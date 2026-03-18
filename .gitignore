@@ -38,3 +38,7 @@ contracts/typechain-types/
 
 # Misc
 *.tsbuildinfo
+rwa-frontend-e8b39143a30b.json
+*.json.key
+*-credentials.json
+*service-account*.json
