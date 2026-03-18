@@ -1,0 +1,434 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IRWAEscrowVault",
+  "sourceName": "contracts/interfaces/IRWAEscrowVault.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_description",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_percentage",
+          "type": "uint256"
+        }
+      ],
+      "name": "addMilestone",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_milestoneIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "approveMilestone",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "claimRefund",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "securityToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "softCap",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "hardCap",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minInvestment",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxInvestment",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenPrice",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "startTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "endTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "createProject",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "enableRefunds",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_investor",
+          "type": "address"
+        }
+      ],
+      "name": "getInvestorAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMilestones",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "description",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "percentage",
+              "type": "uint256"
+            },
+            {
+              "internalType": "enum IRWAEscrowVault.MilestoneStatus",
+              "name": "status",
+              "type": "uint8"
+            },
+            {
+              "internalType": "string",
+              "name": "proofURI",
+              "type": "string"
+            },
+            {
+              "internalType": "uint256",
+              "name": "submittedAt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "approvedAt",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "releasedAmount",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IRWAEscrowVault.Milestone[]",
+          "name": "",
+          "type": "tuple[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getProjectFunding",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "projectId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "fundingGoal",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalRaised",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalReleased",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "deadline",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "paymentToken",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "fundingComplete",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "refundsEnabled",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "currentMilestone",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct IRWAEscrowVault.ProjectFunding",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_milestoneIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "getReleasableAmount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_paymentToken",
+          "type": "address"
+        }
+      ],
+      "name": "invest",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_milestoneIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_reason",
+          "type": "string"
+        }
+      ],
+      "name": "raiseDispute",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_milestoneIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_reason",
+          "type": "string"
+        }
+      ],
+      "name": "rejectMilestone",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_milestoneIndex",
+          "type": "uint256"
+        }
+      ],
+      "name": "releaseMilestoneFunds",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_milestoneIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bool",
+          "name": "_approved",
+          "type": "bool"
+        }
+      ],
+      "name": "resolveDispute",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_milestoneIndex",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_proofURI",
+          "type": "string"
+        }
+      ],
+      "name": "submitMilestone",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

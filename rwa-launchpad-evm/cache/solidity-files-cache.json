@@ -1,0 +1,4300 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\compliance\\ModularCompliance.sol": {
+      "lastModificationDate": 1772034579793,
+      "contentHash": "c7126c235583e58d7b77ee7f0c36e86f",
+      "sourceName": "contracts/compliance/ModularCompliance.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "../interfaces/IModule.sol",
+        "../interfaces/IModularCompliance.sol",
+        "../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ModularCompliance"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IModularCompliance.sol": {
+      "lastModificationDate": 1770965045978,
+      "contentHash": "c34f5ca6d9129167810aff98b5c76960",
+      "sourceName": "contracts/interfaces/IModularCompliance.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IModularCompliance"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IModule.sol": {
+      "lastModificationDate": 1770960999637,
+      "contentHash": "8cfe0e58261d782c26eefd8226a59e8f",
+      "sourceName": "contracts/interfaces/IModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\libraries\\Constants.sol": {
+      "lastModificationDate": 1770921679498,
+      "contentHash": "172836a3a8e5e5af11e4257d76b8d715",
+      "sourceName": "contracts/libraries/Constants.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "Constants"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol": {
+      "lastModificationDate": 1772044233855,
+      "contentHash": "a70d53f7e468306c02c529ecaa1d59c5",
+      "sourceName": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/ContextUpgradeable.sol",
+        "../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "OwnableUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\utils\\Initializable.sol": {
+      "lastModificationDate": 1772044233713,
+      "contentHash": "b0970a564d121abf9adfff8d1a01eb16",
+      "sourceName": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../utils/AddressUpgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.2"
+      ],
+      "artifacts": [
+        "Initializable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\utils\\UUPSUpgradeable.sol": {
+      "lastModificationDate": 1772044234061,
+      "contentHash": "c50df4f62eb9ef48d89b3a48a57e3bf5",
+      "sourceName": "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../interfaces/draft-IERC1822Upgradeable.sol",
+        "../ERC1967/ERC1967UpgradeUpgradeable.sol",
+        "./Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "UUPSUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\ContextUpgradeable.sol": {
+      "lastModificationDate": 1772044220916,
+      "contentHash": "b6dfb72ff1fd764f725ec4db364b1b20",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ContextUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\AddressUpgradeable.sol": {
+      "lastModificationDate": 1772044220769,
+      "contentHash": "c30c805386fda8a42ff515da963d3a95",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "AddressUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\interfaces\\draft-IERC1822Upgradeable.sol": {
+      "lastModificationDate": 1772044221332,
+      "contentHash": "a6883cfd85607b16c121a02728369eb3",
+      "sourceName": "@openzeppelin/contracts-upgradeable/interfaces/draft-IERC1822Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC1822ProxiableUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\ERC1967\\ERC1967UpgradeUpgradeable.sol": {
+      "lastModificationDate": 1772044221696,
+      "contentHash": "e186f91201ca317278fffbf1ea60cea0",
+      "sourceName": "@openzeppelin/contracts-upgradeable/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../beacon/IBeaconUpgradeable.sol",
+        "../../interfaces/IERC1967Upgradeable.sol",
+        "../../interfaces/draft-IERC1822Upgradeable.sol",
+        "../../utils/AddressUpgradeable.sol",
+        "../../utils/StorageSlotUpgradeable.sol",
+        "../utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.2"
+      ],
+      "artifacts": [
+        "ERC1967UpgradeUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\interfaces\\IERC1967Upgradeable.sol": {
+      "lastModificationDate": 1772044233048,
+      "contentHash": "a5421a5e611067b9202e83329fbf6fc7",
+      "sourceName": "@openzeppelin/contracts-upgradeable/interfaces/IERC1967Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC1967Upgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\StorageSlotUpgradeable.sol": {
+      "lastModificationDate": 1772044234009,
+      "contentHash": "02cf959b00ba5c650708472f195f8b29",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/StorageSlotUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "StorageSlotUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\proxy\\beacon\\IBeaconUpgradeable.sol": {
+      "lastModificationDate": 1772044232850,
+      "contentHash": "21bffd733b4ca013e125a0ffe2e52254",
+      "sourceName": "@openzeppelin/contracts-upgradeable/proxy/beacon/IBeaconUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IBeaconUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\ArraysUpgradeable.sol": {
+      "lastModificationDate": 1772044220779,
+      "contentHash": "da56499319c21af55ec5728542ebf4b6",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/ArraysUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./StorageSlotUpgradeable.sol",
+        "./math/MathUpgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ArraysUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\math\\MathUpgradeable.sol": {
+      "lastModificationDate": 1772044233809,
+      "contentHash": "5a2a749b45b6a8eb035f4bf75addcb27",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "MathUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\StringsUpgradeable.sol": {
+      "lastModificationDate": 1772044234018,
+      "contentHash": "c221361be1c4953f5b71f47475b90266",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./math/MathUpgradeable.sol",
+        "./math/SignedMathUpgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "StringsUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\math\\SignedMathUpgradeable.sol": {
+      "lastModificationDate": 1772044233997,
+      "contentHash": "2a6b819b2e241091ada6d645df3e3929",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/math/SignedMathUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SignedMathUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC721\\ERC721Upgradeable.sol": {
+      "lastModificationDate": 1772044231836,
+      "contentHash": "cf4ee017d1c233e20dc46b40c0f570c1",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC721Upgradeable.sol",
+        "./IERC721ReceiverUpgradeable.sol",
+        "./extensions/IERC721MetadataUpgradeable.sol",
+        "../../utils/AddressUpgradeable.sol",
+        "../../utils/ContextUpgradeable.sol",
+        "../../utils/StringsUpgradeable.sol",
+        "../../utils/introspection/ERC165Upgradeable.sol",
+        "../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC721Upgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC721\\IERC721Upgradeable.sol": {
+      "lastModificationDate": 1772044233580,
+      "contentHash": "f6c6e71ba8413a4ba32871610dba0658",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../utils/introspection/IERC165Upgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721Upgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC721\\IERC721ReceiverUpgradeable.sol": {
+      "lastModificationDate": 1772044233563,
+      "contentHash": "ba28cf60b52b00d2b3a190bcdf0952bd",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721ReceiverUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721ReceiverUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\introspection\\ERC165Upgradeable.sol": {
+      "lastModificationDate": 1772044221662,
+      "contentHash": "7cd9c9d1dccf4a894c0f6926f5b6ac3d",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC165Upgradeable.sol",
+        "../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC165Upgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\IERC721MetadataUpgradeable.sol": {
+      "lastModificationDate": 1772044233539,
+      "contentHash": "76212ca0265501d1eb3dd1175e6afca4",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721MetadataUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC721Upgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721MetadataUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\introspection\\IERC165Upgradeable.sol": {
+      "lastModificationDate": 1772044232977,
+      "contentHash": "d6ecf203a5e72c845be9bbf2f304a289",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/introspection/IERC165Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC165Upgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\ERC721EnumerableUpgradeable.sol": {
+      "lastModificationDate": 1772044231663,
+      "contentHash": "8a9382efbcdfcf606329d61aaae85396",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC721Upgradeable.sol",
+        "./IERC721EnumerableUpgradeable.sol",
+        "../../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC721EnumerableUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\IERC721EnumerableUpgradeable.sol": {
+      "lastModificationDate": 1772044233510,
+      "contentHash": "bed9876900f8c465d42317f566c03828",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/IERC721EnumerableUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC721Upgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC721EnumerableUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\interfaces\\IERC721Upgradeable.sol": {
+      "lastModificationDate": 1772044233569,
+      "contentHash": "b6d2f759a0c41967c68a26c21d5ecbe4",
+      "sourceName": "@openzeppelin/contracts-upgradeable/interfaces/IERC721Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../token/ERC721/IERC721Upgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\interfaces\\IERC4906Upgradeable.sol": {
+      "lastModificationDate": 1772044233458,
+      "contentHash": "fe5233feb20121d3fcadf24db464f5f8",
+      "sourceName": "@openzeppelin/contracts-upgradeable/interfaces/IERC4906Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC165Upgradeable.sol",
+        "./IERC721Upgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC4906Upgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\interfaces\\IERC165Upgradeable.sol": {
+      "lastModificationDate": 1772044232971,
+      "contentHash": "0ce0dc23b57eb688403ad5169cc18a7d",
+      "sourceName": "@openzeppelin/contracts-upgradeable/interfaces/IERC165Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/introspection/IERC165Upgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": []
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC20\\extensions\\ERC20BurnableUpgradeable.sol": {
+      "lastModificationDate": 1769545232405,
+      "contentHash": "1e8bd1aac96ccd418df6d677cc3b3663",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20BurnableUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC20Upgradeable.sol",
+        "../../../utils/ContextUpgradeable.sol",
+        "../../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC20BurnableUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC20\\ERC20Upgradeable.sol": {
+      "lastModificationDate": 1772044231547,
+      "contentHash": "a7a59a8d3ad24a7b40ba5f34f0c1d47f",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20Upgradeable.sol",
+        "./extensions/IERC20MetadataUpgradeable.sol",
+        "../../utils/ContextUpgradeable.sol",
+        "../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC20Upgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC20\\IERC20Upgradeable.sol": {
+      "lastModificationDate": 1772044233081,
+      "contentHash": "9a9398a7dbda9d014f04d5eb0fb581fd",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20Upgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC20\\extensions\\IERC20MetadataUpgradeable.sol": {
+      "lastModificationDate": 1772044233061,
+      "contentHash": "9efcd5467a7f0bf533910ee8a267adb2",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/IERC20MetadataUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20Upgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20MetadataUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC20\\extensions\\ERC20SnapshotUpgradeable.sol": {
+      "lastModificationDate": 1772044231359,
+      "contentHash": "dda8f54f8fbac4e5000368cd976221fc",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20SnapshotUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC20Upgradeable.sol",
+        "../../../utils/ArraysUpgradeable.sol",
+        "../../../utils/CountersUpgradeable.sol",
+        "../../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC20SnapshotUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\utils\\CountersUpgradeable.sol": {
+      "lastModificationDate": 1772044220931,
+      "contentHash": "2e908c762a799baea365e68a50500e2c",
+      "sourceName": "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "CountersUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\core\\RWASecurityToken.sol": {
+      "lastModificationDate": 1772049787696,
+      "contentHash": "a829859e06236df6fee735ae7883468b",
+      "sourceName": "contracts/core/RWASecurityToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PausableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20SnapshotUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+        "../interfaces/IModularCompliance.sol",
+        "../interfaces/IKYCVerifier.sol",
+        "../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "RWASecurityToken"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\security\\ReentrancyGuardUpgradeable.sol": {
+      "lastModificationDate": 1772044233923,
+      "contentHash": "2c309ab8cb953d5db2a280f534c113cd",
+      "sourceName": "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ReentrancyGuardUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\access\\AccessControlUpgradeable.sol": {
+      "lastModificationDate": 1772044220746,
+      "contentHash": "e755cb2313878e08bcbc64c75b169c1e",
+      "sourceName": "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAccessControlUpgradeable.sol",
+        "../utils/ContextUpgradeable.sol",
+        "../utils/StringsUpgradeable.sol",
+        "../utils/introspection/ERC165Upgradeable.sol",
+        "../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AccessControlUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC20\\extensions\\ERC20PausableUpgradeable.sol": {
+      "lastModificationDate": 1772044222421,
+      "contentHash": "089f35d9d45ae7349a7c05651e2efea3",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20PausableUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC20Upgradeable.sol",
+        "../../../security/PausableUpgradeable.sol",
+        "../../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC20PausableUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\access\\IAccessControlUpgradeable.sol": {
+      "lastModificationDate": 1772044232811,
+      "contentHash": "21b43d1337ebc77c11da3cbe3fd65316",
+      "sourceName": "@openzeppelin/contracts-upgradeable/access/IAccessControlUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAccessControlUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\security\\PausableUpgradeable.sol": {
+      "lastModificationDate": 1772044233890,
+      "contentHash": "6a4b611a83035a19370ecd7eb445d4fc",
+      "sourceName": "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/ContextUpgradeable.sol",
+        "../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "PausableUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\RWASecurityExchange.sol": {
+      "lastModificationDate": 1772026847967,
+      "contentHash": "7db142cc429021a64acce503916d8c89",
+      "sourceName": "contracts/RWASecurityExchange.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "./interfaces/IKYCVerifier.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IRWASecurityToken",
+        "RWASecurityExchange"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\IERC20.sol": {
+      "lastModificationDate": 1772044232914,
+      "contentHash": "df36f7051335cd1e748b1b6463b7fdd3",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\utils\\SafeERC20.sol": {
+      "lastModificationDate": 1772044233806,
+      "contentHash": "1b5d667d3740d866eca0352758e59827",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20.sol",
+        "../extensions/IERC20Permit.sol",
+        "../../../utils/Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeERC20"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\utils\\Address.sol": {
+      "lastModificationDate": 1772044208459,
+      "contentHash": "211ffd288c1588ba8c10eae668ca3c66",
+      "sourceName": "@openzeppelin/contracts/utils/Address.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "Address"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Permit.sol": {
+      "lastModificationDate": 1772044232932,
+      "contentHash": "525fcdad8d171312933f47baf01d1ed8",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Permit.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20Permit"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\proxy\\ERC1967\\ERC1967Upgrade.sol": {
+      "lastModificationDate": 1772044221410,
+      "contentHash": "a127706394bead18392601a20d44867a",
+      "sourceName": "@openzeppelin/contracts/proxy/ERC1967/ERC1967Upgrade.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../beacon/IBeacon.sol",
+        "../../interfaces/IERC1967.sol",
+        "../../interfaces/draft-IERC1822.sol",
+        "../../utils/Address.sol",
+        "../../utils/StorageSlot.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.2"
+      ],
+      "artifacts": [
+        "ERC1967Upgrade"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\interfaces\\IERC1967.sol": {
+      "lastModificationDate": 1772044232887,
+      "contentHash": "d0d060231a45da7a1eecbb5cd286fa40",
+      "sourceName": "@openzeppelin/contracts/interfaces/IERC1967.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC1967"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\utils\\StorageSlot.sol": {
+      "lastModificationDate": 1772044233864,
+      "contentHash": "682f7dd1f2e1147c8390e7575deceb2d",
+      "sourceName": "@openzeppelin/contracts/utils/StorageSlot.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "StorageSlot"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\interfaces\\draft-IERC1822.sol": {
+      "lastModificationDate": 1772044220791,
+      "contentHash": "2858d98e74e67987ec81b39605230b74",
+      "sourceName": "@openzeppelin/contracts/interfaces/draft-IERC1822.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC1822Proxiable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\proxy\\beacon\\IBeacon.sol": {
+      "lastModificationDate": 1772044232636,
+      "contentHash": "b6bd23bf19e90b771337037706470933",
+      "sourceName": "@openzeppelin/contracts/proxy/beacon/IBeacon.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IBeacon"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\proxy\\ERC1967\\ERC1967Proxy.sol": {
+      "lastModificationDate": 1772044221393,
+      "contentHash": "3fc3c7c0a2956f36e766691bb9473b06",
+      "sourceName": "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Proxy.sol",
+        "./ERC1967Upgrade.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC1967Proxy"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\proxy\\Proxy.sol": {
+      "lastModificationDate": 1772044233713,
+      "contentHash": "40b3d81a836d50ff47e03893dcaaf204",
+      "sourceName": "@openzeppelin/contracts/proxy/Proxy.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Proxy"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\libraries\\DeploymentLib.sol": {
+      "lastModificationDate": 1770912453511,
+      "contentHash": "1074c69a4eb33d85acce9cc1cbef3803",
+      "sourceName": "contracts/libraries/DeploymentLib.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "DeploymentLib"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\core\\RWALaunchpadFactory.sol": {
+      "lastModificationDate": 1771870006062,
+      "contentHash": "8f44a6620f1a34f181e416281e839913",
+      "sourceName": "contracts/core/RWALaunchpadFactory.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+        "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol",
+        "../interfaces/IRWASecurityToken.sol",
+        "../interfaces/IRWAProjectNFT.sol",
+        "../interfaces/IModularCompliance.sol",
+        "../interfaces/IRWAEscrowVault.sol",
+        "../interfaces/IKYCVerifier.sol",
+        "../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "RWALaunchpadFactory"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IRWALaunchpadFactory.sol": {
+      "lastModificationDate": 1770912127952,
+      "contentHash": "9ea4d2c30165dc0d9776cc5cbcfb7314",
+      "sourceName": "contracts/interfaces/IRWALaunchpadFactory.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IRWALaunchpadFactory"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IRWAProjectNFT.sol": {
+      "lastModificationDate": 1770965524701,
+      "contentHash": "15a3e59ca914faf1c4589153ffe07193",
+      "sourceName": "contracts/interfaces/IRWAProjectNFT.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IRWAProjectNFT"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\OffChainInvestmentManager.sol": {
+      "lastModificationDate": 1772026805324,
+      "contentHash": "258aa43307e4f34ebbf3539e3b7ab9c9",
+      "sourceName": "contracts/OffChainInvestmentManager.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "./interfaces/IKYCVerifier.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IRWAProjectNFT",
+        "IRWASecurityToken",
+        "OffChainInvestmentManager"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IClaimTopicsRegistry.sol": {
+      "lastModificationDate": 1770921908811,
+      "contentHash": "48db3ecafbeb19f3d905924f93bfdc09",
+      "sourceName": "contracts/interfaces/IClaimTopicsRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IClaimTopicsRegistry"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\ITrustedIssuersRegistry.sol": {
+      "lastModificationDate": 1770923786469,
+      "contentHash": "9a006d4cc4d3fe954469f1606a1c80f3",
+      "sourceName": "contracts/interfaces/ITrustedIssuersRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ITrustedIssuersRegistry"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IIdentity.sol": {
+      "lastModificationDate": 1770965983755,
+      "contentHash": "ff48fdf140111448721b514a03fd497a",
+      "sourceName": "contracts/interfaces/IIdentity.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IIdentity"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IClaimIssuer.sol": {
+      "lastModificationDate": 1770970821010,
+      "contentHash": "a7249b7c188226b7dfab1dc46a238fbb",
+      "sourceName": "contracts/interfaces/IClaimIssuer.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IClaimIssuer"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\registry\\TrustedIssuersRegistry.sol": {
+      "lastModificationDate": 1770965863754,
+      "contentHash": "648ca3498d5115bf57ca91b7c74e7880",
+      "sourceName": "contracts/registry/TrustedIssuersRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "../interfaces/ITrustedIssuersRegistry.sol",
+        "../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "TrustedIssuersRegistry"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\registry\\ClaimTopicsRegistry.sol": {
+      "lastModificationDate": 1770965601032,
+      "contentHash": "f68831595f4ac684f66c6d8a5048d3ed",
+      "sourceName": "contracts/registry/ClaimTopicsRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "../interfaces/IClaimTopicsRegistry.sol",
+        "../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ClaimTopicsRegistry"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\mocks\\MockIdentity.sol": {
+      "lastModificationDate": 1770970782648,
+      "contentHash": "e715880a346d3e0b9498278dcbe50f28",
+      "sourceName": "contracts/mocks/MockIdentity.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MockIdentity"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\mocks\\MockClaimIssuer.sol": {
+      "lastModificationDate": 1770970891453,
+      "contentHash": "029b14fbfe54c7a0cfec7a2b856e88c4",
+      "sourceName": "contracts/mocks/MockClaimIssuer.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./MockIdentity.sol",
+        "../interfaces/IClaimIssuer.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MockClaimIssuer"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\compliance\\modules\\CountryRestrictModule.sol": {
+      "lastModificationDate": 1772028291302,
+      "contentHash": "67b659d4786c02baaf0a980e1b0c7f22",
+      "sourceName": "contracts/compliance/modules/CountryRestrictModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "../../interfaces/IModule.sol",
+        "../../interfaces/IModularCompliance.sol",
+        "../../interfaces/IKYCVerifier.sol",
+        "../../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "CountryRestrictModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\compliance\\modules\\AbstractModule.sol": {
+      "lastModificationDate": 1770964710759,
+      "contentHash": "46954bfd2bc31fdbd28241d031c947b3",
+      "sourceName": "contracts/compliance/modules/AbstractModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../interfaces/IModule.sol",
+        "../../interfaces/IModularCompliance.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AbstractModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\compliance\\modules\\TransferFeesModule.sol": {
+      "lastModificationDate": 1770969165889,
+      "contentHash": "6db1473d9c7a8ddd6014d281ff185110",
+      "sourceName": "contracts/compliance/modules/TransferFeesModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "../../interfaces/IModule.sol",
+        "../../interfaces/IModularCompliance.sol",
+        "../../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "TransferFeesModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\compliance\\modules\\MaxBalanceModule.sol": {
+      "lastModificationDate": 1770969151792,
+      "contentHash": "4517ec2c357f7db92df413764f7e85a8",
+      "sourceName": "contracts/compliance/modules/MaxBalanceModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "../../interfaces/IModule.sol",
+        "../../interfaces/IModularCompliance.sol",
+        "../../interfaces/IRWASecurityToken.sol",
+        "../../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MaxBalanceModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\compliance\\modules\\LockupModule.sol": {
+      "lastModificationDate": 1770968975612,
+      "contentHash": "1003c1122ea98da20361cd1c1db296ca",
+      "sourceName": "contracts/compliance/modules/LockupModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "../../interfaces/IModule.sol",
+        "../../interfaces/IModularCompliance.sol",
+        "../../interfaces/IRWASecurityToken.sol",
+        "../../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "LockupModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\compliance\\modules\\AccreditedInvestorModule.sol": {
+      "lastModificationDate": 1772028656559,
+      "contentHash": "a8f58f4db94a08935948faf3c5d2bdb5",
+      "sourceName": "contracts/compliance/modules/AccreditedInvestorModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "../../interfaces/IModule.sol",
+        "../../interfaces/IModularCompliance.sol",
+        "../../interfaces/IKYCVerifier.sol",
+        "../../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AccreditedInvestorModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\libraries\\ProjectLib.sol": {
+      "lastModificationDate": 1770912703650,
+      "contentHash": "0c99ecf7855ab474dc6c49fe7ff73a0d",
+      "sourceName": "contracts/libraries/ProjectLib.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ProjectLib"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\core\\RWAProjectNFT.sol": {
+      "lastModificationDate": 1771232491179,
+      "contentHash": "f4765871c2c911b91d4199880dd4110e",
+      "sourceName": "contracts/core/RWAProjectNFT.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "../interfaces/IRWAProjectNFT.sol",
+        "../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "RWAProjectNFT"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts-upgradeable\\token\\ERC721\\extensions\\ERC721URIStorageUpgradeable.sol": {
+      "lastModificationDate": 1772044231843,
+      "contentHash": "647d5735ee93e70b099b114d3cca3986",
+      "sourceName": "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721URIStorageUpgradeable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../ERC721Upgradeable.sol",
+        "../../../interfaces/IERC4906Upgradeable.sol",
+        "../../../proxy/utils/Initializable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC721URIStorageUpgradeable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\core\\RWAEscrowVault.sol": {
+      "lastModificationDate": 1772027569324,
+      "contentHash": "21c7e330525a9922b30f2b5b81beca0f",
+      "sourceName": "contracts/core/RWAEscrowVault.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "../interfaces/IRWASecurityToken.sol",
+        "../interfaces/IRWAProjectNFT.sol",
+        "../interfaces/IAggregatorV3.sol",
+        "../libraries/Constants.sol",
+        "../interfaces/IKYCVerifier.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "RWAEscrowVault"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\extensions\\IERC20Metadata.sol": {
+      "lastModificationDate": 1772044232926,
+      "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20Metadata"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\token\\ERC20\\ERC20.sol": {
+      "lastModificationDate": 1772044221439,
+      "contentHash": "3ae5166c6827a9cf1a7a462d1632b464",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol",
+        "./extensions/IERC20Metadata.sol",
+        "../../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC20"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\utils\\Context.sol": {
+      "lastModificationDate": 1772044220515,
+      "contentHash": "f07feb4a44b1a4872370da5aa70e8e46",
+      "sourceName": "@openzeppelin/contracts/utils/Context.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\access\\AccessControl.sol": {
+      "lastModificationDate": 1772044200950,
+      "contentHash": "a2b1ec38a8dad325a596f926890772b8",
+      "sourceName": "@openzeppelin/contracts/access/AccessControl.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAccessControl.sol",
+        "../utils/Context.sol",
+        "../utils/Strings.sol",
+        "../utils/introspection/ERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "AccessControl"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\access\\IAccessControl.sol": {
+      "lastModificationDate": 1772044231888,
+      "contentHash": "57c84298234411cea19c7c284d86be8b",
+      "sourceName": "@openzeppelin/contracts/access/IAccessControl.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IAccessControl"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\utils\\Strings.sol": {
+      "lastModificationDate": 1772044233892,
+      "contentHash": "48686fc32a22a3754b8e63321857dd2a",
+      "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./math/Math.sol",
+        "./math/SignedMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Strings"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\ERC165.sol": {
+      "lastModificationDate": 1772044221268,
+      "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC165"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\utils\\math\\Math.sol": {
+      "lastModificationDate": 1772044233618,
+      "contentHash": "fe63409d8a06818b926cf89e0ea88b1b",
+      "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Math"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\utils\\math\\SignedMath.sol": {
+      "lastModificationDate": 1772044233835,
+      "contentHash": "9488ebd4daacfee8ad04811600d7d061",
+      "sourceName": "@openzeppelin/contracts/utils/math/SignedMath.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SignedMath"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\utils\\introspection\\IERC165.sol": {
+      "lastModificationDate": 1772044232846,
+      "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
+      "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\compliance\\modules\\ComplianceModule.sol": {
+      "lastModificationDate": 1772028188429,
+      "contentHash": "18e024252867b1564bbc1313051e2eae",
+      "sourceName": "contracts/compliance/modules/ComplianceModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/AccessControl.sol",
+        "../../interfaces/IKYCVerifier.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ComplianceModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\mocks\\MockERC20.sol": {
+      "lastModificationDate": 1770912879592,
+      "contentHash": "97b6ccc6dcdf259ca709d274338dd6f7",
+      "sourceName": "contracts/mocks/MockERC20.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "MockERC20"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\core\\DividendDistributor.sol": {
+      "lastModificationDate": 1770962900531,
+      "contentHash": "0482b510109ef5bcfd21ce3cf3f52ed1",
+      "sourceName": "contracts/core/DividendDistributor.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "../interfaces/IRWASecurityToken.sol",
+        "../libraries/Constants.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "DividendDistributor"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IDividendDistributor.sol": {
+      "lastModificationDate": 1770911809752,
+      "contentHash": "eb0db622dfa6c04614e66404acc908f4",
+      "sourceName": "contracts/interfaces/IDividendDistributor.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IDividendDistributor"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\core\\ProjectBadgeManager.sol": {
+      "lastModificationDate": 1770910449442,
+      "contentHash": "249194eb5a3b0fb9933f7ec58bc9a997",
+      "sourceName": "contracts/core/ProjectBadgeManager.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ProjectBadgeManager"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\ICompliance.sol": {
+      "lastModificationDate": 1769453804539,
+      "contentHash": "cdeed3c40626bce14136c37a273e719b",
+      "sourceName": "contracts/interfaces/ICompliance.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ICompliance"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IComplianceModule.sol": {
+      "lastModificationDate": 1769453829249,
+      "contentHash": "4e905a8f15083e2caa2344d00a83a30e",
+      "sourceName": "contracts/interfaces/IComplianceModule.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IComplianceModule"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IRWAEscrowVault.sol": {
+      "lastModificationDate": 1770927437841,
+      "contentHash": "9f323969afc3f56c7a67ee08460cdf00",
+      "sourceName": "contracts/interfaces/IRWAEscrowVault.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IRWAEscrowVault"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IToken.sol": {
+      "lastModificationDate": 1770912301836,
+      "contentHash": "b6c36c0ab10090cc3f25bf76bbfb0958",
+      "sourceName": "contracts/interfaces/IToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IToken"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IRWASecurityToken.sol": {
+      "lastModificationDate": 1770965445784,
+      "contentHash": "fe359b0a5107afef889fc3b91a9bebcd",
+      "sourceName": "contracts/interfaces/IRWASecurityToken.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IRWASecurityToken"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IAggregatorV3.sol": {
+      "lastModificationDate": 1770922001360,
+      "contentHash": "4bc8a3ffdade1868c39db718f7fe39e9",
+      "sourceName": "contracts/interfaces/IAggregatorV3.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "AggregatorV3Interface"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\access\\Ownable.sol": {
+      "lastModificationDate": 1772044233662,
+      "contentHash": "5a20b2cad87ddb61c7a3a6af21289e28",
+      "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\tokenize\\RWATradeEscrow.sol": {
+      "lastModificationDate": 1771871513975,
+      "contentHash": "517bb1cd32b70307240a8eb662c0faab",
+      "sourceName": "contracts/tokenize/RWATradeEscrow.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "../interfaces/IKYCVerifier.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "RWATradeEscrow"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\tokenize\\RWATokenizationFactory.sol": {
+      "lastModificationDate": 1772050529155,
+      "contentHash": "53eeb7d21a57a0d656dea182a4d4a7d5",
+      "sourceName": "contracts/tokenize/RWATokenizationFactory.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol",
+        "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol",
+        "../interfaces/IKYCVerifier.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IModularCompliance",
+        "IRWAERC3643",
+        "RWATokenizationFactory"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\trade\\TradeEscrow.sol": {
+      "lastModificationDate": 1771407647167,
+      "contentHash": "30adfd2852216c5a2b5662947d4e3cb0",
+      "sourceName": "contracts/trade/TradeEscrow.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol",
+        "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/access/AccessControl.sol",
+        "@openzeppelin/contracts/security/Pausable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "TradeEscrow"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\security\\Pausable.sol": {
+      "lastModificationDate": 1772044233697,
+      "contentHash": "25c8108f36fdd472bc78d4c4af240c11",
+      "sourceName": "@openzeppelin/contracts/security/Pausable.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../utils/Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Pausable"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\node_modules\\@openzeppelin\\contracts\\security\\ReentrancyGuard.sol": {
+      "lastModificationDate": 1772044233742,
+      "contentHash": "1535f8c0c68463f8c1b5239f7584e71f",
+      "sourceName": "@openzeppelin/contracts/security/ReentrancyGuard.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ReentrancyGuard"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\interfaces\\IKYCVerifier.sol": {
+      "lastModificationDate": 1771876462336,
+      "contentHash": "579895f2ef8c6e896fd9a56e83ef31e4",
+      "sourceName": "contracts/interfaces/IKYCVerifier.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IKYCVerifier"
+      ]
+    },
+    "D:\\Frontend\\RWA Launchpad\\rwa-launchpad-evm\\contracts\\KYCVerifier.sol": {
+      "lastModificationDate": 1772433983301,
+      "contentHash": "e793b99975b1a67019547567ab8ec863",
+      "sourceName": "contracts/KYCVerifier.sol",
+      "solcConfig": {
+        "version": "0.8.20",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "viaIR": true,
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata",
+                "storageLayout"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol",
+        "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "KYCVerifier"
+      ]
+    }
+  }
+}

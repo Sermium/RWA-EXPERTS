@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ArraysUpgradeable",
+  "sourceName": "@openzeppelin/contracts-upgradeable/utils/ArraysUpgradeable.sol",
+  "abi": [],
+  "bytecode": "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea264697066735822122043876133edddc605ffd51ad608671357fd2db85478de8589147d965e22bb351b64736f6c63430008140033",
+  "deployedBytecode": "0x600080fdfea264697066735822122043876133edddc605ffd51ad608671357fd2db85478de8589147d965e22bb351b64736f6c63430008140033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

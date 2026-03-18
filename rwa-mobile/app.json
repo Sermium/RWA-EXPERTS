@@ -1,0 +1,79 @@
+{
+  "expo": {
+    "name": "RWA Mobile",
+    "slug": "rwa-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "rwa-mobile",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#111827"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.rwamobile.app",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "Use Face ID to unlock your wallet"
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#111827"
+      },
+      "package": "com.rwamobile.app",
+      "permissions": [
+        "USE_BIOMETRIC",
+        "USE_FINGERPRINT"
+      ]
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow RWA Mobile to use Face ID to unlock your wallet"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "defaultNetwork": "avalancheFuji",
+      "supportedChains": {
+        "testnet": {
+          "avalancheFuji": {
+            "chainId": 43113,
+            "name": "Avalanche Fuji",
+            "rpcUrl": "https://api.avax-test.network/ext/bc/C/rpc",
+            "explorer": "https://testnet.snowtrace.io",
+            "symbol": "AVAX",
+            "faucet": "https://faucet.avax.network/"
+          }
+        },
+        "mainnet": {
+          "avalanche": {
+            "chainId": 43114,
+            "name": "Avalanche C-Chain",
+            "rpcUrl": "https://api.avax.network/ext/bc/C/rpc",
+            "explorer": "https://snowtrace.io",
+            "symbol": "AVAX"
+          }
+        }
+      },
+      "contracts": {
+        "rwaToken": "",
+        "marketplace": "",
+        "staking": ""
+      },
+      "eas": {
+        "projectId": ""
+      }
+    }
+  }
+}

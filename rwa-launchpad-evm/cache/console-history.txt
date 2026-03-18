@@ -1,0 +1,1000 @@
+.exit
+console.log("RWASecurityToken:", ST.bytecode.length / 2, "bytes");
+const ST = await ethers.getContractFactory("RWASecurityToken");
+console.log("RWATokenizationFactory:", TF.bytecode.length / 2, "bytes");
+const TF = await ethers.getContractFactory("RWATokenizationFactory");
+.exit
+console.log("RWATokenizationFactory:", TF.bytecode.length / 2, "bytes")
+const TF = await ethers.getContractFactory("RWATokenizationFactory")
+console.log("RWASecurityToken:", ST.bytecode.length / 2, "bytes")
+const ST = await ethers.getContractFactory("RWASecurityToken")
+.exit
+console.log("RWATokenizationFactory:", TF.bytecode.length / 2, "bytes")
+const TF = await ethers.getContractFactory("RWATokenizationFactory")
+console.log("RWASecurityToken:", ST.bytecode.length / 2, "bytes")
+const ST = await ethers.getContractFactory("RWASecurityToken")
+.exit
+}
+  console.log(addr, "- bytecode size:", code.length / 2, "bytes")
+  const code = await ethers.provider.getCode(addr)
+for (const addr of addrs) {
+]
+  "0x01B4286FdcBf99dFA42a06f90FB1058A397F7c2c"
+  "0x30B0C77426dd7c3BCBC845099BEE931aE00904a6",
+  "0x73B699A1e7AF652027194d35A7DB3eD0AD6DF399",
+  "0x8A962582446686b62D1F9d86dfe6D8c107f11357",
+  "0x198E1fa20f0538A587C3D3C50Cd0CF7CC67A9052",
+  "0x135d953926A39CB868e524a4D6cFE026b751fA71",
+const addrs = [
+.exit
+console.log("SecurityToken proxy deployed:", await secProxy.getAddress())
+await secProxy.waitForDeployment()
+const secProxy = await ERC1967Proxy.deploy(secImpl, secInitData)
+console.log("SecurityToken init data length:", secInitData.length)
+const secInitData = ST.interface.encodeFunctionData("initialize", ["Test", "TEST", factoryAddr, compAddr, kycVerifier, ethers.parseUnits("1000000", 18)])
+const compAddr = "0x2462Db45222145A0EE0f0a91a39375Ce74AF05c4"
+const ST = await ethers.getContractFactory("RWASecurityToken")
+console.log("Compliance proxy deployed:", await compProxy.getAddress())
+await compProxy.waitForDeployment()
+const compProxy = await ERC1967Proxy.deploy(compImpl, compInitData)
+const ERC1967Proxy = await ethers.getContractFactory("ERC1967Proxy")
+console.log("Compliance init data:", compInitData)
+const compInitData = ModularCompliance.interface.encodeFunctionData("initialize", [factoryAddr])
+const ModularCompliance = await ethers.getContractFactory("ModularCompliance")
+// Try to encode compliance init
+const factoryAddr = "0x166877F8f3Ff3957476e35f861D3d8349f309554"
+const kycVerifier = "0x14d5f500E255fE8A52bAA4BC6216f67Ba7Fd9C49"
+const secImpl = "0x93662c12FC034D5D9a0F2Af577d04b79442A6920"
+const compImpl = "0xce622e5676ABF38CBddc3789658ca9f72Ea6209A"
+(await ethers.getContractFactory("ModularCompliance")).interface.fragments.filter(f => f.name === "created").map(f => f.format())
+console.log("created signature:", createdFragment ? createdFragment.format() : "NOT FOUND")
+const createdFragment = IModularCompliance.interface.fragments.find(f => f.name === "created")
+const IModularCompliance = await ethers.getContractFactory("ModularCompliance")
+console.log("created signature:", createdFragment ? createdFragment.format() : "NOT FOUND")
+const createdFragment = IModularCompliance.interface.fragments.find(f => f.name === "created")
+console.log("Compliance initialize:", compInitFragment.format())
+const compInitFragment = ModularCompliance.interface.fragments.find(f => f.name === "initialize")
+const ModularCompliance = await ethers.getContractFactory("ModularCompliance")
+console.log("Initialize signature:", initFragment.format())
+const initFragment = SecurityToken.interface.fragments.find(f => f.name === "initialize")
+const SecurityToken = await ethers.getContractFactory("RWASecurityToken")
+console.log("SecurityToken has code:", secCode.length > 2)
+const secCode = await ethers.provider.getCode("0x93662c12FC034D5D9a0F2Af577d04b79442A6920")
+console.log("KYC Verifier:", await factory.kycVerifier())
+console.log("ProjectNFT impl:", impl.projectNFT)
+console.log("SecurityToken impl:", impl.securityToken)
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test").then(() => console.log("SUCCESS")).catch(e => console.log("Error:", e))
+const supply = ethers.parseUnits("1000000", 18)
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test").then(() => console.log("SUCCESS")).catch(e => console.log("Error:", e))
+const supply = ethers.parseUnits("1000000", 18)
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test").then(() => console.log("SUCCESS")).catch(e => console.log("Error:", e))
+await factory.setComplianceImplementation("0xce622e5676ABF38CBddc3789658ca9f72Ea6209A")
+console.log("Compliance impl:", impl.compliance)
+const impl = await factory.implementations()
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0x166877F8f3Ff3957476e35f861D3d8349f309554")
+.exit
+await factory.deployToken.staticCall("Test", "TEST", supply, "ipfs://test").then(() => console.log("TOKEN SUCCESS")).catch(e => console.log("TOKEN Error:", e))
+await factory.deployProjectNFT.staticCall("Test", "TEST", "ipfs://test").then(() => console.log("NFT SUCCESS")).catch(e => console.log("NFT Error:", e))
+console.log("Compliance has code:", code2.length > 2)
+const code2 = await ethers.provider.getCode(compImpl)
+const compImpl = "0x867CDfBf24FB2a5A55D773F2d88e67d3040990E9"
+console.log("Has code:", code.length > 2)
+const code = await ethers.provider.getCode(secTokenImpl)
+const secTokenImpl = "0xB880782a597D0A1b200Fb332486f0BEaafa2D15B"
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test").catch(e => console.log(e))
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test").then(() => console.log("SUCCESS")).catch(e => console.log("Error:", e.reason || e.message))
+const supply = ethers.parseUnits("1000000", 18)
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test").then(() => console.log("SUCCESS")).catch(e => console.log("Error:", e.reason || e.message))
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0x0108ea6E1d693C7970f2Bb1E2462cbAac8B48B99")
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test").then(() => console.log("SUCCESS")).catch(e => console.log("Error:", e.reason || e.message))
+.exit
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test").then(() => console.log("SUCCESS")).catch(e => console.log("Error:", e.reason || e.message))
+exit
+```<span class="cursor">█</span>
+}
+  console.log("Error:", e.reason || e.message)
+} catch (e) {
+  console.log("SUCCESS!")
+  await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test")
+try {
+const supply = ethers.parseUnits("1000000", 18)
+// Try the call
+console.log("KYC Verifier:", await factory.kycVerifier())
+console.log("Require KYC:", await factory.requireKYCForDeployment())
+console.log("Deployer approved:", await factory.isDeployerApproved(deployer.address))
+console.log("Paused:", await factory.paused())
+console.log("Deployer:", deployer.address)
+const [deployer] = await ethers.getSigners()
+console.log("Compliance:", impl.compliance)
+console.log("ProjectNFT:", impl.projectNFT)
+console.log("SecurityToken:", impl.securityToken)
+const impl = await factory.implementations()
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0x0108ea6E1d693C7970f2Bb1E2462cbAac8B48B99")
+.exit
+console.log("Compliance:", impl.compliance)
+console.log("ProjectNFT:", impl.projectNFT)
+console.log("SecurityToken:", impl.securityToken)
+const impl = await factory.implementations()
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0x0108ea6E1d693C7970f2Bb1E2462cbAac8B48B99")
+console.log("Compliance:", impl.compliance)
+console.log("ProjectNFT:", impl.projectNFT)
+console.log("SecurityToken:", impl.securityToken)
+const impl = await factory.implementations()
+const factory = await ethers.getContractAt("RWATokenizationFactory", "YOUR_NEW_ADDRESS")
+.exit
+console.log("Deployment 0:", deployment);
+const deployment = await factory.getDeployment(0);
+// Check the deployment
+console.log("Deployment successful!");
+await realResult.wait();
+const realResult = await factory.deployNFTAndToken("Test Project", "TEST", supply, "ipfs://test-metadata");
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test");
+const supply = ethers.parseUnits("1000000", 18);
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0xa02567564095960412BD32cC47C07a91f85BA213");
+console.log("Is now verified:", isNowVerified);
+const isNowVerified = await idRegistry.isVerified("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+console.log("Identity registered!");
+await registerTx.wait();
+);
+  1  // country code (1 = USA, or whatever)
+  "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969",  // identity (can be same as address for basic KYC)
+  "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969",  // address to verify
+const registerTx = await idRegistry.registerIdentity(
+// First check what the register function expects
+// If you have the role, register yourself
+console.log("Has REGISTRAR_ROLE:", hasRole);
+const hasRole = await idRegistry.hasRole(REGISTRAR_ROLE, "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+const REGISTRAR_ROLE = await idRegistry.REGISTRAR_ROLE();
+// Check if you have the registrar role
+const idRegistry = await ethers.getContractAt("IdentityRegistry", "0x01395d6ac65868A48eE2Df3DB41e2Fd4d4387B5D");
+console.log("Is deployer verified:", isVerified);
+const isVerified = await idRegistry.isVerified("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+const idRegistry = await ethers.getContractAt("IdentityRegistry", "0x01395d6ac65868A48eE2Df3DB41e2Fd4d4387B5D");
+console.log("Tokens minted!");
+await mintTx.wait();
+const mintTx = await token.mint("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", mintAmount);
+console.log("Testing mint...");
+const mintAmount = ethers.parseUnits("1000000", 18);
+const token = await ethers.getContractAt("RWASecurityToken", "0x3FE0C07c9e64514356a8feE71B993D6BfAa96F31");
+console.log("Token bound to compliance!");
+await bindTx.wait();
+const bindTx = await compliance.bindToken(tokenAddr);
+console.log("Testing bindToken...");
+const tokenAddr = "0x3FE0C07c9e64514356a8feE71B993D6BfAa96F31";
+const compliance = await ethers.getContractAt("ModularCompliance", "0x9BFb37b288B05C67f315da418D479AeA7eB0897D");
+// Test 4: Bind token to compliance
+console.log("Project NFT deployed at:", await nftProxy.getAddress());
+await nftProxy.waitForDeployment();
+const nftProxy = await ERC1967Proxy.deploy(nftImpl, nftData);
+console.log("Testing project NFT deployment...");
+]);
+  "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969" // deployer as owner
+  "TESTPRJ",
+  "Test Project",
+const nftData = RWAProjectNFT.interface.encodeFunctionData("initialize", [
+const nftImpl = "0x0F6a4f7486ad12e03C89800F251e7f046fD2Ec4e";
+const RWAProjectNFT = await ethers.getContractFactory("RWAProjectNFT");
+console.log("Security Token deployed at:", await tokenProxy.getAddress());
+await tokenProxy.waitForDeployment();
+const tokenProxy = await ERC1967Proxy.deploy(tokenImpl, tokenData);
+console.log("Testing security token deployment...");
+]);
+  maxSupply
+  identityRegistry,
+  complianceAddr,
+  "0xa02567564095960412BD32cC47C07a91f85BA213", // factory as initial admin
+  "TEST", 
+  "Test Token",
+const tokenData = RWASecurityToken.interface.encodeFunctionData("initialize", [
+const maxSupply = ethers.parseUnits("1000000", 18);
+const identityRegistry = "0x01395d6ac65868A48eE2Df3DB41e2Fd4d4387B5D";
+const tokenImpl = "0x90Ae280C9b591F136883A243661ce63df517108a";
+const complianceAddr = await complianceProxy.getAddress();
+const RWASecurityToken = await ethers.getContractFactory("RWASecurityToken");
+// Test 2: Deploy security token
+console.log("Compliance deployed at:", await complianceProxy.getAddress());
+await complianceProxy.waitForDeployment();
+const complianceProxy = await ERC1967Proxy.deploy(complianceImpl, complianceData);
+console.log("Testing compliance deployment...");
+const complianceData = ModularCompliance.interface.encodeFunctionData("initialize", ["0xa02567564095960412BD32cC47C07a91f85BA213"]);
+const complianceImpl = "0x2ac12b2Dbf343146A11cCA2DC1467148DAEb4447";
+const ERC1967Proxy = await ethers.getContractFactory("ERC1967Proxy");
+const ModularCompliance = await ethers.getContractFactory("ModularCompliance");
+// Test 1: Deploy compliance
+await factory.setProjectNFTImplementation("0x0F6a4f7486ad12e03C89800F251e7f046fD2Ec4e");
+console.log("Dividend (4):", impls[4]);
+console.log("Trade Escrow (3):", impls[3]);
+console.log("Compliance (2):", impls[2]);
+console.log("Project NFT (1):", impls[1]);
+console.log("Security Token (0):", impls[0]);
+const impls = await factory.getImplementations();
+await factory.deployNFTAndToken.staticCall("Test", "TEST", supply, "ipfs://test");
+const supply = ethers.parseUnits("1000000", 18);
+console.log("impls[2]:", impls[2]);
+console.log("impls[1]:", impls[1]);
+console.log("impls[0]:", impls[0]);
+console.log("Raw impls:", impls);
+const impls = await factory.getImplementations();
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0xa02567564095960412BD32cC47C07a91f85BA213");
+.exit
+console.log("NFT mint signature:", mintFragment.format());
+const mintFragment = ProjectNFT.interface.getFunction("mint");
+const ProjectNFT = await ethers.getContractFactory("RWAProjectNFT");
+// Test 2: Check if RWAProjectNFT has the mint function the factory expects
+console.log("Compliance init data:", complianceData);
+const complianceData = ModularCompliance.interface.encodeFunctionData("initialize", ["0x978128746a220A20F87c82e1d6dbbF22f01F5C6c"]);
+const complianceImpl = "0x2ac12b2Dbf343146A11cCA2DC1467148DAEb4447";
+const ModularCompliance = await ethers.getContractFactory("ModularCompliance");
+// Test 1: Deploy compliance proxy
+console.log("Initialize signature:", initFragment.format());
+const initFragment = ProjectNFT.interface.fragments.find(f => f.name === 'initialize');
+const ProjectNFT = await ethers.getContractFactory("RWAProjectNFT");
+await factory3.deployNFTAndToken.staticCall("Test Token", "TEST", supply, "ipfs://test");
+}
+  console.log("Revert reason:", err.reason || err.message);
+} catch (err) {
+  await factory3.deployNFTAndToken.staticCall("Test Token", "TEST", supply, "ipfs://QmfJmLRwDMZVG1j9spf9PLMwVNQi7D5Spc5EHafPJ4T3TS");
+try {
+const supply = ethers.parseUnits("100000", 18);
+const factory3 = await ethers.getContractAt("RWATokenizationFactory", "0x978128746a220A20F87c82e1d6dbbF22f01F5C6c");
+// Try to replay the transaction to get the revert reason
+console.log("Gas used:", receipt.gasUsed.toString());
+console.log("Status:", receipt.status);
+const receipt = await ethers.provider.getTransactionReceipt("0x31bcfc22d29e1e6bec37bd03ad81d6f3dd74cca0e500e2b13bdd5ac5e3be9b18");
+console.log("NFT functions:", nftIface.fragments.filter(f => f.type === 'function').map(f => f.name));
+const nftIface = nftImpl.interface;
+const nftImpl = await ethers.getContractAt("RWAAssetNFT", "0x0F6a4f7486ad12e03C89800F251e7f046fD2Ec4e");
+console.log("Compliance init data:", complianceData);
+const complianceData = ComplianceFactory.interface.encodeFunctionData("initialize", ["0x978128746a220A20F87c82e1d6dbbF22f01F5C6c"]);
+const ComplianceFactory = await ethers.getContractFactory("ModularCompliance");
+const complianceImpl = "0x2ac12b2Dbf343146A11cCA2DC1467148DAEb4447";
+console.log("Factory has REGISTRAR_ROLE:", hasRole);
+const hasRole = await idRegistry.hasRole(REGISTRAR_ROLE, "0x978128746a220A20F87c82e1d6dbbF22f01F5C6c");
+const REGISTRAR_ROLE = await idRegistry.REGISTRAR_ROLE();
+const idRegistry = await ethers.getContractAt("IdentityRegistry", "0x01395d6ac65868A48eE2Df3DB41e2Fd4d4387B5D");
+console.log("Paused:", paused);
+const paused = await factory2.paused();
+console.log("Is Paused:", isPaused);
+console.log("Fee Recipient:", feeRecip);
+const feeRecip = await factory2.platformFeeRecipient();
+console.log("IdentityRegistry:", identityReg);
+const identityReg = await factory2.identityRegistry();
+console.log("IdentityRegistry:", ir);
+console.log("DividendDistributor:", impls.dividendDistributor);
+console.log("TradeEscrow:", impls.tradeEscrow);
+console.log("Compliance:", impls.compliance);
+console.log("AssetNFT:", impls.assetNFT);
+console.log("SecurityToken:", impls.securityToken);
+const impls = await factory2.getImplementations();
+await factory2.deployNFTAndToken.staticCall("tttt", "T", supply, "ipfs://test");
+const supply = ethers.parseUnits("2000000", 18);
+const factory2 = await ethers.getContractAt("RWATokenizationFactory", "0x978128746a220A20F87c82e1d6dbbF22f01F5C6c");
+console.log("Gas used:", tx.gasUsed.toString());
+console.log("Status:", tx.status);
+const tx = await ethers.provider.getTransactionReceipt("0x1522beb8b4cc305b74a66f3580fbd141bd850368f3db0d4520b8cc20c2cdf04b");
+fetch('https://api.avax-test.network/ext/bc/C/rpc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_getTransactionReceipt', params: ['0x1522beb8b4cc305b74a66f3580fbd141bd850368f3db0d4520b8cc20c2cdf04b'] }) }).then(r => r.json()).then(r => console.log('Status:', r.result?.status, 'Gas used:', parseInt(r.result?.gasUsed, 16)));
+document.querySelector('button[disabled]')
+undefined
+fetch('https://api.avax-test.network/ext/bc/C/rpc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call', params: [{ to: '0x978128746a220A20F87c82e1d6dbbF22f01F5C6c', data: '0x6780f8e5000000000000000000000000A2fF1ef754b3186f12d2d8D4D922CC31d7BF1969' }, 'latest'] }) }).then(r => r.json()).then(r => console.log('Is approved:', r.result === '0x0000000000000000000000000000000000000000000000000000000000000001'));
+console.log("Require approval:", requireApproval);
+const requireApproval = await factory.requireApproval();
+console.log("isDeployerApproved selector:", iface.getFunction("isDeployerApproved").selector);
+const iface = factory.interface;
+fetch('https://api.avax-test.network/ext/bc/C/rpc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call', params: [{ to: '0x978128746a220A20F87c82e1d6dbbF22f01F5C6c', data: '0x8f5a780b000000000000000000000000A2fF1ef754b3186f12d2d8D4D922CC31d7BF1969' }, 'latest'] }) }).then(r => r.json()).then(r => console.log('Is approved:', r.result === '0x0000000000000000000000000000000000000000000000000000000000000001'));
+console.log("Is approved now:", check);
+const check = await factory.isDeployerApproved("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+console.log("Transaction confirmed");
+await tx.wait();
+const tx = await factory.setDeployerApproval("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", true);
+fetch('https://api.avax-test.network/ext/bc/C/rpc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call', params: [{ to: '0x978128746a220A20F87c82e1d6dbbF22f01F5C6c', data: '0x8f5a780b000000000000000000000000A2fF1ef754b3186f12d2d8D4D922CC31d7BF1969' }, 'latest'] }) }).then(r => r.json()).then(r => console.log('Is approved:', r.result === '0x0000000000000000000000000000000000000000000000000000000000000001'));
+console.log("Approved:", isApproved);
+const isApproved = await factory.isDeployerApproved("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+await factory.setDeployerApproval("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", true);
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0x978128746a220A20F87c82e1d6dbbF22f01F5C6c");
+fetch('https://api.avax-test.network/ext/bc/C/rpc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call', params: [{ to: '0x978128746a220A20F87c82e1d6dbbF22f01F5C6c', data: '0x9af1d35a' }, 'latest'] }) }).then(r => r.json()).then(r => console.log('Fees raw:', r.result));
+fetch('https://api.avax-test.network/ext/bc/C/rpc', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'eth_call', params: [{ to: '0x978128746a220A20F87c82e1d6dbbF22f01F5C6c', data: '0x8f5a780b000000000000000000000000A2fF1ef754b3186f12d2d8D4D922CC31d7BF1969' }, 'latest'] }) }).then(r => r.json()).then(r => console.log('Is approved:', r.result === '0x0000000000000000000000000000000000000000000000000000000000000001'));
+}).then(r => r.json()).then(r => console.log('USDC balance:', parseInt(r.result, 16) / 1e6));
+  })
+    }, 'latest']
+      data: '0x70a08231000000000000000000000000A2fF1ef754b3186f12d2d8D4D922CC31d7BF1969'
+      to: '0x81C7eb2f9FC7a11beC348Ba8846faC9A6FCC4786',
+    params: [{
+    method: 'eth_call',
+    id: 1,
+    jsonrpc: '2.0',
+  body: JSON.stringify({
+  headers: { 'Content-Type': 'application/json' },
+  method: 'POST',
+fetch('https://api.avax-test.network/ext/bc/C/rpc', {
+}).then(r => r.json()).then(r => console.log('Is approved:', r.result === '0x0000000000000000000000000000000000000000000000000000000000000001'));
+  })
+    }, 'latest']
+      data: '0x8f5a780b000000000000000000000000A2fF1ef754b3186f12d2d8D4D922CC31d7BF1969'
+      to: '0x978128746a220A20F87c82e1d6dbbF22f01F5C6c',
+    params: [{
+    method: 'eth_call',
+    id: 1,
+    jsonrpc: '2.0',
+  body: JSON.stringify({
+  headers: { 'Content-Type': 'application/json' },
+  method: 'POST',
+console.log('Factory:', '0x978128746a220A20F87c82e1d6dbbF22f01F5C6c');
+console.log("Dividend:", ethers.formatUnits(f[4], 6));
+console.log("Escrow:", ethers.formatUnits(f[3], 6));
+console.log("Bundle:", ethers.formatUnits(f[2], 6));
+console.log("NFT:", ethers.formatUnits(f[1], 6));
+console.log("Token:", ethers.formatUnits(f[0], 6));
+const f = await factory.getFees();
+await factory.setFees(0, 0, 0, 0, 0);
+console.log("Approved:", approved);
+const approved = await factory.isDeployerApproved("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+// Check deployer approval
+console.log("Bundle fee:", ethers.formatUnits(fees[2], 6));
+const fees = await factory.getFees();
+// Check if fees are really 0
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0x978128746a220A20F87c82e1d6dbbF22f01F5C6c");
+console.log("Fees updated!");
+);
+  ethers.parseUnits("200", 6)   // dividendFee - $200 (optional add-on)
+  ethers.parseUnits("250", 6),  // escrowFee - $250 (optional add-on)
+  0,                    // bundleFee - $0 (already paid on /pay page)
+  0,                    // nftFee - $0  
+  0,                    // tokenFee - $0
+await factory.setFees(
+// Keep escrow and dividend fees if you want to charge for those add-ons
+// Set bundle fee to 0 (already paid off-chain)
+await factory.setDeployerApproval("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", true);
+// Approve deployer if needed
+console.log("Implementations:", impls);
+const impls = await factory.getImplementations();
+// Check implementations
+console.log("Dividend fee:", ethers.formatUnits(fees[4], 6));
+console.log("Escrow fee:", ethers.formatUnits(fees[3], 6));
+console.log("Bundle fee:", ethers.formatUnits(fees[2], 6));
+console.log("NFT fee:", ethers.formatUnits(fees[1], 6));
+console.log("Token fee:", ethers.formatUnits(fees[0], 6));
+const fees = await factory.getFees();
+// Check fees
+console.log("Is approved:", isApproved);
+const isApproved = await factory.isDeployerApproved("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+// Check approval
+const factory = await ethers.getContractAt("RWATokenizationFactory", "0x978128746a220A20F87c82e1d6dbbF22f01F5C6c");
+.exit
+console.log("New EscrowVault impl:", implsUpdated.escrowVault);
+const implsUpdated = await factory.implementations();
+// Verify
+console.log("Factory updated with V2 EscrowVault implementation!");
+await tx.wait();
+const tx = await factory.setImplementations(currentSecurityToken, newEscrowImpl, currentCompliance);
+const currentCompliance = impls.compliance;
+const currentSecurityToken = impls.securityToken;
+const newEscrowImpl = "0x2bB93F5eC42aA40a532180F9008484E05F71c418";
+// Update to V2 implementation
+console.log("Current EscrowVault impl:", impls.escrowVault);
+const impls = await factory.implementations();
+// Check current implementations
+const factory = await ethers.getContractAt("RWALaunchpadFactory", "0x07bf2B1e5900B967175C5927bfA01E30Eb06ab87");
+// In Hardhat console
+.exit
+console.log("Payment token:", funding.paymentToken);
+}
+  }
+    console.log("Could not decode log from:", log.address);
+  } catch (e) {
+    }
+      console.log("Event:", decoded.name, decoded.args);
+      const decoded = iface.parseLog({ topics: log.topics, data: log.data });
+    if (log.address.toLowerCase() === "0x5d80a0CF918cCB851D4970125574A53DB887Ae55".toLowerCase()) {
+  try {
+for (const log of receipt.logs) {
+const iface = escrow.interface;
+// Decode the logs from the release tx
+console.log("Your USDC balance:", Number(yourUSDC)/1e6, "USDC");
+const yourUSDC = await usdcContract.balanceOf("0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+console.log("Your USDC balance:", Number(yourUSDC)/1e6, "USDC");
+}
+  console.log("Log address:", log.address, "Topics:", log.topics.length);
+for (const log of receipt.logs) {
+console.log("Release tx logs:", receipt.logs.length);
+const receipt = await ethers.provider.getTransactionReceipt("0x1e2094a3bc331cffca93d06b7ee47e114a019a6b8dde72331453437aa9e7106b");
+console.log("Funding Complete:", funding.fundingComplete);
+console.log("Total Released:", Number(funding.totalReleased)/1e6, "USDC");
+const funding = await escrow.getProjectFunding(5n);
+// Check project funding
+console.log("Milestone 2 status:", Number(m2.status), "Released amount:", Number(m2.releasedAmount)/1e6, "USDC");
+const m2 = await escrow.getMilestone(5n, 2n);
+// Check milestone 2 status
+console.log("Escrow USDC balance:", Number(usdcBalance)/1e6, "USDC");
+const usdcBalance = await usdcContract.balanceOf("0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+const usdcContract = await ethers.getContractAt("IERC20", "0xEd589B57e559874A5202a0FB82406c46A2116675");
+console.log("Escrow POL balance:", ethers.formatEther(polBalance), "POL");
+const polBalance = await ethers.provider.getBalance("0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+// Check balances
+const escrow = await ethers.getContractAt("RWAEscrowVault", "0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+console.log("Max price age set to:", (await factoryFinal.maxPriceAge()).toString(), "seconds");
+await setAgeTx.wait();
+const setAgeTx = await factoryFinal.setMaxPriceAge(3600);
+console.log("Fee recipient:", await factoryFinal.feeRecipient());
+console.log("Implementations - SecurityToken:", impl.securityToken, "EscrowVault:", impl.escrowVault, "Compliance:", impl.compliance);
+const impl = await factoryFinal.implementations();
+console.log("Default stablecoins:", await factoryFinal.defaultStablecoins());
+console.log("Max price age:", (await factoryFinal.maxPriceAge()).toString(), "seconds");
+console.log("Native price feed:", await factoryFinal.nativePriceFeed());
+console.log("=== Factory Configuration ===");
+console.log("Native price feed:", await factoryFinal.nativePriceFeed());
+console.log("Price feed set!");
+await setPriceTx.wait();
+const setPriceTx = await factoryFinal.setNativePriceFeed("0x001382149eBa3441043c1c66972b4772963f5D43");
+console.log("Has setNativePriceFeed:", typeof factoryFinal.setNativePriceFeed);
+const factoryFinal = await ethers.getContractAt("RWALaunchpadFactory", "0x07bf2B1e5900B967175C5927bfA01E30Eb06ab87");
+console.log("Factory upgraded manually!");
+await upgTx.wait();
+const upgTx = await factoryProxy.upgradeToAndCall(newFactoryImplAddr, "0x");
+const factoryProxy = new ethers.Contract("0x07bf2B1e5900B967175C5927bfA01E30Eb06ab87", uupsAbi, (await ethers.getSigners())[0]);
+const uupsAbi = ["function upgradeToAndCall(address newImplementation, bytes memory data) external"];
+console.log("New factory implementation:", newFactoryImplAddr);
+const newFactoryImplAddr = await newFactoryImpl.getAddress();
+await newFactoryImpl.waitForDeployment();
+const newFactoryImpl = await FactoryNew.deploy();
+const FactoryNew = await ethers.getContractFactory("RWALaunchpadFactory");
+console.log("Current implementation:", currentImpl);
+const currentImpl = await ethers.provider.getStorage("0x07bf2B1e5900B967175C5927bfA01E30Eb06ab87", implSlot);
+const implSlot = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+console.log("Stablecoins:", await factory.defaultStablecoins());
+console.log("Native price feed:", await factory.nativePriceFeed());
+console.log("Stablecoins set!");
+await tx2.wait();
+const tx2 = await factory.setDefaultStablecoins(["0xEd589B57e559874A5202a0FB82406c46A2116675", "0xfa86C7c30840694293a5c997f399d00A4eD3cDD8"]);
+console.log("Price feed set!");
+await tx1.wait();
+const tx1 = await factory.setNativePriceFeed("0x001382149eBa3441043c1c66972b4772963f5D43");
+const factory = await ethers.getContractAt("RWALaunchpadFactory", "0x07bf2B1e5900B967175C5927bfA01E30Eb06ab87");
+console.log("Factory upgraded!");
+await upgraded.waitForDeployment();
+const upgraded = await upgrades.upgradeProxy("0x07bf2B1e5900B967175C5927bfA01E30Eb06ab87", RWALaunchpadFactory);
+console.log("Proxy imported!");
+await upgrades.forceImport("0x07bf2B1e5900B967175C5927bfA01E30Eb06ab87", RWALaunchpadFactory, {kind: 'uups'});
+const RWALaunchpadFactory = await ethers.getContractFactory("RWALaunchpadFactory");
+const { upgrades } = require("hardhat");
+.exit
+..exit
+console.log("Funds released!");
+await releaseTx.wait();
+const releaseTx = await escrowNew.releaseMilestoneFunds(5n, 2n);
+console.log("Escrow USDC balance:", Number(usdcBal)/1e6, "USDC");
+const usdcBal = await usdcContract.balanceOf("0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+const usdcContract = await ethers.getContractAt("IERC20", "0xEd589B57e559874A5202a0FB82406c46A2116675");
+console.log("Escrow POL balance:", ethers.formatEther(escrowBal), "POL");
+const escrowBal = await ethers.provider.getBalance("0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+console.log("Project 5 NFT status:", Number(p5status.status), "- 3=Funded, 4=InProgress, 5=Completed");
+const p5status = await nftCheck.getProject(5n);
+const nftCheck = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315");
+console.log("Milestone 2 status:", Number(m2final.status), "Released amount:", Number(m2final.releasedAmount));
+const m2final = await escrowNew.getMilestone(5n, 2n);
+console.log("Total Released:", Number(finalCheck.totalReleased)/1e6, "USD", "Funding Complete:", finalCheck.fundingComplete, "Current Milestone:", Number(finalCheck.currentMilestone));
+const finalCheck = await escrowNew.getProjectFunding(5n);
+await approveTx.wait();
+const approveTx = await escrowNew.approveMilestone(5n, 0n);
+for(let i = 0; i < Number(mCount); i++) { const m = await escrowNew.getMilestone(5n, i); console.log("Milestone", i, "- Desc:", m.description, "Pct:", Number(m.percentage)/100, "% Status:", Number(m.status), "Proof:", m.proofURI); }
+console.log("Total milestone count:", Number(mCount));
+const mCount = await escrowNew.getMilestoneCount(5n);
+milestones5.forEach((m,i) => console.log("Milestone", i, "- Desc:", m.description || "(empty)", "Pct:", Number(m.percentage)/100, "% Status:", Number(m.status)));
+console.log("Milestone count:", milestones5.length);
+const milestones5 = await escrowNew.getMilestones(5n);
+escrowNew.interface.forEachFunction(f => { if(f.name.toLowerCase().includes('complete') || f.name.toLowerCase().includes('funding')) console.log(f.name); });
+const completeTx = await escrowNew.setProjectFunding(5n, 100000000000n, 100000000n, 100000000000n, 1772867889n, "0x0000000000000000000000000000000000000000", "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", "0x58a76074C61fD7aAFD6d11c2273827C1BCC76b50");
+console.log("Project 5 - ID:", Number(final5.projectId), "Goal:", Number(final5.fundingGoal)/1e6, "USD", "Raised:", Number(final5.totalRaised)/1e6, "USD", "Owner:", final5.projectOwner, "Complete:", final5.fundingComplete);
+const final5 = await escrowNew.getProjectFunding(5n);
+console.log("Total raised synced!");
+await syncTx.wait();
+const syncTx = await escrowNew.setTotalRaised(5n, 100000000000n);
+console.log("Project ID:", Number(funding5.projectId), "Owner:", funding5.projectOwner, "Goal:", Number(funding5.fundingGoal)/1e6, "USD", "Token:", funding5.securityToken);
+const funding5 = await escrowNew.getProjectFunding(5n);
+console.log("Project ID:", Number(f.projectId), "Owner:", f.projectOwner, "Goal:", Number(f.fundingGoal)/1e6, "USD");
+const f = await escrowNew.getProjectFunding(5n);
+await fixTx2.wait();
+const fixTx2 = await escrowNew.setProjectFunding(5n, 100000000000n, 100000000n, 100000000000n, 1772867889n, "0x0000000000000000000000000000000000000000", "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", "0x58a76074C61fD7aAFD6d11c2273827C1BCC76b50");
+console.log("Project 5 fixed!");
+await fixTx.wait();
+const fixTx = await escrowNew.setProjectFunding(5n, 100000000000n, 100000000n, 100000000000n, 1772867889n, "0x0000000000000000000000000000000000000000", "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", "0x58a76074C61fD7aAFD6d11c2273827C1BCC76b50");
+const escrowNew = await ethers.getContractAt("RWAEscrowVault", "0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+console.log("Upgraded!");
+await upgTx.wait();
+const upgTx = await proxy.upgradeToAndCall(newImplAddr, "0x");
+const proxy = new ethers.Contract("0x5d80a0CF918cCB851D4970125574A53DB887Ae55", uupsAbi, (await ethers.getSigners())[0]);
+const uupsAbi = ["function upgradeToAndCall(address newImplementation, bytes memory data) external"];
+console.log("Has setProjectFunding:", typeof testImpl.setProjectFunding);
+const testImpl = await ethers.getContractAt("RWAEscrowVault", newImplAddr);
+console.log("New implementation deployed at:", newImplAddr);
+const newImplAddr = await newImpl.getAddress();
+await newImpl.waitForDeployment();
+const newImpl = await RWAEscrowVaultNew.deploy();
+const RWAEscrowVaultNew = await ethers.getContractFactory("RWAEscrowVault");
+console.log("Current implementation:", implAddress);
+const implAddress = await ethers.provider.getStorage("0x5d80a0CF918cCB851D4970125574A53DB887Ae55", implSlot);
+const implSlot = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+func.inputs.forEach((inp, i) => console.log(i, inp.name, inp.type));
+console.log("Function inputs:", func.inputs.length, "params");
+const func = iface.getFunction("setProjectFunding");
+const iface = escrow.interface;
+console.log("Project 1 - ID:", Number(p1.projectId), "Owner:", p1.projectOwner);
+const p1 = await escrow.getProjectFunding(1n);
+console.log("Project 0 - ID:", Number(p0.projectId), "Owner:", p0.projectOwner);
+const p0 = await escrow.getProjectFunding(0n);
+console.log("Project 5 - ID:", Number(p5.projectId), "Owner:", p5.projectOwner, "Goal:", Number(p5.fundingGoal)/1e6);
+const p5 = await escrow.getProjectFunding(5n);
+console.log("Project 2 - ID:", Number(p2.projectId), "Owner:", p2.projectOwner, "Goal:", Number(p2.fundingGoal)/1e6);
+const p2 = await escrow.getProjectFunding(2n);
+escrow.interface.forEachFunction(f => { if(f.name.toLowerCase().includes('project')) console.log(f.name); });
+console.log("Project 5 in mapping:", projects);
+const projects = await escrow.projects(5n);
+console.log("Current projectId in escrow:", Number(currentProjectId));
+const currentProjectId = await escrow.projectId();
+await escrow.setProjectFunding.staticCall(5n, 100000000000n, 100000000n, 100000000000n, 1772867889n, "0x0000000000000000000000000000000000000000", "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", "0x58a76074C61fD7aAFD6d11c2273827C1BCC76b50");
+console.log("Has DEFAULT_ADMIN_ROLE:", hasAdmin);
+const hasAdmin = await escrow.hasRole(DEFAULT_ADMIN_ROLE, "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
+const fixTx = await escrow.setProjectFunding(5n, 100000000000n, 100000000n, 100000000000n, 1772867889n, "0x0000000000000000000000000000000000000000", "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", "0x58a76074C61fD7aAFD6d11c2273827C1BCC76b50");
+console.log("Security Token:", f.securityToken);
+console.log("Goal:", Number(f.fundingGoal) / 1e6, "USD");
+console.log("Owner:", f.projectOwner);
+console.log("Project ID:", Number(f.projectId));
+const f = await escrow.getProjectFunding(5n);
+console.log("Project 5 fixed!");
+await fixTx.wait();
+);
+    "0x58a76074C61fD7aAFD6d11c2273827C1BCC76b50"  // securityToken
+    "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", // projectOwner
+    "0x0000000000000000000000000000000000000000", // paymentToken
+    1772867889n,                                  // deadline
+    100000n * 1000000n,                           // maxInvestment: $100,000
+    100n * 1000000n,                              // minInvestment: $100
+    100000n * 1000000n,                           // fundingGoal: $100,000
+    5n,                                           // projectId
+console.log("Has setProjectFunding:", typeof escrow.setProjectFunding);
+const escrow = await ethers.getContractAt("RWAEscrowVault", "0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+console.log("Escrow upgraded successfully!");
+await upgradedEscrow.waitForDeployment();
+const upgradedEscrow = await upgrades.upgradeProxy("0x5d80a0CF918cCB851D4970125574A53DB887Ae55", RWAEscrowVaultV3);
+// Now upgrade
+console.log("Proxy imported!");
+await upgrades.forceImport("0x5d80a0CF918cCB851D4970125574A53DB887Ae55", RWAEscrowVaultV3, {kind: 'uups'});
+// Force import both the proxy AND implementation
+const RWAEscrowVaultV3 = await ethers.getContractFactory("RWAEscrowVault");
+const { upgrades } = require("hardhat");
+// npx hardhat console --network amoy
+// First, exit console and start fresh
+.exit
+console.log("Security Token:", fundingVerify.securityToken);
+console.log("Funding Goal:", Number(fundingVerify.fundingGoal) / 1e6, "USD");
+console.log("Project Owner:", fundingVerify.projectOwner);
+console.log("Project ID:", Number(fundingVerify.projectId));
+const fundingVerify = await escrowFixed.getProjectFunding(5n);
+await fixTx.wait();
+);
+    "0x58a76074C61fD7aAFD6d11c2273827C1BCC76b50"  // securityToken
+    "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969", // projectOwner (you)
+    "0x0000000000000000000000000000000000000000", // paymentToken (native/stablecoin)
+    1772867889n,                    // deadline (from NFT)
+    100000n * 1000000n,             // maxInvestment: $100,000 in 6 decimals
+    100n * 1000000n,                // minInvestment: $100 in 6 decimals
+    100000n * 1000000n,             // fundingGoal: $100,000 in 6 decimals
+    5n,                             // projectId
+const fixTx = await escrowFixed.setProjectFunding(
+const escrowFixed = await ethers.getContractAt("RWAEscrowVault", "0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+console.log("Escrow upgraded!");
+await upgEscrow.waitForDeployment();
+const upgEscrow = await upgrades.upgradeProxy("0x5d80a0CF918cCB851D4970125574A53DB887Ae55", RWAEscrowVaultV3);
+const RWAEscrowVaultV3 = await ethers.getContractFactory("RWAEscrowVault");
+.exit
+console.log("Funding Goal:", Number(fundingNow.fundingGoal) / 1e6, "USD");
+console.log("Total Raised:", Number(fundingNow.totalRaised) / 1e6, "USD");
+console.log("Project Owner:", fundingNow.projectOwner);
+console.log("Project ID:", Number(fundingNow.projectId));
+const fundingNow = await escrow5.getProjectFunding(5n);
+console.log("Fixed Security Token:", fundingFixed.securityToken);
+console.log("Fixed Total Raised:", Number(fundingFixed.totalRaised) / 1e6, "USD");
+console.log("Fixed Funding Goal:", Number(fundingFixed.fundingGoal) / 1e6, "USD");
+console.log("Fixed Project Owner:", fundingFixed.projectOwner);
+console.log("Total raised synced!");
+await syncTx.wait();
+const syncTx = await escrow5.setTotalRaised(5n, nftData.totalRaised);
+// Sync the total raised from NFT to escrow
+console.log("Project 5 escrow initialized!");
+await initTx.wait();
+);
+  nftData.securityToken         // securityToken
+  nftData.owner,                // projectOwner
+  "0x0000000000000000000000000000000000000000", // paymentToken (address(0) for native or USDC address)
+  nftData.deadline,             // deadline
+  nftData.maxInvestment,        // maxInvestment  
+  nftData.minInvestment,        // minInvestment
+  nftData.fundingGoal,          // fundingGoal (USD 6 decimals)
+  5n,                           // projectId
+const initTx = await escrow5.initializeProject(
+console.log("  Total Raised:", Number(nftData.totalRaised) / 1e6, "USD");
+console.log("  Security Token:", nftData.securityToken);
+console.log("  Owner:", nftData.owner);
+console.log("  Deadline:", Number(nftData.deadline));
+console.log("  Max Investment:", Number(nftData.maxInvestment));
+console.log("  Min Investment:", Number(nftData.minInvestment));
+console.log("  Funding Goal:", Number(nftData.fundingGoal));
+console.log("NFT Data:");
+const nftData = await nftFinal.getProject(5n);
+// Get the data from NFT to initialize escrow properly
+console.log("NFT Security Token:", nftData.securityToken);
+console.log("NFT Escrow Vault:", nftData.escrowVault);
+console.log("NFT Owner:", nftData.owner);
+const nftData = await nftFinal.getProject(5n);
+console.log("Escrow initialized:", Number(funding.projectId) > 0);
+console.log("Security Token:", funding.securityToken);
+console.log("Project Owner:", funding.projectOwner);
+console.log("Total Raised:", Number(funding.totalRaised) / 1e6, "USD");
+console.log("Funding Goal:", Number(funding.fundingGoal) / 1e6, "USD");
+console.log("Project ID:", Number(funding.projectId));
+console.log("Is owner:", funding.projectOwner.toLowerCase() === "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969".toLowerCase());
+console.log("Your address:", "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+console.log("Project Owner:", funding.projectOwner);
+const funding = await escrow5.getProjectFunding(5n);
+});
+  console.log("  ProofURI:", m.proofURI || "(none)");
+  console.log("  Status:", m.status); // 0=Pending, 1=Submitted, 2=Approved, 3=Rejected, 4=Disputed, 5=Released
+  console.log("  Percentage:", Number(m.percentage) / 100, "%");
+  console.log("  Description:", m.description);
+  console.log(`\nMilestone ${i}:`);
+milestones.forEach((m, i) => {
+console.log("Number of milestones:", milestones.length);
+const milestones = await escrow5.getMilestones(5n);
+const escrow5 = await ethers.getContractAt("RWAEscrowVault", "0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+// Check milestones for project 5
+console.log("NFT 5 owner:", owner5);
+const owner5 = await nftFinal.ownerOf(5n);
+await nftFinal.ownerOf(4n).catch(e => console.log("NFT 4: burned"));
+await nftFinal.ownerOf(3n).catch(e => console.log("NFT 3: burned"));
+await nftFinal.ownerOf(2n).catch(e => console.log("NFT 2: burned"));
+await nftFinal.ownerOf(1n).catch(e => console.log("NFT 1: burned"));
+console.log("Project 5 status:", p5data.status, "owner:", p5data.owner);
+const p5data = await nftFinal.getProject(5n);
+await nftFinal.getProject(4n).catch(e => console.log("Project 4: deleted or error"));
+await nftFinal.getProject(3n).catch(e => console.log("Project 3: deleted or error"));
+await nftFinal.getProject(2n).catch(e => console.log("Project 2: deleted or error"));
+await nftFinal.getProject(1n).catch(e => console.log("Project 1: deleted or error"));
+console.log("Project 4 burned!");
+await burn4.wait();
+const burn4 = await nftFinal.burnProject(4n);
+console.log("Total projects:", (await nftFinal.totalProjects()).toString());
+console.log("Project 5 exists:", await nftFinal.projectExists(5n));
+console.log("Project 4 exists:", await nftFinal.projectExists(4n));
+console.log("Project 3 exists:", await nftFinal.projectExists(3n));
+console.log("Project 2 exists:", await nftFinal.projectExists(2n));
+console.log("Project 1 exists:", await nftFinal.projectExists(1n));
+// Verify all burned and project 5 still exists
+console.log("Project 4 burned!");
+await burn4.wait();
+console.log("Project 3 burned!");
+await burn3.wait();
+const burn3 = await nftFinal.burnProject(3n);
+console.log("Project 2 burned!");
+await burn2.wait();
+const burn2 = await nftFinal.burnProject(2n);
+console.log("Project 1 burned!");
+await burn1.wait();
+const burn1 = await nftFinal.burnProject(1n);
+const nftFinal = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315");
+console.log("Upgraded!");
+await upgNft2.waitForDeployment();
+const upgNft2 = await upgrades.upgradeProxy("0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315", RWAProjectNFTv2);
+const RWAProjectNFTv2 = await ethers.getContractFactory("RWAProjectNFT");
+.exit
+console.log("Project 1 completed!");
+await compTx1.wait();
+const compTx1 = await nftBurn.completeProject(1n);
+nftBurn.interface.forEachFunction(f => { if(f.name.toLowerCase().includes('transfer')) console.log(" -", f.name); });
+console.log("Functions with 'transfer':");
+console.log("Status:", proj1.status, "Transferable:", proj1.transferable);
+const proj1 = await nftBurn.getProject(1n);
+console.log("Project 1 NFT owner:", owner1);
+const owner1 = await nftBurn.ownerOf(1n);
+await nftBurn.burnProject.staticCall(1n).catch(e => console.log("Error:", e.reason || e.message));
+}
+  console.log("Revert reason:", e.message);
+} catch (e) {
+  console.log("Static call succeeded");
+  await nftBurn.burnProject.staticCall(1n);
+try {
+// Try static call to see error
+console.log("Project 1 exists:", exists1);
+const exists1 = await nftBurn.projectExists(1n);
+// Check project 1 exists
+console.log("Has OPERATOR_ROLE:", hasOperator);
+const hasOperator = await nftBurn.hasRole(OPERATOR_ROLE, "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969");
+const OPERATOR_ROLE = await nftBurn.OPERATOR_ROLE();
+// Check your role
+console.log("Has burnProject:", typeof nftBurn.burnProject);
+// Check if burnProject function exists
+console.log("Project 5 status:", p5.status, "- still exists!");
+const p5 = await nftBurn.getProject(5n);
+// Project 5 should still work
+}
+  console.log("Project 1 successfully burned!");
+} catch (e) {
+  console.log("Project 1 still exists:", p1.status);
+  const p1 = await nftBurn.getProject(1n);
+try {
+// Verify - this should fail now
+console.log("Project 4 burned!");
+await b4.wait();
+const b4 = await nftBurn.burnProject(4n);
+console.log("Project 3 burned!");
+await b3.wait();
+const b3 = await nftBurn.burnProject(3n);
+// Burn project 3
+console.log("Project 2 burned!");
+await b2.wait();
+const b2 = await nftBurn.burnProject(2n);
+console.log("Project 1 burned!");
+await b1.wait();
+const b1 = await nftBurn.burnProject(1n);
+// Burn project 1
+const nftBurn = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315");
+console.log("Project 1 burned!");
+await b1.wait();
+const b1 = await nftBurn.burnProject(1n);
+// Burn project 1
+const nftBurn = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315");
+console.log("NFT contract upgraded!");
+await upgradedNft.waitForDeployment();
+const upgradedNft = await upgrades.upgradeProxy(nftProxyAddr, RWAProjectNFTNew);
+// Now upgrade
+console.log("Proxy imported!");
+await upgrades.forceImport(nftProxyAddr, RWAProjectNFTNew, { kind: 'uups' });
+const nftProxyAddr = "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315";
+// Force import the proxy first
+const { upgrades } = require("hardhat");
+console.log("NFT contract upgraded!");
+await upgTx.wait();
+const upgTx = await nftProxy.upgradeToAndCall(newNftImplAddr, "0x");
+const nftProxy = await ethers.getContractAt(uupsAbi, nftProxyAddr);
+const uupsAbi = ["function upgradeToAndCall(address newImplementation, bytes memory data) external"];
+const nftProxyAddr = "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315";
+// Upgrade proxy
+console.log("New implementation at:", newNftImplAddr);
+const newNftImplAddr = await newNftImpl.getAddress();
+await newNftImpl.waitForDeployment();
+const newNftImpl = await RWAProjectNFTNew.deploy();
+console.log("Deploying new NFT implementation...");
+// Deploy new implementation
+const RWAProjectNFTNew = await ethers.getContractFactory("RWAProjectNFT");
+.exit
+console.log("Project 4 burned!");
+await tx4.wait();
+const tx4 = await nftContract.burn(4n);
+console.log("Project 3 burned!");
+await tx3.wait();
+const tx3 = await nftContract.burn(3n);
+console.log("Project 2 burned!");
+await tx2.wait();
+const tx2 = await nftContract.burn(2n);
+console.log("Project 1 burned!");
+await tx1.wait();
+const tx1 = await nftContract.burn(1n);
+}
+  }
+    console.log(`Project ${i} error:`, e.message.slice(0, 100));
+  } catch (e) {
+    console.log(`Project ${i} burned!`);
+    await tx.wait();
+    const tx = await nftContract.burn(BigInt(i));
+  try {
+for (let i = 1; i <= 4; i++) {
+// Burn projects 1-4
+}
+  console.log(`Project ${i} owner:`, owner);
+  const owner = await nftContract.ownerOf(BigInt(i));
+for (let i = 1; i <= 4; i++) {
+// Check ownership of projects 1-4
+const nftContract = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315");
+// Get the NFT contract
+const nft = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E<span class="cursor">█</span>
+// Check if burn function exists
+}
+  console.log(`Project ${i}: status=${project.status}, totalRaised=${Number(project.totalRaised)/1e6} USD`);
+  const project = await nft.getProject(BigInt(i));
+for (let i = 1; i <= 4; i++) {
+// Check current status of projects 1-4
+const nft = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315");
+// Get the project NFT contract
+console.log("Has UPGRADER_ROLE:", await escrow1Old.hasRole(UPGRADER_ROLE, myAddress));
+console.log("Has DEFAULT_ADMIN_ROLE:", await escrow1Old.hasRole(DEFAULT_ADMIN_ROLE, myAddress));
+const myAddress = "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969";
+const UPGRADER_ROLE = "0x189ab7a9244df0848122154315af71fe140f3db0fe014031783b0946b8c9d2e3";
+const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000";
+// Check if your account has admin role
+const escrow1Old = await ethers.getContractAt("RWAEscrowVault", "0x4C23202fc3853499a3c0e8232752Ab858EecB36e");
+// Check roles on Project 1 escrow
+console.log("Project 1 fee set to:", ethers.formatEther(await escrow1New.transactionFee()), "POL");
+await feeTx1.wait();
+const feeTx1 = await escrow1New.setTransactionFee(ethers.parseEther("0.01"));
+// Set fee to 0.01 POL
+console.log("Project 1 transactionFee:", await escrow1New.transactionFee());
+const escrow1New = await ethers.getContractAt("RWAEscrowVault", proxy1Address);
+// Verify and set fee
+console.log("Project 1 Upgraded!");
+await upgradeTx1.wait();
+const upgradeTx1 = await proxy1.upgradeToAndCall(newImplAddress, "0x");
+console.log("Upgrading Project 1...");
+const proxy1 = await ethers.getContractAt(uupsAbi, proxy1Address);
+const proxy1Address = "0x4C23202fc3853499a3c0e8232752Ab858EecB36e";
+// Upgrade Project 1 proxy
+console.log("Fee set to:", ethers.formatEther(await escrow5New.transactionFee()), "POL");
+await feeTx.wait();
+const feeTx = await escrow5New.setTransactionFee(ethers.parseEther("0.01"));
+// Set fee to 0.01 POL
+console.log("transactionFee:", await escrow5New.transactionFee());
+const escrow5New = await ethers.getContractAt("RWAEscrowVault", proxyAddress);
+// Verify new functions work
+console.log("Upgraded!");
+await upgradeTx.wait();
+const upgradeTx = await proxy.upgradeToAndCall(newImplAddress, "0x");
+console.log("Upgrading...");
+const proxy = await ethers.getContractAt(uupsAbi, proxyAddress);
+const uupsAbi = ["function upgradeToAndCall(address newImplementation, bytes memory data) external"];
+const proxyAddress = "0x5d80a0CF918cCB851D4970125574A53DB887Ae55";
+// Upgrade Project 5 proxy
+console.log("New implementation at:", newImplAddress);
+const newImplAddress = await newImpl.getAddress();
+await newImpl.waitForDeployment();
+const newImpl = await RWAEscrowVaultNew.deploy();
+console.log("Deploying new implementation...");
+// Deploy new implementation
+const RWAEscrowVaultNew = await ethers.getContractFactory("RWAEscrowVault");
+// Get fresh contract factory with compiled code
+.exit
+console.log("New impl functions check - has setTransactionFee:", typeof testImpl.setTransactionFee);
+const testImpl = await ethers.getContractAt("RWAEscrowVault", newImplAddress);
+console.log("Testing new impl has transactionFee...");
+// Verify the new implementation has the fee function
+console.log("New implementation deployed at:", newImplAddress);
+const newImplAddress = await newImpl.getAddress();
+await newImpl.waitForDeployment();
+const newImpl = await RWAEscrowVaultNew.deploy();
+const RWAEscrowVaultNew = await ethers.getContractFactory("RWAEscrowVault");
+console.log("Deploying new implementation...");
+// Deploy a fresh implementation
+console.log("Current implementation:", currentImpl);
+const currentImpl = await ethers.provider.getStorage("0x5d80a0CF918cCB851D4970125574A53DB887Ae55", implSlot);
+const implSlot = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+// Check current implementation
+console.log("feeRecipient:", await escrow5.feeRecipient());
+console.log("collectedTransactionFees:", await escrow5.collectedTransactionFees());
+console.log("transactionFee:", await escrow5.transactionFee());
+console.log("Checking functions...");
+// Check if fee functions exist now
+const escrow5 = await ethers.getContractAt("RWAEscrowVault", "0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+// Get a fresh contract instance
+console.log("Fee recipient:", await escrow5Proxy.feeRecipient());
+console.log("Transaction fee:", ethers.formatEther(await escrow5Proxy.transactionFee()), "POL");
+// Verify
+console.log("Fee set to 0.01 POL");
+await feeTx.wait();
+const feeTx = await escrow5Proxy.setTransactionFee(ethers.parseEther("0.01"));
+// Set transaction fee to 0.01 POL
+console.log("Project 5 upgraded!");
+await escrow5Proxy.waitForDeployment();
+const escrow5Proxy = await upgrades.upgradeProxy("0x5d80a0CF918cCB851D4970125574A53DB887Ae55", RWAEscrowVault);
+// Force import worked! Now upgrade with new variable names
+console.log("Fee recipient:", await upgraded5.feeRecipient());
+console.log("Transaction fee:", ethers.formatEther(await upgraded5.transactionFee()), "POL");
+// Step 4: Verify
+console.log("Fee set to 0.01 POL");
+await tx1.wait();
+const tx1 = await upgraded5.setTransactionFee(ethers.parseEther("0.01"));
+// Step 3: Set transaction fee to 0.01 POL
+console.log("Project 5 upgraded!");
+await upgraded5.waitForDeployment();
+const upgraded5 = await upgrades.upgradeProxy(escrow5Address, RWAEscrowVault);
+console.log("Upgrading Project 5 escrow...");
+// Step 2: Now upgrade
+console.log("Proxy imported!");
+await upgrades.forceImport(escrow5Address, RWAEscrowVault, { kind: 'uups' });
+const escrow5Address = "0x5d80a0CF918cCB851D4970125574A53DB887Ae55";
+console.log("Importing existing proxy...");
+// Force import Project 5 escrow
+const RWAEscrowVault = await ethers.getContractFactory("RWAEscrowVault");
+const { upgrades } = require("hardhat");
+// Step 1: Force import the existing proxy
+console.log("Fee recipient:", await upgraded5.feeRecipient());
+console.log("Transaction fee:", ethers.formatEther(await upgraded5.transactionFee()), "POL");
+// Verify
+console.log("Fee set to 0.01 POL");
+await tx1.wait();
+const tx1 = await upgraded5.setTransactionFee(ethers.parseEther("0.01"));
+// Set transaction fee to 0.01 POL
+console.log("Project 5 upgraded!");
+await upgraded5.waitForDeployment();
+const upgraded5 = await upgrades.upgradeProxy(escrow5Address, RWAEscrowVault);
+const escrow5Address = "0x5d80a0CF918cCB851D4970125574A53DB887Ae55";
+console.log("Upgrading Project 5 escrow...");
+// Upgrade Project 5 escrow
+const RWAEscrowVault = await ethers.getContractFactory("RWAEscrowVault");
+// Get the updated contract factory
+const { upgrades } = require("hardhat");
+// Then in console:
+// Run: npx hardhat compile
+// First, compile the updated contract
+console.log("Project 5 escrow:", p5.escrowVault);
+const p5 = await nft.getProject(5n);
+// Get project 5
+console.log("Project 1 escrow:", p1.escrowVault);
+const p1 = await nft.getProject(1n);
+// Get project 1
+const nft = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315");
+// await escrow.setFeeRecipient("0xYourWalletAddress");
+// Set new recipient (requires DEFAULT_ADMIN_ROLE)
+console.log("Fee recipient:", recipient);
+const recipient = await escrow.feeRecipient();
+// Check current fee recipient
+const escrow = await ethers.getContractAt("RWAEscrowVault", "0x5d80a0CF918cCB851D4970125574A53DB887Ae55");
+// In Hardhat console
+console.log("Refunds enabled:", refundsOn);
+const refundsOn = await oldEscrow.refundsEnabled();
+);
+  ethers.provider
+  ],
+    "function totalDeposited() view returns (uint256)"
+    "function deposits(address) view returns (uint256)",
+    "function refundsEnabled() view returns (bool)",
+  [
+  "0x4C23202fc3853499a3c0e8232752Ab858EecB36e",
+const oldEscrow = new ethers.Contract(
+}
+  console.log("No totalDeposited() function");
+} catch(e) {
+  console.log("Total deposited:", Number(total) / 1e6);
+  const total = await oldEscrow.totalDeposited();
+try {
+// Check total
+}
+  console.log("No deposits() function");
+} catch(e) {
+  console.log("Your deposit:", Number(deposit) / 1e6);
+  const deposit = await oldEscrow.deposits(inv);
+try {
+// Check your deposit
+}
+  console.log("No refundsEnabled() function");
+} catch(e) {
+  console.log("Refunds enabled:", refundsOn);
+  const refundsOn = await oldEscrow.refundsEnabled();
+try {
+// Check if refunds are enabled
+);
+  ethers.provider
+  ],
+    "function enableRefunds() external"
+    "function claimRefund() external",
+    "function totalDeposited() view returns (uint256)",
+    "function deposits(address) view returns (uint256)",
+    "function refundsEnabled() view returns (bool)",
+  [
+  "0x4C23202fc3853499a3c0e8232752Ab858EecB36e",
+const oldEscrow = new ethers.Contract(
+// Try the old escrow's likely function names
+console.log("Your deposit (USD):", Number(details1.amountUSD) / 1e6);
+const details1 = await escrow1.getInvestorDetails(1n, inv);
+const inv = "0x0E670BbfFc7ead71e4eb05DFe77016729B6b7C0E";
+// Check your deposit in project 1
+console.log("Refunds enabled:", funding1.refundsEnabled);
+const funding1 = await escrow1.getProjectFunding(1n);
+const escrow1 = await ethers.getContractAt("RWAEscrowVault", p1Data.escrowVault);
+// Check escrow for project 1
+console.log("Project 1 status:", p1Data.status); // 6 = Cancelled
+console.log("Project 1 escrow:", p1Data.escrowVault);
+const p1Data = await project1.getProject(1n);
+const project1 = await ethers.getContractAt("RWAProjectNFT", "0x4497e4EA43C1A1Cd2B719fF0E4cea376364c1315");
+// Check project 1 escrow and your deposit
+console.log("Refunded:", details.refunded);
+console.log("Tokens minted:", Number(details.tokensMinted) / 1e18);
+console.log("Amount USD:", Number(details.amountUSD) / 1e6);
+console.log("Amount USD (6 dec):", details.amountUSD.toString());
+console.log("Raw amount:", details.amount.toString()); details = await escrow.getInvestorDetails(5n, inv);r(details.amountUSD) / 1e6);0CF918cCB851D4970125574A53DB887Ae55");4970125574A53DB887Ae55"; // Project 5 escrow

@@ -1,0 +1,73 @@
+{
+  "name": "Solar Farm Project #001",
+  "description": "50MW Solar Farm in Nevada, USA",
+  "image": "ipfs://QmXxx.../project-image.png",
+  "external_url": "https://rwa-launchpad.io/project/1",
+  "attributes": [
+    {"trait_type": "Asset Type", "value": "Renewable Energy"},
+    {"trait_type": "Location", "value": "Nevada, USA"},
+    {"trait_type": "Jurisdiction", "value": "US-NV"},
+    {"trait_type": "Funding Goal", "value": "5000000", "display_type": "number"},
+    {"trait_type": "Token Standard", "value": "ERC-3643"},
+    {"trait_type": "Project Status", "value": "Active"}
+  ],
+  "legal": {
+    "contract_hash": "ipfs://QmYyy.../legal-agreement.pdf",
+    "terms_hash": "ipfs://QmZzz.../terms-conditions.pdf",
+    "prospectus_hash": "ipfs://QmAaa.../prospectus.pdf",
+    "jurisdiction": "US-NV",
+    "regulatory_status": "Reg D 506(c)",
+    "legal_entity": "SolarFarm Nevada LLC",
+    "legal_entity_id": "EIN: 12-3456789"
+  },
+  "project_details": {
+    "total_capacity_mw": 50,
+    "estimated_annual_revenue": 8500000,
+    "project_duration_years": 25,
+    "land_ownership": "Leased (25-year agreement)",
+    "off_taker": "Nevada Power Company",
+    "ppa_duration_years": 20
+  },
+  "milestones": [
+    {
+      "index": 0,
+      "name": "Land Acquisition & Permits",
+      "amount": 500000,
+      "deadline": 1735689600,
+      "deliverables": ["Land lease signed", "Environmental permits"]
+    },
+    {
+      "index": 1,
+      "name": "Equipment Procurement",
+      "amount": 2000000,
+      "deadline": 1738368000,
+      "deliverables": ["Solar panels delivered", "Inverters delivered"]
+    },
+    {
+      "index": 2,
+      "name": "Construction Phase 1",
+      "amount": 1500000,
+      "deadline": 1743638400,
+      "deliverables": ["Foundation complete", "Mounting structures installed"]
+    },
+    {
+      "index": 3,
+      "name": "Construction Phase 2 & Commissioning",
+      "amount": 1000000,
+      "deadline": 1748908800,
+      "deliverables": ["Grid connection", "First power generation"]
+    }
+  ],
+  "security_token": {
+    "address": "0x...",
+    "symbol": "SOLAR001",
+    "total_supply": 5000000,
+    "price_per_token": 1.00,
+    "min_investment": 1000,
+    "investor_rights": [
+      "Pro-rata revenue distribution",
+      "Quarterly reporting",
+      "Voting on major decisions"
+    ]
+  }
+}

@@ -1,0 +1,164 @@
+{
+  "network": "Avalanche Fuji",
+  "chainId": 43113,
+  "deployer": "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969",
+  "timestamp": "2026-02-25T20:44:46.765Z",
+  "feeRecipient": "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969",
+  "rolesConfigured": true,
+  "kycVerifierConfigured": true,
+  "verified": true,
+  "kycVerifier": "0x24F3c59582C8cf5772DB66C38e6375A0C305771B",
+  "kycVerifierImpl": "0x650396Dfaa1b4c02297B8E74dd41eFa5B32B893A",
+  "securityTokenImpl": "0x4Af0b8DFc46A2c48A7F74eBc06b985e440C0Ab28",
+  "escrowVaultImpl": "0x5F5c1822b69269b743241966dD772eeeD0574e05",
+  "complianceImpl": "0x2A9Fed3Db675b958E0195D38234195636e0f8a20",
+  "projectNFTImpl": "0xb4D067E8177650f79215Cb62d1B550E2EaD9B6E1",
+  "offChainManagerImpl": "0x2993fBcC23f6D856a55Ea1cD91a41FCD924AA722",
+  "exchangeImpl": "0xF40e7C3da0bd9F8250Eb551D504fc7CA48e9A1d3",
+  "dividendDistributorImpl": "0x4E59ad675B3d717321238BeC5F5559218B767a57",
+  "maxBalanceModuleImpl": "0x64B2D2Be0e3C49f54F5Fe554C56Ca2682BacbF5c",
+  "lockupModuleImpl": "0xDc649B2690C8F68c86fbA71a1c9bC9d3eA9098a4",
+  "rwaTradeEscrowImpl": "0xEC96adb406d2660716fb1C0f042d35b506F5A4CB",
+  "projectNFT": "0x375f38Af0Bf16043F53790B400a4d6dCe0691199",
+  "factory": "0xE01Da562794820FA44c8B25F02040ad0eAD7C3a2",
+  "factoryImpl": "0x1B4B23e54418F516D2Fcbb96f7219Bd1E9Ca42d3",
+  "offChainManager": "0x28010D59A35c7fCFb51526e6C249Da6f75C94855",
+  "exchange": "0x35F9aeFb01C0098532c2eD5D8DB27FcBDc35C673",
+  "acceptedTokens": {
+    "USDC": "0x81C7eb2f9FC7a11beC348Ba8846faC9A6FCC4786",
+    "USDT": "0x224e403397F3aec9a0D2875445dC32dB00ea31C3"
+  },
+  "countryRestrictModule": "0xa76D5a58738D3A0603B97622f557505993794d61",
+  "countryRestrictModuleImpl": "0x9891c8eEdB535cF2076060864062c1B8ACc33488",
+  "accreditedInvestorModule": "0xED001C6E3a0A3Aa702F71729a9c24962f4a39721",
+  "accreditedInvestorModuleImpl": "0x5645A4De6Cc14b66c8af796f93457B93E2A73bd4",
+  "tokenizationFactory": "0x4a8FBb0F4927094ab5caD161D90E7d68eB1eFF66",
+  "tokenizationFactoryImpl": "0x212637019ad586250529C1937cBA2E6dfc28CCfC",
+  "verificationResults": [
+    {
+      "contract": "RWASecurityToken",
+      "address": "0x4Af0b8DFc46A2c48A7F74eBc06b985e440C0Ab28",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "RWAEscrowVault",
+      "address": "0x5F5c1822b69269b743241966dD772eeeD0574e05",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "ModularCompliance",
+      "address": "0x2A9Fed3Db675b958E0195D38234195636e0f8a20",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "RWAProjectNFT (impl)",
+      "address": "0xb4D067E8177650f79215Cb62d1B550E2EaD9B6E1",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "OffChainInvestmentManager (impl)",
+      "address": "0x2993fBcC23f6D856a55Ea1cD91a41FCD924AA722",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "RWASecurityExchange (impl)",
+      "address": "0xF40e7C3da0bd9F8250Eb551D504fc7CA48e9A1d3",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "DividendDistributor",
+      "address": "0x4E59ad675B3d717321238BeC5F5559218B767a57",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "MaxBalanceModule",
+      "address": "0x64B2D2Be0e3C49f54F5Fe554C56Ca2682BacbF5c",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "LockupModule",
+      "address": "0xDc649B2690C8F68c86fbA71a1c9bC9d3eA9098a4",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "RWATradeEscrow (impl)",
+      "address": "0xEC96adb406d2660716fb1C0f042d35b506F5A4CB",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "KYCVerifier (impl)",
+      "address": "0x650396Dfaa1b4c02297B8E74dd41eFa5B32B893A",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "RWALaunchpadFactory (impl)",
+      "address": "0x1B4B23e54418F516D2Fcbb96f7219Bd1E9Ca42d3",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "CountryRestrictModule (impl)",
+      "address": "0x9891c8eEdB535cF2076060864062c1B8ACc33488",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "AccreditedInvestorModule (impl)",
+      "address": "0x5645A4De6Cc14b66c8af796f93457B93E2A73bd4",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "RWATokenizationFactory (impl)",
+      "address": "0x212637019ad586250529C1937cBA2E6dfc28CCfC",
+      "status": "✅ Verified"
+    },
+    {
+      "contract": "KYCVerifier",
+      "address": "0x24F3c59582C8cf5772DB66C38e6375A0C305771B",
+      "status": "❌ Failed"
+    },
+    {
+      "contract": "RWAProjectNFT",
+      "address": "0x375f38Af0Bf16043F53790B400a4d6dCe0691199",
+      "status": "❌ Failed"
+    },
+    {
+      "contract": "RWALaunchpadFactory",
+      "address": "0xE01Da562794820FA44c8B25F02040ad0eAD7C3a2",
+      "status": "❌ Failed"
+    },
+    {
+      "contract": "OffChainInvestmentManager",
+      "address": "0x28010D59A35c7fCFb51526e6C249Da6f75C94855",
+      "status": "❌ Failed"
+    },
+    {
+      "contract": "RWASecurityExchange",
+      "address": "0x35F9aeFb01C0098532c2eD5D8DB27FcBDc35C673",
+      "status": "❌ Failed"
+    },
+    {
+      "contract": "CountryRestrictModule",
+      "address": "0xa76D5a58738D3A0603B97622f557505993794d61",
+      "status": "❌ Failed"
+    },
+    {
+      "contract": "AccreditedInvestorModule",
+      "address": "0xED001C6E3a0A3Aa702F71729a9c24962f4a39721",
+      "status": "❌ Failed"
+    },
+    {
+      "contract": "RWATokenizationFactory",
+      "address": "0x4a8FBb0F4927094ab5caD161D90E7d68eB1eFF66",
+      "status": "❌ Failed"
+    }
+  ],
+  "config": {
+    "creationFee": "10000000000000000",
+    "platformFeeBps": 250,
+    "escrowTransactionFeeBps": 100,
+    "kycSignerAddress": "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969"
+  },
+  "tokens": {
+    "USDC": "0x81C7eb2f9FC7a11beC348Ba8846faC9A6FCC4786",
+    "USDT": "0x224e403397F3aec9a0D2875445dC32dB00ea31C3"
+  }
+}

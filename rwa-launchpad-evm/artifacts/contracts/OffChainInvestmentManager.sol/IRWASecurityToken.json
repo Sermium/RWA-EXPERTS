@@ -1,0 +1,58 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IRWASecurityToken",
+  "sourceName": "contracts/OffChainInvestmentManager.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_reference",
+          "type": "string"
+        }
+      ],
+      "name": "isPaymentProcessed",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tokenAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "string",
+          "name": "_paymentMethod",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_paymentReference",
+          "type": "string"
+        }
+      ],
+      "name": "mintForOffChainPayment",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
