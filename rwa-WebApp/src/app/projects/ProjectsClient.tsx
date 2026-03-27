@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useChainId, useAccount } from 'wagmi';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { isValidChainId } from '@/config/chains';
+import { TrendingUp, Timer, Clock, Percent } from 'lucide-react';
 
 // ============================================================================
 // TYPES
@@ -23,42 +24,73 @@ interface ProjectMetadata {
 }
 
 interface Project {
-  id: number;
+  id: string | number;
   owner: string;
   fundingGoal: bigint;
   totalRaised: bigint;
   deadline: bigint;
-  status: number;
+  status: string; // Changed from number to string for DB status
   securityToken: string;
   escrowVault: string;
   createdAt: bigint;
   metadata?: ProjectMetadata;
   tokenName?: string;
   tokenSymbol?: string;
+  // New fields for cliff/ROI
+  cliffPeriod?: number;
+  vestingPeriod?: number;
+  expectedROI?: number;
+  dividendYield?: number;
+  // Images from DB
+  images?: string[];
+  category?: string;
 }
 
 interface APIProject {
-  id: number;
+  id: string | number;
   owner: string;
   fundingGoal: string;
   totalRaised: string;
   deadline: string;
-  status: number;
+  status: string;
   securityToken: string;
   escrowVault: string;
   createdAt: string;
   metadata?: ProjectMetadata;
   tokenName?: string;
   tokenSymbol?: string;
+  cliffPeriod?: number;
+  vestingPeriod?: number;
+  expectedROI?: number;
+  dividendYield?: number;
+  images?: string[];
+  category?: string;
 }
 
-const STATUS_LABELS = ['Draft', 'Pending', 'Active', 'Funded', 'In Progress', 'Completed', 'Cancelled', 'Failed'];
+// Database status labels and colors
+const DB_STATUS_CONFIG: Record<string, { label: string; color: string; priority: number }> = {
+  'draft': { label: 'Draft', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', priority: 5 },
+  'pending_review': { label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', priority: 4 },
+  'pending_payment': { label: 'Pending Payment', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30', priority: 4 },
+  'approved': { label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30', priority: 2 },
+  'active': { label: 'Active', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', priority: 0 },
+  'funded': { label: 'Funded', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', priority: 1 },
+  'in_progress': { label: 'In Progress', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', priority: 1 },
+  'completed': { label: 'Completed', color: 'bg-green-500/20 text-green-400 border-green-500/30', priority: 3 },
+  'rejected': { label: 'Rejected', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 6 },
+  'cancelled': { label: 'Cancelled', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 6 },
+  'failed': { label: 'Failed', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 6 },
+};
+
+const getStatusConfig = (status: string) => {
+  return DB_STATUS_CONFIG[status] || { label: status, color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', priority: 99 };
+};
 
 // ============================================================================
 // LOCAL CACHE (for instant loading)
 // ============================================================================
 
-const LOCAL_CACHE_KEY_PREFIX = 'rwa_projects_v2_';
+const LOCAL_CACHE_KEY_PREFIX = 'rwa_projects_v3_';
 const LOCAL_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 interface LocalCache {
@@ -78,10 +110,10 @@ function getLocalCache(chainId: number): LocalCache | null {
     // Convert string values back to BigInt
     const projects = data.projects.map((p: APIProject) => ({
       ...p,
-      fundingGoal: BigInt(p.fundingGoal),
-      totalRaised: BigInt(p.totalRaised),
-      deadline: BigInt(p.deadline),
-      createdAt: BigInt(p.createdAt),
+      fundingGoal: BigInt(p.fundingGoal || '0'),
+      totalRaised: BigInt(p.totalRaised || '0'),
+      deadline: BigInt(p.deadline || '0'),
+      createdAt: BigInt(p.createdAt || '0'),
     }));
     
     return {
@@ -126,7 +158,7 @@ function isLocalCacheValid(cache: LocalCache | null): boolean {
 
 const PROJECTS_PER_PAGE = 30;
 
-type SortOption = 'newest' | 'oldest' | 'most_raised' | 'least_raised' | 'most_funded' | 'least_funded' | 'status' | 'ending_soon';
+type SortOption = 'newest' | 'oldest' | 'most_raised' | 'least_raised' | 'most_funded' | 'least_funded' | 'status' | 'ending_soon' | 'highest_roi';
 
 interface SortConfig {
   value: SortOption;
@@ -137,9 +169,10 @@ interface SortConfig {
 const SORT_OPTIONS: SortConfig[] = [
   { value: 'newest', label: 'Newest First', icon: '🕐' },
   { value: 'oldest', label: 'Oldest First', icon: '📅' },
+  { value: 'highest_roi', label: 'Highest ROI', icon: '📈' },
   { value: 'most_raised', label: 'Most Raised', icon: '💰' },
   { value: 'least_raised', label: 'Least Raised', icon: '💵' },
-  { value: 'most_funded', label: 'Most % Funded', icon: '📈' },
+  { value: 'most_funded', label: 'Most % Funded', icon: '📊' },
   { value: 'least_funded', label: 'Least % Funded', icon: '📉' },
   { value: 'status', label: 'By Status', icon: '🏷️' },
   { value: 'ending_soon', label: 'Ending Soon', icon: '⏰' },
@@ -152,9 +185,9 @@ const SORT_OPTIONS: SortConfig[] = [
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 const isProjectArchived = (project: Project): boolean => {
-  const isCancelledOrFailed = project.status === 6 || project.status === 7;
+  const archivedStatuses = ['cancelled', 'failed', 'rejected'];
   const hasNoFundsLeft = project.totalRaised === 0n;
-  return isCancelledOrFailed && hasNoFundsLeft;
+  return archivedStatuses.includes(project.status) && hasNoFundsLeft;
 };
 
 const formatUSD = (amount: bigint): string => {
@@ -190,11 +223,8 @@ const getFundingPercentage = (project: Project): number => {
   return (Number(project.totalRaised) / goal) * 100;
 };
 
-const getStatusPriority = (status: number): number => {
-  const priorities: Record<number, number> = {
-    2: 0, 1: 1, 3: 2, 4: 3, 0: 4, 5: 5, 6: 6, 7: 7,
-  };
-  return priorities[status] ?? 99;
+const getStatusPriority = (status: string): number => {
+  return getStatusConfig(status).priority;
 };
 
 const sortProjects = (projects: Project[], sortBy: SortOption): Project[] => {
@@ -205,6 +235,8 @@ const sortProjects = (projects: Project[], sortBy: SortOption): Project[] => {
       return sorted.sort((a, b) => Number(b.createdAt - a.createdAt));
     case 'oldest':
       return sorted.sort((a, b) => Number(a.createdAt - b.createdAt));
+    case 'highest_roi':
+      return sorted.sort((a, b) => (b.expectedROI || 0) - (a.expectedROI || 0));
     case 'most_raised':
       return sorted.sort((a, b) => Number(b.totalRaised - a.totalRaised));
     case 'least_raised':
@@ -389,7 +421,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
 }
 
 // ============================================================================
-// PROJECT CARD COMPONENT
+// PROJECT CARD COMPONENT (Updated with ROI & Cliff)
 // ============================================================================
 
 interface ProjectCardProps {
@@ -399,9 +431,8 @@ interface ProjectCardProps {
 }
 
 function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
-  const isCancelled = project.status === 6;
-  const isFailed = project.status === 7;
   const isArchived = isProjectArchived(project);
+  const statusConfig = getStatusConfig(project.status);
   
   const fundingGoalNum = Number(project.fundingGoal) / 1e6;
   const totalRaisedNum = Number(project.totalRaised) / 1e6;
@@ -412,20 +443,9 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
   const daysLeft = deadline ? Math.max(0, Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : null;
 
   const displayName = project.metadata?.name || project.tokenName || `Project #${project.id}`;
-  const statusLabel = STATUS_LABELS[project.status] ?? `Status ${project.status}`;
-
-  const getStatusColor = () => {
-    if (isCancelled || isFailed) return 'bg-red-500/20 text-red-400 border border-red-500/30';
-    switch (project.status) {
-      case 0: return 'bg-gray-500/20 text-gray-400 border border-gray-500/30';
-      case 1: return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30';
-      case 2: return 'bg-blue-500/20 text-blue-400 border border-blue-500/30';
-      case 3: return 'bg-green-500/20 text-green-400 border border-green-500/30';
-      case 4: return 'bg-purple-500/20 text-purple-400 border border-purple-500/30';
-      case 5: return 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-      default: return 'bg-gray-500/20 text-gray-400 border border-gray-500/30';
-    }
-  };
+  const displayImage = project.images?.[0] || project.metadata?.image;
+  const displayCategory = project.category || project.metadata?.attributes?.category;
+  const displayROI = project.expectedROI || project.metadata?.attributes?.projected_roi;
 
   return (
     <Link href={`/projects/${project.id}`}>
@@ -434,12 +454,13 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
           ? 'border-gray-800 opacity-60 hover:opacity-80' 
           : 'border-gray-700 hover:border-gray-600 hover:shadow-lg hover:shadow-blue-500/10'
       }`}>
+        {/* Image Header */}
         <div className={`h-40 bg-gradient-to-br from-blue-600/20 to-purple-600/20 relative ${isArchived ? 'grayscale' : ''}`}>
-          {project.metadata?.image && isValidIPFSHash(project.metadata.image) ? (
+          {displayImage && isValidIPFSHash(displayImage) ? (
             <Image
-              src={project.metadata.image.startsWith('ipfs://') 
-                ? `https://gateway.pinata.cloud/ipfs/${project.metadata.image.replace('ipfs://', '')}`
-                : project.metadata.image}
+              src={displayImage.startsWith('ipfs://') 
+                ? `https://gateway.pinata.cloud/ipfs/${displayImage.replace('ipfs://', '')}`
+                : displayImage}
               alt={displayName}
               fill
               className="object-cover"
@@ -453,18 +474,20 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
             </div>
           )}
           
+          {/* Status Badge */}
           <div className="absolute top-3 right-3">
             {isArchived ? (
               <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-700/80 text-gray-400 border border-gray-600">
                 📦 Archived
               </span>
             ) : (
-              <span className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor()}`}>
-                {statusLabel}
+              <span className={`px-3 py-1 text-xs font-medium rounded-full border ${statusConfig.color}`}>
+                {statusConfig.label}
               </span>
             )}
           </div>
 
+          {/* Chain Badge */}
           <div className="absolute top-3 left-3">
             <span className={`px-2 py-1 text-xs font-medium rounded-full ${
               isTestnet 
@@ -477,6 +500,7 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
         </div>
 
         <div className="p-5">
+          {/* Title & Category */}
           <div className="mb-3">
             <h3 className={`text-lg font-semibold transition-colors truncate ${
               isArchived ? 'text-gray-400' : 'text-white group-hover:text-blue-400'
@@ -487,26 +511,58 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
               {project.tokenSymbol && (
                 <span className="text-sm text-gray-500">${project.tokenSymbol}</span>
               )}
-              {project.metadata?.attributes?.category && (
+              {displayCategory && (
                 <span className="px-2 py-0.5 bg-gray-700 text-gray-400 text-xs rounded">
-                  {project.metadata.attributes.category}
+                  {displayCategory}
                 </span>
               )}
             </div>
           </div>
 
+          {/* Description */}
           <p className="text-gray-400 text-sm mb-4 line-clamp-2">
             {project.metadata?.description || 'Tokenized real-world asset investment opportunity'}
           </p>
 
-          {!isArchived && project.metadata?.attributes?.projected_roi && (
-            <div className="mb-4 px-3 py-2 bg-green-500/10 border border-green-500/20 rounded-lg">
-              <span className="text-sm text-green-400 font-medium">
-                📈 Projected ROI: {project.metadata.attributes.projected_roi}%
-              </span>
+          {/* ROI & Cliff Badges - NEW */}
+          {!isArchived && (displayROI || project.cliffPeriod) && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {displayROI && displayROI > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg">
+                  <TrendingUp className="w-3.5 h-3.5 text-green-400" />
+                  <span className="text-sm text-green-400 font-medium">
+                    {displayROI}% ROI
+                  </span>
+                </div>
+              )}
+              {project.cliffPeriod && project.cliffPeriod > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-lg">
+                  <Timer className="w-3.5 h-3.5 text-orange-400" />
+                  <span className="text-sm text-orange-400 font-medium">
+                    {project.cliffPeriod}d cliff
+                  </span>
+                </div>
+              )}
+              {project.vestingPeriod && project.vestingPeriod > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <Clock className="w-3.5 h-3.5 text-blue-400" />
+                  <span className="text-sm text-blue-400 font-medium">
+                    {project.vestingPeriod}d vest
+                  </span>
+                </div>
+              )}
+              {project.dividendYield && project.dividendYield > 0 && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+                  <Percent className="w-3.5 h-3.5 text-purple-400" />
+                  <span className="text-sm text-purple-400 font-medium">
+                    {project.dividendYield}% yield
+                  </span>
+                </div>
+              )}
             </div>
           )}
 
+          {/* Funding Progress */}
           <div className="mb-4">
             <div className="flex justify-between text-sm mb-2">
               <span className="text-gray-400">Raised</span>
@@ -519,7 +575,7 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
               <div
                 className={`h-2 rounded-full transition-all ${
                   isArchived ? 'bg-gray-600' :
-                  isCancelled || isFailed ? 'bg-red-500' : 
+                  ['cancelled', 'failed', 'rejected'].includes(project.status) ? 'bg-red-500' : 
                   'bg-gradient-to-r from-blue-500 to-blue-400'
                 }`}
                 style={{ width: `${Math.min(progress, 100)}%` }}
@@ -530,23 +586,25 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
             </div>
           </div>
 
+          {/* Footer */}
           <div className="flex justify-between items-center pt-4 border-t border-gray-700">
             <div className="text-gray-400 text-sm">
-              {isArchived ? 'Archived' : statusLabel}
+              {isArchived ? 'Archived' : statusConfig.label}
             </div>
             <div className={`text-sm ${
               isArchived ? 'text-gray-500' :
-              isCancelled || isFailed ? 'text-red-400' : 
+              ['cancelled', 'failed', 'rejected'].includes(project.status) ? 'text-red-400' : 
               !deadline ? 'text-gray-400' :
               isExpired ? 'text-orange-400' : 
               'text-gray-400'
             }`}>
               {isArchived ? 'Closed' : 
-              isCancelled ? 'Cancelled' : 
-              isFailed ? 'Failed' : 
-              !deadline ? 'No deadline' :
-              isExpired ? 'Ended' : 
-              `${daysLeft} days left`}
+               project.status === 'cancelled' ? 'Cancelled' : 
+               project.status === 'failed' ? 'Failed' : 
+               project.status === 'rejected' ? 'Rejected' :
+               !deadline ? 'No deadline' :
+               isExpired ? 'Ended' : 
+               `${daysLeft} days left`}
             </div>
           </div>
         </div>
@@ -590,7 +648,64 @@ export default function ProjectsClient() {
   const [currentPage, setCurrentPage] = useState(1);
   const [cacheHit, setCacheHit] = useState(false);
 
-  // Load projects from API
+  // Fetch from API
+  const fetchFromAPI = useCallback(async (showLoading: boolean) => {
+    if (showLoading) setLoading(true);
+    
+    try {
+      const url = `/api/crowdfunding/projects?status=all${chainId ? `&chainId=${chainId}` : ''}`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch projects');
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.projects) {
+        // Convert and map projects
+        const parsedProjects: Project[] = data.projects.map((p: any) => ({
+          id: p.id,
+          owner: p.owner || '',
+          fundingGoal: BigInt(p.fundingGoal || '0'),
+          totalRaised: BigInt(p.totalRaised || '0'),
+          deadline: BigInt(p.deadline || '0'),
+          createdAt: BigInt(p.createdAt || '0'),
+          status: p.status || 'draft', // String status from DB
+          securityToken: p.securityToken || '',
+          escrowVault: p.escrowVault || '',
+          metadata: p.metadata,
+          tokenName: p.tokenName,
+          tokenSymbol: p.tokenSymbol,
+          // New fields
+          cliffPeriod: p.cliffPeriod || p.cliff_period || p.token_cliff,
+          vestingPeriod: p.vestingPeriod || p.vesting_period || p.token_vesting,
+          expectedROI: p.expectedROI || p.expected_roi || p.projected_roi,
+          dividendYield: p.dividendYield || p.dividend_yield,
+          images: p.images || [],
+          category: p.category,
+        }));
+
+        setProjects(parsedProjects);
+        setLastRefresh(Date.now());
+        setCacheHit(false);
+        
+        // Update local cache
+        setLocalCache(chainId, parsedProjects);
+        
+        console.log(`[ProjectsClient] Loaded ${parsedProjects.length} projects from database`);
+      }
+
+      setError(null);
+    } catch (err) {
+      console.error('[ProjectsClient] Error:', err);
+      setError(err instanceof Error ? err.message : 'Failed to load projects');
+    } finally {
+      setLoading(false);
+    }
+  }, [chainId]);
+
+  // Load projects
   const loadProjects = useCallback(async (forceRefresh = false) => {
     if (!isDeployed) {
       setProjects([]);
@@ -614,57 +729,8 @@ export default function ProjectsClient() {
       }
     }
 
-    setLoading(true);
-    await fetchFromAPI(forceRefresh);
-  }, [chainId, isDeployed]);
-
-  const fetchFromAPI = async (forceRefresh: boolean) => {
-    try {
-      // Changed from /api/projects/list to /api/crowdfunding/projects
-      const url = `/api/crowdfunding/projects?status=all${chainId ? `&chainId=${chainId}` : ''}`;
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch projects');
-      }
-
-      const data = await response.json();
-
-      if (data.success && data.projects) {
-        // Convert string values to BigInt
-        const parsedProjects: Project[] = data.projects.map((p: any) => ({
-          id: p.id,
-          owner: p.owner,
-          fundingGoal: BigInt(p.fundingGoal || '0'),
-          totalRaised: BigInt(p.totalRaised || '0'),
-          deadline: BigInt(p.deadline || '0'),
-          createdAt: BigInt(p.createdAt || '0'),
-          status: p.status,
-          securityToken: p.securityToken || '',
-          escrowVault: p.escrowVault || '',
-          metadata: p.metadata,
-          tokenName: p.tokenName,
-          tokenSymbol: p.tokenSymbol,
-        }));
-
-        setProjects(parsedProjects);
-        setLastRefresh(Date.now());
-        setCacheHit(false);
-        
-        // Update local cache
-        setLocalCache(chainId, parsedProjects);
-        
-        console.log(`[ProjectsClient] Loaded ${parsedProjects.length} projects from database`);
-      }
-
-      setError(null);
-    } catch (err) {
-      console.error('[ProjectsClient] Error:', err);
-      setError(err instanceof Error ? err.message : 'Failed to load projects');
-    } finally {
-      setLoading(false);
-    }
-  };
+    await fetchFromAPI(true);
+  }, [chainId, isDeployed, fetchFromAPI]);
 
   // Load on mount and chain change
   useEffect(() => {
@@ -695,21 +761,25 @@ export default function ProjectsClient() {
     let result = projects.filter((p) => {
       const isArchived = isProjectArchived(p);
       
-      if (filter === 'active' && p.status !== 2) return false;
-      if (filter === 'funded' && p.status !== 3) return false;
+      // Status-based filters using string statuses
+      if (filter === 'active' && p.status !== 'active') return false;
+      if (filter === 'funded' && p.status !== 'funded') return false;
       if (filter === 'ended') {
-        if (![5, 6, 7].includes(p.status)) return false;
+        if (!['completed', 'cancelled', 'failed'].includes(p.status)) return false;
         if (isArchived) return false;
       }
       if (filter === 'archived' && !isArchived) return false;
       if (filter === 'all' && isArchived) return false;
 
+      // Search filter
       if (search) {
         const s = search.toLowerCase();
         const matches = 
           p.metadata?.name?.toLowerCase().includes(s) ||
           p.tokenSymbol?.toLowerCase().includes(s) ||
+          p.tokenName?.toLowerCase().includes(s) ||
           p.metadata?.description?.toLowerCase().includes(s) ||
+          p.category?.toLowerCase().includes(s) ||
           `project #${p.id}`.includes(s);
         if (!matches) return false;
       }
