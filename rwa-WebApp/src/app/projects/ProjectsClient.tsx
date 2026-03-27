@@ -620,7 +620,7 @@ export default function ProjectsClient() {
 
   const fetchFromAPI = async (forceRefresh: boolean) => {
     try {
-      const url = `/api/projects/list?chainId=${chainId}${forceRefresh ? '&refresh=true' : ''}`;
+      const url = `/api/crowdfunding/projects?chainId=${chainId}&status=active`;
       const response = await fetch(url);
       
       if (!response.ok) {
