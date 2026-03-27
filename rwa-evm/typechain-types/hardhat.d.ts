@@ -66,10 +66,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20Upgradeable__factory>;
     getContractFactory(
-      name: "ERC20BurnableUpgradeable",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.ERC20BurnableUpgradeable__factory>;
-    getContractFactory(
       name: "ERC20PausableUpgradeable",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20PausableUpgradeable__factory>;
@@ -222,13 +218,29 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.TransferFeesModule__factory>;
     getContractFactory(
+      name: "DisputeManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.DisputeManager__factory>;
+    getContractFactory(
+      name: "IEscrowVault",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IEscrowVault__factory>;
+    getContractFactory(
       name: "DividendDistributor",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.DividendDistributor__factory>;
     getContractFactory(
+      name: "PlatformFeeManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.PlatformFeeManager__factory>;
+    getContractFactory(
       name: "ProjectBadgeManager",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ProjectBadgeManager__factory>;
+    getContractFactory(
+      name: "IPlatformFeeManager",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPlatformFeeManager__factory>;
     getContractFactory(
       name: "RWAEscrowVault",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -358,6 +370,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RWASecurityExchange__factory>;
     getContractFactory(
+      name: "KYCLib",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.KYCLib__factory>;
+    getContractFactory(
       name: "IModularCompliance",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IModularCompliance__factory>;
@@ -444,11 +460,6 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ERC20Upgradeable>;
     getContractAt(
-      name: "ERC20BurnableUpgradeable",
-      address: string | ethers.Addressable,
-      signer?: ethers.Signer
-    ): Promise<Contracts.ERC20BurnableUpgradeable>;
-    getContractAt(
       name: "ERC20PausableUpgradeable",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -639,15 +650,35 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.TransferFeesModule>;
     getContractAt(
+      name: "DisputeManager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.DisputeManager>;
+    getContractAt(
+      name: "IEscrowVault",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IEscrowVault>;
+    getContractAt(
       name: "DividendDistributor",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.DividendDistributor>;
     getContractAt(
+      name: "PlatformFeeManager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.PlatformFeeManager>;
+    getContractAt(
       name: "ProjectBadgeManager",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.ProjectBadgeManager>;
+    getContractAt(
+      name: "IPlatformFeeManager",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPlatformFeeManager>;
     getContractAt(
       name: "RWAEscrowVault",
       address: string | ethers.Addressable,
@@ -808,6 +839,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.RWASecurityExchange>;
+    getContractAt(
+      name: "KYCLib",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.KYCLib>;
     getContractAt(
       name: "IModularCompliance",
       address: string | ethers.Addressable,
@@ -887,10 +923,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20Upgradeable>;
     deployContract(
-      name: "ERC20BurnableUpgradeable",
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20BurnableUpgradeable>;
-    deployContract(
       name: "ERC20PausableUpgradeable",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20PausableUpgradeable>;
@@ -1043,13 +1075,29 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TransferFeesModule>;
     deployContract(
+      name: "DisputeManager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DisputeManager>;
+    deployContract(
+      name: "IEscrowVault",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IEscrowVault>;
+    deployContract(
       name: "DividendDistributor",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DividendDistributor>;
     deployContract(
+      name: "PlatformFeeManager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PlatformFeeManager>;
+    deployContract(
       name: "ProjectBadgeManager",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ProjectBadgeManager>;
+    deployContract(
+      name: "IPlatformFeeManager",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPlatformFeeManager>;
     deployContract(
       name: "RWAEscrowVault",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1178,6 +1226,10 @@ declare module "hardhat/types/runtime" {
       name: "RWASecurityExchange",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.RWASecurityExchange>;
+    deployContract(
+      name: "KYCLib",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.KYCLib>;
     deployContract(
       name: "IModularCompliance",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1265,11 +1317,6 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ERC20Upgradeable>;
     deployContract(
-      name: "ERC20BurnableUpgradeable",
-      args: any[],
-      signerOrOptions?: ethers.Signer | DeployContractOptions
-    ): Promise<Contracts.ERC20BurnableUpgradeable>;
-    deployContract(
       name: "ERC20PausableUpgradeable",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1460,15 +1507,35 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.TransferFeesModule>;
     deployContract(
+      name: "DisputeManager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.DisputeManager>;
+    deployContract(
+      name: "IEscrowVault",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IEscrowVault>;
+    deployContract(
       name: "DividendDistributor",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.DividendDistributor>;
     deployContract(
+      name: "PlatformFeeManager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.PlatformFeeManager>;
+    deployContract(
       name: "ProjectBadgeManager",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.ProjectBadgeManager>;
+    deployContract(
+      name: "IPlatformFeeManager",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPlatformFeeManager>;
     deployContract(
       name: "RWAEscrowVault",
       args: any[],
@@ -1629,6 +1696,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.RWASecurityExchange>;
+    deployContract(
+      name: "KYCLib",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.KYCLib>;
     deployContract(
       name: "IModularCompliance",
       args: any[],

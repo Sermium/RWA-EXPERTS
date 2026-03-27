@@ -2,32 +2,22 @@
 "use client";
 
 import { CHAINS, SupportedChainId, ChainInfo } from "./chains";
-import { 
-  DEPLOYMENTS, 
-  DeploymentData, 
-  isChainDeployed, 
-  getDeployedChainIds 
-} from "./deployments";
+import { DEPLOYMENTS, DeploymentData, isChainDeployed, getDeployedChainIds , getFees } from "./deployments";
 
 // ============================================================================
 // TYPE DEFINITIONS
 // ============================================================================
 
 export interface ContractsConfig {
-  // Core contracts
   RWAProjectNFT: string;
   RWALaunchpadFactory: string;
   KYCVerifier: string;
   RWATokenizationFactory: string;
-  RWATradeEscrow: string;  // Make optional
-  
-  // Other contracts
+  RWATradeEscrow: string;
   RWASecurityExchange: string;
   OffChainInvestmentManager: string;
   CountryRestrictModule: string;
   AccreditedInvestorModule: string;
-  
-  // Implementation contracts
   Implementations: {
     SecurityToken: string;
     EscrowVault: string;
@@ -62,7 +52,9 @@ export interface TokensConfig {
 // CHAIN STATE MANAGEMENT
 // ============================================================================
 
-const DEFAULT_CHAIN_ID = (parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "43113")) as SupportedChainId;
+// Default to first deployed chain, or Fuji as ultimate fallback
+const deployedChainIds = getDeployedChainIds();
+const DEFAULT_CHAIN_ID: SupportedChainId = deployedChainIds.length > 0 ? deployedChainIds[0] : 43113;
 
 let _currentChainId: SupportedChainId = DEFAULT_CHAIN_ID;
 const _chainChangeListeners: Set<(chainId: SupportedChainId) => void> = new Set();
@@ -72,11 +64,11 @@ const _chainChangeListeners: Set<(chainId: SupportedChainId) => void> = new Set(
 // ============================================================================
 
 function getCurrentDeployment(): DeploymentData {
-  return DEPLOYMENTS[_currentChainId] || DEPLOYMENTS[43113];
+  return DEPLOYMENTS[_currentChainId] || DEPLOYMENTS[DEFAULT_CHAIN_ID];
 }
 
 function getCurrentChain(): ChainInfo {
-  return CHAINS[_currentChainId] || CHAINS[43113];
+  return CHAINS[_currentChainId] || CHAINS[DEFAULT_CHAIN_ID];
 }
 
 // ============================================================================
@@ -94,7 +86,6 @@ export function setCurrentChain(chainId: SupportedChainId): void {
   
   console.log(`[Contracts] Chain changed: ${previousChainId} → ${chainId}`);
   
-  // Notify all listeners
   if (previousChainId !== chainId) {
     _chainChangeListeners.forEach(listener => {
       try {
@@ -134,7 +125,7 @@ export function getDeployedChains(): ChainInfo[] {
 export const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 // ============================================================================
-// DYNAMIC GETTERS - Always return current chain values
+// DYNAMIC GETTERS
 // ============================================================================
 
 export const getChainId = (): SupportedChainId => _currentChainId;
@@ -157,23 +148,21 @@ export const getIsTestnet = (): boolean => getCurrentChain().testnet;
 
 export const getContracts = (): ContractsConfig => getCurrentDeployment().contracts as ContractsConfig;
 export const getTokens = (): TokensConfig => getCurrentDeployment().tokens;
-export const getFees = (): FeesConfig => getCurrentDeployment().fees;
 
 // ============================================================================
-// INDIVIDUAL CONTRACT GETTERS (for convenience)
+// INDIVIDUAL CONTRACT GETTERS
 // ============================================================================
 
 export const getRWAProjectNFT = (): string => getContracts().RWAProjectNFT;
 export const getRWALaunchpadFactory = (): string => getContracts().RWALaunchpadFactory;
 export const getKYCVerifier = (): string => getContracts().KYCVerifier;
 export const getRWATokenizationFactory = (): string => getContracts().RWATokenizationFactory;
-export const getRWATradeEscrow = (): string => getContracts().RWATradeEscrow;  // ✅ NEW
+export const getRWATradeEscrow = (): string => getContracts().RWATradeEscrow;
 export const getRWASecurityExchange = (): string => getContracts().RWASecurityExchange;
 export const getOffChainInvestmentManager = (): string => getContracts().OffChainInvestmentManager;
 export const getCountryRestrictModule = (): string => getContracts().CountryRestrictModule;
 export const getAccreditedInvestorModule = (): string => getContracts().AccreditedInvestorModule;
 
-// Implementation getters
 export const getSecurityTokenImpl = (): string => getContracts().Implementations.SecurityToken;
 export const getEscrowVaultImpl = (): string => getContracts().Implementations.EscrowVault;
 export const getComplianceImpl = (): string => getContracts().Implementations.Compliance;
@@ -184,15 +173,14 @@ export const getExchangeImpl = (): string => getContracts().Implementations.Exch
 export const getDividendDistributorImpl = (): string => getContracts().Implementations.DividendDistributor;
 export const getMaxBalanceModuleImpl = (): string => getContracts().Implementations.MaxBalanceModule;
 export const getLockupModuleImpl = (): string => getContracts().Implementations.LockupModule;
-export const getRWATradeEscrowImpl = (): string => getContracts().Implementations.RWATradeEscrow;  // ✅ NEW
-export const getTokenizationFactoryImpl = (): string => getContracts().Implementations.TokenizationFactory;  // ✅ NEW
+export const getRWATradeEscrowImpl = (): string => getContracts().Implementations.RWATradeEscrow;
+export const getTokenizationFactoryImpl = (): string => getContracts().Implementations.TokenizationFactory;
 
-// Token getters
 export const getUSDC = (): string => getTokens().USDC;
 export const getUSDT = (): string => getTokens().USDT;
 
 // ============================================================================
-// PROXY-BASED EXPORTS (for backward compatibility)
+// PROXY-BASED EXPORTS
 // ============================================================================
 
 const createDynamicProxy = <T extends object>(getter: () => T): T => {
@@ -218,12 +206,11 @@ const createDynamicProxy = <T extends object>(getter: () => T): T => {
   });
 };
 
-// These proxies always return the current chain's data
 export const CONTRACTS = createDynamicProxy(getContracts);
 export const TOKENS = createDynamicProxy(getTokens);
 export const FEES = createDynamicProxy(getFees);
 
-// Static exports for backward compatibility (snapshot of default chain)
+// Static exports for backward compatibility
 const _initialChain = getCurrentChain();
 export const CHAIN_ID = DEFAULT_CHAIN_ID;
 export const CHAIN_ID_TESTNET = 43113 as SupportedChainId;
@@ -260,15 +247,15 @@ export function getExplorerTokenUrl(address: string): string {
 }
 
 export function getContractsForChain(chainId: SupportedChainId): ContractsConfig {
-  return (DEPLOYMENTS[chainId]?.contracts || DEPLOYMENTS[43113].contracts) as ContractsConfig;
+  return (DEPLOYMENTS[chainId]?.contracts || DEPLOYMENTS[DEFAULT_CHAIN_ID].contracts) as ContractsConfig;
 }
 
 export function getTokensForChain(chainId: SupportedChainId): TokensConfig {
-  return DEPLOYMENTS[chainId]?.tokens || DEPLOYMENTS[43113].tokens;
+  return DEPLOYMENTS[chainId]?.tokens || DEPLOYMENTS[DEFAULT_CHAIN_ID].tokens;
 }
 
 export function getFeesForChain(chainId: SupportedChainId): FeesConfig {
-  return DEPLOYMENTS[chainId]?.fees || DEPLOYMENTS[43113].fees;
+  return getFees(chainId);
 }
 
 export function getChainInfo(chainId: SupportedChainId): ChainInfo | null {
@@ -294,9 +281,9 @@ export function debugCurrentConfig(): void {
   console.log("╠══════════════════════════════════════════════════════════════╣");
   console.log("║ KEY CONTRACTS");
   console.log(`║ Factory:         ${deployment.contracts.RWALaunchpadFactory}`);
-  console.log(`║ KYCVerifier:      ${deployment.contracts.KYCVerifier}`);
+  console.log(`║ KYCVerifier:     ${deployment.contracts.KYCVerifier}`);
   console.log(`║ TokenizationFac: ${deployment.contracts.RWATokenizationFactory}`);
-  console.log(`║ TradeEscrow:     ${deployment.contracts.RWATradeEscrow}`);  // ✅ NEW
+  console.log(`║ TradeEscrow:     ${deployment.contracts.RWATradeEscrow}`);
   console.log("╠══════════════════════════════════════════════════════════════╣");
   console.log("║ TOKENS");
   console.log(`║ USDC:            ${deployment.tokens.USDC}`);

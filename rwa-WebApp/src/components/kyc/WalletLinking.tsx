@@ -3,7 +3,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useKYC } from '@/hooks/useKYC';
+import { useKYC } from '@/contexts/KYCContext';
 import { Copy, Check, Loader2, ArrowLeft } from 'lucide-react';
 
 interface WalletLinkingProps {
@@ -13,7 +13,7 @@ interface WalletLinkingProps {
 }
 
 export function WalletLinking({ mode, onBack, onSuccess }: WalletLinkingProps) {
-    const { generateLinkCode, useLinkCode, error } = useKYC();
+    const { generateLinkCode, useLinkCode, linkError: error } = useKYC();
     
     const [loading, setLoading] = useState(false);
     const [code, setCode] = useState('');

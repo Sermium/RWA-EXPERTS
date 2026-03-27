@@ -1,13 +1,14 @@
 // src/app/admin/tokenization/TokenizationManagement.tsx
 'use client';
 import { useState, useEffect, useCallback } from 'react';
-import { useAccount, useWriteContract, usePublicClient } from 'wagmi';
+import { useAccount, useWriteContract, usePublicClient, useSwitchChain } from 'wagmi';
 import { type Address } from 'viem';
 import { useChainConfig } from '@/hooks/useChainConfig';
+import { getChainById } from '@/config/chains';
 import { TokenizationApplication, TokenizationDocument, TOKENIZATION_STATUS, ASSET_TYPE_LABELS } from '../constants';
 import {
   FileText, Search, Filter, Eye, CheckCircle2, XCircle, Clock, CreditCard, Coins, AlertCircle, ChevronLeft,
-  ChevronRight, Loader2, Building2, DollarSign, Calendar, User, Lock, TrendingUp, ExternalLink, MessageSquare, RefreshCw, X, Shield
+  ChevronRight, Loader2, Building2, DollarSign, Calendar, User, Lock, TrendingUp, ExternalLink, MessageSquare, RefreshCw, X, Shield, Globe
 } from 'lucide-react';
 
 // ABI for deployer approval
@@ -42,17 +43,41 @@ interface TokenizationManagementProps {
   onRefresh?: () => void;
 }
 
+// Chain Badge Component
+const ChainBadge = ({ chainId, showWarning = false }: { chainId?: number; showWarning?: boolean }) => {
+  if (!chainId) return <span className="text-gray-500 text-xs">No chain</span>;
+  
+  const chain = getChainById(chainId);
+  if (!chain) return <span className="text-gray-500 text-xs">Chain {chainId}</span>;
+  
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
+      showWarning
+        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+        : chain.testnet 
+          ? 'bg-yellow-500/20 text-yellow-400' 
+          : 'bg-green-500/20 text-green-400'
+    }`}>
+      {showWarning && <AlertCircle className="w-3 h-3" />}
+      <Globe className="w-3 h-3" />
+      {chain.name}
+    </span>
+  );
+};
+
 export default function TokenizationManagement({ onRefresh }: TokenizationManagementProps) {
   const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
+  const { switchChain } = useSwitchChain();
   const publicClient = usePublicClient();
-  const { contracts, chainName } = useChainConfig();
+  const { contracts, chainName, chainId: currentChainId } = useChainConfig();
 
   const [applications, setApplications] = useState<TokenizationApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [chainFilter, setChainFilter] = useState<string>('all');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
@@ -67,6 +92,22 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
     checking: boolean;
   }>({ isApproved: false, requiresApproval: true, checking: false });
 
+  // Helper to check if admin is on wrong chain for an application
+  const isWrongChain = (appChainId?: number) => {
+    if (!appChainId) return false;
+    return currentChainId !== appChainId;
+  };
+
+  // Get unique chains from applications for filter dropdown
+  const uniqueChains = Array.from(new Set(applications.map(app => app.chain_id).filter(Boolean))) as number[];
+
+  // Handle chain switch
+  const handleSwitchChain = (targetChainId: number) => {
+    if (switchChain) {
+      switchChain({ chainId: targetChainId });
+    }
+  };
+
   const fetchApplications = useCallback(async () => {
     if (!address) return;
 
@@ -78,6 +119,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
         page: page.toString(),
         limit: '20',
         ...(statusFilter !== 'all' && { status: statusFilter }),
+        ...(chainFilter !== 'all' && { chainId: chainFilter }),
       });
 
       const response = await fetch(`/api/admin/tokenizations?${params}`, {
@@ -97,16 +139,17 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
     } finally {
       setLoading(false);
     }
-  }, [address, page, statusFilter]);
+  }, [address, page, statusFilter, chainFilter]);
 
   useEffect(() => {
     fetchApplications();
   }, [fetchApplications]);
 
   // Check on-chain approval status when selecting an application
-  const checkOnChainApproval = useCallback(async (userAddress: string) => {
-    if (!publicClient || !contracts?.RWALaunchpadFactory) {
-      setOnChainStatus({ isApproved: false, requiresApproval: false, checking: false });
+  const checkOnChainApproval = useCallback(async (userAddress: string, appChainId?: number) => {
+    // Can't check if on wrong chain or no contracts
+    if (!publicClient || !contracts?.RWALaunchpadFactory || isWrongChain(appChainId)) {
+      setOnChainStatus({ isApproved: false, requiresApproval: true, checking: false });
       return;
     }
 
@@ -136,7 +179,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
       console.error('Failed to check on-chain approval:', err);
       setOnChainStatus({ isApproved: false, requiresApproval: true, checking: false });
     }
-  }, [publicClient, contracts]);
+  }, [publicClient, contracts, currentChainId]);
 
   const approveDeployerOnChain = async (userAddress: string): Promise<boolean> => {
     if (!contracts?.RWALaunchpadFactory) {
@@ -154,7 +197,6 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
       console.log('Deployer approved on-chain, tx:', hash);
 
-      // Wait for confirmation
       if (publicClient) {
         await publicClient.waitForTransactionReceipt({ hash });
       }
@@ -196,13 +238,18 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
   const handleUpdateApplication = async () => {
     if (!selectedApp || !address) return;
 
-    // Require a status change
+    // Check wrong chain
+    if (isWrongChain(selectedApp.chain_id)) {
+      const chainName = getChainById(selectedApp.chain_id!)?.name || `chain ${selectedApp.chain_id}`;
+      setError(`Please switch to ${chainName} to update this application.`);
+      return;
+    }
+
     if (!newStatus || newStatus === selectedApp.status) {
       setError('Please select a new status for this application.');
       return;
     }
 
-    // Require rejection reason when rejecting
     if (newStatus === 'rejected' && !adminNotes.trim()) {
       setError('Please provide a rejection reason so the user knows what to fix.');
       return;
@@ -212,9 +259,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
     setError('');
 
     try {
-      // Handle on-chain approval/revocation based on status change
       if (newStatus === 'approved' && onChainStatus.requiresApproval && !onChainStatus.isApproved) {
-        // Approve deployer on-chain when approving application
         try {
           await approveDeployerOnChain(selectedApp.user_address);
           console.log('[TokenizationManagement] Deployer approved on-chain');
@@ -224,17 +269,14 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
           return;
         }
       } else if (newStatus === 'rejected' && onChainStatus.isApproved) {
-        // Optionally revoke on-chain approval when rejecting
         try {
           await revokeDeployerOnChain(selectedApp.user_address);
           console.log('[TokenizationManagement] Deployer revoked on-chain');
         } catch (onChainError: any) {
           console.warn('Failed to revoke on-chain, continuing with DB update:', onChainError);
-          // Don't block DB update if revocation fails
         }
       }
 
-      // Update database
       const response = await fetch('/api/admin/tokenizations', {
         method: 'PATCH',
         headers: {
@@ -257,17 +299,10 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
       console.log('[TokenizationManagement] Application updated:', result);
 
-      // Refresh the applications list
       await fetchApplications();
-
-      // Close the modal
       setSelectedApp(null);
-
-      // Reset form state
       setAdminNotes('');
       setNewStatus('');
-
-      // Call parent refresh if provided
       onRefresh?.();
 
     } catch (err: any) {
@@ -279,14 +314,14 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
   };
 
   const handleManualOnChainApproval = async () => {
-    if (!selectedApp) return;
+    if (!selectedApp || isWrongChain(selectedApp.chain_id)) return;
 
     setUpdating(true);
     setError('');
 
     try {
       await approveDeployerOnChain(selectedApp.user_address);
-      await checkOnChainApproval(selectedApp.user_address);
+      await checkOnChainApproval(selectedApp.user_address, selectedApp.chain_id);
     } catch (err: any) {
       setError(err.message || 'Failed to approve deployer on-chain');
     } finally {
@@ -295,14 +330,14 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
   };
 
   const handleManualOnChainRevoke = async () => {
-    if (!selectedApp) return;
+    if (!selectedApp || isWrongChain(selectedApp.chain_id)) return;
 
     setUpdating(true);
     setError('');
 
     try {
       await revokeDeployerOnChain(selectedApp.user_address);
-      await checkOnChainApproval(selectedApp.user_address);
+      await checkOnChainApproval(selectedApp.user_address, selectedApp.chain_id);
     } catch (err: any) {
       setError(err.message || 'Failed to revoke deployer on-chain');
     } finally {
@@ -312,10 +347,17 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
   const openApplicationDetails = (app: TokenizationApplication) => {
     setSelectedApp(app);
-    setNewStatus(''); // Start with no selection to force user to choose
+    setNewStatus('');
     setAdminNotes(app.admin_notes || '');
     setNewFeeAmount(app.fee_amount.toString());
-    checkOnChainApproval(app.user_address);
+    setError('');
+    
+    // Only check on-chain status if on correct chain
+    if (!isWrongChain(app.chain_id)) {
+      checkOnChainApproval(app.user_address, app.chain_id);
+    } else {
+      setOnChainStatus({ isApproved: false, requiresApproval: true, checking: false });
+    }
   };
 
   const formatDate = (dateStr: string) => {
@@ -358,8 +400,13 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
     }
   };
 
-  // Helper to get the project page URL
   const getProjectPageUrl = (appId: string) => `/tokenization/${appId}`;
+
+  const getExplorerUrl = (chainId?: number) => {
+    if (!chainId) return null;
+    const chain = getChainById(chainId);
+    return chain?.explorerUrl;
+  };
 
   const filteredApplications = applications.filter(app => {
     if (!searchQuery) return true;
@@ -400,8 +447,9 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               {totalCount} total applications • Review and manage asset tokenization requests
             </p>
             {chainName && (
-              <p className="text-gray-500 text-xs mt-1">
-                Connected to: {chainName}
+              <p className="text-gray-500 text-xs mt-1 flex items-center gap-1">
+                <Globe className="w-3 h-3" />
+                Admin connected to: <span className="text-blue-400">{chainName}</span>
               </p>
             )}
           </div>
@@ -447,6 +495,29 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               <option value="cancelled">Cancelled</option>
             </select>
           </div>
+
+          {/* Chain Filter */}
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-gray-400" />
+            <select
+              value={chainFilter}
+              onChange={(e) => {
+                setChainFilter(e.target.value);
+                setPage(1);
+              }}
+              className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+            >
+              <option value="all">All Chains</option>
+              {uniqueChains.map(chainId => {
+                const chain = getChainById(chainId);
+                return (
+                  <option key={chainId} value={chainId.toString()}>
+                    {chain?.name || `Chain ${chainId}`}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -467,9 +538,12 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
           <div className="p-8 text-center">
             <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
             <p className="text-gray-400">No tokenization applications found</p>
-            {statusFilter !== 'all' && (
+            {(statusFilter !== 'all' || chainFilter !== 'all') && (
               <button
-                onClick={() => setStatusFilter('all')}
+                onClick={() => {
+                  setStatusFilter('all');
+                  setChainFilter('all');
+                }}
                 className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
               >
                 Clear filters
@@ -482,6 +556,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               <thead className="bg-gray-700/50">
                 <tr>
                   <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Asset</th>
+                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Chain</th>
                   <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Company</th>
                   <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Type</th>
                   <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Value</th>
@@ -496,8 +571,10 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                 {filteredApplications.map((app) => {
                   const statusConfig = TOKENIZATION_STATUS[app.status] || TOKENIZATION_STATUS.pending;
                   const isCompleted = app.status === 'completed';
+                  const wrongChain = isWrongChain(app.chain_id);
+                  
                   return (
-                    <tr key={app.id} className="hover:bg-gray-700/30 transition">
+                    <tr key={app.id} className={`hover:bg-gray-700/30 transition ${wrongChain ? 'opacity-60' : ''}`}>
                       <td className="px-4 py-4">
                         <div>
                           <p className="text-white font-medium">{app.asset_name}</p>
@@ -505,6 +582,9 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                             {app.user_address.slice(0, 6)}...{app.user_address.slice(-4)}
                           </p>
                         </div>
+                      </td>
+                      <td className="px-4 py-4">
+                        <ChainBadge chainId={app.chain_id} showWarning={wrongChain} />
                       </td>
                       <td className="px-4 py-4">
                         <div>
@@ -553,39 +633,52 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                       </td>
                       <td className="px-4 py-4 text-right">
                         <div className="flex items-center justify-end gap-2">
-                          {/* View Live button - show for completed/deployed projects */}
-                          {isCompleted && (
-                            <a
-                              href={getProjectPageUrl(app.id)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
+                          {/* Wrong chain - show switch button */}
+                          {wrongChain ? (
+                            <button
+                              onClick={() => handleSwitchChain(app.chain_id!)}
+                              className="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
                             >
-                              <ExternalLink className="w-4 h-4" />
-                              View Live
-                            </a>
+                              <RefreshCw className="w-4 h-4" />
+                              Switch to {getChainById(app.chain_id!)?.name}
+                            </button>
+                          ) : (
+                            <>
+                              {/* View Live button - show for completed/deployed projects */}
+                              {isCompleted && (
+                                <a
+                                  href={getProjectPageUrl(app.id)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
+                                >
+                                  <ExternalLink className="w-4 h-4" />
+                                  View Live
+                                </a>
+                              )}
+                              {/* Preview button - show for non-completed (admin preview) */}
+                              {!isCompleted && (
+                                <a
+                                  href={getProjectPageUrl(app.id)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
+                                  title="Preview project page"
+                                >
+                                  <Eye className="w-4 h-4" />
+                                  Preview
+                                </a>
+                              )}
+                              {/* View Details button - opens modal */}
+                              <button
+                                onClick={() => openApplicationDetails(app)}
+                                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
+                              >
+                                <FileText className="w-4 h-4" />
+                                Details
+                              </button>
+                            </>
                           )}
-                          {/* Preview button - show for non-completed (admin preview) */}
-                          {!isCompleted && (
-                            <a
-                              href={getProjectPageUrl(app.id)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
-                              title="Preview project page"
-                            >
-                              <Eye className="w-4 h-4" />
-                              Preview
-                            </a>
-                          )}
-                          {/* View Details button - opens modal */}
-                          <button
-                            onClick={() => openApplicationDetails(app)}
-                            className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
-                          >
-                            <FileText className="w-4 h-4" />
-                            Details
-                          </button>
                         </div>
                       </td>
                     </tr>
@@ -629,9 +722,10 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
             {/* Modal Header */}
             <div className="flex items-start justify-between p-6 border-b border-gray-700">
               <div className="flex-1">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 flex-wrap">
                   <h3 className="text-xl font-bold text-white">{selectedApp.asset_name}</h3>
-                  {/* View Live / Preview button in header */}
+                  <ChainBadge chainId={selectedApp.chain_id} showWarning={isWrongChain(selectedApp.chain_id)} />
+                  {/* View Live / Preview button in header - always accessible */}
                   <a
                     href={getProjectPageUrl(selectedApp.id)}
                     target="_blank"
@@ -657,6 +751,28 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {/* Wrong Chain Warning Banner */}
+            {isWrongChain(selectedApp.chain_id) && (
+              <div className="mx-6 mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="w-5 h-5 text-yellow-400" />
+                  <div>
+                    <p className="text-yellow-400 font-medium">Wrong Network</p>
+                    <p className="text-yellow-400/70 text-sm">
+                      Switch to {getChainById(selectedApp.chain_id!)?.name} to manage this application
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleSwitchChain(selectedApp.chain_id!)}
+                  className="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg transition flex items-center gap-2"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  Switch Network
+                </button>
+              </div>
+            )}
 
             {/* Modal Content */}
             <div className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -685,13 +801,20 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               </div>
 
               {/* On-Chain Approval Status */}
-              <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4">
-                <h4 className="text-purple-400 font-medium mb-3 flex items-center gap-2">
+              <div className={`rounded-lg p-4 ${isWrongChain(selectedApp.chain_id) ? 'bg-gray-700/50 border border-gray-600' : 'bg-purple-500/10 border border-purple-500/30'}`}>
+                <h4 className={`font-medium mb-3 flex items-center gap-2 ${isWrongChain(selectedApp.chain_id) ? 'text-gray-400' : 'text-purple-400'}`}>
                   <Shield className="w-4 h-4" />
                   On-Chain Deployer Status
+                  <span className="text-xs text-gray-400 ml-2">
+                    ({getChainById(selectedApp.chain_id!)?.name || 'Unknown'})
+                  </span>
                 </h4>
 
-                {onChainStatus.checking ? (
+                {isWrongChain(selectedApp.chain_id) ? (
+                  <p className="text-gray-500 text-sm">
+                    Switch to {getChainById(selectedApp.chain_id!)?.name} to view and manage on-chain status
+                  </p>
+                ) : onChainStatus.checking ? (
                   <div className="flex items-center gap-2 text-gray-400">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Checking on-chain status...
@@ -745,7 +868,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                           </button>
                         )}
                         <button
-                          onClick={() => checkOnChainApproval(selectedApp.user_address)}
+                          onClick={() => checkOnChainApproval(selectedApp.user_address, selectedApp.chain_id)}
                           disabled={onChainStatus.checking}
                           className="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 disabled:opacity-50 text-white text-sm rounded-lg transition flex items-center gap-1"
                         >
@@ -755,7 +878,6 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                       </div>
                     )}
 
-                    {/* Warning if approved in DB but not on-chain */}
                     {selectedApp.status === 'approved' && onChainStatus.requiresApproval && !onChainStatus.isApproved && (
                       <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/30 rounded text-yellow-400 text-xs">
                         ⚠️ Application is approved in database but deployer is NOT approved on-chain.
@@ -853,9 +975,15 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                   {selectedApp.fee_tx_hash && (
                     <div className="md:col-span-2">
                       <span className="text-gray-400">Payment TX:</span>
-                      <span className="text-white ml-2 font-mono text-xs bg-gray-600 px-2 py-1 rounded">
+                      <a
+                        href={`${getExplorerUrl(selectedApp.chain_id)}/tx/${selectedApp.fee_tx_hash}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-400 ml-2 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                      >
                         {selectedApp.fee_tx_hash.slice(0, 20)}...
-                      </span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
                     </div>
                   )}
                   {selectedApp.fee_paid_at && (
@@ -977,30 +1105,63 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                   <h4 className="text-green-400 font-medium mb-3 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4" />
                     Deployment Information
+                    <ChainBadge chainId={selectedApp.chain_id} />
                   </h4>
                   <div className="space-y-2 text-sm">
                     {selectedApp.token_address && (
-                      <div>
+                      <div className="flex items-center gap-2">
                         <span className="text-gray-400">Token Address:</span>
-                        <span className="text-white ml-2 font-mono text-xs bg-gray-700 px-2 py-1 rounded">{selectedApp.token_address}</span>
+                        <a
+                          href={`${getExplorerUrl(selectedApp.chain_id)}/address/${selectedApp.token_address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                        >
+                          {selectedApp.token_address}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
                       </div>
                     )}
                     {selectedApp.nft_address && (
-                      <div>
+                      <div className="flex items-center gap-2">
                         <span className="text-gray-400">NFT Address:</span>
-                        <span className="text-white ml-2 font-mono text-xs bg-gray-700 px-2 py-1 rounded">{selectedApp.nft_address}</span>
+                        <a
+                          href={`${getExplorerUrl(selectedApp.chain_id)}/address/${selectedApp.nft_address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                        >
+                          {selectedApp.nft_address}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
                       </div>
                     )}
                     {selectedApp.escrow_address && (
-                      <div>
+                      <div className="flex items-center gap-2">
                         <span className="text-gray-400">Escrow Address:</span>
-                        <span className="text-white ml-2 font-mono text-xs bg-gray-700 px-2 py-1 rounded">{selectedApp.escrow_address}</span>
+                        <a
+                          href={`${getExplorerUrl(selectedApp.chain_id)}/address/${selectedApp.escrow_address}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                        >
+                          {selectedApp.escrow_address}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
                       </div>
                     )}
                     {selectedApp.deployment_tx_hash && (
-                      <div>
+                      <div className="flex items-center gap-2">
                         <span className="text-gray-400">TX Hash:</span>
-                        <span className="text-white ml-2 font-mono text-xs bg-gray-700 px-2 py-1 rounded">{selectedApp.deployment_tx_hash}</span>
+                        <a
+                          href={`${getExplorerUrl(selectedApp.chain_id)}/tx/${selectedApp.deployment_tx_hash}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                        >
+                          {selectedApp.deployment_tx_hash}
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
                       </div>
                     )}
                   </div>
@@ -1008,13 +1169,16 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               )}
 
               {/* Admin Actions */}
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-                <h4 className="text-blue-400 font-medium mb-4 flex items-center gap-2">
+              <div className={`rounded-lg p-4 ${isWrongChain(selectedApp.chain_id) ? 'bg-gray-700/50 border border-gray-600' : 'bg-blue-500/10 border border-blue-500/30'}`}>
+                <h4 className={`font-medium mb-4 flex items-center gap-2 ${isWrongChain(selectedApp.chain_id) ? 'text-gray-400' : 'text-blue-400'}`}>
                   <MessageSquare className="w-4 h-4" />
                   Admin Actions
+                  {isWrongChain(selectedApp.chain_id) && (
+                    <span className="text-xs text-yellow-400 ml-2">(Switch network to enable)</span>
+                  )}
                 </h4>
 
-                <div className="space-y-4">
+                <div className={`space-y-4 ${isWrongChain(selectedApp.chain_id) ? 'opacity-50 pointer-events-none' : ''}`}>
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* Status Update */}
                     <div>
@@ -1022,7 +1186,8 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                       <select
                         value={newStatus}
                         onChange={(e) => setNewStatus(e.target.value)}
-                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                        disabled={isWrongChain(selectedApp.chain_id)}
+                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <option value="">Select new status...</option>
                         <option value="pending" disabled={selectedApp.status === 'pending'}>
@@ -1052,8 +1217,9 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     <textarea
                       value={adminNotes}
                       onChange={(e) => setAdminNotes(e.target.value)}
+                      disabled={isWrongChain(selectedApp.chain_id)}
                       rows={3}
-                      className={`w-full px-4 py-2 bg-gray-700 border rounded-lg text-white focus:outline-none resize-none ${
+                      className={`w-full px-4 py-2 bg-gray-700 border rounded-lg text-white focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
                         newStatus === 'rejected' && !adminNotes.trim()
                           ? 'border-red-500 focus:border-red-400'
                           : 'border-gray-600 focus:border-blue-500'
@@ -1074,8 +1240,8 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
             {/* Modal Footer */}
             <div className="flex items-center justify-between gap-3 p-6 border-t border-gray-700 bg-gray-800">
-              {/* Left side - View Live button for completed projects */}
-              <div>
+              {/* Left side */}
+              <div className="flex items-center gap-3">
                 {selectedApp.status === 'completed' && (
                   <a
                     href={getProjectPageUrl(selectedApp.id)}
@@ -1086,6 +1252,15 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     <ExternalLink className="w-4 h-4" />
                     View Live Project
                   </a>
+                )}
+                {isWrongChain(selectedApp.chain_id) && (
+                  <button
+                    onClick={() => handleSwitchChain(selectedApp.chain_id!)}
+                    className="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg transition flex items-center gap-2"
+                  >
+                    <RefreshCw className="w-4 h-4" />
+                    Switch to {getChainById(selectedApp.chain_id!)?.name}
+                  </button>
                 )}
               </div>
 
@@ -1099,7 +1274,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                 </button>
                 <button
                   onClick={handleUpdateApplication}
-                  disabled={updating || !newStatus || newStatus === selectedApp.status || (newStatus === 'rejected' && !adminNotes.trim())}
+                  disabled={updating || isWrongChain(selectedApp.chain_id) || !newStatus || newStatus === selectedApp.status || (newStatus === 'rejected' && !adminNotes.trim())}
                   className="px-6 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition flex items-center gap-2"
                 >
                   {updating ? (

@@ -9,6 +9,7 @@ import { useChainConfig } from '@/hooks/useChainConfig';
 import { RWAProjectNFTABI, RWAEscrowVaultABI } from '@/config/abis';
 import { Project, AdminTab, KYCStats, TokenizationStats, TradeStats, DisputeStats } from './constants';
 import { convertIPFSUrl } from './helpers';
+import AdminDocs from './components/AdminDocs';
 import {
   LayoutDashboard,
   FolderKanban,
@@ -30,13 +31,12 @@ import {
   ArrowRightLeft,
   ExternalLink,
   Globe,
-  Book,  // Add this import
+  Book,
 } from 'lucide-react';
 
 // Import all tab components
 import { AdminOverview, PlatformContracts } from './components';
 import KYCManagement from './kyc/KYCManagement';
-import ProjectManagement from './projects/ProjectManagement';
 import OffChainPayments from './offchain/OffChainPayments';
 import FactorySettings from './settings/FactorySettings';
 import PlatformSettings from './settings/PlatformSettings';
@@ -45,6 +45,7 @@ import TradeManagement from './trade/TradeManagement';
 import DisputeManagement from './trade/DisputeManagement';
 import AdminUsersManagement from './users/AdminUsersManagement';
 import { SupportedChainId } from '@/config/chains';
+import CrowdfundingReviewPanel from './crowdfunding/CrowdfundingReviewPanel';
 
 // ============================================================================
 // CONSTANTS
@@ -54,7 +55,7 @@ const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 const tabs: { id: AdminTab; label: string; icon: React.ReactNode; isLink?: boolean; href?: string }[] = [
   { id: 'overview', label: 'Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
-  { id: 'projects', label: 'Launchpad', icon: <FolderKanban className="w-4 h-4" /> },
+  { id: 'crowdfunding', label: 'Crowdfunding', icon: <Coins className="w-4 h-4" /> },
   { id: 'tokenization', label: 'Tokenization', icon: <Coins className="w-4 h-4" /> },
   { id: 'trade', label: 'Trade', icon: <Ship className="w-4 h-4" /> },
   { id: 'disputes', label: 'Disputes', icon: <AlertTriangle className="w-4 h-4" /> },
@@ -64,7 +65,7 @@ const tabs: { id: AdminTab; label: string; icon: React.ReactNode; isLink?: boole
   { id: 'factory', label: 'Factory', icon: <Factory className="w-4 h-4" /> },
   { id: 'users', label: 'Users', icon: <Users className="w-4 h-4" /> },
   { id: 'settings', label: 'Settings', icon: <Settings className="w-4 h-4" /> },
-  { id: 'docs', label: 'Docs', icon: <Book className="w-4 h-4" />, isLink: true, href: '/admin/docs' }
+  { id: 'docs', label: 'Docs', icon: <Book className="w-4 h-4" /> },
 ];
 
 // Default stats to prevent undefined errors
@@ -233,6 +234,7 @@ export default function AdminClient() {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [checkingAdmin, setCheckingAdmin] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+  const [crowdfundingStats, setCrowdfundingStats] = useState({ total: 0, pendingReview: 0, approved: 0, rejected: 0 });
 
   // Check admin status
   const checkAdminStatus = useCallback(async () => {
@@ -268,7 +270,6 @@ export default function AdminClient() {
     checkAdminStatus();
   }, [checkAdminStatus]);
 
-  // Fetch projects
   const fetchProjects = useCallback(async () => {
     if (!publicClient || !projectNFTAddress) {
       setProjects([]);
@@ -283,13 +284,16 @@ export default function AdminClient() {
       }) as bigint;
 
       const projectPromises = [];
-      for (let i = 1; i <= Number(totalProjects); i++) {
+      for (let i = 0; i < Number(totalProjects); i++) {
         projectPromises.push(
           publicClient.readContract({
             address: projectNFTAddress,
             abi: RWAProjectNFTABI,
             functionName: 'getProject',
             args: [BigInt(i)],
+          }).catch((err) => {
+            console.warn(`Project ${i} not found on-chain, skipping`);
+            return null;
           })
         );
       }
@@ -297,11 +301,17 @@ export default function AdminClient() {
       const projectData = await Promise.all(projectPromises);
       const formattedProjects: Project[] = [];
 
-      for (const data of projectData) {
+      for (let index = 0; index < projectData.length; index++) {
+        const data = projectData[index];
+        if (!data) continue;
+        
         const project = data as any;
-        if (project.owner === ZERO_ADDRESS) continue;
+        if (!project.owner || project.owner === ZERO_ADDRESS) continue;
 
-        let name = `Project #${project.id}`;
+        // Use index as ID if project.id is undefined
+        const projectId = project.id !== undefined ? Number(project.id) : index;
+        
+        let name = `Project #${projectId}`;
         let refundsEnabled = false;
 
         // Fetch metadata
@@ -312,40 +322,41 @@ export default function AdminClient() {
             const metadata = await response.json();
             name = metadata.name || name;
           } catch (e) {
-            console.error('Error fetching metadata:', e);
+            // Metadata fetch failed, use default name
           }
         }
 
-        // Fetch escrow data
-        if (project.escrowVault && project.escrowVault !== ZERO_ADDRESS) {
+        // Fetch escrow data - only if escrowVault exists and projectId is valid
+        if (project.escrowVault && project.escrowVault !== ZERO_ADDRESS && !isNaN(projectId)) {
           try {
             const fundingData = await publicClient.readContract({
               address: project.escrowVault as Address,
               abi: RWAEscrowVaultABI,
               functionName: 'getProjectFunding',
-              args: [project.id],
+              args: [BigInt(projectId)],
             });
-            refundsEnabled = (fundingData as any).refundsEnabled;
+            refundsEnabled = (fundingData as any)?.refundsEnabled ?? false;
           } catch (e) {
-            console.error('Error fetching funding data:', e);
+            // Escrow fetch failed, use default
+            console.warn(`Escrow data fetch failed for project ${projectId}`);
           }
         }
 
         formattedProjects.push({
-          id: Number(project.id),
+          id: projectId,
           owner: project.owner,
-          metadataURI: project.metadataURI,
-          fundingGoal: project.fundingGoal,
-          totalRaised: project.totalRaised,
-          minInvestment: project.minInvestment,
-          maxInvestment: project.maxInvestment,
-          deadline: project.deadline,
-          status: project.status,
-          securityToken: project.securityToken,
-          escrowVault: project.escrowVault,
-          createdAt: project.createdAt,
-          completedAt: project.completedAt,
-          transferable: project.transferable,
+          metadataURI: project.metadataURI || '',
+          fundingGoal: project.fundingGoal || BigInt(0),
+          totalRaised: project.totalRaised || BigInt(0),
+          minInvestment: project.minInvestment || BigInt(0),
+          maxInvestment: project.maxInvestment || BigInt(0),
+          deadline: project.deadline || BigInt(0),
+          status: project.status ?? 0,
+          securityToken: project.securityToken || ZERO_ADDRESS,
+          escrowVault: project.escrowVault || ZERO_ADDRESS,
+          createdAt: project.createdAt || BigInt(0),
+          completedAt: project.completedAt || BigInt(0),
+          transferable: project.transferable ?? false,
           name,
           refundsEnabled,
         });
@@ -358,7 +369,7 @@ export default function AdminClient() {
     }
   }, [publicClient, projectNFTAddress]);
 
-  // Fetch KYC stats
+
   const fetchKYCStats = useCallback(async () => {
     if (!address) return;
 
@@ -384,7 +395,6 @@ export default function AdminClient() {
     }
   }, [address, chainId]);
 
-  // Fetch tokenization stats
   const fetchTokenizationStats = useCallback(async () => {
     if (!address) return;
 
@@ -411,7 +421,6 @@ export default function AdminClient() {
     }
   }, [address, chainId]);
 
-  // Fetch trade stats
   const fetchTradeStats = useCallback(async () => {
     if (!address) return;
 
@@ -441,7 +450,6 @@ export default function AdminClient() {
     }
   }, [address, chainId]);
 
-  // Fetch dispute stats
   const fetchDisputeStats = useCallback(async () => {
     if (!address) return;
 
@@ -471,6 +479,24 @@ export default function AdminClient() {
     }
   }, [address, chainId]);
 
+  const fetchCrowdfundingStats = useCallback(async () => {
+    try {
+      const response = await fetch('/api/crowdfunding/admin/list?status=all&limit=1000');
+      if (response.ok) {
+        const data = await response.json();
+        const applications = data.applications || [];
+        setCrowdfundingStats({
+          total: applications.length,
+          pendingReview: applications.filter((a: any) => a.status === 'pending_review').length,
+          approved: applications.filter((a: any) => a.status === 'approved').length,
+          rejected: applications.filter((a: any) => a.status === 'rejected').length,
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching crowdfunding stats:', error);
+    }
+  }, []);
+
   // Refresh all data
   const refreshAll = useCallback(async () => {
     setLoading(true);
@@ -480,10 +506,11 @@ export default function AdminClient() {
       fetchTokenizationStats(),
       fetchTradeStats(),
       fetchDisputeStats(),
+      fetchCrowdfundingStats(),
     ]);
     setLastRefresh(new Date());
     setLoading(false);
-  }, [fetchProjects, fetchKYCStats, fetchTokenizationStats, fetchTradeStats, fetchDisputeStats]);
+  }, [fetchProjects, fetchKYCStats, fetchTokenizationStats, fetchTradeStats, fetchDisputeStats, fetchCrowdfundingStats]);
 
   // Load data when admin is confirmed
   useEffect(() => {
@@ -602,8 +629,9 @@ export default function AdminClient() {
             explorerUrl={explorerUrl}
           />
         );
-      case 'projects':
-        return <ProjectManagement projects={projects} onRefresh={fetchProjects} />;
+      
+      case 'crowdfunding':
+        return <CrowdfundingReviewPanel onRefresh={refreshAll} />;
       case 'tokenization':
         return <TokenizationManagement onRefresh={fetchTokenizationStats} />;
       case 'trade':
@@ -622,8 +650,21 @@ export default function AdminClient() {
         return <AdminUsersManagement />;
       case 'settings':
         return <PlatformSettings />;
+      case 'docs':
+        return <AdminDocs />;
       default:
-        return null;
+        return (
+          <AdminOverview 
+            projects={projects} 
+            kycStats={kycStats} 
+            tokenizationStats={tokenizationStats}
+            tradeStats={tradeStats}
+            disputeStats={disputeStats}
+            setActiveTab={setActiveTab}
+            chainName={chainName}
+            explorerUrl={explorerUrl}
+          />
+        );
     }
   };
 
@@ -676,10 +717,10 @@ export default function AdminClient() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
           <QuickStatCard
-            label="Launchpad"
-            value={projects.length}
-            onClick={() => setActiveTab('projects')}
-            color="text-white"
+            label="Crowdfunding"
+            value={crowdfundingStats.pendingReview > 0 ? `${crowdfundingStats.pendingReview} pending` : crowdfundingStats.total}
+            onClick={() => setActiveTab('crowdfunding')}
+            color={crowdfundingStats.pendingReview > 0 ? "text-yellow-400" : "text-white"}
             hoverBorder="hover:border-blue-500/50"
           />
           <QuickStatCard
@@ -752,32 +793,36 @@ export default function AdminClient() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700">
+        <div className="flex flex-wrap gap-1.5 mb-6 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700">
           {tabs.map(tab => (
             tab.isLink && tab.href ? (
-              // Link tab (for Docs)
               <Link
                 key={tab.id}
                 href={tab.href}
-                className="px-4 py-2.5 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-2 bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700"
+                className="px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700"
               >
                 {tab.icon}
-                {tab.label}
+                <span className="hidden sm:inline">{tab.label}</span>
                 <ExternalLink className="w-3 h-3 opacity-50" />
               </Link>
             ) : (
-              // Regular tab button
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-4 py-2.5 rounded-lg font-medium whitespace-nowrap transition-all flex items-center gap-2 ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 relative ${
                   activeTab === tab.id
                     ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
                     : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700'
                 }`}
               >
                 {tab.icon}
-                {tab.label}
+                <span className="hidden sm:inline">{tab.label}</span>
+                {/* Notification badge for crowdfunding */}
+                {tab.id === 'crowdfunding' && crowdfundingStats.pendingReview > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {crowdfundingStats.pendingReview}
+                  </span>
+                )}
               </button>
             )
           ))}

@@ -325,14 +325,27 @@ function TeamMemberCard({ member }: { member: TeamMember }) {
     <div className="w-[320px] flex-shrink-0 bg-gray-800/50 rounded-2xl overflow-hidden border border-gray-700/50 hover:border-purple-500/50 transition-all group">
       {/* Image */}
       <div className="aspect-square bg-gradient-to-br from-purple-900/50 to-blue-900/50 relative overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center">
+        {member.image ? (
+          <img 
+            src={member.image} 
+            alt={member.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to initials if image fails to load
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.nextElementSibling?.classList.remove('hidden');
+            }}
+          />
+        ) : null}
+        {/* Fallback initials (shown if no image or image fails) */}
+        <div className={`absolute inset-0 flex items-center justify-center ${member.image ? 'hidden' : ''}`}>
           <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center text-6xl font-bold text-white">
             {member.name.split(' ').map(n => n[0]).join('')}
           </div>
         </div>
       </div>
       
-      {/* Info */}
+      {/* Info - keep the rest the same */}
       <div className="p-6">
         <h3 className="text-xl font-semibold text-white mb-1">{member.name}</h3>
         <p className="text-purple-400 text-sm font-medium mb-3">{member.role}</p>
@@ -389,8 +402,22 @@ function AdvisorCard({ advisor }: { advisor: Advisor }) {
   return (
     <div className="w-[280px] flex-shrink-0 bg-gray-800/30 rounded-xl p-6 border border-gray-700/50 hover:border-purple-500/50 transition-all text-center">
       {/* Avatar */}
-      <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 flex items-center justify-center text-2xl font-bold text-white">
-        {advisor.name.split(' ').map(n => n[0]).join('')}
+      <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 overflow-hidden">
+        {advisor.image ? (
+          <img 
+            src={advisor.image} 
+            alt={advisor.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+              e.currentTarget.nextElementSibling?.classList.remove('hidden');
+            }}
+          />
+        ) : null}
+        {/* Fallback initials */}
+        <div className={`w-full h-full flex items-center justify-center text-2xl font-bold text-white ${advisor.image ? 'hidden' : ''}`}>
+          {advisor.name.split(' ').map(n => n[0]).join('')}
+        </div>
       </div>
       <h3 className="text-lg font-semibold text-white">{advisor.name}</h3>
       <p className="text-purple-400 text-sm">{advisor.role}</p>
@@ -421,97 +448,85 @@ function PositionCard({ position }: { position: Position }) {
 export default function TeamPage() {
   const teamMembers: TeamMember[] = [
     {
-      name: 'Alex Thompson',
-      role: 'CEO & Co-Founder',
-      image: '/team/alex.jpg',
-      bio: '10+ years in fintech and blockchain. Previously led product at a major DeFi protocol. Passionate about democratizing finance.',
+      name: 'Christopher',
+      role: 'CEO/CTO & Co-Founder',
+      image: '/team/chris.jpg',
+      bio: '25+ years Top tier manager in fintech and blockchain. Previously lead developer for a major RWA customer. Multi-Field specialist and passionate about democratizing finance.',
       social: {
-        twitter: 'https://twitter.com',
-        linkedin: 'https://linkedin.com',
+        twitter: 'https://x.com/Chrissou78',
+        linkedin: 'https://www.linkedin.com/in/christopherfourquier/',
       }
     },
     {
-      name: 'Sarah Chen',
-      role: 'CTO & Co-Founder',
-      image: '/team/sarah.jpg',
-      bio: 'Former senior engineer at Ethereum Foundation. Expert in smart contract security and tokenization standards.',
-      social: {
-        twitter: 'https://twitter.com',
-        linkedin: 'https://linkedin.com',
-        github: 'https://github.com',
-      }
-    },
-    {
-      name: 'Michael Roberts',
+      name: 'Lester',
       role: 'Head of Legal & Compliance',
-      image: '/team/michael.jpg',
-      bio: 'Securities attorney with 15 years experience. Specialized in digital assets regulation and cross-border compliance.',
+      image: '/team/lester.jpg',
+      bio: '20 years experienced Attorney. Specialties: Corporate M&A, Commercial contracts, Renewable energy, Company law and Consumer protection',
       social: {
-        linkedin: 'https://linkedin.com',
+        linkedin: 'https://www.linkedin.com/in/lester-timothy-92793414/',
       }
     },
     {
-      name: 'Emily Zhang',
+      name: 'Dummy',
       role: 'Head of Product',
-      image: '/team/emily.jpg',
-      bio: 'Product leader with experience at major crypto exchanges. Focused on creating intuitive user experiences.',
+      image: '/team/Dummy.jpg',
+      bio: 'TBD',
       social: {
         twitter: 'https://twitter.com',
         linkedin: 'https://linkedin.com',
       }
     },
     {
-      name: 'David Kim',
+      name: 'Dummy',
       role: 'Lead Smart Contract Developer',
-      image: '/team/david.jpg',
-      bio: 'Solidity expert with contributions to multiple DeFi protocols. Security-first development approach.',
+      image: '/team/dummy.jpg',
+      bio: 'TBD',
       social: {
         github: 'https://github.com',
-        linkedin: 'https://linkedin.com',
+        linkedin: 'https://www.linkedin.com/',
       }
     },
     {
-      name: 'Lisa Martinez',
+      name: 'Frances Regina',
       role: 'Head of Business Development',
-      image: '/team/lisa.jpg',
-      bio: 'Built partnerships at leading real estate and investment platforms. Expert in asset tokenization deals.',
+      image: '/team/frances.jpg',
+      bio: '15+ years in African trade. Now building the financial infrastructure to unlock capital that was always there',
       social: {
-        twitter: 'https://twitter.com',
-        linkedin: 'https://linkedin.com',
+        linkedin: 'https://www.linkedin.com/in/francesregina/',
       }
     },
   ];
 
   const advisors: Advisor[] = [
     {
-      name: 'Dr. James Wilson',
+      name: 'Dummy',
       role: 'Blockchain Advisor',
-      company: 'Stanford University',
-      image: '/team/advisor1.jpg',
+      company: 'TBD',
+      image: '/team/Dummy.jpg',
     },
     {
-      name: 'Amanda Foster',
+      name: 'Dummy',
       role: 'Legal Advisor',
-      company: 'Foster & Associates',
-      image: '/team/advisor2.jpg',
+      company: 'TBD',
+      image: '/team/Dummy.jpg',
     },
     {
-      name: 'Robert Chang',
+      name: 'Dummy',
       role: 'Investment Advisor',
-      company: 'Sequoia Capital',
-      image: '/team/advisor3.jpg',
+      company: 'TBD',
+      image: '/team/Dummy.jpg',
     },
     {
-      name: 'Maria Santos',
+      name: 'Dummy',
       role: 'Real Estate Advisor',
-      company: 'CBRE',
-      image: '/team/advisor4.jpg',
+      company: 'TBD',
+      image: '/team/Dummy.jpg',
     },
     {
-      name: 'Thomas Weber',
+      name: 'Dummy',
       role: 'DeFi Advisor',
-      company: 'Aave Labs',
-      image: '/team/advisor5.jpg',
+      company: 'TBD',
+      image: '/team/Dummy.jpg',
     },
   ];
 
@@ -519,11 +534,9 @@ export default function TeamPage() {
     { title: 'Senior Frontend Developer', type: 'Engineering', location: 'Remote' },
     { title: 'Smart Contract Auditor', type: 'Security', location: 'Remote' },
     { title: 'Community Manager', type: 'Marketing', location: 'Remote' },
-    { title: 'Business Development Manager', type: 'Business', location: 'Remote / NYC' },
+    { title: 'Business Development Manager', type: 'Business', location: 'Remote' },
     { title: 'Product Designer', type: 'Design', location: 'Remote' },
     { title: 'Backend Engineer', type: 'Engineering', location: 'Remote' },
-    { title: 'Legal Counsel', type: 'Legal', location: 'NYC / London' },
-    { title: 'Data Analyst', type: 'Analytics', location: 'Remote' },
   ];
 
   return (

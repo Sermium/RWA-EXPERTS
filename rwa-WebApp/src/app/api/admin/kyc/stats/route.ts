@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { isAdmin } from "@/lib/admin";
 import { createPublicClient, http, formatEther } from "viem";
-import { getChainById } from "@/config/chains";
+import { getChainById, SupportedChainId } from "@/config/chains";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -76,8 +76,16 @@ export async function GET(request: NextRequest) {
     // Fetch total fees from contract
     let totalFeesCollected = "0";
     try {
+      
+      
       const chainIdHeader = request.headers.get('x-chain-id');
-      const chainId = chainIdHeader ? parseInt(chainIdHeader) : parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "137");
+      if (!chainIdHeader) {
+        return NextResponse.json(
+          { error: "Missing x-chain-id header" },
+          { status: 400 }
+        );
+      }
+      const chainId = parseInt(chainIdHeader) as SupportedChainId;
       const chainConfig = getChainById(chainId);
 
       if (chainConfig?.contracts?.KYCVerifier) {

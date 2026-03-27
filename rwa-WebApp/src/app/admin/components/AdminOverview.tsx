@@ -1,6 +1,7 @@
 // src/app/admin/components/AdminOverview.tsx
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Project, AdminTab, KYCStats, TokenizationStats, TradeStats, DisputeStats, STATUS_COLORS, STATUS_NAMES } from '../constants';
 import { formatUSD } from '../helpers';
 import {
@@ -21,8 +22,29 @@ import {
   Activity,
   Globe,
   Users,
-  Banknote
+  Banknote,
+  Receipt,
+  PiggyBank,
+  ArrowUpRight,
+  ArrowDownRight,
 } from 'lucide-react';
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+interface FeeStats {
+  total_collected: number;
+  crowdfunding_fees: number;
+  tokenization_fees: number;
+  trading_fees: number;
+  dividend_fees: number;
+  kyc_fees: number;
+  withdrawal_fees: number;
+  this_month: number;
+  last_month: number;
+  this_year: number;
+}
 
 interface AdminOverviewProps {
   projects: Project[];
@@ -31,32 +53,101 @@ interface AdminOverviewProps {
   tradeStats?: TradeStats;
   disputeStats?: DisputeStats;
   setActiveTab: (tab: AdminTab) => void;
-  chainName: string;    
-  explorerUrl: string;  
+  chainName: string;
+  explorerUrl: string;
 }
 
-export default function AdminOverview({ 
-  projects, 
-  kycStats, 
-  tokenizationStats, 
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
+export default function AdminOverview({
+  projects,
+  kycStats,
+  tokenizationStats,
   tradeStats,
   disputeStats,
-  setActiveTab 
+  setActiveTab,
 }: AdminOverviewProps) {
+  const [feeStats, setFeeStats] = useState<FeeStats | null>(null);
+  const [loadingFees, setLoadingFees] = useState(true);
+
+  // Fetch fee stats
+  useEffect(() => {
+    const fetchFeeStats = async () => {
+      try {
+        const response = await fetch('/api/admin/settings/fee/stats');
+        const data = await response.json();
+        if (data.success && data.stats) {
+          setFeeStats(data.stats);
+        }
+      } catch (error) {
+        console.error('Failed to fetch fee stats:', error);
+      } finally {
+        setLoadingFees(false);
+      }
+    };
+
+    fetchFeeStats();
+  }, []);
+  
+  useEffect(() => {
+    const fetchFeeStats = async () => {
+      try {
+        const response = await fetch('/api/admin/settings/fee/stats');
+        const data = await response.json();
+        
+        // API returns stats directly at root level
+        if (data.total_collected !== undefined) {
+          setFeeStats(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch fee stats:', error);
+      } finally {
+        setLoadingFees(false);
+      }
+    };
+
+    fetchFeeStats();
+  }, []);
+
+  // Safe defaults
   const safeProjects = projects || [];
   const safeKycStats = kycStats || { total: 0, pending: 0, approved: 0, rejected: 0 };
-  
-  const activeProjects = safeProjects.filter(p => p.status === 2).length;
-  const fundedProjects = safeProjects.filter(p => p.status >= 3 && p.status <= 5).length;
+
+  // Calculate project stats
+  const activeProjects = safeProjects.filter((p) => p.status === 2).length;
+  const fundedProjects = safeProjects.filter((p) => p.status >= 3 && p.status <= 5).length;
   const totalRaised = safeProjects.reduce((sum, p) => sum + (p.totalRaised || 0n), 0n);
-  // Calculate urgent items count
-  const urgentItems = (safeKycStats.pending || 0) + 
-    (tokenizationStats?.pending || 0) + 
-    (disputeStats?.pending || 0) + 
+
+  // Calculate urgent items
+  const urgentItems =
+    (safeKycStats.pending || 0) +
+    (tokenizationStats?.pending || 0) +
+    (disputeStats?.pending || 0) +
     (disputeStats?.inArbitration || 0);
+
+  // Calculate month-over-month change
+  const monthChange =
+    feeStats && feeStats.last_month > 0
+      ? (((feeStats.this_month - feeStats.last_month) / feeStats.last_month) * 100).toFixed(1)
+      : '0';
+  const isPositiveChange = parseFloat(monthChange) >= 0;
+
+  // Format currency helper
+  const formatCurrency = (amount: number): string => {
+    if (amount >= 1_000_000) {
+      return `$${(amount / 1_000_000).toFixed(2)}M`;
+    }
+    if (amount >= 1_000) {
+      return `$${(amount / 1_000).toFixed(1)}K`;
+    }
+    return `$${amount.toFixed(2)}`;
+  };
 
   return (
     <div className="space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white">Dashboard Overview</h2>
         {urgentItems > 0 && (
@@ -64,6 +155,127 @@ export default function AdminOverview({
             <ShieldAlert className="w-4 h-4 text-red-400" />
             <span className="text-red-400 text-sm font-medium">{urgentItems} items need attention</span>
           </div>
+        )}
+      </div>
+
+      {/* Fee Revenue Section */}
+      <div className="bg-gradient-to-r from-green-500/10 via-emerald-500/10 to-teal-500/10 border border-green-500/30 rounded-xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-500/20 rounded-lg">
+              <PiggyBank className="w-6 h-6 text-green-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-white">Platform Revenue</h3>
+              <p className="text-gray-400 text-sm">Fees collected from all services</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setActiveTab('settings')}
+            className="text-green-400 hover:text-green-300 text-sm flex items-center gap-1"
+          >
+            Manage Fees <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {loadingFees ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full" />
+          </div>
+        ) : (
+          <>
+            {/* Main Revenue Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <div className="bg-gray-800/50 rounded-xl p-4">
+                <p className="text-gray-400 text-sm">Total Collected</p>
+                <p className="text-3xl font-bold text-green-400">
+                  {formatCurrency(feeStats?.total_collected || 0)}
+                </p>
+                <p className="text-gray-500 text-xs mt-1">All time</p>
+              </div>
+
+              <div className="bg-gray-800/50 rounded-xl p-4">
+                <p className="text-gray-400 text-sm">This Month</p>
+                <p className="text-3xl font-bold text-white">
+                  {formatCurrency(feeStats?.this_month || 0)}
+                </p>
+                <div
+                  className={`flex items-center gap-1 mt-1 ${
+                    isPositiveChange ? 'text-green-400' : 'text-red-400'
+                  }`}
+                >
+                  {isPositiveChange ? (
+                    <ArrowUpRight className="w-3 h-3" />
+                  ) : (
+                    <ArrowDownRight className="w-3 h-3" />
+                  )}
+                  <span className="text-xs">{monthChange}% vs last month</span>
+                </div>
+              </div>
+
+              <div className="bg-gray-800/50 rounded-xl p-4">
+                <p className="text-gray-400 text-sm">Last Month</p>
+                <p className="text-3xl font-bold text-gray-300">
+                  {formatCurrency(feeStats?.last_month || 0)}
+                </p>
+                <p className="text-gray-500 text-xs mt-1">Previous period</p>
+              </div>
+
+              <div className="bg-gray-800/50 rounded-xl p-4">
+                <p className="text-gray-400 text-sm">This Year</p>
+                <p className="text-3xl font-bold text-emerald-400">
+                  {formatCurrency(feeStats?.this_year || 0)}
+                </p>
+                <p className="text-gray-500 text-xs mt-1">YTD revenue</p>
+              </div>
+            </div>
+
+            {/* Fee Breakdown */}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+              <div className="bg-gray-800/30 rounded-lg p-3 text-center">
+                <Receipt className="w-5 h-5 text-blue-400 mx-auto mb-1" />
+                <p className="text-white font-semibold">
+                  {formatCurrency(feeStats?.crowdfunding_fees || 0)}
+                </p>
+                <p className="text-gray-500 text-xs">Crowdfunding</p>
+              </div>
+              <div className="bg-gray-800/30 rounded-lg p-3 text-center">
+                <Coins className="w-5 h-5 text-purple-400 mx-auto mb-1" />
+                <p className="text-white font-semibold">
+                  {formatCurrency(feeStats?.tokenization_fees || 0)}
+                </p>
+                <p className="text-gray-500 text-xs">Tokenization</p>
+              </div>
+              <div className="bg-gray-800/30 rounded-lg p-3 text-center">
+                <Handshake className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
+                <p className="text-white font-semibold">
+                  {formatCurrency(feeStats?.trading_fees || 0)}
+                </p>
+                <p className="text-gray-500 text-xs">Trading</p>
+              </div>
+              <div className="bg-gray-800/30 rounded-lg p-3 text-center">
+                <Banknote className="w-5 h-5 text-yellow-400 mx-auto mb-1" />
+                <p className="text-white font-semibold">
+                  {formatCurrency(feeStats?.dividend_fees || 0)}
+                </p>
+                <p className="text-gray-500 text-xs">Dividends</p>
+              </div>
+              <div className="bg-gray-800/30 rounded-lg p-3 text-center">
+                <UserCheck className="w-5 h-5 text-orange-400 mx-auto mb-1" />
+                <p className="text-white font-semibold">
+                  {formatCurrency(feeStats?.kyc_fees || 0)}
+                </p>
+                <p className="text-gray-500 text-xs">KYC</p>
+              </div>
+              <div className="bg-gray-800/30 rounded-lg p-3 text-center">
+                <DollarSign className="w-5 h-5 text-red-400 mx-auto mb-1" />
+                <p className="text-white font-semibold">
+                  {formatCurrency(feeStats?.withdrawal_fees || 0)}
+                </p>
+                <p className="text-gray-500 text-xs">Withdrawals</p>
+              </div>
+            </div>
+          </>
         )}
       </div>
 
@@ -79,7 +291,7 @@ export default function AdminOverview({
             </div>
           </div>
           <p className="text-gray-400 text-sm">Total Projects</p>
-          <p className="text-3xl font-bold text-white">{projects.length}</p>
+          <p className="text-3xl font-bold text-white">{safeProjects.length}</p>
           <p className="text-sm text-green-400 mt-1">{activeProjects} active</p>
         </div>
 
@@ -113,7 +325,9 @@ export default function AdminOverview({
             )}
           </div>
           <p className="text-gray-400 text-sm">KYC Applications</p>
-          <p className="text-3xl font-bold text-white">{safeKycStats.total || (safeKycStats.pending + safeKycStats.approved + safeKycStats.rejected)}</p>
+          <p className="text-3xl font-bold text-white">
+            {safeKycStats.total || safeKycStats.pending + safeKycStats.approved + safeKycStats.rejected}
+          </p>
           <p className="text-sm text-yellow-400 mt-1">{safeKycStats.pending} awaiting review</p>
         </div>
 
@@ -186,7 +400,7 @@ export default function AdminOverview({
               <div className="p-2 bg-orange-500/20 rounded-lg">
                 <Scale className="w-5 h-5 text-orange-400" />
               </div>
-              {disputeStats && (disputeStats.pending + disputeStats.inArbitration) > 0 && (
+              {disputeStats && disputeStats.pending + disputeStats.inArbitration > 0 && (
                 <span className="px-2 py-0.5 bg-orange-500/20 text-orange-400 text-xs rounded-full animate-pulse">
                   {disputeStats.pending + disputeStats.inArbitration} active
                 </span>
@@ -216,10 +430,12 @@ export default function AdminOverview({
       )}
 
       {/* Quick Action Alerts */}
-      {(kycStats.pending > 0 || (tokenizationStats && tokenizationStats.pending > 0) || 
-        (disputeStats && disputeStats.pending > 0) || (disputeStats && disputeStats.inArbitration > 0)) && (
+      {(safeKycStats.pending > 0 ||
+        (tokenizationStats && tokenizationStats.pending > 0) ||
+        (disputeStats && disputeStats.pending > 0) ||
+        (disputeStats && disputeStats.inArbitration > 0)) && (
         <div className="grid md:grid-cols-2 gap-4">
-          {kycStats.pending > 0 && (
+          {safeKycStats.pending > 0 && (
             <button
               onClick={() => setActiveTab('kyc')}
               className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 text-left hover:bg-yellow-500/20 transition group flex items-center justify-between"
@@ -229,7 +445,7 @@ export default function AdminOverview({
                   <Clock className="w-5 h-5 text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-yellow-400 font-semibold">{kycStats.pending} Pending KYC Reviews</p>
+                  <p className="text-yellow-400 font-semibold">{safeKycStats.pending} Pending KYC Reviews</p>
                   <p className="text-gray-400 text-sm">Applications awaiting your approval</p>
                 </div>
               </div>
@@ -247,7 +463,9 @@ export default function AdminOverview({
                   <Coins className="w-5 h-5 text-purple-400" />
                 </div>
                 <div>
-                  <p className="text-purple-400 font-semibold">{tokenizationStats.pending} Pending Tokenization</p>
+                  <p className="text-purple-400 font-semibold">
+                    {tokenizationStats.pending} Pending Tokenization
+                  </p>
                   <p className="text-gray-400 text-sm">Asset tokenization requests to review</p>
                 </div>
               </div>
@@ -265,7 +483,9 @@ export default function AdminOverview({
                   <Scale className="w-5 h-5 text-orange-400" />
                 </div>
                 <div>
-                  <p className="text-orange-400 font-semibold">{disputeStats.pending} Disputes Awaiting Review</p>
+                  <p className="text-orange-400 font-semibold">
+                    {disputeStats.pending} Disputes Awaiting Review
+                  </p>
                   <p className="text-gray-400 text-sm">New disputes requiring attention</p>
                 </div>
               </div>
@@ -283,8 +503,12 @@ export default function AdminOverview({
                   <AlertTriangle className="w-5 h-5 text-red-400" />
                 </div>
                 <div>
-                  <p className="text-red-400 font-semibold">{disputeStats.inArbitration} Active Arbitrations</p>
-                  <p className="text-gray-400 text-sm">${(disputeStats.valueAtRisk / 1000).toFixed(0)}K value at risk</p>
+                  <p className="text-red-400 font-semibold">
+                    {disputeStats.inArbitration} Active Arbitrations
+                  </p>
+                  <p className="text-gray-400 text-sm">
+                    ${(disputeStats.valueAtRisk / 1000).toFixed(0)}K value at risk
+                  </p>
                 </div>
               </div>
               <ArrowRight className="w-5 h-5 text-red-400 group-hover:translate-x-1 transition-transform" />
@@ -393,15 +617,15 @@ export default function AdminOverview({
 
         <div
           className="bg-gray-800 border border-gray-700 rounded-xl p-6 cursor-pointer hover:border-gray-600 transition-colors group"
-          onClick={() => setActiveTab('identity')}
+          onClick={() => setActiveTab('users')}
         >
           <div className="flex items-center gap-3 mb-3">
             <div className="p-2 bg-indigo-500/20 rounded-lg">
               <Users className="w-5 h-5 text-indigo-400" />
             </div>
-            <h3 className="text-lg font-semibold text-white">Identity</h3>
+            <h3 className="text-lg font-semibold text-white">Users</h3>
           </div>
-          <p className="text-gray-400 text-sm">Manage user identities and verification status.</p>
+          <p className="text-gray-400 text-sm">Manage user accounts and admin permissions.</p>
           <p className="text-indigo-400 text-sm mt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
             Manage <ArrowRight className="w-4 h-4" />
           </p>
@@ -437,7 +661,7 @@ export default function AdminOverview({
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          
+
           {safeProjects.length === 0 ? (
             <div className="text-center py-8">
               <FolderKanban className="w-10 h-10 text-gray-600 mx-auto mb-2" />
@@ -445,13 +669,22 @@ export default function AdminOverview({
             </div>
           ) : (
             <div className="space-y-3">
-              {safeProjects.slice(0, 4).map(project => (
-                <div key={project.id} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition">
+              {safeProjects.slice(0, 4).map((project) => (
+                <div
+                  key={project.id}
+                  className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition"
+                >
                   <div className="flex-1 min-w-0">
-                    <p className="text-white font-medium truncate">{project.name || `Project #${project.id}`}</p>
+                    <p className="text-white font-medium truncate">
+                      {project.name || `Project #${project.id}`}
+                    </p>
                     <p className="text-gray-400 text-sm">{formatUSD(project.totalRaised)} raised</p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${STATUS_COLORS[project.status]}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium text-white ${
+                      STATUS_COLORS[project.status]
+                    }`}
+                  >
                     {STATUS_NAMES[project.status]}
                   </span>
                 </div>
@@ -471,7 +704,7 @@ export default function AdminOverview({
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          
+
           {!tradeStats || tradeStats.totalDeals === 0 ? (
             <div className="text-center py-8">
               <Handshake className="w-10 h-10 text-gray-600 mx-auto mb-2" />
@@ -497,7 +730,7 @@ export default function AdminOverview({
                   <p className="text-gray-400 text-sm">Total</p>
                 </div>
               </div>
-              
+
               <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-400 text-sm">In Escrow</span>
@@ -521,7 +754,7 @@ export default function AdminOverview({
               View All <ArrowRight className="w-4 h-4" />
             </button>
           </div>
-          
+
           {!tokenizationStats || tokenizationStats.total === 0 ? (
             <div className="text-center py-8">
               <Coins className="w-10 h-10 text-gray-600 mx-auto mb-2" />
@@ -547,7 +780,7 @@ export default function AdminOverview({
                   <p className="text-gray-400 text-sm">Total</p>
                 </div>
               </div>
-              
+
               {tokenizationStats.completed > 0 && (
                 <div className="flex items-center gap-2 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
                   <CheckCircle2 className="w-5 h-5 text-green-400" />
@@ -590,11 +823,11 @@ export default function AdminOverview({
             <p className="text-green-400 text-sm">Secured</p>
           </div>
           <div className="text-center">
-            <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-2 ${
-              disputeStats && disputeStats.inArbitration > 2 
-                ? 'bg-yellow-500/20' 
-                : 'bg-green-500/20'
-            }`}>
+            <div
+              className={`inline-flex items-center justify-center w-12 h-12 rounded-full mb-2 ${
+                disputeStats && disputeStats.inArbitration > 2 ? 'bg-yellow-500/20' : 'bg-green-500/20'
+              }`}
+            >
               {disputeStats && disputeStats.inArbitration > 2 ? (
                 <AlertTriangle className="w-6 h-6 text-yellow-400" />
               ) : (
@@ -602,14 +835,12 @@ export default function AdminOverview({
               )}
             </div>
             <p className="text-white font-semibold">Disputes</p>
-            <p className={`text-sm ${
-              disputeStats && disputeStats.inArbitration > 2 
-                ? 'text-yellow-400' 
-                : 'text-green-400'
-            }`}>
-              {disputeStats && disputeStats.inArbitration > 2 
-                ? 'Needs Attention' 
-                : 'Under Control'}
+            <p
+              className={`text-sm ${
+                disputeStats && disputeStats.inArbitration > 2 ? 'text-yellow-400' : 'text-green-400'
+              }`}
+            >
+              {disputeStats && disputeStats.inArbitration > 2 ? 'Needs Attention' : 'Under Control'}
             </p>
           </div>
         </div>

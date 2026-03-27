@@ -8,77 +8,93 @@ const supabase = createClient(
 );
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const wallet = searchParams.get('wallet');
-
-  if (!wallet) {
-    return NextResponse.json({ error: 'Wallet required' }, { status: 400 });
-  }
-
   try {
-    const walletLower = wallet.toLowerCase();
+    const { searchParams } = new URL(request.url);
+    const wallet = searchParams.get('wallet');
 
-    // Fetch from tokenization_applications using correct column: user_address
+    if (!wallet) {
+      return NextResponse.json({ error: 'Wallet address required' }, { status: 400 });
+    }
+
+    // Fetch user's tokenization applications
     const { data: applications, error } = await supabase
       .from('tokenization_applications')
       .select('*')
-      .ilike('user_address', walletLower)
+      .eq('user_address', wallet.toLowerCase())
       .order('created_at', { ascending: false });
 
     if (error) {
-      console.error('[API] Supabase error:', error);
-      throw error;
+      console.error('[Tokenization User API] Error:', error);
+      return NextResponse.json({ error: 'Failed to fetch projects' }, { status: 500 });
     }
 
-    console.log('[API] Found applications:', applications?.length || 0);
+    // Get all project IDs for deployed projects
+    const deployedProjectIds = applications
+      ?.filter(app => ['deployed', 'completed', 'live'].includes(app.status))
+      .map(app => app.id) || [];
 
-    // Also fetch from projects table for deployed projects
-    const { data: deployedProjects } = await supabase
-      .from('projects')
-      .select('*')
-      .ilike('owner', walletLower);
+    // Fetch listing status for all deployed projects
+    let listingsMap: Record<string, { isListed: boolean; listingId: string; tradingPair?: string; status?: string }> = {};
+    
+    if (deployedProjectIds.length > 0) {
+      const { data: listings, error: listingsError } = await supabase
+        .from('exchange_listings')
+        .select('id, project_id, token_address, status, trading_pair')
+        .in('project_id', deployedProjectIds);
 
-    // Transform to frontend format
+      if (!listingsError && listings) {
+        listings.forEach(listing => {
+          if (listing.project_id) {
+            listingsMap[listing.project_id] = {
+              isListed: listing.status === 'active' || listing.status === 'listed',
+              listingId: listing.id,
+              tradingPair: listing.trading_pair,
+              status: listing.status,
+            };
+          }
+        });
+      }
+    }
+
+    // Map to frontend format
     const projects = applications?.map(app => {
-      const deployed = deployedProjects?.find(p => p.application_id === app.id);
-      const createdAt = new Date(app.created_at);
-      const now = new Date();
-      const age = deployed ? Math.floor((now.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24)) : 0;
-      
+      const listingInfo = listingsMap[app.id];
+
       return {
         id: app.id,
-        name: app.asset_name || app.token_name || 'Unnamed Project',
-        type: app.token_type || 'tokenize',
+        name: app.asset_name,
+        type: 'tokenize',
         status: app.status,
-        submittedAt: createdAt.toLocaleDateString(),
+        tokenName: app.token_name,
         tokenSymbol: app.token_symbol,
-        category: app.asset_type || 'other',
-        totalRaised: deployed?.total_raised || 0,
-        targetAmount: parseFloat(app.estimated_value) || parseFloat(app.fundraising_goal) || 0,
-        totalSupply: parseFloat(app.token_supply) || parseFloat(app.desired_token_supply) || 0,
-        tokensSold: deployed?.tokens_sold || 0,
-        currentValue: deployed?.current_value || parseFloat(app.estimated_value) || 0,
-        roi: deployed && parseFloat(app.estimated_value) > 0 
-          ? ((deployed.current_value - parseFloat(app.estimated_value)) / parseFloat(app.estimated_value) * 100) 
-          : 0,
-        age,
-        performanceScore: deployed?.performance_score || 50,
-        dividendsDistributed: deployed?.dividends_distributed || 0,
-        escrowBalance: deployed?.escrow_balance || 0,
-        // Additional fields from your schema
-        rejectionReason: app.rejection_reason,
         tokenAddress: app.token_address,
         escrowAddress: app.escrow_address,
         nftAddress: app.nft_address,
-        logoUrl: app.logo_url || app.logo_ipfs,
+        category: app.asset_type,
+        targetAmount: app.fundraising_goal || app.estimated_value,
+        totalSupply: app.token_supply || app.desired_token_supply,
+        tokenPrice: app.token_price_estimate,
+        chainId: app.chain_id,
+        createdAt: app.created_at,
+        deployedAt: app.deployed_at,
+        logoUrl: app.logo_url,
         website: app.website,
         description: app.asset_description,
+        location: app.asset_location,
+        country: app.asset_country,
+        rejectionReason: app.rejection_reason,
+        metadataUri: app.metadata_uri,
+        // Exchange listing status
+        isListed: listingInfo?.isListed || false,
+        listingId: listingInfo?.listingId,
+        tradingPair: listingInfo?.tradingPair,
+        listingStatus: listingInfo?.status,
       };
     }) || [];
 
     return NextResponse.json({ projects });
   } catch (error) {
-    console.error('Error fetching user projects:', error);
-    return NextResponse.json({ projects: [], error: 'Failed to fetch projects' });
+    console.error('[Tokenization User API] Error:', error);
+    return NextResponse.json({ error: 'Server error' }, { status: 500 });
   }
 }

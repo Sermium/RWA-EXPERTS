@@ -10,7 +10,7 @@
   "kycVerifier": "0x24F3c59582C8cf5772DB66C38e6375A0C305771B",
   "kycVerifierImpl": "0x650396Dfaa1b4c02297B8E74dd41eFa5B32B893A",
   "securityTokenImpl": "0x4Af0b8DFc46A2c48A7F74eBc06b985e440C0Ab28",
-  "escrowVaultImpl": "0x5F5c1822b69269b743241966dD772eeeD0574e05",
+  "escrowVaultImpl": "0x9aCDF25DAD78FEe282Bfc14B561642E1886ED20a",
   "complianceImpl": "0x2A9Fed3Db675b958E0195D38234195636e0f8a20",
   "projectNFTImpl": "0xb4D067E8177650f79215Cb62d1B550E2EaD9B6E1",
   "offChainManagerImpl": "0x2993fBcC23f6D856a55Ea1cD91a41FCD924AA722",
@@ -160,5 +160,11 @@
   "tokens": {
     "USDC": "0x81C7eb2f9FC7a11beC348Ba8846faC9A6FCC4786",
     "USDT": "0x224e403397F3aec9a0D2875445dC32dB00ea31C3"
-  }
+  },
+  "platformWallets": {
+    "feeReceiver": "0xdD4104A780142EfB9566659f26d3317714a81510",
+    "liquidityWallet": "0xe7c533355a7Fa04baf083C726a442db7Dc0971b1",
+    "treasuryWallet": "0x2Db96c4F203fBc13c98bBa428ba9E09B48543b0A"
+  },
+  "platformFeeManager": "0xeC644de34d1A641f2E1A67726445C1688ABd44fd"
 }

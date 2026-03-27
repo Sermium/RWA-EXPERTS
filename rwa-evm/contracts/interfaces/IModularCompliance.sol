@@ -27,4 +27,8 @@ interface IModularCompliance {
 
     // Module interaction
     function callModuleFunction(bytes calldata _callData, address _module) external;
+
+    // Ownership (from OwnableUpgradeable)
+    function owner() external view returns (address);
+    function transferOwnership(address newOwner) external;
 }

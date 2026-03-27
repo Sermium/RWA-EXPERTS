@@ -2,4 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export * as rwaTokenizationFactorySol from "./RWATokenizationFactory.sol";
+export { KYCLib__factory } from "./KYCLib__factory";
 export { RWATradeEscrow__factory } from "./RWATradeEscrow__factory";

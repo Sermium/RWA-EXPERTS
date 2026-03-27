@@ -18,6 +18,8 @@ export async function PUT(
 ) {
   try {
     const walletAddress = request.headers.get('x-wallet-address');
+    const chainIdHeader = request.headers.get('x-chain-id');
+    
     if (!walletAddress) {
       return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
     }
@@ -46,6 +48,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Only rejected applications can be resubmitted' }, { status: 400 });
     }
 
+    // Get chain ID - preserve existing, or use new if provided
+    const chainId = body.chainId || (chainIdHeader ? parseInt(chainIdHeader) : null) || existing.chain_id;
+
     // Calculate fee difference
     const originalFee = existing.total_fee_paid || existing.original_fee_paid || existing.fee_amount || FEES.base;
     const newFee = body.feeAmount || FEES.base;
@@ -65,6 +70,7 @@ export async function PUT(
         website: body.website || existing.website,
         useCase: body.useCase || existing.use_case,
         originalAssetType: body.assetType || existing.asset_type,
+        chainId: chainId, // Include chainId in documents for reference
       };
     }
 
@@ -98,6 +104,9 @@ export async function PUT(
         original_fee_paid: originalFee,
         additional_fee_required: feeDifference > 0 ? feeDifference : null,
         
+        // Chain ID - preserve existing or update if changed
+        chain_id: chainId,
+        
         // Documents
         documents: documentsData,
         
@@ -122,6 +131,7 @@ export async function PUT(
     return NextResponse.json({ 
       success: true, 
       application: data,
+      chainId: chainId,
       requiresPayment: feeDifference > 0,
       feeDifference
     });

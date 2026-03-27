@@ -33,8 +33,44 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Map to consistent format
+    const submissions = (data || []).map(sub => ({
+      id: sub.id,
+      wallet_address: sub.wallet_address,
+      email: sub.email,
+      full_name: sub.full_name,
+      tier: sub.tier || sub.requested_level,
+      current_level: sub.current_level,
+      requested_level: sub.requested_level,
+      status: sub.status,
+      is_upgrade: sub.is_upgrade,
+      // Documents
+      selfie_url: sub.selfie_url,
+      id_document_front_url: sub.id_document_front_url,
+      id_document_back_url: sub.id_document_back_url,
+      address_proof_url: sub.address_proof_url,
+      accredited_proof_url: sub.accredited_proof_url,
+      // Verification
+      document_type: sub.document_type,
+      document_number: sub.document_number,
+      date_of_birth: sub.date_of_birth,
+      country_code: sub.country_code,
+      liveness_passed: sub.liveness_passed,
+      liveness_score: sub.liveness_score,
+      id_validation_passed: sub.id_validation_passed,
+      id_validation_score: sub.id_validation_score,
+      id_requires_manual_review: sub.id_requires_manual_review,
+      // Review
+      reviewed_by: sub.reviewed_by,
+      reviewed_at: sub.reviewed_at,
+      rejection_reason: sub.rejection_reason,
+      // Timestamps
+      created_at: sub.created_at,
+      updated_at: sub.updated_at,
+    }));
+
     return NextResponse.json({
-      submissions: data || [],
+      submissions,
       pagination: {
         page,
         limit,

@@ -9,7 +9,7 @@ const supabase = createClient(
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const adminAddress = request.headers.get("x-wallet-address");
   
@@ -18,7 +18,7 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const documentId = params.id;
+  const { id: documentId } = await params;
 
   try {
     // Fetch document record
@@ -29,12 +29,20 @@ export async function GET(
       .single();
 
     if (error || !doc) {
+      console.error("Document not found:", documentId, error);
       return NextResponse.json({ error: "Document not found" }, { status: 404 });
     }
 
-    // If stored in Google Drive, return the URL directly
-    if (doc.storage_url) {
-      return NextResponse.json({ url: doc.storage_url });
+    // If stored in Google Drive, construct the URL from storage_id
+    if (doc.storage_provider === 'google_drive' && doc.storage_id) {
+      const directUrl = `https://drive.google.com/uc?export=view&id=${doc.storage_id}`;
+      return NextResponse.json({ 
+        url: directUrl,
+        thumbnailUrl: directUrl,
+        fileName: doc.file_name,
+        mimeType: doc.mime_type,
+        documentType: doc.document_type
+      });
     }
 
     // If stored in Supabase storage, generate signed URL
@@ -44,7 +52,12 @@ export async function GET(
         .createSignedUrl(doc.storage_path, 3600); // 1 hour expiry
 
       if (signedUrl) {
-        return NextResponse.json({ url: signedUrl.signedUrl });
+        return NextResponse.json({ 
+          url: signedUrl.signedUrl,
+          fileName: doc.file_name,
+          mimeType: doc.mime_type,
+          documentType: doc.document_type
+        });
       }
     }
 

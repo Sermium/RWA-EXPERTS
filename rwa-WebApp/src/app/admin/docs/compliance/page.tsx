@@ -12,14 +12,10 @@ import {
   Building2
 } from 'lucide-react';
 import { CONTACT, SOCIAL, LINKS, mailto, COMPANY } from '@/config/contacts';
-export const metadata = {
-  title: `Compliance Framework | ${COMPANY.name} Admin`,
-  description: 'Regulatory compliance framework and procedures',
-};
 
 export default function ComplianceFrameworkPage() {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-8xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-purple-500/20 rounded-lg">

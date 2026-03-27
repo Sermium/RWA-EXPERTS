@@ -3,11 +3,11 @@
 'use client';
 
 import { useState } from 'react';
-import { useKYC } from '@/hooks/useKYC';
+import { useAccount } from 'wagmi';
 import { Download, Trash2, Loader2, AlertTriangle } from 'lucide-react';
 
 export function GDPRSettings() {
-    const { exportData, deleteData } = useKYC();
+    const { address } = useAccount();
     
     const [exporting, setExporting] = useState(false);
     const [deleting, setDeleting] = useState(false);
@@ -16,43 +16,73 @@ export function GDPRSettings() {
     const [earliestDeletion, setEarliestDeletion] = useState<string | null>(null);
 
     const handleExport = async () => {
+        if (!address) return;
+        
         setExporting(true);
-        const data = await exportData();
-        setExporting(false);
-
-        if (data) {
-            // Download as JSON file
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `rwa-launchpad-data-export-${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+        
+        try {
+            const response = await fetch(`/api/kyc/gdpr/export?address=${address}`);
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+                // Download as JSON file
+                const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `rwa-launchpad-data-export-${new Date().toISOString().split('T')[0]}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+        } catch (error) {
+            console.error('Export error:', error);
+        } finally {
+            setExporting(false);
         }
     };
 
     const handleDelete = async () => {
+        if (!address) return;
+        
         setDeleting(true);
         setDeleteError(null);
         
-        const result = await deleteData();
-        
-        setDeleting(false);
+        try {
+            const response = await fetch('/api/kyc/gdpr/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address }),
+            });
+            
+            const result = await response.json();
 
-        if (result.success) {
-            setShowDeleteConfirm(false);
-            // Redirect or show success
-            window.location.reload();
-        } else {
-            setDeleteError(result.error || 'Failed to delete data');
-            if (result.earliestDeletion) {
-                setEarliestDeletion(result.earliestDeletion);
+            if (result.success) {
+                setShowDeleteConfirm(false);
+                window.location.reload();
+            } else {
+                setDeleteError(result.error || 'Failed to delete data');
+                if (result.earliestDeletion) {
+                    setEarliestDeletion(result.earliestDeletion);
+                }
             }
+        } catch (error) {
+            console.error('Delete error:', error);
+            setDeleteError('Network error. Please try again.');
+        } finally {
+            setDeleting(false);
         }
     };
+
+    if (!address) {
+        return (
+            <div className="bg-white rounded-xl shadow-lg p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-2">Data Privacy (GDPR)</h2>
+                <p className="text-gray-600">Connect your wallet to manage your data.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="bg-white rounded-xl shadow-lg p-6">

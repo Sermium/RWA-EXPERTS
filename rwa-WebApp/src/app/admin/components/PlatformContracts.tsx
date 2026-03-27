@@ -2,11 +2,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { formatEther } from 'viem';
+import { formatEther, createPublicClient, http } from 'viem';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { ZERO_ADDRESS } from '@/config/contracts';
 import { RWALaunchpadFactoryABI } from '@/config/abis';
-import { createPublicClient, http } from 'viem';
+import { getChainConfig, isValidChainId } from '@/config/chains';
 import ContractRow from './ContractRow';
 import { COMPANY } from '@/config/contacts';
 
@@ -26,9 +26,8 @@ export default function PlatformContracts() {
   const [factoryConfig, setFactoryConfig] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // Refetch when chain changes
   useEffect(() => {
-    if (!contracts || !isDeployed) {
+    if (!contracts || !isDeployed || !chainId) {
       setLoading(false);
       return;
     }
@@ -37,14 +36,26 @@ export default function PlatformContracts() {
       setLoading(true);
       
       try {
-        // Create a client for the current chain
+        // Validate chain ID
+        if (!isValidChainId(chainId)) {
+          console.error('[PlatformContracts] Invalid chain ID:', chainId);
+          setLoading(false);
+          return;
+        }
+
+        // Get chain config with RPC URL
+        const chainConfig = getChainConfig(chainId);
+        
+        console.log('[PlatformContracts] Using RPC:', chainConfig.rpcUrl, 'for chain:', chainConfig.name);
+        
+        // Create client with chain and RPC URL
         const client = createPublicClient({
-          transport: http(),
+          chain: chainConfig.chain,
+          transport: http(chainConfig.rpcUrl),
         });
 
         const factoryAddress = contracts.RWALaunchpadFactory as `0x${string}`;
         
-        // Only fetch if factory exists
         if (!factoryAddress || factoryAddress === ZERO_ADDRESS) {
           setLoading(false);
           return;

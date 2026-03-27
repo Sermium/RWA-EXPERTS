@@ -1,7 +1,14 @@
+// src/components/create/StepReview.tsx
 'use client';
 
 import { ProjectMilestone } from '@/types/project';
 import { getCurrencyByCode, formatCurrencyAmount } from '@/types/currency';
+import { ipfsToHttp } from '@/utils/ipfs';
+import { FEE_CONFIG } from '@/config/deployments';
+
+// Convert BPS to percentage
+const PLATFORM_TOKEN_FEE_PERCENT = FEE_CONFIG.PLATFORM_TOKEN_FEE_BPS / 100; // 1%
+const PLATFORM_RAISE_FEE_PERCENT = FEE_CONFIG.PLATFORM_USDT_FEE_BPS / 100; // 1.5%
 
 interface ProjectData {
   projectName: string;
@@ -16,6 +23,7 @@ interface ProjectData {
   milestones: ProjectMilestone[];
   investorSharePercentage: number;
   projectedROI: number;
+  roiTimelineMonths: number;
   tokenName: string;
   tokenSymbol: string;
   totalSupply: number;
@@ -45,9 +53,11 @@ interface StepReviewProps {
   uploadedUrls: UploadedUrls;
   onNext: () => void;
   onBack: () => void;
+  isEditMode?: boolean;
+  isResubmit?: boolean;
 }
 
-export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepReviewProps) {
+export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditMode = false, isResubmit = false, }: StepReviewProps) {
   const currency = getCurrencyByCode(data.localCurrency);
   const isLocalCurrency = data.localCurrency !== 'USD';
   
@@ -59,6 +69,43 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
   const exchangeRateDate = data.exchangeRateTimestamp 
     ? new Date(data.exchangeRateTimestamp).toLocaleString()
     : 'Unknown';
+
+  // Calculate token distribution with correct fee logic
+  const platformFeeTokens = Math.round((data.totalSupply * FEE_CONFIG.PLATFORM_TOKEN_FEE_BPS) / FEE_CONFIG.BPS_DENOMINATOR);
+  const platformRaiseFee = (data.amountToRaise * FEE_CONFIG.PLATFORM_USDT_FEE_BPS) / FEE_CONFIG.BPS_DENOMINATOR;
+  const netToProject = data.amountToRaise - platformRaiseFee;
+
+  // Calculate investor and owner tokens
+  let investorTokens: number;
+  let ownerTokens: number;
+  let investorEffectivePercentage: number;
+  let ownerPercentage: number;
+  const platformFeeFromInvestors = data.investorSharePercentage >= 99;
+
+  if (data.investorSharePercentage >= 99) {
+    // Platform tokens come from investor allocation
+    investorTokens = Math.round(data.totalSupply * (data.investorSharePercentage / 100)) - platformFeeTokens;
+    ownerTokens = data.totalSupply - investorTokens - platformFeeTokens;
+    investorEffectivePercentage = (investorTokens / data.totalSupply) * 100;
+    ownerPercentage = (ownerTokens / data.totalSupply) * 100;
+  } else {
+    // Normal case: platform comes from remainder
+    investorTokens = Math.round(data.totalSupply * (data.investorSharePercentage / 100));
+    ownerTokens = data.totalSupply - investorTokens - platformFeeTokens;
+    investorEffectivePercentage = data.investorSharePercentage;
+    ownerPercentage = 100 - data.investorSharePercentage - PLATFORM_TOKEN_FEE_PERCENT;
+  }
+
+  // Ensure no negative values
+  if (ownerTokens < 0) {
+    ownerTokens = 0;
+    investorTokens = data.totalSupply - platformFeeTokens;
+    investorEffectivePercentage = (investorTokens / data.totalSupply) * 100;
+    ownerPercentage = 0;
+  }
+
+  // Token price
+  const tokenPrice = data.totalSupply > 0 ? data.amountToRaise / data.totalSupply : 0;
 
   return (
     <div className="space-y-8">
@@ -146,13 +193,13 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
 
           {/* Platform Fee */}
           <div className="bg-gray-700/50 rounded-lg p-4">
-            <label className="text-sm text-gray-400">Platform Fee (5%)</label>
+            <label className="text-sm text-gray-400">Platform Fee ({PLATFORM_RAISE_FEE_PERCENT}%)</label>
             <p className="text-2xl font-bold text-yellow-400 mt-1">
-              ${data.platformFee.toLocaleString()}
+              ${platformRaiseFee.toLocaleString()}
             </p>
             {isLocalCurrency && (
               <p className="text-sm text-gray-400 mt-1">
-                {formatCurrencyAmount(data.amountToRaiseLocal * 0.05, data.localCurrency)}
+                {formatCurrencyAmount(data.amountToRaiseLocal * (PLATFORM_RAISE_FEE_PERCENT / 100), data.localCurrency)}
               </p>
             )}
           </div>
@@ -161,11 +208,11 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
           <div className="bg-gray-700/50 rounded-lg p-4">
             <label className="text-sm text-gray-400">Net to Project</label>
             <p className="text-2xl font-bold text-blue-400 mt-1">
-              ${(data.amountToRaise - data.platformFee).toLocaleString()}
+              ${netToProject.toLocaleString()}
             </p>
             {isLocalCurrency && (
               <p className="text-sm text-gray-400 mt-1">
-                {formatCurrencyAmount(data.amountToRaiseLocal * 0.95, data.localCurrency)}
+                {formatCurrencyAmount(data.amountToRaiseLocal * ((100 - PLATFORM_RAISE_FEE_PERCENT) / 100), data.localCurrency)}
               </p>
             )}
           </div>
@@ -178,7 +225,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
             </p>
             {data.projectedROI > 0 && (
               <p className="text-sm text-gray-400 mt-1">
-                Projected ROI: {data.projectedROI}%
+                ROI: {data.projectedROI}% / {data.roiTimelineMonths}mo
               </p>
             )}
           </div>
@@ -243,7 +290,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
                     )}
                     
                     {/* Deliverables */}
-                    {milestone.deliverables.length > 0 && (
+                    {milestone.deliverables && milestone.deliverables.length > 0 && (
                       <div className="mt-3">
                         <p className="text-xs text-gray-500 mb-1">Deliverables:</p>
                         <div className="flex flex-wrap gap-2">
@@ -331,9 +378,22 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
           </div>
           <div className="bg-gray-700/50 rounded-lg p-4">
             <label className="text-sm text-gray-400">Token Price</label>
-            <p className="text-white font-medium mt-1">$1.00 USD</p>
+            <p className="text-white font-medium mt-1">${tokenPrice.toFixed(4)} USD</p>
           </div>
         </div>
+
+        {/* Info banner when platform fee comes from investors */}
+        {platformFeeFromInvestors && (
+          <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-3 mb-4 flex items-start gap-2">
+            <svg className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            <p className="text-xs text-blue-300">
+              With {data.investorSharePercentage}% investor allocation, the {PLATFORM_TOKEN_FEE_PERCENT}% platform fee is deducted from investor tokens. 
+              Effective investor share: {investorEffectivePercentage.toFixed(1)}%
+            </p>
+          </div>
+        )}
 
         {/* Token Distribution */}
         <div>
@@ -341,29 +401,69 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
           <div className="flex items-center gap-2 mb-2">
             <div className="flex-1 h-6 bg-gray-700 rounded-full overflow-hidden flex">
               <div
-                className="bg-purple-500 h-full"
-                style={{ width: `${data.investorSharePercentage}%` }}
-              />
-              <div
-                className="bg-yellow-500 h-full"
-                style={{ width: '5%' }}
-              />
-              <div
                 className="bg-blue-500 h-full"
-                style={{ width: `${95 - data.investorSharePercentage}%` }}
+                style={{ width: `${investorEffectivePercentage}%` }}
               />
+              <div
+                className="bg-amber-500 h-full"
+                style={{ width: `${PLATFORM_TOKEN_FEE_PERCENT}%` }}
+              />
+              {ownerPercentage > 0 && (
+                <div
+                  className="bg-purple-500 h-full"
+                  style={{ width: `${ownerPercentage}%` }}
+                />
+              )}
             </div>
           </div>
-          <div className="flex justify-between text-xs">
-            <span className="text-purple-400">
-              Investors: {data.investorSharePercentage}% ({data.investorTokens.toLocaleString()} tokens)
-            </span>
-            <span className="text-yellow-400">
-              Platform: 5% ({data.platformFeeTokens.toLocaleString()} tokens)
-            </span>
-            <span className="text-blue-400">
-              Project: {95 - data.investorSharePercentage}% ({(data.totalSupply - data.investorTokens - data.platformFeeTokens).toLocaleString()} tokens)
-            </span>
+          <div className={`grid gap-2 text-xs ${ownerPercentage > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              <span className="text-blue-400">
+                Investors: {investorEffectivePercentage.toFixed(1)}% ({investorTokens.toLocaleString()} tokens)
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-amber-500" />
+              <span className="text-amber-400">
+                Platform: {PLATFORM_TOKEN_FEE_PERCENT}% ({platformFeeTokens.toLocaleString()} tokens)
+              </span>
+            </div>
+            {ownerPercentage > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-purple-500" />
+                <span className="text-purple-400">
+                  Project: {ownerPercentage.toFixed(1)}% ({ownerTokens.toLocaleString()} tokens)
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Platform Fees Summary */}
+        <div className="mt-6 bg-amber-900/20 border border-amber-700/50 rounded-lg p-4">
+          <h5 className="text-sm font-medium text-amber-300 mb-3 flex items-center gap-2">
+            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            Platform Fees Summary
+          </h5>
+          <div className="grid md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Token Fee ({PLATFORM_TOKEN_FEE_PERCENT}%)</span>
+                <span className="text-white">{platformFeeTokens.toLocaleString()} tokens</span>
+              </div>
+              {platformFeeFromInvestors && (
+                <p className="text-xs text-amber-400 mt-1">* Deducted from investor allocation</p>
+              )}
+            </div>
+            <div>
+              <div className="flex justify-between">
+                <span className="text-gray-400">Fundraise Fee ({PLATFORM_RAISE_FEE_PERCENT}%)</span>
+                <span className="text-white">${platformRaiseFee.toLocaleString()}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -440,7 +540,9 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
             {data.logo || uploadedUrls.logo ? (
               <div className="aspect-square bg-gray-700 rounded-lg overflow-hidden">
                 <img
-                  src={uploadedUrls.logo || (data.logo ? URL.createObjectURL(data.logo) : '')}
+                  src={uploadedUrls.logo 
+                    ? ipfsToHttp(uploadedUrls.logo) 
+                    : (data.logo ? URL.createObjectURL(data.logo) : '')}
                   alt="Project Logo"
                   className="w-full h-full object-cover"
                 />
@@ -458,7 +560,9 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
             {data.banner || uploadedUrls.banner ? (
               <div className="aspect-[3/1] bg-gray-700 rounded-lg overflow-hidden">
                 <img
-                  src={uploadedUrls.banner || (data.banner ? URL.createObjectURL(data.banner) : '')}
+                  src={uploadedUrls.banner 
+                    ? ipfsToHttp(uploadedUrls.banner) 
+                    : (data.banner ? URL.createObjectURL(data.banner) : '')}
                   alt="Project Banner"
                   className="w-full h-full object-cover"
                 />
@@ -498,7 +602,9 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
               {data.images.map((image, index) => (
                 <div key={index} className="w-20 h-20 flex-shrink-0 bg-gray-700 rounded-lg overflow-hidden">
                   <img
-                    src={uploadedUrls.images?.[index] || URL.createObjectURL(image)}
+                    src={uploadedUrls.images?.[index] 
+                      ? ipfsToHttp(uploadedUrls.images[index]) 
+                      : URL.createObjectURL(image)}
                     alt={`Image ${index + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -513,7 +619,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
       <section className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-6 border border-blue-500/20">
         <h4 className="text-lg font-semibold text-white mb-4">Deployment Summary</h4>
         
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
           <div>
             <div className="text-2xl font-bold text-green-400">
               ${data.amountToRaise.toLocaleString()}
@@ -538,8 +644,14 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
             <div className="text-sm text-gray-400">{data.tokenSymbol} Tokens</div>
           </div>
           <div>
+            <div className="text-2xl font-bold text-cyan-400">
+              ${tokenPrice.toFixed(4)}
+            </div>
+            <div className="text-sm text-gray-400">Token Price</div>
+          </div>
+          <div>
             <div className="text-2xl font-bold text-yellow-400">
-              {data.investorSharePercentage}%
+              {investorEffectivePercentage.toFixed(1)}%
             </div>
             <div className="text-sm text-gray-400">Investor Share</div>
           </div>
@@ -557,6 +669,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
             <li>• Token configuration, milestone structure, and funding target are permanent</li>
             <li>• Deploying will require gas fees on Avalanche Fuji</li>
             <li>• Make sure all legal documents and business plan are accurate</li>
+            <li>• Platform fees: {PLATFORM_TOKEN_FEE_PERCENT}% of tokens + {PLATFORM_RAISE_FEE_PERCENT}% of funds raised</li>
             {isLocalCurrency && (
               <li>• Exchange rate ({data.exchangeRate.toFixed(4)} {data.localCurrency}/USD) was captured at {exchangeRateDate}</li>
             )}
@@ -568,6 +681,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
       <div className="flex justify-between pt-4">
         <button
           onClick={onBack}
+          type="button"
           className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors flex items-center gap-2"
         >
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -577,9 +691,10 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack }: StepR
         </button>
         <button
           onClick={onNext}
+          type="button"
           className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold transition-colors flex items-center gap-2"
         >
-          Proceed to Deploy
+          {isResubmit ? 'Resubmit for Review' : 'Continue to Payment'}
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
           </svg>

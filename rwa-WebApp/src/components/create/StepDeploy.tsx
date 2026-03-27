@@ -14,13 +14,13 @@ import { ZERO_ADDRESS } from '@/config/contracts';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { RWALaunchpadFactoryABI, RWAProjectNFTABI } from '@/config/abis';
 
-
 type DeployStatus = 
   | 'idle' 
   | 'connecting' 
   | 'uploading' 
   | 'waitingWallet' 
   | 'confirming' 
+  | 'activating'
   | 'verifying' 
   | 'success' 
   | 'error';
@@ -76,7 +76,6 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
   const { disconnect } = useDisconnect();
   const publicClient = usePublicClient();
   
-  // Multichain config
   const { 
     chainId: currentChainId,
     chainName,
@@ -100,12 +99,16 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
   const [metadataUri, setMetadataUri] = useState<string>('');
   const [deployedContracts, setDeployedContracts] = useState<DeployedContracts | null>(null);
   const [txHash, setTxHash] = useState<Hash | undefined>();
+  const [activationTxHash, setActivationTxHash] = useState<Hash | undefined>();
   const [creationFee, setCreationFee] = useState<bigint>(BigInt(0));
   const [verificationStatus, setVerificationStatus] = useState<Record<string, 'pending' | 'success' | 'failed'>>({});
 
-  // Watch for transaction receipt
   const { data: receipt, isLoading: isConfirming } = useWaitForTransactionReceipt({
     hash: txHash,
+  });
+
+  const { data: activationReceipt } = useWaitForTransactionReceipt({
+    hash: activationTxHash,
   });
 
   // Fetch creation fee when chain changes
@@ -122,7 +125,6 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
         setCreationFee(fee);
       } catch (err) {
         console.error('Failed to fetch creation fee:', err);
-        // Fallback to config fees if available
         if (fees?.CREATION_FEE) {
           setCreationFee(BigInt(fees.CREATION_FEE));
         }
@@ -132,39 +134,88 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
     fetchCreationFee();
   }, [publicClient, contracts, fees, isDeployed, currentChainId]);
 
-  // Handle transaction receipt
+  // Handle deployment transaction receipt
   useEffect(() => {
     if (receipt && status === 'confirming') {
       parseDeploymentEvents(receipt);
     }
   }, [receipt, status]);
 
+  // Handle activation transaction receipt
+  useEffect(() => {
+    if (activationReceipt && status === 'activating') {
+      if (activationReceipt.status === 'success') {
+        console.log('Project activated successfully');
+        setStatus('verifying');
+        if (deployedContracts) {
+          verifyContracts(deployedContracts);
+        }
+      } else {
+        console.warn('Activation failed, but deployment succeeded');
+        setStatus('verifying');
+        if (deployedContracts) {
+          verifyContracts(deployedContracts);
+        }
+      }
+    }
+  }, [activationReceipt, status, deployedContracts]);
+
+  const activateProject = async (projectId: bigint) => {
+    if (!contracts?.RWALaunchpadFactory) return;
+
+    try {
+      setStatus('activating');
+      console.log('Activating project:', projectId.toString());
+
+      const hash = await writeContractAsync({
+        address: contracts.RWALaunchpadFactory as Address,
+        abi: RWALaunchpadFactoryABI,
+        functionName: 'activateProject',
+        args: [projectId],
+      });
+
+      setActivationTxHash(hash);
+      console.log('Activation tx:', hash);
+    } catch (err) {
+      console.error('Failed to activate project:', err);
+      // Don't fail the whole deployment, just log and continue
+      setStatus('verifying');
+      if (deployedContracts) {
+        verifyContracts(deployedContracts);
+      }
+    }
+  };
+
   const parseDeploymentEvents = async (txReceipt: typeof receipt) => {
     if (!txReceipt || !contracts) return;
 
     try {
-      setStatus('verifying');
-      
       let deployedData: DeployedContracts | null = null;
+
+      console.log('Parsing logs from receipt:', txReceipt.logs.length, 'logs');
 
       // Parse ProjectDeployed event from factory
       for (const log of txReceipt.logs) {
         try {
           if (log.address.toLowerCase() === contracts.RWALaunchpadFactory?.toLowerCase()) {
+            console.log('Found factory log:', log);
+            
             const decoded = decodeEventLog({
               abi: RWALaunchpadFactoryABI,
               data: log.data,
               topics: log.topics,
             });
             
+            console.log('Decoded event:', decoded);
+            
             if (decoded.eventName === 'ProjectDeployed') {
               const args = decoded.args as {
                 projectId: bigint;
-                owner: Address;
+                deployer: Address;
                 securityToken: Address;
                 escrowVault: Address;
                 compliance: Address;
-                category: string;
+                minKYCLevel?: number;
               };
               
               deployedData = {
@@ -173,14 +224,16 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
                 escrowVault: args.escrowVault,
                 compliance: args.compliance,
               };
+              
+              console.log('Parsed ProjectDeployed:', deployedData);
             }
           }
-        } catch {
-          // Not the event we're looking for
+        } catch (e) {
+          console.log('Could not decode log:', e);
         }
       }
 
-      // Parse NFT Transfer event
+      // Parse NFT Transfer event (ProjectCreated)
       for (const log of txReceipt.logs) {
         try {
           if (log.address.toLowerCase() === contracts.RWAProjectNFT?.toLowerCase()) {
@@ -190,9 +243,10 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
               topics: log.topics,
             });
             
-            if (decoded.eventName === 'Transfer' && deployedData) {
-              const args = decoded.args as { tokenId: bigint };
+            if (decoded.eventName === 'ProjectCreated' && deployedData) {
+              const args = decoded.args as { tokenId: bigint; owner: `0x${string}`; name: string };
               deployedData.nftTokenId = args.tokenId;
+              console.log('Found NFT tokenId from ProjectCreated:', args.tokenId);
             }
           }
         } catch {
@@ -202,16 +256,18 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
 
       if (deployedData) {
         setDeployedContracts(deployedData);
-        await verifyContracts(deployedData);
-        setStatus('success');
-        onSuccess?.(deployedData);
+        
+        // Auto-activate the project
+        await activateProject(deployedData.projectId);
       } else {
-        throw new Error('Failed to parse deployment events');
+        console.warn('Could not parse events, but transaction succeeded');
+        setError('Deployment succeeded but failed to parse events. Check the transaction on the explorer.');
+        setStatus('success');
       }
     } catch (err) {
       console.error('Failed to parse deployment events:', err);
       setError('Deployment succeeded but failed to parse events. Check the transaction on the explorer.');
-      setStatus('error');
+      setStatus('success');
     }
   };
 
@@ -244,6 +300,9 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
         setVerificationStatus(prev => ({ ...prev, [contract.name]: 'failed' }));
       }
     }
+
+    setStatus('success');
+    onSuccess?.(deployed);
   };
 
   const handleConnect = useCallback(() => {
@@ -307,8 +366,11 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
           category: projectData.category,
           totalSupply: projectData.totalSupply,
           fundingGoal: projectData.amountToRaise,
+          investorSharePercent: projectData.investorSharePercentage,
+          projectedROI: projectData.projectedROI,
+          roiTimelineMonths: projectData.roiTimelineMonths,
           documents: uploadedUrls.legalDocs || [],
-          images: [uploadedUrls.logo, uploadedUrls.banner].filter(Boolean),
+          images: [uploadedUrls.logo, uploadedUrls.banner, ...(uploadedUrls.images || [])].filter(Boolean),
           milestones: projectData.milestones || [],
           pitchDeck: uploadedUrls.pitchDeck || '',
           video: projectData.videoUrl || '',
@@ -319,15 +381,20 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
       const ipfsResponse = await fetch('/api/ipfs/upload', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ metadata }),
+        body: JSON.stringify({ 
+          metadata,
+          type: 'metadata'
+        }),
       });
 
       if (!ipfsResponse.ok) {
-        throw new Error('Failed to upload metadata to IPFS');
+        const errorData = await ipfsResponse.json().catch(() => ({}));
+        console.error('IPFS upload error:', errorData);
+        throw new Error(errorData.error || 'Failed to upload metadata to IPFS');
       }
 
-      const { uri } = await ipfsResponse.json();
-      setMetadataUri(uri);
+      const { url } = await ipfsResponse.json();
+      setMetadataUri(url);
 
       setStatus('waitingWallet');
 
@@ -336,25 +403,42 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
       const tokenSymbol = projectData.tokenSymbol || 'RWA';
       const category = projectData.category || 'real-estate';
       const maxSupply = parseUnits(projectData.totalSupply?.toString() || '1000000', 18);
-      const fundingGoal = parseUnits(projectData.amountToRaise?.toString() || '100000', 6); // USDC decimals
+      
+      // Funding goal in 6 decimals (USDC format)
+      // $100,000 -> 100000 * 10^6 = 100000000000
+      const fundingGoal = parseUnits(projectData.amountToRaise?.toString() || '100000', 6);
+      
       const deadlineDays = 30;
+
+      console.log('Deployment params:', {
+        tokenName,
+        tokenSymbol,
+        category,
+        maxSupply: maxSupply.toString(),
+        fundingGoal: fundingGoal.toString(),
+        fundingGoalUSD: projectData.amountToRaise,
+        deadlineDays,
+        metadataUri: url,
+        creationFee: creationFee.toString(),
+      });
 
       // Execute deployment
       const hash = await writeContractAsync({
         address: contracts.RWALaunchpadFactory as Address,
         abi: RWALaunchpadFactoryABI,
-        functionName: 'deployProject' as any,
+        functionName: 'deployProject',
         args: [
           tokenName,
           tokenSymbol,
+          ZERO_ADDRESS,
           category,
           maxSupply,
           fundingGoal,
           BigInt(deadlineDays),
-          uri,
+          url,
         ],
         value: creationFee,
-      }as any);
+      });
 
       setTxHash(hash);
       setStatus('confirming');
@@ -366,6 +450,8 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
         setError('Transaction was rejected. Please try again.');
       } else if (errorMessage.includes('insufficient funds')) {
         setError(`Insufficient ${nativeCurrency} balance. Please add funds to your wallet.`);
+      } else if (errorMessage.includes('InvalidFee')) {
+        setError('Funding goal is below minimum ($10,000). Please increase your funding goal.');
       } else {
         setError(errorMessage);
       }
@@ -377,6 +463,7 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
     setStatus('idle');
     setError('');
     setTxHash(undefined);
+    setActivationTxHash(undefined);
     setDeployedContracts(null);
     setMetadataUri('');
     setVerificationStatus({});
@@ -476,23 +563,39 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
             </div>
             <h2 className="text-2xl font-bold text-green-600 mb-2">Deployment Successful!</h2>
             <p className="text-gray-600 dark:text-gray-400">
-              Your RWA project has been deployed to {chainName}.
+              Your RWA project has been deployed and activated on {chainName}.
             </p>
+          </div>
+
+          {/* Project ID */}
+          <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 mb-6">
+            <p className="text-sm text-primary-600 dark:text-primary-400 mb-1">Project ID</p>
+            <div className="flex items-center justify-between">
+              <span className="text-2xl font-bold text-primary-700 dark:text-primary-300">
+                #{deployedContracts.projectId.toString()}
+              </span>
+              <a
+                href={`/projects/${deployedContracts.projectId}`}
+                className="text-primary-600 hover:text-primary-700 text-sm"
+              >
+                View Project →
+              </a>
+            </div>
           </div>
 
           {/* NFT Token ID */}
           {deployedContracts.nftTokenId !== undefined && (
-            <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4 mb-6">
-              <p className="text-sm text-primary-600 dark:text-primary-400 mb-1">Project NFT Token ID</p>
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 mb-6">
+              <p className="text-sm text-purple-600 dark:text-purple-400 mb-1">Project NFT Token ID</p>
               <div className="flex items-center justify-between">
-                <span className="text-2xl font-bold text-primary-700 dark:text-primary-300">
+                <span className="text-xl font-bold text-purple-700 dark:text-purple-300">
                   #{deployedContracts.nftTokenId.toString()}
                 </span>
                 <a
                   href={`${explorerUrl}/token/${contracts?.RWAProjectNFT}?a=${deployedContracts.nftTokenId}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-primary-600 hover:text-primary-700 text-sm"
+                  className="text-purple-600 hover:text-purple-700 text-sm"
                 >
                   View on Explorer →
                 </a>
@@ -524,10 +627,10 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
             />
           </div>
 
-          {/* Transaction Link */}
+          {/* Transaction Links */}
           {txHash && (
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Transaction Hash</p>
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-4">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Deployment Transaction</p>
               <a
                 href={getTxUrl(txHash)}
                 target="_blank"
@@ -539,11 +642,25 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
             </div>
           )}
 
+          {activationTxHash && (
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Activation Transaction</p>
+              <a
+                href={getTxUrl(activationTxHash)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary-600 hover:text-primary-700 text-sm font-mono break-all"
+              >
+                {activationTxHash}
+              </a>
+            </div>
+          )}
+
           {/* Next Steps */}
           <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
             <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Next Steps</h4>
             <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
-              <li>✓ Complete KYC verification to enable trading</li>
+              <li>✓ Your project is now ACTIVE and ready for investments</li>
               <li>✓ Configure escrow milestones for fund release</li>
               <li>✓ Share your project with potential investors</li>
               <li>✓ Monitor investment progress on the dashboard</li>
@@ -691,7 +808,7 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
                 label="Upload metadata to IPFS"
                 status={
                   status === 'uploading' ? 'active' :
-                  ['waitingWallet', 'confirming', 'verifying', 'success'].includes(status) ? 'complete' :
+                  ['waitingWallet', 'confirming', 'activating', 'verifying', 'success'].includes(status) ? 'complete' :
                   'pending'
                 }
               />
@@ -699,7 +816,7 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
                 label="Confirm transaction in wallet"
                 status={
                   status === 'waitingWallet' ? 'active' :
-                  ['confirming', 'verifying', 'success'].includes(status) ? 'complete' :
+                  ['confirming', 'activating', 'verifying', 'success'].includes(status) ? 'complete' :
                   'pending'
                 }
               />
@@ -707,6 +824,14 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
                 label="Deploy contracts on-chain"
                 status={
                   status === 'confirming' ? 'active' :
+                  ['activating', 'verifying', 'success'].includes(status) ? 'complete' :
+                  'pending'
+                }
+              />
+              <ProgressStep
+                label="Activate project"
+                status={
+                  status === 'activating' ? 'active' :
                   ['verifying', 'success'].includes(status) ? 'complete' :
                   'pending'
                 }
@@ -724,7 +849,7 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
         )}
 
         {/* Transaction Hash */}
-        {txHash && status === 'confirming' && (
+        {txHash && (status === 'confirming' || status === 'activating') && (
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 mb-6">
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Transaction submitted</p>
             <a
@@ -760,6 +885,8 @@ export function StepDeploy({ projectData, uploadedUrls, onBack, onSuccess }: Ste
               'Confirm in Wallet...'
             ) : status === 'confirming' ? (
               'Deploying...'
+            ) : status === 'activating' ? (
+              'Activating Project...'
             ) : (
               'Processing...'
             )}

@@ -59,6 +59,13 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const supabase = getSupabaseAdmin();
 
+    // Get chain ID from body or header - NO DEFAULT, use what the user sends
+    const chainId = body.chainId || (chainIdHeader ? parseInt(chainIdHeader) : null);
+    
+    if (!chainId) {
+      return NextResponse.json({ error: 'Chain ID is required' }, { status: 400 });
+    }
+
     // Parse estimated value
     let estimatedValue = 0;
     if (body.estimatedValue) {
@@ -97,7 +104,7 @@ export async function POST(request: NextRequest) {
       tokenSymbol: body.tokenSymbol,
       additionalInfo: body.additionalInfo || body.additionalNotes,
       originalAssetType: body.assetType,
-      chainId: body.chainId || chainIdHeader,
+      chainId: chainId, // Keep for reference
     };
 
     const { data: application, error: appError } = await supabase
@@ -127,6 +134,8 @@ export async function POST(request: NextRequest) {
         contact_telegram: body.telegram || null,
         website: body.website || null,
         use_case: body.useCase || null,
+        token_name: body.tokenName || null,
+        token_symbol: body.tokenSymbol || null,
         
         // Logo and Banner fields
         logo_url: body.logo?.url || null,
@@ -149,6 +158,9 @@ export async function POST(request: NextRequest) {
         status: 'pending',
         token_type: body.tokenType || 'nft_and_token',
         
+        // Chain ID - IMPORTANT: Save the actual chain!
+        chain_id: chainId,
+        
         // Documents and metadata as JSONB
         documents: documentsData,
       })
@@ -167,6 +179,7 @@ export async function POST(request: NextRequest) {
       success: true, 
       application,
       applicationId: application.id,
+      chainId: chainId,
       message: 'Application submitted successfully. Payment confirmed.'
     });
 

@@ -1,0 +1,21 @@
+{
+  "chainId": 43113,
+  "timestamp": 1774253579085,
+  "phase": "complete",
+  "contracts": {
+    "KYCVerifier": "0x5D0C920e3A0be7A9d29baec58BEAEe3e4810bFbC",
+    "ProjectNFT": "0x7c13b3Fd6334F4944AAc73780ff6f90555Ce1Fe5",
+    "LaunchpadFactory": "0x496f98ecc190ac342C78601B5E01563464958E98"
+  },
+  "implementations": {
+    "KYCVerifier": "0xbd8A39a390fe25a849b29b9210De643d69C6DBDE",
+    "SecurityToken": "0xF5CfE5263e0dE794bA0458E1c9077FE397d5767b",
+    "EscrowVault": "0xD514EfAE076D6F1D9C8C95540eE9a3709543C16b",
+    "Compliance": "0x7E8f434ee0912648850eBA5CC4B2207b6eEF071D",
+    "ProjectNFT": "0xE15c4B176A7fe56eA4b0aB308882f216B035cce8",
+    "DividendDistributor": "0x4908065c0932531A431FdCA84E0ECbC4AD040391",
+    "MaxBalanceModule": "0x7bB7795e87A621f688567f5cf7f6f308Be3505ad",
+    "LockupModule": "0xf79A06Be1d90380BD23813eee429F1CEc3298BDb",
+    "LaunchpadFactory": "0x4bAD0A88450ef9Fcb2Fa3Ff847A3920D352b3dAb"
+  }
+}

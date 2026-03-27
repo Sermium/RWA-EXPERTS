@@ -35,7 +35,9 @@ export interface IModularComplianceInterface extends Interface {
       | "getModules"
       | "getTokenBound"
       | "isModuleBound"
+      | "owner"
       | "removeModule"
+      | "transferOwnership"
       | "transferred"
       | "unbindToken"
   ): FunctionFragment;
@@ -84,8 +86,13 @@ export interface IModularComplianceInterface extends Interface {
     functionFragment: "isModuleBound",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "removeModule",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -118,8 +125,13 @@ export interface IModularComplianceInterface extends Interface {
     functionFragment: "isModuleBound",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "removeModule",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -257,8 +269,16 @@ export interface IModularCompliance extends BaseContract {
 
   isModuleBound: TypedContractMethod<[_module: AddressLike], [boolean], "view">;
 
+  owner: TypedContractMethod<[], [string], "view">;
+
   removeModule: TypedContractMethod<
     [_module: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -319,8 +339,14 @@ export interface IModularCompliance extends BaseContract {
     nameOrSignature: "isModuleBound"
   ): TypedContractMethod<[_module: AddressLike], [boolean], "view">;
   getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
     nameOrSignature: "removeModule"
   ): TypedContractMethod<[_module: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "transferred"
   ): TypedContractMethod<

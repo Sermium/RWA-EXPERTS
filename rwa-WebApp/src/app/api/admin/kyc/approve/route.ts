@@ -4,6 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 import { getAddress } from "viem";
 import { privateKeyToAccount, signTypedData } from "viem/accounts";
 import { isAdmin } from "@/lib/admin";
+import type { SupportedChainId } from "@/config/chains";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -27,7 +28,13 @@ export async function POST(request: NextRequest) {
     }
 
     const chainIdHeader = request.headers.get('x-chain-id');
-    const chainId = chainIdHeader ? parseInt(chainIdHeader) : parseInt(process.env.NEXT_PUBLIC_CHAIN_ID || "1");
+    if (!chainIdHeader) {
+      return NextResponse.json(
+        { error: "Missing x-chain-id header" },
+        { status: 400 }
+      );
+    }
+    const chainId = parseInt(chainIdHeader) as SupportedChainId;
 
     const body = await request.json();
     const { applicationId, notes } = body;

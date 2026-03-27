@@ -24,94 +24,113 @@ import type {
 export declare namespace IRWAEscrowVault {
   export type MilestoneStruct = {
     description: string;
-    percentage: BigNumberish;
-    status: BigNumberish;
-    proofURI: string;
-    submittedAt: BigNumberish;
+    amount: BigNumberish;
+    deadline: BigNumberish;
+    state: BigNumberish;
+    releasedAt: BigNumberish;
     approvedAt: BigNumberish;
-    releasedAmount: BigNumberish;
   };
 
   export type MilestoneStructOutput = [
     description: string,
-    percentage: bigint,
-    status: bigint,
-    proofURI: string,
-    submittedAt: bigint,
-    approvedAt: bigint,
-    releasedAmount: bigint
+    amount: bigint,
+    deadline: bigint,
+    state: bigint,
+    releasedAt: bigint,
+    approvedAt: bigint
   ] & {
     description: string;
-    percentage: bigint;
-    status: bigint;
-    proofURI: string;
-    submittedAt: bigint;
+    amount: bigint;
+    deadline: bigint;
+    state: bigint;
+    releasedAt: bigint;
     approvedAt: bigint;
-    releasedAmount: bigint;
   };
 
-  export type ProjectFundingStruct = {
+  export type ProjectStruct = {
     projectId: BigNumberish;
+    projectOwner: AddressLike;
+    securityToken: AddressLike;
+    paymentToken: AddressLike;
+    priceFeed: AddressLike;
     fundingGoal: BigNumberish;
     totalRaised: BigNumberish;
-    totalReleased: BigNumberish;
     deadline: BigNumberish;
-    paymentToken: AddressLike;
-    fundingComplete: boolean;
-    refundsEnabled: boolean;
-    currentMilestone: BigNumberish;
+    state: BigNumberish;
+    createdAt: BigNumberish;
+    platformFeeBps: BigNumberish;
+    maxPriceAge: BigNumberish;
   };
 
-  export type ProjectFundingStructOutput = [
+  export type ProjectStructOutput = [
     projectId: bigint,
+    projectOwner: string,
+    securityToken: string,
+    paymentToken: string,
+    priceFeed: string,
     fundingGoal: bigint,
     totalRaised: bigint,
-    totalReleased: bigint,
     deadline: bigint,
-    paymentToken: string,
-    fundingComplete: boolean,
-    refundsEnabled: boolean,
-    currentMilestone: bigint
+    state: bigint,
+    createdAt: bigint,
+    platformFeeBps: bigint,
+    maxPriceAge: bigint
   ] & {
     projectId: bigint;
+    projectOwner: string;
+    securityToken: string;
+    paymentToken: string;
+    priceFeed: string;
     fundingGoal: bigint;
     totalRaised: bigint;
-    totalReleased: bigint;
     deadline: bigint;
-    paymentToken: string;
-    fundingComplete: boolean;
-    refundsEnabled: boolean;
-    currentMilestone: bigint;
+    state: bigint;
+    createdAt: bigint;
+    platformFeeBps: bigint;
+    maxPriceAge: bigint;
   };
 }
 
 export interface IRWAEscrowVaultInterface extends Interface {
   getFunction(
     nameOrSignature:
+      | "activateProject"
       | "addMilestone"
       | "approveMilestone"
+      | "cancelProject"
       | "claimRefund"
       | "createProject"
-      | "enableRefunds"
-      | "getInvestorAmount"
+      | "getClaimableTokens"
+      | "getInvestorBalance"
+      | "getInvestorContribution"
       | "getMilestones"
-      | "getProjectFunding"
-      | "getReleasableAmount"
-      | "invest"
+      | "getProject"
+      | "grantRole"
       | "raiseDispute"
-      | "rejectMilestone"
       | "releaseMilestoneFunds"
       | "resolveDispute"
-      | "submitMilestone"
+      | "revokeRole"
+      | "setKYCVerifier"
+      | "setPaymentTokens"
+      | "updateProjectPriceFeed"
+      | "upgradeTo"
   ): FunctionFragment;
 
   encodeFunctionData(
+    functionFragment: "activateProject",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "addMilestone",
-    values: [BigNumberish, string, BigNumberish]
+    values: [BigNumberish, string, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "approveMilestone",
     values: [BigNumberish, BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "cancelProject",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "claimRefund",
@@ -122,9 +141,8 @@ export interface IRWAEscrowVaultInterface extends Interface {
     values: [
       BigNumberish,
       AddressLike,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
+      AddressLike,
+      AddressLike,
       BigNumberish,
       BigNumberish,
       BigNumberish,
@@ -132,11 +150,15 @@ export interface IRWAEscrowVaultInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "enableRefunds",
-    values: [BigNumberish]
+    functionFragment: "getClaimableTokens",
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getInvestorAmount",
+    functionFragment: "getInvestorBalance",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getInvestorContribution",
     values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
@@ -144,23 +166,15 @@ export interface IRWAEscrowVaultInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getProjectFunding",
+    functionFragment: "getProject",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getReleasableAmount",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "invest",
-    values: [BigNumberish, BigNumberish, AddressLike]
+    functionFragment: "grantRole",
+    values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "raiseDispute",
-    values: [BigNumberish, BigNumberish, string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "rejectMilestone",
     values: [BigNumberish, BigNumberish, string]
   ): string;
   encodeFunctionData(
@@ -172,16 +186,40 @@ export interface IRWAEscrowVaultInterface extends Interface {
     values: [BigNumberish, BigNumberish, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "submitMilestone",
-    values: [BigNumberish, BigNumberish, string]
+    functionFragment: "revokeRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setKYCVerifier",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setPaymentTokens",
+    values: [AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "updateProjectPriceFeed",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeTo",
+    values: [AddressLike]
   ): string;
 
+  decodeFunctionResult(
+    functionFragment: "activateProject",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "addMilestone",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "approveMilestone",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "cancelProject",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -193,32 +231,25 @@ export interface IRWAEscrowVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "enableRefunds",
+    functionFragment: "getClaimableTokens",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getInvestorAmount",
+    functionFragment: "getInvestorBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getInvestorContribution",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getMilestones",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getProjectFunding",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getReleasableAmount",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "invest", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getProject", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "raiseDispute",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "rejectMilestone",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -229,10 +260,20 @@ export interface IRWAEscrowVaultInterface extends Interface {
     functionFragment: "resolveDispute",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "revokeRole", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "submitMilestone",
+    functionFragment: "setKYCVerifier",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "setPaymentTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateProjectPriceFeed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
 }
 
 export interface IRWAEscrowVault extends BaseContract {
@@ -278,14 +319,31 @@ export interface IRWAEscrowVault extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
+  activateProject: TypedContractMethod<
+    [_projectId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   addMilestone: TypedContractMethod<
-    [_projectId: BigNumberish, _description: string, _percentage: BigNumberish],
+    [
+      _projectId: BigNumberish,
+      _description: string,
+      _amount: BigNumberish,
+      _deadline: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
 
   approveMilestone: TypedContractMethod<
     [_projectId: BigNumberish, _milestoneIndex: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  cancelProject: TypedContractMethod<
+    [_projectId: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -298,27 +356,32 @@ export interface IRWAEscrowVault extends BaseContract {
 
   createProject: TypedContractMethod<
     [
-      projectId: BigNumberish,
-      securityToken: AddressLike,
-      softCap: BigNumberish,
-      hardCap: BigNumberish,
-      minInvestment: BigNumberish,
-      maxInvestment: BigNumberish,
-      tokenPrice: BigNumberish,
-      startTime: BigNumberish,
-      endTime: BigNumberish
+      _projectId: BigNumberish,
+      _securityToken: AddressLike,
+      _paymentToken: AddressLike,
+      _priceFeed: AddressLike,
+      _fundingGoal: BigNumberish,
+      _deadline: BigNumberish,
+      _platformFeeBps: BigNumberish,
+      _maxPriceAge: BigNumberish
     ],
     [void],
     "nonpayable"
   >;
 
-  enableRefunds: TypedContractMethod<
-    [_projectId: BigNumberish],
-    [void],
-    "nonpayable"
+  getClaimableTokens: TypedContractMethod<
+    [_projectId: BigNumberish, _investor: AddressLike],
+    [bigint],
+    "view"
   >;
 
-  getInvestorAmount: TypedContractMethod<
+  getInvestorBalance: TypedContractMethod<
+    [_projectId: BigNumberish, _investor: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  getInvestorContribution: TypedContractMethod<
     [_projectId: BigNumberish, _investor: AddressLike],
     [bigint],
     "view"
@@ -330,35 +393,19 @@ export interface IRWAEscrowVault extends BaseContract {
     "view"
   >;
 
-  getProjectFunding: TypedContractMethod<
+  getProject: TypedContractMethod<
     [_projectId: BigNumberish],
-    [IRWAEscrowVault.ProjectFundingStructOutput],
+    [IRWAEscrowVault.ProjectStructOutput],
     "view"
   >;
 
-  getReleasableAmount: TypedContractMethod<
-    [_projectId: BigNumberish, _milestoneIndex: BigNumberish],
-    [bigint],
-    "view"
-  >;
-
-  invest: TypedContractMethod<
-    [
-      _projectId: BigNumberish,
-      _amount: BigNumberish,
-      _paymentToken: AddressLike
-    ],
-    [void],
-    "payable"
-  >;
-
-  raiseDispute: TypedContractMethod<
-    [_projectId: BigNumberish, _milestoneIndex: BigNumberish, _reason: string],
+  grantRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  rejectMilestone: TypedContractMethod<
+  raiseDispute: TypedContractMethod<
     [_projectId: BigNumberish, _milestoneIndex: BigNumberish, _reason: string],
     [void],
     "nonpayable"
@@ -380,12 +427,32 @@ export interface IRWAEscrowVault extends BaseContract {
     "nonpayable"
   >;
 
-  submitMilestone: TypedContractMethod<
-    [
-      _projectId: BigNumberish,
-      _milestoneIndex: BigNumberish,
-      _proofURI: string
-    ],
+  revokeRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setKYCVerifier: TypedContractMethod<
+    [_kycVerifier: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setPaymentTokens: TypedContractMethod<
+    [_usdc: AddressLike, _usdt: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  updateProjectPriceFeed: TypedContractMethod<
+    [_projectId: BigNumberish, _priceFeed: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  upgradeTo: TypedContractMethod<
+    [newImplementation: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -395,9 +462,17 @@ export interface IRWAEscrowVault extends BaseContract {
   ): T;
 
   getFunction(
+    nameOrSignature: "activateProject"
+  ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "addMilestone"
   ): TypedContractMethod<
-    [_projectId: BigNumberish, _description: string, _percentage: BigNumberish],
+    [
+      _projectId: BigNumberish,
+      _description: string,
+      _amount: BigNumberish,
+      _deadline: BigNumberish
+    ],
     [void],
     "nonpayable"
   >;
@@ -409,30 +484,43 @@ export interface IRWAEscrowVault extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "cancelProject"
+  ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "claimRefund"
   ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "createProject"
   ): TypedContractMethod<
     [
-      projectId: BigNumberish,
-      securityToken: AddressLike,
-      softCap: BigNumberish,
-      hardCap: BigNumberish,
-      minInvestment: BigNumberish,
-      maxInvestment: BigNumberish,
-      tokenPrice: BigNumberish,
-      startTime: BigNumberish,
-      endTime: BigNumberish
+      _projectId: BigNumberish,
+      _securityToken: AddressLike,
+      _paymentToken: AddressLike,
+      _priceFeed: AddressLike,
+      _fundingGoal: BigNumberish,
+      _deadline: BigNumberish,
+      _platformFeeBps: BigNumberish,
+      _maxPriceAge: BigNumberish
     ],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "enableRefunds"
-  ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
+    nameOrSignature: "getClaimableTokens"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _investor: AddressLike],
+    [bigint],
+    "view"
+  >;
   getFunction(
-    nameOrSignature: "getInvestorAmount"
+    nameOrSignature: "getInvestorBalance"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _investor: AddressLike],
+    [bigint],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getInvestorContribution"
   ): TypedContractMethod<
     [_projectId: BigNumberish, _investor: AddressLike],
     [bigint],
@@ -446,39 +534,21 @@ export interface IRWAEscrowVault extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "getProjectFunding"
+    nameOrSignature: "getProject"
   ): TypedContractMethod<
     [_projectId: BigNumberish],
-    [IRWAEscrowVault.ProjectFundingStructOutput],
+    [IRWAEscrowVault.ProjectStructOutput],
     "view"
   >;
   getFunction(
-    nameOrSignature: "getReleasableAmount"
+    nameOrSignature: "grantRole"
   ): TypedContractMethod<
-    [_projectId: BigNumberish, _milestoneIndex: BigNumberish],
-    [bigint],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "invest"
-  ): TypedContractMethod<
-    [
-      _projectId: BigNumberish,
-      _amount: BigNumberish,
-      _paymentToken: AddressLike
-    ],
-    [void],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "raiseDispute"
-  ): TypedContractMethod<
-    [_projectId: BigNumberish, _milestoneIndex: BigNumberish, _reason: string],
+    [role: BytesLike, account: AddressLike],
     [void],
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "rejectMilestone"
+    nameOrSignature: "raiseDispute"
   ): TypedContractMethod<
     [_projectId: BigNumberish, _milestoneIndex: BigNumberish, _reason: string],
     [void],
@@ -503,13 +573,33 @@ export interface IRWAEscrowVault extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "submitMilestone"
+    nameOrSignature: "revokeRole"
   ): TypedContractMethod<
-    [
-      _projectId: BigNumberish,
-      _milestoneIndex: BigNumberish,
-      _proofURI: string
-    ],
+    [role: BytesLike, account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "setKYCVerifier"
+  ): TypedContractMethod<[_kycVerifier: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setPaymentTokens"
+  ): TypedContractMethod<
+    [_usdc: AddressLike, _usdt: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "updateProjectPriceFeed"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _priceFeed: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "upgradeTo"
+  ): TypedContractMethod<
+    [newImplementation: AddressLike],
     [void],
     "nonpayable"
   >;

@@ -10,16 +10,20 @@ import {
 import { formatEther, parseEther, isAddress, getAddress } from "viem";
 import { useChainConfig } from "@/hooks/useChainConfig";
 import { getNativeCurrency } from "@/config/contracts";
-import {
-  TierName,
-  tierNumberToName,
-  formatLimit,
-  DEFAULT_LIMITS,
-} from "@/lib/kycLimits";
 
 // ============================================================================
 // TYPES & INTERFACES
 // ============================================================================
+
+type TierName = 'None' | 'Bronze' | 'Silver' | 'Gold' | 'Diamond';
+
+interface TierLimits {
+  None: number;
+  Bronze: number;
+  Silver: number;
+  Gold: number;
+  Diamond: number;
+}
 
 interface KYCApplication {
   id: string;
@@ -90,7 +94,31 @@ interface KYCSettings {
 }
 
 // ============================================================================
-// CONSTANTS - Updated to match new tier system
+// HELPER FUNCTIONS
+// ============================================================================
+
+function tierNumberToName(num: number): TierName {
+  const names: TierName[] = ['None', 'Bronze', 'Silver', 'Gold', 'Diamond'];
+  return names[num] || 'None';
+}
+
+function formatLimit(value: number | null | undefined): string {
+  if (value === null || value === undefined) return 'Unlimited';
+  if (!isFinite(value)) return 'Unlimited';
+  if (value === 0) return '$0';
+  if (value >= 1_000_000) {
+    const millions = value / 1_000_000;
+    return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
+  }
+  if (value >= 1_000) {
+    const thousands = value / 1_000;
+    return `$${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}K`;
+  }
+  return `$${value.toLocaleString()}`;
+}
+
+// ============================================================================
+// CONSTANTS
 // ============================================================================
 
 const TIER_NAMES: Record<number, TierName> = {
@@ -151,14 +179,43 @@ const COUNTRY_NAMES: Record<number, string> = {
   192: "Cuba",
   643: "Russia",
   112: "Belarus",
-  // Add more as needed
 };
 
-const DEFAULT_RESTRICTED_COUNTRIES = [408, 364, 760, 192]; // NK, Iran, Syria, Cuba
+const DEFAULT_RESTRICTED_COUNTRIES = [408, 364, 760, 192];
+
+// Fallback limits (will be overwritten by DB)
+const FALLBACK_LIMITS: TierLimits = {
+  None: 0,
+  Bronze: 20000,
+  Silver: 200000,
+  Gold: 2000000,
+  Diamond: Infinity,
+};
 
 // ============================================================================
 // API FUNCTIONS
 // ============================================================================
+
+async function fetchTierLimits(): Promise<TierLimits> {
+  try {
+    const response = await fetch('/api/kyc/limits');
+    if (!response.ok) return FALLBACK_LIMITS;
+    
+    const data = await response.json();
+    if (data.success && data.limits) {
+      return {
+        None: data.limits.None ?? 0,
+        Bronze: data.limits.Bronze ?? 0,
+        Silver: data.limits.Silver ?? 0,
+        Gold: data.limits.Gold ?? 0,
+        Diamond: data.limits.Diamond === null ? Infinity : (data.limits.Diamond ?? Infinity),
+      };
+    }
+  } catch (error) {
+    console.error('[KYC Admin] Failed to fetch tier limits:', error);
+  }
+  return FALLBACK_LIMITS;
+}
 
 async function fetchKYCApplications(
   status?: string,
@@ -170,7 +227,8 @@ async function fetchKYCApplications(
   if (status && status !== "all") params.append("status", status);
   if (search) params.append("search", search);
 
-  const response = await fetch(`/api/admin/kyc/submissions?${params}`, {
+  // Changed from /submissions to /applications
+  const response = await fetch(`/api/admin/kyc/applications?${params}`, {
     headers: {
       "Content-Type": "application/json",
       "x-wallet-address": walletAddress || "",
@@ -181,32 +239,34 @@ async function fetchKYCApplications(
   if (!response.ok) throw new Error("Failed to fetch applications");
   const data = await response.json();
   
-  // Map API response to component interface
-  return (data.submissions || []).map((sub: any) => ({
-    id: sub.id,
-    walletAddress: sub.walletAddress,
-    walletPreview: `${sub.walletAddress?.slice(0, 6)}...${sub.walletAddress?.slice(-4)}`,
-    firstName: sub.firstName,
-    lastName: sub.lastName,
-    email: sub.email,
-    dateOfBirth: sub.dateOfBirth,
-    countryCode: sub.countryCode,
-    countryName: COUNTRY_NAMES[sub.countryCode] || `Code: ${sub.countryCode}`,
-    requestedLevel: sub.tierNumber || sub.requestedLevel || 1,
-    currentLevel: sub.currentLevel || 0,
-    tier: tierNumberToName(sub.tierNumber || 0),
-    requestedTier: tierNumberToName(sub.requestedLevel || sub.tierNumber || 1),
-    status: sub.status,
-    submittedAt: sub.submittedAt,
-    reviewedAt: sub.reviewedAt,
-    reviewedBy: sub.reviewedBy,
-    expiresAt: sub.expiresAt,
-    documents: sub.documents || {},
-    verificationScore: sub.verificationScore,
-    rejectionReason: sub.rejectionReason,
-    notes: sub.adminNotes,
-    linkedWallets: sub.linkedWallets || [],
-    livenessVerification: sub.livenessVerification,
+  // Map from applications API format to KYCApplication format
+  return (data.applications || []).map((app: any) => ({
+    id: app.id,
+    walletAddress: app.walletAddress,
+    walletPreview: app.walletPreview || `${app.walletAddress?.slice(0, 6)}...${app.walletAddress?.slice(-4)}`,
+    firstName: app.firstName,
+    lastName: app.lastName,
+    email: app.email,
+    dateOfBirth: app.dateOfBirth,
+    countryCode: app.countryCode,
+    countryName: app.countryName || COUNTRY_NAMES[app.countryCode] || `Code: ${app.countryCode}`,
+    requestedLevel: app.requestedLevel || 1,
+    currentLevel: app.currentLevel || 0,
+    tier: tierNumberToName(app.currentLevel || 0),
+    requestedTier: tierNumberToName(app.requestedLevel || 1),
+    status: app.status,
+    submittedAt: app.submittedAt,
+    reviewedAt: null,
+    reviewedBy: null,
+    expiresAt: null,
+    documents: app.documents || {},
+    verificationScore: app.verificationScore,
+    rejectionReason: app.rejectionReason,
+    notes: app.notes,
+    linkedWallets: app.linkedWallets || [],
+    livenessVerification: null,
+    isUpgrade: false,
+    idValidation: null,
   }));
 }
 
@@ -222,7 +282,6 @@ async function fetchKYCStats(
   });
   
   if (!response.ok) {
-    // Return default stats if endpoint doesn't exist yet
     return {
       totalApplications: 0,
       pendingCount: 0,
@@ -252,7 +311,6 @@ async function fetchKYCSettings(
     isPaused: false,
   };
 
-  // Only fetch contract settings if verifier address exists
   if (verifierAddress && publicClient) {
     try {
       const [registrationFee, feeRecipient, trustedSigner, isPaused] = await Promise.all([
@@ -289,7 +347,6 @@ async function fetchKYCSettings(
     }
   }
 
-  // Fetch API settings
   let apiSettings = {
     restrictedCountries: DEFAULT_RESTRICTED_COUNTRIES,
     autoApprovalEnabled: false,
@@ -449,15 +506,20 @@ function TierBadge({ level }: { level: number }) {
 
 function ApplicationCard({
   application,
+  tierLimits,
   onApprove,
   onReject,
   onViewDetails,
 }: {
   application: KYCApplication;
+  tierLimits: TierLimits;
   onApprove: () => void;
   onReject: () => void;
   onViewDetails: () => void;
 }) {
+  const requestedTierName = TIER_NAMES[application.requestedLevel];
+  const limit = tierLimits[requestedTierName];
+
   return (
     <div className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-gray-600 transition-colors">
       <div className="flex items-start justify-between mb-3">
@@ -493,7 +555,6 @@ function ApplicationCard({
         </div>
       </div>
 
-      {/* Verification Score */}
       {application.verificationScore !== undefined && (
         <div className="mb-3">
           <div className="flex items-center justify-between text-xs mb-1">
@@ -515,7 +576,6 @@ function ApplicationCard({
         </div>
       )}
 
-      {/* Liveness Status */}
       {application.livenessVerification && (
         <div className="mb-3 flex items-center gap-2">
           <span className="text-gray-500 text-xs">Liveness:</span>
@@ -531,11 +591,10 @@ function ApplicationCard({
         </div>
       )}
 
-      {/* Investment Limit Preview */}
       <div className="mb-3 p-2 bg-gray-700/50 rounded-lg">
         <span className="text-gray-500 text-xs">Requested Limit: </span>
         <span className="text-white text-sm font-medium">
-          {formatLimit(DEFAULT_LIMITS[TIER_NAMES[application.requestedLevel]])}
+          {formatLimit(limit)}
         </span>
       </div>
 
@@ -569,11 +628,13 @@ function ApplicationCard({
 
 function ApproveModal({
   application,
+  tierLimits,
   onConfirm,
   onClose,
   isProcessing,
 }: {
   application: KYCApplication;
+  tierLimits: TierLimits;
   onConfirm: (tierNumber: number, expiresInDays: number, notes: string) => void;
   onClose: () => void;
   isProcessing: boolean;
@@ -606,9 +667,9 @@ function ApproveModal({
             onChange={(e) => setTierNumber(parseInt(e.target.value))}
             className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500"
           >
-            <option value="1">🥉 Bronze - {formatLimit(DEFAULT_LIMITS.Bronze)}</option>
-            <option value="2">🥈 Silver - {formatLimit(DEFAULT_LIMITS.Silver)}</option>
-            <option value="3">🥇 Gold - {formatLimit(DEFAULT_LIMITS.Gold)}</option>
+            <option value="1">🥉 Bronze - {formatLimit(tierLimits.Bronze)}</option>
+            <option value="2">🥈 Silver - {formatLimit(tierLimits.Silver)}</option>
+            <option value="3">🥇 Gold - {formatLimit(tierLimits.Gold)}</option>
             <option value="4">💎 Diamond - Unlimited</option>
           </select>
           <p className="text-xs text-gray-500 mt-1">
@@ -774,8 +835,15 @@ function DetailsModal({
   onClose: () => void;
 }) {
   const { address } = useAccount();
-  const [documentUrls, setDocumentUrls] = useState<Record<string, string>>({});
+  const [documentUrls, setDocumentUrls] = useState<Record<string, { url: string; thumbnailUrl: string; fileName: string }>>({});
   const [loadingDocs, setLoadingDocs] = useState(true);
+  const [lightboxImage, setLightboxImage] = useState<string | null>(null);
+
+  // Helper to extract Google Drive ID
+  const extractDriveId = (url: string): string => {
+    const match = url.match(/id=([a-zA-Z0-9_-]+)/);
+    return match ? match[1] : '';
+  };
 
   useEffect(() => {
     async function fetchDocumentUrls() {
@@ -784,10 +852,10 @@ function DetailsModal({
         return;
       }
 
-      const urls: Record<string, string> = {};
+      const urls: Record<string, { url: string; thumbnailUrl: string; fileName: string }> = {};
       
       for (const [docType, docId] of Object.entries(application.documents)) {
-        if (docId) {
+        if (docId && typeof docId === 'string') {
           try {
             const response = await fetch(`/api/admin/kyc/document/${docId}`, {
               headers: {
@@ -796,7 +864,11 @@ function DetailsModal({
             });
             if (response.ok) {
               const data = await response.json();
-              urls[docType] = data.url;
+              urls[docType] = {
+                url: data.url,
+                thumbnailUrl: data.thumbnailUrl || data.url,
+                fileName: data.fileName || docType,
+              };
             }
           } catch (err) {
             console.error(`[KYC Admin] Failed to fetch ${docType} document:`, err);
@@ -815,213 +887,291 @@ function DetailsModal({
     const docId = application.documents?.[docType as keyof typeof application.documents];
     if (!docId) return null;
 
-    const url = documentUrls[docType];
+    const docData = documentUrls[docType];
 
     return (
-      <div className="text-center">
-        <div className="bg-gray-600 rounded-lg aspect-video flex items-center justify-center mb-1 overflow-hidden">
+      <div className="text-center group">
+        <div 
+          className="bg-gray-600 rounded-lg aspect-video flex items-center justify-center mb-1 overflow-hidden relative cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
+          onClick={() => docData?.url && setLightboxImage(docData.url)}
+        >
           {loadingDocs ? (
-            <span className="animate-spin text-2xl">⟳</span>
-          ) : url ? (
-            <img 
-              src={url} 
-              alt={label}
-              className="w-full h-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
-              onClick={() => window.open(url, '_blank')}
-            />
+            <div className="flex flex-col items-center">
+              <span className="animate-spin text-2xl mb-1">⟳</span>
+              <span className="text-xs text-gray-400">Loading...</span>
+            </div>
+          ) : docData?.url ? (
+            <>
+              <iframe
+                src={`https://drive.google.com/file/d/${extractDriveId(docData.url)}/preview`}
+                className="w-full h-full border-0"
+                allow="autoplay"
+                sandbox="allow-same-origin allow-scripts"
+              />
+              {/* Clickable overlay */}
+              <div 
+                className="absolute inset-0 bg-transparent group-hover:bg-black/30 transition-all flex items-center justify-center"
+                onClick={() => setLightboxImage(docData.url)}
+              >
+                <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded">
+                  🔍 Click to enlarge
+                </span>
+              </div>
+            </>
           ) : (
             <span className="text-4xl">{emoji}</span>
           )}
         </div>
-        <p className="text-xs text-gray-400">{label}</p>
-        {url && (
+        <p className="text-xs text-gray-400 truncate" title={docData?.fileName || label}>
+          {label}
+        </p>
+        {docData?.url && (
           <button
-            onClick={() => window.open(url, '_blank')}
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(docData.url, '_blank');
+            }}
             className="text-xs text-blue-400 hover:text-blue-300 mt-1"
           >
-            View Full Size
+            Open Full Size ↗️
           </button>
         )}
       </div>
     );
   };
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-      <div className="bg-gray-800 rounded-xl max-w-2xl w-full p-6 my-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-white">Application Details</h2>
+  // Lightbox component for full-size image viewing
+  const Lightbox = () => {
+    if (!lightboxImage) return null;
+    
+    const driveId = extractDriveId(lightboxImage);
+
+    return (
+      <div 
+        className="fixed inset-0 bg-black/90 flex items-center justify-center z-[60] p-4"
+        onClick={() => setLightboxImage(null)}
+      >
+        <div 
+          className="relative w-full max-w-4xl h-[80vh] bg-gray-900 rounded-lg overflow-hidden"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close button */}
           <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-white text-2xl"
+            onClick={() => setLightboxImage(null)}
+            className="absolute top-2 right-2 text-white text-2xl hover:text-gray-300 z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center"
           >
             ×
           </button>
-        </div>
-
-        {/* Personal Info */}
-        <div className="bg-gray-700 rounded-lg p-4 mb-4">
-          <h3 className="text-sm text-gray-400 mb-3">Personal Information</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-gray-500 text-xs">Full Name</p>
-              <p className="text-white">{application.firstName} {application.lastName}</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-xs">Email</p>
-              <p className="text-white">{application.email}</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-xs">Date of Birth</p>
-              <p className="text-white">{application.dateOfBirth}</p>
-            </div>
-            <div>
-              <p className="text-gray-500 text-xs">Country</p>
-              <p className="text-white">{application.countryName}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Verification Status */}
-        <div className="bg-gray-700 rounded-lg p-4 mb-4">
-          <h3 className="text-sm text-gray-400 mb-3">Verification Status</h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-gray-500 text-xs">Status</p>
-              <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${STATUS_COLORS[application.status]}`}>
-                {application.status.toUpperCase()}
-              </span>
-            </div>
-            <div>
-              <p className="text-gray-500 text-xs">Requested Tier</p>
-              <TierBadge level={application.requestedLevel} />
-            </div>
-            <div>
-              <p className="text-gray-500 text-xs">Current Tier</p>
-              <TierBadge level={application.currentLevel} />
-            </div>
-            <div>
-              <p className="text-gray-500 text-xs">Submitted</p>
-              <p className="text-white">{new Date(application.submittedAt).toLocaleString()}</p>
-            </div>
-            {application.reviewedAt && (
-              <div>
-                <p className="text-gray-500 text-xs">Reviewed</p>
-                <p className="text-white">{new Date(application.reviewedAt).toLocaleString()}</p>
-              </div>
-            )}
-            {application.expiresAt && (
-              <div>
-                <p className="text-gray-500 text-xs">Expires</p>
-                <p className="text-white">{new Date(application.expiresAt).toLocaleString()}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Verification Score */}
-          {application.verificationScore !== undefined && (
-            <div className="mt-4">
-              <div className="flex items-center justify-between text-xs mb-1">
-                <span className="text-gray-500">Document Verification Score</span>
-                <span className="text-white">{application.verificationScore}%</span>
-              </div>
-              <div className="h-2 bg-gray-600 rounded-full overflow-hidden">
-                <div
-                  className={`h-full ${
-                    application.verificationScore >= 80
-                      ? "bg-green-500"
-                      : application.verificationScore >= 50
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
-                  }`}
-                  style={{ width: `${application.verificationScore}%` }}
-                />
-              </div>
-            </div>
+          
+          {/* Google Drive Preview */}
+          {driveId ? (
+            <iframe
+              src={`https://drive.google.com/file/d/${driveId}/preview`}
+              className="w-full h-full border-0"
+              allow="autoplay"
+            />
+          ) : (
+            <img 
+              src={lightboxImage} 
+              alt="Document preview"
+              className="w-full h-full object-contain"
+            />
           )}
+          
+          {/* Open in new tab button */}
+          <button
+            onClick={() => window.open(lightboxImage, '_blank')}
+            className="absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          >
+            Download / Open ↗️
+          </button>
+        </div>
+      </div>
+    );
+  };
 
-          {/* Liveness Verification */}
-          {application.livenessVerification && (
-            <div className="mt-4 p-3 bg-gray-600 rounded-lg">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-400 text-sm">Liveness Verification</span>
-                {application.livenessVerification.passed ? (
-                  <span className="text-green-400 text-sm font-medium">✓ Passed</span>
-                ) : (
-                  <span className="text-red-400 text-sm font-medium">✗ Failed</span>
+  return (
+    <>
+      <Lightbox />
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+        <div className="bg-gray-800 rounded-xl max-w-2xl w-full p-6 my-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-white">Application Details</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-white text-2xl"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="bg-gray-700 rounded-lg p-4 mb-4">
+            <h3 className="text-sm text-gray-400 mb-3">Personal Information</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray-500 text-xs">Full Name</p>
+                <p className="text-white">{application.firstName} {application.lastName}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs">Email</p>
+                <p className="text-white">{application.email}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs">Date of Birth</p>
+                <p className="text-white">{application.dateOfBirth}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs">Country</p>
+                <p className="text-white">{application.countryName}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-700 rounded-lg p-4 mb-4">
+            <h3 className="text-sm text-gray-400 mb-3">Verification Status</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p className="text-gray-500 text-xs">Status</p>
+                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${STATUS_COLORS[application.status]}`}>
+                  {application.status.toUpperCase()}
+                </span>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs">Requested Tier</p>
+                <TierBadge level={application.requestedLevel} />
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs">Current Tier</p>
+                <TierBadge level={application.currentLevel} />
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs">Submitted</p>
+                <p className="text-white">{new Date(application.submittedAt).toLocaleString()}</p>
+              </div>
+              {application.reviewedAt && (
+                <div>
+                  <p className="text-gray-500 text-xs">Reviewed</p>
+                  <p className="text-white">{new Date(application.reviewedAt).toLocaleString()}</p>
+                </div>
+              )}
+              {application.expiresAt && (
+                <div>
+                  <p className="text-gray-500 text-xs">Expires</p>
+                  <p className="text-white">{new Date(application.expiresAt).toLocaleString()}</p>
+                </div>
+              )}
+            </div>
+
+            {application.verificationScore !== undefined && (
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-xs mb-1">
+                  <span className="text-gray-500">Document Verification Score</span>
+                  <span className="text-white">{application.verificationScore}%</span>
+                </div>
+                <div className="h-2 bg-gray-600 rounded-full overflow-hidden">
+                  <div
+                    className={`h-full ${
+                      application.verificationScore >= 80
+                        ? "bg-green-500"
+                        : application.verificationScore >= 50
+                        ? "bg-yellow-500"
+                        : "bg-red-500"
+                    }`}
+                    style={{ width: `${application.verificationScore}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {application.livenessVerification && (
+              <div className="mt-4 p-3 bg-gray-600 rounded-lg">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-400 text-sm">Liveness Verification</span>
+                  {application.livenessVerification.passed ? (
+                    <span className="text-green-400 text-sm font-medium">✓ Passed</span>
+                  ) : (
+                    <span className="text-red-400 text-sm font-medium">✗ Failed</span>
+                  )}
+                </div>
+                {application.livenessVerification.completedChallenges !== undefined && (
+                  <p className="text-xs text-gray-500 mt-1">
+                    Completed {application.livenessVerification.completedChallenges} of {application.livenessVerification.totalChallenges} challenges
+                    {application.livenessVerification.score !== undefined && ` (Score: ${application.livenessVerification.score}%)`}
+                  </p>
                 )}
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                Completed {application.livenessVerification.completedChallenges} of {application.livenessVerification.totalChallenges} challenges
-                (Score: {application.livenessVerification.score}%)
+            )}
+          </div>
+
+          <div className="bg-gray-700 rounded-lg p-4 mb-4">
+            <h3 className="text-sm text-gray-400 mb-3">Wallet Information</h3>
+            <p className="text-gray-500 text-xs">Wallet Address</p>
+            <p className="text-white font-mono text-sm break-all">{application.walletAddress}</p>
+            {application.linkedWallets && application.linkedWallets.length > 0 && (
+              <div className="mt-2">
+                <p className="text-gray-500 text-xs">Linked Wallets ({application.linkedWallets.length})</p>
+                {application.linkedWallets.map((wallet, i) => (
+                  <p key={i} className="text-white font-mono text-sm">{wallet}</p>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {application.documents && Object.keys(application.documents).length > 0 && (
+            <div className="bg-gray-700 rounded-lg p-4 mb-4">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm text-gray-400">Documents</h3>
+                {loadingDocs && (
+                  <span className="text-xs text-blue-400 animate-pulse">Loading thumbnails...</span>
+                )}
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                {renderDocument('idFront', 'ID Front', '🪪')}
+                {renderDocument('idBack', 'ID Back', '🪪')}
+                {renderDocument('selfie', 'Selfie', '🤳')}
+                {renderDocument('addressProof', 'Address Proof', '📄')}
+                {renderDocument('accreditedProof', 'Accredited Proof', '📋')}
+                {renderDocument('liveness_1', 'Liveness 1', '📸')}
+                {renderDocument('liveness_2', 'Liveness 2', '📸')}
+                {renderDocument('liveness_3', 'Liveness 3', '📸')}
+              </div>
+              <p className="text-xs text-gray-500 mt-3 text-center">
+                Click on any document to preview • Use ↗️ to open in new tab
               </p>
             </div>
           )}
-        </div>
 
-        {/* Wallet Info */}
-        <div className="bg-gray-700 rounded-lg p-4 mb-4">
-          <h3 className="text-sm text-gray-400 mb-3">Wallet Information</h3>
-          <p className="text-gray-500 text-xs">Wallet Address</p>
-          <p className="text-white font-mono text-sm break-all">{application.walletAddress}</p>
-          {application.linkedWallets && application.linkedWallets.length > 0 && (
-            <div className="mt-2">
-              <p className="text-gray-500 text-xs">Linked Wallets ({application.linkedWallets.length})</p>
-              {application.linkedWallets.map((wallet, i) => (
-                <p key={i} className="text-white font-mono text-sm">{wallet}</p>
-              ))}
+          {application.status === 'rejected' && application.rejectionReason && (
+            <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-4 mb-4">
+              <h3 className="text-sm text-red-400 mb-2">Rejection Reason</h3>
+              <p className="text-white">
+                {REJECTION_REASONS.find(r => r.id === application.rejectionReason)?.label || application.rejectionReason}
+              </p>
             </div>
           )}
-        </div>
 
-        {/* Documents */}
-        {application.documents && Object.keys(application.documents).length > 0 && (
-          <div className="bg-gray-700 rounded-lg p-4 mb-4">
-            <h3 className="text-sm text-gray-400 mb-3">Documents</h3>
-            <div className="grid grid-cols-3 gap-3">
-              {renderDocument('idFront', 'ID Front', '🪪')}
-              {renderDocument('idBack', 'ID Back', '🪪')}
-              {renderDocument('selfie', 'Selfie', '🤳')}
-              {renderDocument('addressProof', 'Address Proof', '📄')}
-              {renderDocument('accreditedProof', 'Accredited Proof', '📋')}
-              {renderDocument('liveness_1', 'Liveness 1', '📸')}
-              {renderDocument('liveness_2', 'Liveness 2', '📸')}
-              {renderDocument('liveness_3', 'Liveness 3', '📸')}
+          {application.notes && (
+            <div className="bg-gray-700 rounded-lg p-4 mb-4">
+              <h3 className="text-sm text-gray-400 mb-2">Admin Notes</h3>
+              <p className="text-white">{application.notes}</p>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Rejection Info */}
-        {application.status === 'rejected' && application.rejectionReason && (
-          <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-4 mb-4">
-            <h3 className="text-sm text-red-400 mb-2">Rejection Reason</h3>
-            <p className="text-white">
-              {REJECTION_REASONS.find(r => r.id === application.rejectionReason)?.label || application.rejectionReason}
-            </p>
-          </div>
-        )}
-
-        {/* Notes */}
-        {application.notes && (
-          <div className="bg-gray-700 rounded-lg p-4 mb-4">
-            <h3 className="text-sm text-gray-400 mb-2">Admin Notes</h3>
-            <p className="text-white">{application.notes}</p>
-          </div>
-        )}
-
-        <button
-          onClick={onClose}
-          className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
-        >
-          Close
-        </button>
+          <button
+            onClick={onClose}
+            className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          >
+            Close
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
 function SettingsPanel({
   settings,
+  tierLimits,
   onUpdateFee,
   onUpdateRecipient,
   onTogglePause,
@@ -1030,6 +1180,7 @@ function SettingsPanel({
   isProcessing,
 }: {
   settings: KYCSettings;
+  tierLimits: TierLimits;
   onUpdateFee: (fee: string) => void;
   onUpdateRecipient: (address: string) => void;
   onTogglePause: () => void;
@@ -1066,20 +1217,24 @@ function SettingsPanel({
       <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
         <h3 className="text-lg font-semibold text-white mb-4">Tier Investment Limits</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map((level) => (
-            <div key={level} className={`p-4 rounded-lg ${TIER_COLORS[level]}/20 border border-${TIER_COLORS[level].replace('bg-', '')}/30`}>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-2xl">{TIER_ICONS[level]}</span>
-                <span className="font-medium text-white">{TIER_NAMES[level]}</span>
+          {[1, 2, 3, 4].map((level) => {
+            const tierName = TIER_NAMES[level];
+            const limit = tierLimits[tierName];
+            return (
+              <div key={level} className={`p-4 rounded-lg ${TIER_COLORS[level]}/20 border border-gray-600`}>
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-2xl">{TIER_ICONS[level]}</span>
+                  <span className="font-medium text-white">{tierName}</span>
+                </div>
+                <p className="text-white font-bold">
+                  {formatLimit(limit)}
+                </p>
               </div>
-              <p className="text-white font-bold">
-                {formatLimit(DEFAULT_LIMITS[TIER_NAMES[level]])}
-              </p>
-            </div>
-          ))}
+            );
+          })}
         </div>
         <p className="text-xs text-gray-500 mt-4">
-          Tier limits are defined in the codebase. To change them, update src/lib/kycLimits.ts
+          Tier limits are stored in the database (kyc_tier_limits table). Update them via SQL or admin API.
         </p>
       </div>
 
@@ -1274,6 +1429,7 @@ export function KYCManagement() {
   const [applications, setApplications] = useState<KYCApplication[]>([]);
   const [stats, setStats] = useState<KYCStats | null>(null);
   const [settings, setSettings] = useState<KYCSettings | null>(null);
+  const [tierLimits, setTierLimits] = useState<TierLimits>(FALLBACK_LIMITS);
   const [isLoading, setIsLoading] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -1309,6 +1465,11 @@ export function KYCManagement() {
 
     checkAdmin();
   }, [address]);
+
+  // Load tier limits
+  useEffect(() => {
+    fetchTierLimits().then(setTierLimits);
+  }, []);
 
   // Load data
   const loadData = useCallback(async () => {
@@ -1355,10 +1516,8 @@ export function KYCManagement() {
           "x-chain-id": chainId?.toString() || "",
         },
         body: JSON.stringify({
-          submissionId: selectedApplication.id,
-          tierNumber,
-          expiresInDays,
-          adminNotes: notes,
+          applicationId: selectedApplication.id,  // Changed from submissionId
+          notes,
         }),
       });
 
@@ -1662,6 +1821,7 @@ export function KYCManagement() {
                   <ApplicationCard
                     key={app.id}
                     application={app}
+                    tierLimits={tierLimits}
                     onApprove={() => {
                       setSelectedApplication(app);
                       setShowApproveModal(true);
@@ -1685,6 +1845,7 @@ export function KYCManagement() {
         {activeTab === "settings" && settings && (
           <SettingsPanel
             settings={settings}
+            tierLimits={tierLimits}
             onUpdateFee={handleUpdateFee}
             onUpdateRecipient={handleUpdateRecipient}
             onTogglePause={handleTogglePause}
@@ -1699,6 +1860,7 @@ export function KYCManagement() {
       {showApproveModal && selectedApplication && (
         <ApproveModal
           application={selectedApplication}
+          tierLimits={tierLimits}
           onConfirm={handleApprove}
           onClose={() => {
             setShowApproveModal(false);

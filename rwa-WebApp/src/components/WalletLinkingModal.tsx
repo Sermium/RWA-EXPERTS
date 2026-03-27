@@ -3,7 +3,7 @@
 
 import React, { useState, useCallback, useEffect } from "react";
 import { useAccount } from "wagmi";
-import { useKYC, WalletLinkCode } from "@/hooks/useKYC";
+import { useKYC } from "@/contexts/KYCContext";
 
 interface WalletLinkingModalProps {
   isOpen: boolean;
@@ -17,10 +17,10 @@ export function WalletLinkingModal({
   mode: initialMode,
 }: WalletLinkingModalProps) {
   const { address } = useAccount();
-  const { generateLinkCode, useLinkCode, getLinkedWallets } = useKYC();
+  const { generateLinkCode, useLinkCode, linkError, refreshKYC } = useKYC();
 
   const [mode, setMode] = useState<"generate" | "use">(initialMode);
-  const [linkCode, setLinkCode] = useState<WalletLinkCode | null>(null);
+  const [linkCode, setLinkCode] = useState<{ code: string; expiresAt: string } | null>(null);
   const [inputCode, setInputCode] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +45,8 @@ export function WalletLinkingModal({
 
     const updateTime = () => {
       const now = Math.floor(Date.now() / 1000);
-      const remaining = linkCode.expiresAt - now;
+      const expiresAtTimestamp = Math.floor(new Date(linkCode.expiresAt).getTime() / 1000);
+      const remaining = expiresAtTimestamp - now;
       setTimeLeft(Math.max(0, remaining));
     };
 
@@ -53,6 +54,13 @@ export function WalletLinkingModal({
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, [linkCode]);
+
+  // Sync linkError from context
+  useEffect(() => {
+    if (linkError) {
+      setError(linkError);
+    }
+  }, [linkError]);
 
   // Generate code handler
   const handleGenerate = useCallback(async () => {
@@ -81,19 +89,22 @@ export function WalletLinkingModal({
     setError(null);
 
     try {
-      const result = await useLinkCode(inputCode.toUpperCase());
-      if (result.success) {
+      const success = await useLinkCode(inputCode.toUpperCase());
+      if (success) {
         setSuccess(true);
-        await getLinkedWallets();
+        await refreshKYC();
       } else {
-        setError(result.error || "Failed to link wallet");
+        // Error will be set via linkError from context
+        if (!linkError) {
+          setError("Failed to link wallet");
+        }
       }
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to link wallet");
     } finally {
       setIsLoading(false);
     }
-  }, [inputCode, useLinkCode, getLinkedWallets]);
+  }, [inputCode, useLinkCode, refreshKYC, linkError]);
 
   // Copy code handler
   const handleCopy = useCallback(() => {

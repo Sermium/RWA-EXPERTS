@@ -1,9 +1,33 @@
+// src/app/api/kyc/status/route.ts
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  KYC_INVESTMENT_LIMITS,
-  formatInvestmentLimit,
-  KYC_EXPIRY_DURATION,
-} from '@/lib/constants/kyc';
+
+// KYC expiry duration: 1 year in seconds
+const KYC_EXPIRY_DURATION = 365 * 24 * 60 * 60;
+
+// Helper to format limit
+function formatLimit(value: number | null): string {
+  if (value === null) return 'Unlimited';
+  if (!isFinite(value)) return 'Unlimited';
+  if (value === 0) return '$0';
+  if (value >= 1_000_000) {
+    const millions = value / 1_000_000;
+    return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
+  }
+  if (value >= 1_000) {
+    const thousands = value / 1_000;
+    return `$${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}K`;
+  }
+  return `$${value.toLocaleString()}`;
+}
+
+// Tier level to name mapping
+const TIER_LEVEL_TO_NAME: Record<number, string> = {
+  0: 'None',
+  1: 'Bronze',
+  2: 'Silver',
+  3: 'Gold',
+  4: 'Diamond',
+};
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,6 +58,7 @@ export async function GET(request: NextRequest) {
           wallet: wallet.toLowerCase(),
           kycStatus: 'none',
           kycLevel: 0,
+          tier: 'None',
           isVerified: false,
           canInvest: false,
           investmentLimit: 0,
@@ -50,6 +75,20 @@ export async function GET(request: NextRequest) {
     const { createClient } = await import('@supabase/supabase-js');
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // Fetch tier limits from database
+    const { data: tierLimitsData } = await supabase
+      .from('kyc_tier_limits')
+      .select('tier_name, tier_level, investment_limit');
+
+    // Build limits map from DB
+    const tierLimits: Record<number, number | null> = { 0: 0, 1: 0, 2: 0, 3: 0, 4: null };
+    if (tierLimitsData) {
+      for (const row of tierLimitsData) {
+        tierLimits[row.tier_level] = row.investment_limit;
+      }
+    }
+
+    // Fetch KYC application
     const { data: kycData, error: kycError } = await supabase
       .from('kyc_applications')
       .select('*')
@@ -66,6 +105,7 @@ export async function GET(request: NextRequest) {
           wallet: wallet.toLowerCase(),
           kycStatus: 'none',
           kycLevel: 0,
+          tier: 'None',
           isVerified: false,
           canInvest: false,
           investmentLimit: 0,
@@ -86,6 +126,7 @@ export async function GET(request: NextRequest) {
           wallet: wallet.toLowerCase(),
           kycStatus: 'none',
           kycLevel: 0,
+          tier: 'None',
           isVerified: false,
           canInvest: false,
           investmentLimit: 0,
@@ -104,7 +145,9 @@ export async function GET(request: NextRequest) {
     const isExpired = expiresAt ? new Date() > expiresAt : false;
 
     const kycLevel = kycData.kyc_level || 0;
-    const investmentLimit = KYC_INVESTMENT_LIMITS[kycLevel as keyof typeof KYC_INVESTMENT_LIMITS] || 0;
+    const tierName = TIER_LEVEL_TO_NAME[kycLevel] || 'None';
+    const investmentLimit = tierLimits[kycLevel] ?? 0;
+    const effectiveLimit = isExpired ? 0 : investmentLimit;
 
     return NextResponse.json({
       success: true,
@@ -112,10 +155,11 @@ export async function GET(request: NextRequest) {
         wallet: wallet.toLowerCase(),
         kycStatus: isExpired ? 'expired' : kycData.status,
         kycLevel: isExpired ? 0 : kycLevel,
+        tier: isExpired ? 'None' : tierName,
         isVerified: kycData.status === 'approved' && !isExpired,
         canInvest: kycData.status === 'approved' && !isExpired && kycLevel >= 1,
-        investmentLimit: isExpired ? 0 : (investmentLimit === Infinity ? null : investmentLimit),
-        investmentLimitFormatted: formatInvestmentLimit(isExpired ? 0 : kycLevel),
+        investmentLimit: effectiveLimit === null ? null : effectiveLimit,
+        investmentLimitFormatted: formatLimit(effectiveLimit),
         submittedAt: kycData.created_at,
         verifiedAt: kycData.verified_at,
         expiresAt: expiresAt?.toISOString() || null,

@@ -1,10 +1,10 @@
 // src/app/kyc/GDPRDataManagement.tsx
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useAccount } from "wagmi";
-import { useKYC } from "@/hooks/useKYC";
-import { CONTACT, SOCIAL, LINKS, mailto } from '@/config/contacts';
+import { useKYC } from "@/contexts/KYCContext";
+import { CONTACT } from '@/config/contacts';
 
 // ============================================================================
 // TYPES
@@ -284,7 +284,7 @@ function DeleteSection({
 
 export function GDPRDataManagement() {
   const { address, isConnected } = useAccount();
-  const { status, exportData, requestDeletion } = useKYC();
+  const { tier, status, isVerified, refreshKYC } = useKYC();
 
   const [exportState, setExportState] = useState<ActionState>("idle");
   const [exportError, setExportError] = useState<string | null>(null);
@@ -293,35 +293,39 @@ export function GDPRDataManagement() {
 
   // Handle export
   const handleExport = useCallback(async () => {
+    if (!address) return;
+    
     setExportState("processing");
     setExportError(null);
 
     try {
-      const blob = await exportData();
+      const response = await fetch(`/api/kyc/gdpr/export?address=${address}`);
+      const data = await response.json();
       
-      if (blob) {
-        // Create download link
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `kyc-export-${address?.slice(0, 8)}-${Date.now()}.json`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        setExportState("success");
-        
-        // Reset after 5 seconds
-        setTimeout(() => setExportState("idle"), 5000);
-      } else {
-        throw new Error("Failed to generate export");
+      if (!response.ok || !data.success) {
+        throw new Error(data.error || "Failed to export data");
       }
+
+      // Create download link
+      const blob = new Blob([JSON.stringify(data.data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `kyc-export-${address?.slice(0, 8)}-${Date.now()}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      setExportState("success");
+      
+      // Reset after 5 seconds
+      setTimeout(() => setExportState("idle"), 5000);
     } catch (e) {
       setExportError(e instanceof Error ? e.message : "Export failed");
       setExportState("error");
     }
-  }, [exportData, address]);
+  }, [address]);
 
   // Handle delete initiation
   const handleDeleteInitiate = useCallback(() => {
@@ -331,22 +335,33 @@ export function GDPRDataManagement() {
 
   // Handle delete confirmation
   const handleDeleteConfirm = useCallback(async () => {
+    if (!address) return;
+    
     setDeleteState("processing");
     setDeleteError(null);
 
     try {
-      const result = await requestDeletion();
+      const response = await fetch('/api/kyc/gdpr/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address }),
+      });
       
-      if (result) {
-        setDeleteState("success");
-      } else {
-        throw new Error("Deletion failed");
+      const result = await response.json();
+      
+      if (!response.ok || !result.success) {
+        throw new Error(result.error || "Deletion failed");
       }
+
+      setDeleteState("success");
+      
+      // Refresh KYC status after deletion
+      await refreshKYC();
     } catch (e) {
       setDeleteError(e instanceof Error ? e.message : "Deletion failed");
       setDeleteState("error");
     }
-  }, [requestDeletion]);
+  }, [address, refreshKYC]);
 
   // Handle delete cancel
   const handleDeleteCancel = useCallback(() => {
@@ -368,7 +383,8 @@ export function GDPRDataManagement() {
   }
 
   // No KYC data state
-  if (!status?.hasApplication || status?.applicationStatus === 'none') {
+  const hasKYCData = tier !== 'None' || status !== 'None';
+  if (!hasKYCData) {
     return (
       <div className="max-w-2xl mx-auto p-8 text-center">
         <div className="text-6xl mb-4">📭</div>

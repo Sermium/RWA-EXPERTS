@@ -2,18 +2,19 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { useAccount, useReadContract } from 'wagmi';
+import { useAccount, useReadContract, useChainId, useSwitchChain } from 'wagmi';
 import { useChainConfig } from '@/hooks/useChainConfig';
-import { useKYC as useKYCContext, KYCTier } from '@/contexts/KYCContext';
-import { useKYC, LinkedWallet, WalletLinkCode } from '@/hooks/useKYC';
+import { useKYC, KYCTier } from '@/contexts/KYCContext';
+import { getChainById, isValidChainId } from '@/config/chains';
 import Link from 'next/link';
+import DashboardCrowdfundingSummary from '@/components/crowdfunding/DashboardCrowdfundingSummary';
 import { 
-  Wallet, TrendingUp, DollarSign, Shield, 
+  Wallet, TrendingUp, DollarSign, Shield, Plus,
   ChevronRight, AlertCircle, FileText, Briefcase, 
   CheckCircle, XCircle, Loader2, PieChart, ArrowUpRight,
   ArrowDownRight, Coins, Users, BarChart3, Award, Banknote,
   Settings, Copy, Check, Link as LinkIcon, Share2, Clock,
-  ExternalLink, ChevronDown, RefreshCw, Eye
+  ExternalLink, ChevronDown, RefreshCw, Eye, AlertTriangle
 } from 'lucide-react';
 import { RWAProjectNFTABI } from '@/config/abis';
 
@@ -34,27 +35,28 @@ interface Investment {
   currentPrice: number;
   roi: number;
   status: 'active' | 'pending' | 'completed';
+  chainId?: number;
 }
 
 interface UserProject {
   id: string;
   name: string;
-  type: 'tokenize' | 'crowdfund' | 'trade' | 'ERC20' | 'ERC721' | 'ERC1155';
-  status: 'pending' | 'approved' | 'rejected' | 'payment_pending' | 'deploying' | 'deployed' | 'live' | 'funded' | 'completed';
-  submittedAt: string;
+  type?: 'tokenize' | 'crowdfund' | 'trade' | 'ERC20' | 'ERC721' | 'ERC1155';
+  status: string;
+  submittedAt?: string;
+  tokenName?: string;
   tokenSymbol?: string;
-  category: string;
-  totalRaised: number;
-  targetAmount: number;
-  totalSupply: number;
-  tokensSold: number;
-  currentValue: number;
-  roi: number;
-  age: number;
-  performanceScore: number;
-  dividendsDistributed: number;
-  escrowBalance: number;
-  // New fields
+  category?: string;
+  totalRaised?: number;
+  targetAmount?: number | string;
+  totalSupply?: number | string;
+  tokensSold?: number;
+  currentValue?: number;
+  roi?: number;
+  age?: number;
+  performanceScore?: number;
+  dividendsDistributed?: number;
+  escrowBalance?: number;
   rejectionReason?: string;
   tokenAddress?: string;
   escrowAddress?: string;
@@ -62,6 +64,19 @@ interface UserProject {
   logoUrl?: string;
   website?: string;
   description?: string;
+  tokenPrice?: number | string;
+  chainId?: number;
+  createdAt?: string;
+  deployedAt?: string;
+  location?: string;
+  country?: string;
+  currency?: string;
+  legalEntity?: string;
+  metadataUri?: string;
+  isListed?: boolean;
+  listingId?: string;
+  tradingPair?: string;
+  listingStatus?: string;
 }
 
 interface InvestorStats {
@@ -90,302 +105,302 @@ interface PortfolioHistory {
   value: number;
 }
 
-const MAX_LINKED_WALLETS = 10;
-
-interface ProjectCardProps {
-  project: UserProject;
+interface LinkedWallet {
+  address: string;
+  isPrimary: boolean;
+  linkedAt: string;
+  label?: string;
 }
 
-function ProjectCard({ project }: ProjectCardProps) {
-  const [expanded, setExpanded] = useState(false);
+const MAX_LINKED_WALLETS = 10;
 
-  const getStatusConfig = (status: string) => {
-    const configs: Record<string, { color: string; bgColor: string; icon: React.ReactNode; label: string }> = {
-      pending: { 
-        color: 'text-yellow-400', 
-        bgColor: 'bg-yellow-500/20', 
-        icon: <Clock className="w-4 h-4" />,
-        label: 'Pending Review'
-      },
-      approved: { 
-        color: 'text-blue-400', 
-        bgColor: 'bg-blue-500/20', 
-        icon: <CheckCircle className="w-4 h-4" />,
-        label: 'Approved - Ready to Deploy'
-      },
-      rejected: { 
-        color: 'text-red-400', 
-        bgColor: 'bg-red-500/20', 
-        icon: <XCircle className="w-4 h-4" />,
-        label: 'Rejected'
-      },
-      payment_pending: { 
-        color: 'text-orange-400', 
-        bgColor: 'bg-orange-500/20', 
-        icon: <Banknote className="w-4 h-4" />,
-        label: 'Awaiting Payment'
-      },
-      deploying: { 
-        color: 'text-purple-400', 
-        bgColor: 'bg-purple-500/20', 
-        icon: <Loader2 className="w-4 h-4 animate-spin" />,
-        label: 'Deploying...'
-      },
-      deployed: { 
-        color: 'text-green-400', 
-        bgColor: 'bg-green-500/20', 
-        icon: <CheckCircle className="w-4 h-4" />,
-        label: 'Live'
-      },
-      live: { 
-        color: 'text-green-400', 
-        bgColor: 'bg-green-500/20', 
-        icon: <CheckCircle className="w-4 h-4" />,
-        label: 'Live'
-      },
-    };
-    return configs[status] || configs.pending;
+// ============================================================================
+// REUSABLE COMPONENTS
+// ============================================================================
+
+const ChainBadge = ({ chainId, currentChainId }: { chainId?: number; currentChainId?: number }) => {
+  const chain = chainId ? getChainById(chainId) : null;
+  const isWrongChain = chainId && currentChainId && chainId !== currentChainId;
+  
+  if (!chain) return null;
+  
+  return (
+    <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${
+      isWrongChain 
+        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
+        : 'bg-purple-500/20 text-purple-300'
+    }`}>
+      {isWrongChain && <AlertTriangle className="w-3 h-3" />}
+      {chain.name}
+    </span>
+  );
+};
+
+const ChainGatedActions = ({ 
+  projectChainId, 
+  currentChainId,
+  onSwitchChain,
+  children,
+}: { 
+  projectChainId?: number;
+  currentChainId?: number;
+  onSwitchChain: (chainId: number) => void;
+  children: React.ReactNode;
+}) => {
+  const targetChainId = projectChainId || 80002;
+  const isWrongChain = currentChainId && targetChainId !== currentChainId;
+  const chainConfig = getChainById(targetChainId);
+
+  if (isWrongChain) {
+    return (
+      <button
+        onClick={() => onSwitchChain(targetChainId)}
+        className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
+      >
+        <RefreshCw className="w-4 h-4" />
+        Switch to {chainConfig?.name || 'Polygon Amoy'}
+      </button>
+    );
+  }
+
+  return <>{children}</>;
+};
+
+// ============================================================================
+// PROJECT CARD COMPONENT
+// ============================================================================
+
+const ProjectCard = ({ 
+  project, 
+  onSwitchChain,
+  currentChainId 
+}: { 
+  project: UserProject; 
+  onSwitchChain: (chainId: number) => void;
+  currentChainId: number | undefined;
+}) => {
+  const isDeployed = project.status === 'deployed';
+  const needsChainSwitch = project.chainId && currentChainId !== project.chainId;
+  const chainInfo = project.chainId ? getChainById(project.chainId) : null;
+
+  const getStatusColor = (status: string): string => {
+    switch (status?.toLowerCase()) {
+      case 'deployed':
+        return 'bg-green-500/20 text-green-400';
+      case 'approved':
+        return 'bg-blue-500/20 text-blue-400';
+      case 'pending':
+        return 'bg-yellow-500/20 text-yellow-400';
+      case 'rejected':
+        return 'bg-red-500/20 text-red-400';
+      case 'draft':
+        return 'bg-gray-500/20 text-gray-400';
+      default:
+        return 'bg-gray-500/20 text-gray-400';
+    }
   };
 
-  const getTypeConfig = (type: string) => {
-    const configs: Record<string, { color: string; label: string }> = {
-      tokenize: { color: 'bg-purple-500/20 text-purple-400', label: 'Tokenization' },
-      crowdfund: { color: 'bg-blue-500/20 text-blue-400', label: 'Crowdfunding' },
-      trade: { color: 'bg-green-500/20 text-green-400', label: 'Trade' },
-      ERC20: { color: 'bg-purple-500/20 text-purple-400', label: 'ERC-20' },
-      ERC721: { color: 'bg-indigo-500/20 text-indigo-400', label: 'NFT (ERC-721)' },
-      ERC1155: { color: 'bg-pink-500/20 text-pink-400', label: 'Multi-Token' },
-    };
-    return configs[type] || configs.tokenize;
+  const formatCurrency = (value: number | string | undefined): string => {
+    if (value === undefined || value === null) return '0';
+    const num = typeof value === 'string' ? parseFloat(value) : value;
+    if (isNaN(num)) return '0';
+    
+    if (num >= 1000000) {
+      return (num / 1000000).toFixed(2) + 'M';
+    } else if (num >= 1000) {
+      return (num / 1000).toFixed(2) + 'K';
+    }
+    return num.toFixed(2);
   };
-
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000) return `$${(value / 1000000).toFixed(2)}M`;
-    if (value >= 1000) return `$${(value / 1000).toFixed(1)}K`;
-    return `$${value.toLocaleString()}`;
-  };
-
-  const statusConfig = getStatusConfig(project.status);
-  const typeConfig = getTypeConfig(project.type);
-  const isDeployed = project.status === 'deployed' || project.status === 'completed' || project.status === 'live';
-  const isApproved = project.status === 'approved'
-  const isPending = project.status === 'pending'
-  const isRejected = project.status === 'rejected';
 
   return (
-    <div className={`bg-gray-900 rounded-xl border transition-all ${
-      isRejected ? 'border-red-500/30' : 
-      isDeployed ? 'border-green-500/30' : 
-      isApproved ? 'border-blue-500/30' : 
-      'border-gray-700'
-    }`}>
-      {/* Header */}
-      <div className="p-4 border-b border-gray-700">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h4 className="font-semibold text-white truncate">{project.name}</h4>
-              {project.tokenSymbol && (
-                <span className="text-xs text-gray-400 bg-gray-700 px-2 py-0.5 rounded">
-                  ${project.tokenSymbol}
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className={`px-2 py-0.5 rounded text-xs ${typeConfig.color}`}>
-                {typeConfig.label}
-              </span>
-              <span className="text-xs text-gray-500 capitalize">
-                {project.category?.replace(/_/g, ' ')}
-              </span>
-            </div>
-          </div>
-          <div className={`flex items-center gap-1.5 px-2 py-1 rounded-lg text-xs ${statusConfig.bgColor} ${statusConfig.color}`}>
-            {statusConfig.icon}
-            <span className="hidden sm:inline">{statusConfig.label}</span>
-          </div>
+    <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600/50 transition-all">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex-1">
+          <h3 className="font-semibold text-white truncate">{project.name}</h3>
+          <p className="text-sm text-gray-400 truncate">{project.tokenName} ({project.tokenSymbol})</p>
         </div>
-      </div>
-
-      {/* Stats */}
-      <div className="p-4 grid grid-cols-2 gap-3">
-        <div>
-          <p className="text-xs text-gray-500">Target Value</p>
-          <p className="text-sm font-medium text-white">{formatCurrency(project.targetAmount)}</p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">Token Supply</p>
-          <p className="text-sm font-medium text-white">{project.totalSupply?.toLocaleString() || '—'}</p>
-        </div>
-        {isDeployed && (
-          <>
-            <div>
-              <p className="text-xs text-gray-500">Raised</p>
-              <p className="text-sm font-medium text-green-400">{formatCurrency(project.totalRaised)}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-500">ROI</p>
-              <p className={`text-sm font-medium ${project.roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                {project.roi >= 0 ? '+' : ''}{project.roi.toFixed(1)}%
-              </p>
-            </div>
-          </>
+        {project.logoUrl && (
+          <img src={project.logoUrl} alt={project.name} className="w-10 h-10 rounded-lg object-cover ml-3" />
         )}
       </div>
 
-      {/* Expanded Details */}
-      {expanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-gray-700 pt-3">
-          <div className="grid grid-cols-2 gap-3 text-sm">
-            <div>
-              <p className="text-xs text-gray-500">Submitted</p>
-              <p className="text-gray-300">{project.submittedAt}</p>
-            </div>
-            {project.age > 0 && (
-              <div>
-                <p className="text-xs text-gray-500">Age</p>
-                <p className="text-gray-300">{project.age} days</p>
-              </div>
-            )}
-            {isDeployed && (
-              <>
-                <div>
-                  <p className="text-xs text-gray-500">Performance</p>
-                  <div className="flex items-center gap-2">
-                    <div className="flex-1 h-1.5 bg-gray-700 rounded-full">
-                      <div 
-                        className={`h-full rounded-full ${
-                          project.performanceScore >= 80 ? 'bg-green-500' :
-                          project.performanceScore >= 60 ? 'bg-blue-500' :
-                          project.performanceScore >= 40 ? 'bg-yellow-500' : 'bg-red-500'
-                        }`}
-                        style={{ width: `${project.performanceScore}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-gray-400">{project.performanceScore}</span>
-                  </div>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Dividends Paid</p>
-                  <p className="text-gray-300">{formatCurrency(project.dividendsDistributed)}</p>
-                </div>
-              </>
-            )}
-          </div>
+      <div className="flex items-center gap-2 flex-wrap mb-4">
+        <span className={`px-2 py-0.5 rounded text-xs ${getStatusColor(project.status)}`}>
+          {project.status}
+        </span>
+        {project.type && (
+          <span className="px-2 py-0.5 rounded text-xs bg-blue-500/20 text-blue-400">
+            {project.type}
+          </span>
+        )}
+        <ChainBadge chainId={project.chainId} currentChainId={currentChainId} />
+        
+        {isDeployed && (
+          project.isListed ? (
+            <Link 
+              href={`/exchange?token=${project.tokenAddress}`}
+              className="px-2 py-0.5 rounded text-xs bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 flex items-center gap-1 transition-colors"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <BarChart3 className="w-3 h-3" />
+              Trading
+              {project.tradingPair && <span className="opacity-70">({project.tradingPair})</span>}
+            </Link>
+          ) : (
+            <span className="px-2 py-0.5 rounded text-xs bg-gray-600/30 text-gray-500">
+              Not Listed
+            </span>
+          )
+        )}
+      </div>
 
-          {/* Rejection Reason */}
-          {isRejected && project.rejectionReason && (
-            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-xs text-red-400 font-medium mb-1">Rejection Reason:</p>
-              <p className="text-sm text-gray-300">{project.rejectionReason}</p>
-            </div>
-          )}
-
-          {/* Contract Addresses */}
-          {isDeployed && project.tokenAddress && (
-            <div className="p-3 bg-gray-800 rounded-lg space-y-2">
-              <p className="text-xs text-gray-500 font-medium">Contract Addresses</p>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-400">Token:</span>
-                <a 
-                  href={`https://polygonscan.com/address/${project.tokenAddress}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 font-mono flex items-center gap-1"
-                >
-                  {project.tokenAddress?.slice(0, 8)}...{project.tokenAddress?.slice(-6)}
-                  <ExternalLink className="w-3 h-3" />
-                </a>
-              </div>
-              {project.escrowAddress && (
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-gray-400">Escrow:</span>
-                  <a 
-                    href={`https://polygonscan.com/address/${project.escrowAddress}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 font-mono flex items-center gap-1"
-                  >
-                    {project.escrowAddress?.slice(0, 8)}...{project.escrowAddress?.slice(-6)}
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                </div>
-              )}
-            </div>
-          )}
+      {project.tokenAddress && (
+        <div className="mb-4 p-2 bg-gray-900/50 rounded-lg">
+          <p className="text-xs text-gray-500 mb-1">Token Address</p>
+          <p className="text-xs text-gray-300 font-mono truncate">{project.tokenAddress}</p>
         </div>
       )}
 
-      {/* Actions */}
-      <div className="p-4 border-t border-gray-700 flex items-center gap-2">
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="flex-1 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
-        >
-          {expanded ? 'Show Less' : 'Show More'}
-          <ChevronDown className={`w-4 h-4 transition-transform ${expanded ? 'rotate-180' : ''}`} />
-        </button>
+      <div className="grid grid-cols-2 gap-3 mb-4">
+        <div>
+          <p className="text-xs text-gray-500">Target</p>
+          <p className="text-sm font-medium text-white">${formatCurrency(project.targetAmount)}</p>
+        </div>
+        <div>
+          <p className="text-xs text-gray-500">Token Price</p>
+          <p className="text-sm font-medium text-white">${project.tokenPrice}</p>
+        </div>
+      </div>
 
-        {/* Action buttons based on status */}
-        {isRejected && (
-          <Link
-            href={`/tokenize/edit/${project.id}?resubmit=true&from=dashboard`}
-            className="flex-1 px-3 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
+      {needsChainSwitch && chainInfo && (
+        <div className="mb-4 p-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <p className="text-xs text-yellow-400">
+            Switch to {chainInfo.name} to manage this project
+          </p>
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        <Link
+          href={`/project/${project.id}`}
+          className="flex-1 text-center py-2 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+        >
+          View Project
+        </Link>
+        
+        {needsChainSwitch && chainInfo && (
+          <button
+            onClick={() => onSwitchChain(project.chainId!)}
+            className="py-2 px-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
           >
             <RefreshCw className="w-4 h-4" />
-            Resubmit
-          </Link>
+            Switch
+          </button>
         )}
-
-        {isPending && (
+        
+        {isDeployed && !project.isListed && !needsChainSwitch && (
           <Link
-            href={`/tokenize/application/${project.id}?from=dashboard`}
-            className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
+            href={`/project/${project.id}?tab=settings`}
+            className="py-2 px-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-medium transition-colors"
           >
-            <Eye className="w-4 h-4" />
-            View
-          </Link>
-        )}
-
-        {isApproved && (
-          <Link
-            href={`/tokenize/create/${project.id}?from=dashboard`}
-            className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
-          >
-            <Coins className="w-4 h-4" />
-            Deploy
-          </Link>
-        )}
-
-        {isDeployed && (
-          <Link
-            href={`/projects/${project.id}`}
-            className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
-          >
-            <ExternalLink className="w-4 h-4" />
-            View Live
+            List
           </Link>
         )}
       </div>
     </div>
   );
+};
+
+
+// ============================================================================
+// INVESTMENT CARD COMPONENT
+// ============================================================================
+
+interface InvestmentCardProps {
+  investment: Investment;
+  currentChainId?: number;
+  onSwitchChain: (chainId: number) => void;
+}
+
+function InvestmentCard({ investment, currentChainId, onSwitchChain }: InvestmentCardProps) {
+  const investmentChainId = investment.chainId || 80002;
+  const isWrongChain = currentChainId && investmentChainId !== currentChainId;
+  const chainConfig = getChainById(investmentChainId);
+
+  const formatCurrency = (value: number): string => {
+    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  };
+
+  return (
+    <tr className={`hover:bg-gray-700/30 transition-colors ${isWrongChain ? 'opacity-60' : ''}`}>
+      <td className="px-6 py-4">
+        <div className="flex items-center gap-2">
+          <div>
+            <p className="font-medium text-white">{investment.projectName}</p>
+            <div className="flex items-center gap-2 mt-1">
+              <p className="text-xs text-gray-400">{investment.tokenSymbol}</p>
+              <ChainBadge chainId={investmentChainId} currentChainId={currentChainId} />
+            </div>
+          </div>
+        </div>
+      </td>
+      <td className="px-6 py-4 text-gray-300">{investment.tokens.toLocaleString()}</td>
+      <td className="px-6 py-4 text-gray-300">{formatCurrency(investment.amount)}</td>
+      <td className="px-6 py-4 text-white font-medium">{formatCurrency(investment.currentValue)}</td>
+      <td className={`px-6 py-4 font-medium ${investment.roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+        {investment.roi >= 0 ? '+' : ''}{investment.roi.toFixed(2)}%
+      </td>
+      <td className="px-6 py-4">
+        {isWrongChain ? (
+          <button
+            onClick={() => onSwitchChain(investmentChainId)}
+            className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs flex items-center gap-1 hover:bg-yellow-500/30 transition-colors"
+          >
+            <RefreshCw className="w-3 h-3" />
+            Switch
+          </button>
+        ) : (
+          <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
+            {investment.status}
+          </span>
+        )}
+      </td>
+    </tr>
+  );
 }
 
 // ============================================================================
-// COMPONENT
+// MAIN COMPONENT
 // ============================================================================
 
 export default function DashboardClient() {
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
   const { contracts } = useChainConfig();
-  const { kycData, tierInfo, tierLimits } = useKYCContext();
-  const {status, linkedWallets, isLoading: isLoadingKYC, generateLinkCode, useLinkCode, getLinkedWallets,} = useKYC();
+  
+  // Use the unified KYC context
+  const { 
+    kycData, 
+    tier,
+    tierInfo, 
+    tierLimits, 
+    isVerified,
+    isLoading: isLoadingKYC,
+    investmentLimit,
+    remainingLimit,
+    generateLinkCode,
+    useLinkCode,
+    linkError: contextLinkError,
+    refreshKYC
+  } = useKYC();
   
   // Tab state
   const [activeTab, setActiveTab] = useState<'investor' | 'owner' | 'settings'>('investor');
   
   // Wallet linking state
-  const [linkCode, setLinkCode] = useState<WalletLinkCode | null>(null);
+  const [linkCode, setLinkCode] = useState<{ code: string; expiresAt: string } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
   const [linkError, setLinkError] = useState<string | null>(null);
@@ -393,7 +408,7 @@ export default function DashboardClient() {
   const [codeInput, setCodeInput] = useState('');
   const [copiedCode, setCopiedCode] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
-  
+  const [linkedWallets, setLinkedWallets] = useState<LinkedWallet[]>([]);
   
   // Referral state
   const [copiedReferral, setCopiedReferral] = useState(false);
@@ -401,6 +416,7 @@ export default function DashboardClient() {
   // Data states
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [userProjects, setUserProjects] = useState<UserProject[]>([]);
+  const tokenizationProjects = userProjects.filter(p => p.type !== 'crowdfund');
   const [investorStats, setInvestorStats] = useState<InvestorStats>({
     totalInvested: 0,
     investmentLimit: 0,
@@ -422,26 +438,67 @@ export default function DashboardClient() {
   });
   const [portfolioHistory, setPortfolioHistory] = useState<PortfolioHistory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [ownerSubTab, setOwnerSubTab] = useState<'crowdfunding' | 'tokenization'>('crowdfunding');
 
   // Read user's on-chain projects
   const { data: onChainProjectIds } = useReadContract({
     address: contracts?.RWAProjectNFT as `0x${string}`,
     abi: RWAProjectNFTABI,
-    functionName: 'getProjectsByOwner',
+    functionName: 'getOwnerProjects',
     args: address ? [address] : undefined,
     query: { enabled: !!address && !!contracts?.RWAProjectNFT },
   });
 
+  // Helper to convert values to numbers
+  const toNumber = (value: string | number | undefined | null): number => {
+    if (value === undefined || value === null) return 0;
+    if (typeof value === 'string') {
+      const parsed = parseFloat(value);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+    return value;
+  };
+
+  // Handle chain switch
+  const handleSwitchChain = useCallback((targetChainId: number) => {
+    if (switchChain) {
+      switchChain({ chainId: targetChainId });
+    }
+  }, [switchChain]);
+
   useEffect(() => {
-  window.scrollTo(0, 0);
-}, []);
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Fetch linked wallets
+  const fetchLinkedWallets = useCallback(async () => {
+    if (!address) return;
+    
+    try {
+      const response = await fetch(`/api/kyc/link/list?wallet=${address}`)
+      const data = await response.json();
+      
+      if (data.success && data.wallets) {
+        setLinkedWallets(data.wallets);
+      }
+    } catch (error) {
+      console.error('Failed to fetch linked wallets:', error);
+    }
+  }, [address]);
 
   // Load linked wallets on mount
   useEffect(() => {
     if (isConnected && address) {
-      getLinkedWallets();
+      fetchLinkedWallets();
     }
-  }, [isConnected, address, getLinkedWallets]);
+  }, [isConnected, address, fetchLinkedWallets]);
+
+  // Sync context link error
+  useEffect(() => {
+    if (contextLinkError) {
+      setLinkError(contextLinkError);
+    }
+  }, [contextLinkError]);
 
   // Countdown timer for link code
   useEffect(() => {
@@ -449,14 +506,57 @@ export default function DashboardClient() {
 
     const updateTime = () => {
       const now = Math.floor(Date.now() / 1000);
-      const remaining = linkCode.expiresAt - now;
+      const expiresAtTimestamp = Math.floor(new Date(linkCode.expiresAt).getTime() / 1000);
+      const remaining = expiresAtTimestamp - now;
       setTimeLeft(Math.max(0, remaining));
+      
+      if (remaining <= 0) {
+        setLinkCode(null);
+      }
     };
 
     updateTime();
     const interval = setInterval(updateTime, 1000);
     return () => clearInterval(interval);
   }, [linkCode]);
+
+  // Check if link code has been used
+  useEffect(() => {
+    if (!linkCode || !address) return;
+    if (timeLeft <= 0) {
+      setLinkCode(null);
+      return;
+    }
+
+    const checkIfCodeUsed = async () => {
+      try {
+        const res = await fetch(
+          `/api/kyc/link/check?code=${encodeURIComponent(linkCode.code)}&wallet=${encodeURIComponent(address)}`
+        );
+        
+        if (!res.ok) return;
+        
+        const data = await res.json();
+
+        if (data.used) {
+          setLinkCode(null);
+          setTimeLeft(0);
+          setLinkSuccess(true);
+          fetchLinkedWallets();
+          setTimeout(() => setLinkSuccess(false), 5000);
+        } else if (data.notFound || data.expired) {
+          setLinkCode(null);
+          setTimeLeft(0);
+        }
+      } catch (error) {
+        console.error("Error checking link code status:", error);
+      }
+    };
+
+    checkIfCodeUsed();
+    const interval = setInterval(checkIfCodeUsed, 3000);
+    return () => clearInterval(interval);
+  }, [linkCode, address, timeLeft, fetchLinkedWallets]);
 
   // Handle generate link code
   const handleGenerateCode = useCallback(async () => {
@@ -485,20 +585,24 @@ export default function DashboardClient() {
     setLinkError(null);
 
     try {
-      const result = await useLinkCode(codeInput.toUpperCase());
-      if (result.success) {
+      const success = await useLinkCode(codeInput.toUpperCase());
+      if (success) {
         setLinkSuccess(true);
         setCodeInput('');
-        await getLinkedWallets();
+        await fetchLinkedWallets();
+        await refreshKYC();
+        setTimeout(() => setLinkSuccess(false), 5000);
       } else {
-        setLinkError(result.error || "Failed to link wallet");
+        if (!contextLinkError) {
+          setLinkError("Failed to link wallet");
+        }
       }
     } catch (e) {
       setLinkError(e instanceof Error ? e.message : "Failed to link wallet");
     } finally {
       setIsLinking(false);
     }
-  }, [codeInput, useLinkCode, getLinkedWallets]);
+  }, [codeInput, useLinkCode, fetchLinkedWallets, refreshKYC, contextLinkError]);
 
   // Copy helpers
   const copyCode = useCallback(() => {
@@ -515,13 +619,10 @@ export default function DashboardClient() {
   };
 
   // KYC status checks
-  const hasKYC = status?.applicationStatus === "approved" && !status?.isExpired;
+  const hasKYC = isVerified && tier !== 'None';
   const isPrimaryWallet = linkedWallets.some(
     (w) => w.address.toLowerCase() === address?.toLowerCase() && w.isPrimary
   );
-
-  // Get investment limit from KYC context
-  const investmentLimit = kycData?.investmentLimit || tierLimits?.[kycData?.tier || 'None'] || 0;
 
   // Fetch investor data
   useEffect(() => {
@@ -552,7 +653,6 @@ export default function DashboardClient() {
             pendingYield: data.pendingYield || 0,
           });
           
-          // Generate portfolio history
           const history: PortfolioHistory[] = [];
           const now = new Date();
           for (let i = 30; i >= 0; i--) {
@@ -583,25 +683,21 @@ export default function DashboardClient() {
         const tokenRes = await fetch(`/api/tokenization/user?wallet=${address}`);
         if (tokenRes.ok) {
           const data = await tokenRes.json();
-          setUserProjects(data.projects || []);
+          const allProjects = data.projects || [];
+          setUserProjects(allProjects);
           
-          const projects = data.projects || [];
-          
-          // Only count deployed/live projects for totals
-          const deployedProjects = projects.filter((p: UserProject) => 
-            p.status === 'deployed' || 
-            p.status === 'completed' ||
-            p.status === 'live'
+          const deployedProjects = allProjects.filter((p: UserProject) => 
+            p.status === 'deployed' || p.status === 'completed' || p.status === 'live'
           );
           
           const totalTokenized = deployedProjects.reduce((sum: number, p: UserProject) => 
-            sum + p.targetAmount, 0);
+            sum + toNumber(p.targetAmount), 0);
           const totalRaised = deployedProjects.reduce((sum: number, p: UserProject) => 
-            sum + p.totalRaised, 0);
+            sum + toNumber(p.totalRaised), 0);
           const dividendsDistributed = deployedProjects.reduce((sum: number, p: UserProject) => 
-            sum + p.dividendsDistributed, 0);
+            sum + toNumber(p.dividendsDistributed), 0);
           const currentValue = deployedProjects.reduce((sum: number, p: UserProject) => 
-            sum + p.currentValue, 0);
+            sum + toNumber(p.currentValue), 0);
           
           setOwnerStats({
             totalTokenized,
@@ -610,7 +706,7 @@ export default function DashboardClient() {
             currentValue,
             totalYield: totalRaised > 0 ? (dividendsDistributed / totalRaised) * 100 : 0,
             dividendsDistributed,
-            projectCount: projects.length, // Show total count of all projects
+            projectCount: allProjects.length,
           });
         }
       } catch (error) {
@@ -625,7 +721,6 @@ export default function DashboardClient() {
 
   // KYC tier config
   const getKYCConfig = () => {
-    const tier = kycData?.tier || 'None';
     const configs: Record<string, { color: string; icon: typeof Shield }> = {
       'None': { color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle },
       'Bronze': { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Shield },
@@ -637,6 +732,19 @@ export default function DashboardClient() {
   };
 
   const kycConfig = getKYCConfig();
+  const currentChainConfig = chainId ? getChainById(chainId) : null;
+  const currentChainName = currentChainConfig?.name || 'Unknown';
+
+  const projectsOnCurrentChain = userProjects.filter((p: UserProject) => {
+    const isDeployed = p.status === 'deployed' || p.status === 'completed' || p.status === 'live';
+    if (!isDeployed) return true;
+    return !p.chainId || p.chainId === chainId;
+  }).length;
+
+  const projectsOnOtherChains = userProjects.filter((p: UserProject) => {
+    const isDeployed = p.status === 'deployed' || p.status === 'completed' || p.status === 'live';
+    return isDeployed && p.chainId && p.chainId !== chainId;
+  }).length;
 
   // Format helpers
   const formatCurrency = (value: number) => {
@@ -647,34 +755,6 @@ export default function DashboardClient() {
   };
 
   const formatAddress = (addr: string) => `${addr.slice(0, 6)}...${addr.slice(-4)}`;
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'deployed':
-      case 'completed':
-      case 'active':
-      case 'live':
-        return <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">Live</span>;
-      case 'approved':
-      case 'creation_ready':
-        return <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs">Ready to Deploy</span>;
-      case 'pending':
-      case 'submitted':
-      case 'under_review':
-        return <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs">Pending</span>;
-      case 'rejected':
-        return <span className="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs">Rejected</span>;
-      default:
-        return <span className="px-2 py-1 bg-gray-500/20 text-gray-400 rounded-full text-xs">{status}</span>;
-    }
-  };
-
-  const getPerformanceColor = (score: number) => {
-    if (score >= 80) return 'text-green-400';
-    if (score >= 60) return 'text-blue-400';
-    if (score >= 40) return 'text-yellow-400';
-    return 'text-red-400';
-  };
 
   if (!isConnected) {
     return (
@@ -693,13 +773,19 @@ export default function DashboardClient() {
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-          <p className="text-gray-400 mt-1">Manage your investments and projects</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Dashboard</h1>
+            <p className="text-gray-400 mt-1">Manage your investments and projects</p>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg border border-gray-700">
+            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <span className="text-sm text-gray-300">{currentChainName}</span>
+          </div>
         </div>
 
         {/* KYC Banner */}
-        {(!kycData?.tier || kycData.tier === 'None') && (
+        {tier === 'None' && (
           <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
               <AlertCircle className="w-5 h-5 text-red-400" />
@@ -751,9 +837,7 @@ export default function DashboardClient() {
           </button>
         </div>
 
-        {/* ================================================================== */}
         {/* INVESTOR TAB */}
-        {/* ================================================================== */}
         {activeTab === 'investor' && (
           <div className="space-y-6">
             {/* Stats Cards */}
@@ -766,7 +850,7 @@ export default function DashboardClient() {
                 <p className="text-2xl font-bold text-white mb-2">{formatCurrency(investorStats.totalInvested)}</p>
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-gray-500">Limit ({kycData?.tier || 'None'})</span>
+                    <span className="text-gray-500">Limit ({tier})</span>
                     <span className="text-gray-400">{formatCurrency(investmentLimit)}</span>
                   </div>
                   {investmentLimit !== Infinity && investmentLimit > 0 && (
@@ -888,21 +972,12 @@ export default function DashboardClient() {
                     </thead>
                     <tbody className="divide-y divide-gray-700">
                       {investments.map((inv, idx) => (
-                        <tr key={idx} className="hover:bg-gray-700/30 transition-colors">
-                          <td className="px-6 py-4">
-                            <p className="font-medium text-white">{inv.projectName}</p>
-                            <p className="text-xs text-gray-400">{inv.tokenSymbol}</p>
-                          </td>
-                          <td className="px-6 py-4 text-gray-300">{inv.tokens.toLocaleString()}</td>
-                          <td className="px-6 py-4 text-gray-300">{formatCurrency(inv.amount)}</td>
-                          <td className="px-6 py-4 text-white font-medium">{formatCurrency(inv.currentValue)}</td>
-                          <td className={`px-6 py-4 font-medium ${inv.roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {inv.roi >= 0 ? '+' : ''}{inv.roi.toFixed(2)}%
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`px-2 py-1 rounded text-xs ${getStatusBadge(inv.status)}`}>{inv.status}</span>
-                          </td>
-                        </tr>
+                        <InvestmentCard 
+                          key={idx} 
+                          investment={inv} 
+                          currentChainId={chainId}
+                          onSwitchChain={handleSwitchChain}
+                        />
                       ))}
                     </tbody>
                   </table>
@@ -912,96 +987,158 @@ export default function DashboardClient() {
           </div>
         )}
 
-        {/* ================================================================== */}
         {/* OWNER TAB */}
-        {/* ================================================================== */}
         {activeTab === 'owner' && (
           <div className="space-y-6">
-            {/* Stats Cards - Only count deployed projects */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 text-sm">Total Tokenized</span>
-                  <Coins className="w-5 h-5 text-purple-400" />
+            {/* Sub-tabs for Owner */}
+            <div className="flex gap-2 p-1 bg-gray-700/50 rounded-xl w-fit">
+              <button
+                onClick={() => setOwnerSubTab('crowdfunding')}
+                className={`px-5 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                  ownerSubTab === 'crowdfunding' 
+                    ? 'bg-blue-600 text-white' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                }`}
+              >
+                <Coins className="w-4 h-4" />
+                Crowdfunding
+              </button>
+              <button
+                onClick={() => setOwnerSubTab('tokenization')}
+                className={`px-5 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
+                  ownerSubTab === 'tokenization' 
+                    ? 'bg-purple-600 text-white' 
+                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                }`}
+              >
+                <FileText className="w-4 h-4" />
+                Tokenization
+              </button>
+            </div>
+
+            {/* Crowdfunding Section */}
+            {ownerSubTab === 'crowdfunding' && (
+              <DashboardCrowdfundingSummary />
+            )}
+
+            {/* Tokenization Section */}
+            {ownerSubTab === 'tokenization' && (
+              <>
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-gray-400 text-sm">Total Tokenized</span>
+                      <Coins className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <p className="text-2xl font-bold text-white">
+                      {formatCurrency(
+                        userProjects
+                          .filter(p => ['deployed', 'live', 'completed'].includes(p.status) && p.type !== 'crowdfund')
+                          .reduce((sum, p) => sum + toNumber(p.targetAmount), 0)
+                      )}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-2">
+                      {userProjects.filter(p => ['deployed', 'live', 'completed'].includes(p.status) && p.type !== 'crowdfund').length} deployed project{userProjects.filter(p => ['deployed', 'live', 'completed'].includes(p.status) && p.type !== 'crowdfund').length !== 1 ? 's' : ''}
+                    </p>
+                  </div>
+
+                  <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-gray-400 text-sm">Total Raised</span>
+                      <DollarSign className="w-5 h-5 text-green-400" />
+                    </div>
+                    <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.totalRaised)}</p>
+                    <p className="text-xs text-gray-500 mt-2">From token sales</p>
+                  </div>
+
+                  <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-gray-400 text-sm">Current Value</span>
+                      <BarChart3 className="w-5 h-5 text-blue-400" />
+                    </div>
+                    <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.currentValue)}</p>
+                    <p className="text-xs text-green-400 mt-2">+{ownerStats.totalYield.toFixed(2)}% yield</p>
+                  </div>
+
+                  <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="text-gray-400 text-sm">Dividends Distributed</span>
+                      <Users className="w-5 h-5 text-yellow-400" />
+                    </div>
+                    <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.dividendsDistributed)}</p>
+                    <p className="text-xs text-gray-500 mt-2">To investors</p>
+                  </div>
                 </div>
-                <p className="text-2xl font-bold text-white">
-                  {formatCurrency(
-                    userProjects
-                      .filter(p => p.status === 'deployed' || p.status === 'live')
-                      .reduce((sum, p) => sum + p.targetAmount, 0)
+
+                {/* Chain Info Banner */}
+                {projectsOnOtherChains > 0 && (
+                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <AlertTriangle className="w-5 h-5 text-yellow-400" />
+                      <div>
+                        <p className="text-white font-medium">
+                          {projectsOnOtherChains} project{projectsOnOtherChains !== 1 ? 's' : ''} on other chains
+                        </p>
+                        <p className="text-sm text-gray-400">
+                          Switch networks to interact with projects on different chains
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Tokenization Projects Grid */}
+                <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+                  <div className="p-6 border-b border-gray-700 flex items-center justify-between flex-wrap gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-purple-500/20 rounded-lg">
+                        <FileText className="w-5 h-5 text-purple-400" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-white">Tokenization Projects</h3>
+                        <p className="text-sm text-gray-400">
+                          {tokenizationProjects.length} project{tokenizationProjects.length !== 1 ? 's' : ''}
+                        </p>
+                      </div>
+                    </div>
+                    <Link href="/tokenize" className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors">
+                      <Plus className="w-4 h-4" />
+                      New Project
+                    </Link>
+                  </div>
+
+                  {isLoading ? (
+                    <div className="p-12 flex justify-center">
+                      <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
+                    </div>
+                  ) : tokenizationProjects.length === 0 ? (
+                    <div className="p-12 text-center">
+                      <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                      <p className="text-gray-400 mb-4">No tokenization projects yet</p>
+                      <Link href="/tokenize" className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors">
+                        Tokenize Asset <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      {tokenizationProjects.map((project) => (
+                        <ProjectCard 
+                          key={project.id} 
+                          project={project} 
+                          currentChainId={chainId}
+                          onSwitchChain={handleSwitchChain}
+                        />
+                      ))}
+                    </div>
                   )}
-                </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  {userProjects.filter(p => p.status === 'deployed' || p.status === 'live').length} deployed project{userProjects.filter(p => p.status === 'deployed' || p.status === 'live').length !== 1 ? 's' : ''}
-                </p>
-              </div>
-
-              <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 text-sm">Total Raised</span>
-                  <DollarSign className="w-5 h-5 text-green-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.totalRaised)}</p>
-                <p className="text-xs text-gray-500 mt-2">From token sales</p>
-              </div>
-
-              <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 text-sm">Current Value</span>
-                  <BarChart3 className="w-5 h-5 text-blue-400" />
-                </div>
-                <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.currentValue)}</p>
-                <p className="text-xs text-green-400 mt-2">+{ownerStats.totalYield.toFixed(2)}% yield</p>
-              </div>
-
-              <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 text-sm">Dividends Distributed</span>
-                  <Users className="w-5 h-5 text-yellow-400" />
-                </div>
-                <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.dividendsDistributed)}</p>
-                <p className="text-xs text-gray-500 mt-2">To investors</p>
-              </div>
-            </div>
-
-            {/* Projects Grid */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-              <div className="p-6 border-b border-gray-700 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <Briefcase className="w-5 h-5 text-purple-400" />
-                  My Projects
-                </h3>
-                <Link href="/tokenize" className="text-sm text-purple-400 hover:text-purple-300 flex items-center gap-1">
-                  New Project <ChevronRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-              {isLoading ? (
-                <div className="p-12 flex justify-center">
-                  <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
-                </div>
-              ) : userProjects.length === 0 ? (
-                <div className="p-12 text-center">
-                  <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400 mb-4">No projects yet</p>
-                  <Link href="/tokenize" className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors">
-                    Tokenize Asset <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              ) : (
-                <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                  {userProjects.map((project) => (
-                    <ProjectCard key={project.id} project={project} />
-                  ))}
-                </div>
-              )}
-            </div>
+              </>
+            )}
           </div>
         )}
 
-        {/* ================================================================== */}
         {/* SETTINGS TAB */}
-        {/* ================================================================== */}
         {activeTab === 'settings' && (
           <div className="space-y-6">
             
@@ -1014,7 +1151,7 @@ export default function DashboardClient() {
                 </h3>
                 <div className={`px-3 py-1.5 rounded-lg text-sm border ${kycConfig.color} flex items-center gap-2`}>
                   {React.createElement(kycConfig.icon, { className: "w-4 h-4" })}
-                  {kycData?.tier || 'Not Verified'}
+                  {tier}
                 </div>
               </div>
               
@@ -1035,7 +1172,7 @@ export default function DashboardClient() {
                 </div>
               </div>
               
-              {(!kycData?.tier || kycData.tier === 'None') && (
+              {tier === 'None' && (
                 <Link href="/kyc" className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
                   Complete KYC Verification <ChevronRight className="w-4 h-4" />
                 </Link>
@@ -1067,7 +1204,7 @@ export default function DashboardClient() {
               {linkSuccess && (
                 <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-sm flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 flex-shrink-0" />
-                  Wallet linked successfully!
+                  Wallet linked successfully! The new wallet now shares your KYC verification.
                 </div>
               )}
 

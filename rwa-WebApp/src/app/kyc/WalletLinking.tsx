@@ -3,13 +3,20 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useAccount } from "wagmi";
-import { useKYC, LinkedWallet, WalletLinkCode } from "@/hooks/useKYC";
+import { useKYC } from "@/contexts/KYCContext";
 
 // ============================================================================
 // TYPES
 // ============================================================================
 
 type LinkingMode = "none" | "generate" | "use";
+
+interface LinkedWallet {
+  address: string;
+  isPrimary: boolean;
+  linkedAt: string;
+  label?: string;
+}
 
 // ============================================================================
 // COMPONENTS
@@ -82,7 +89,7 @@ function GenerateCodeSection({
   error,
 }: {
   onGenerate: () => void;
-  linkCode: WalletLinkCode | null;
+  linkCode: { code: string; expiresAt: string } | null;
   isGenerating: boolean;
   error: string | null;
 }) {
@@ -95,7 +102,8 @@ function GenerateCodeSection({
 
     const updateTime = () => {
       const now = Math.floor(Date.now() / 1000);
-      const remaining = linkCode.expiresAt - now;
+      const expiresAtTimestamp = Math.floor(new Date(linkCode.expiresAt).getTime() / 1000);
+      const remaining = expiresAtTimestamp - now;
       setTimeLeft(Math.max(0, remaining));
     };
 
@@ -322,28 +330,54 @@ function UseCodeSection({
 export function WalletLinking() {
   const { address, isConnected } = useAccount();
   const {
-    status,
-    linkedWallets,
+    tier,
+    tierInfo,
+    isVerified,
     isLoading,
-    error: kycError,
+    kycData,
     generateLinkCode,
     useLinkCode,
-    getLinkedWallets,
+    linkError,
+    refreshKYC,
   } = useKYC();
 
   const [mode, setMode] = useState<LinkingMode>("none");
-  const [linkCode, setLinkCode] = useState<WalletLinkCode | null>(null);
+  const [linkCode, setLinkCode] = useState<{ code: string; expiresAt: string } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const [linkSuccess, setLinkSuccess] = useState(false);
+  const [linkedWallets, setLinkedWallets] = useState<LinkedWallet[]>([]);
 
   // Load linked wallets on mount
   useEffect(() => {
     if (isConnected && address) {
-      getLinkedWallets();
+      fetchLinkedWallets();
     }
-  }, [isConnected, address, getLinkedWallets]);
+  }, [isConnected, address]);
+
+  // Sync linkError from context
+  useEffect(() => {
+    if (linkError) {
+      setLocalError(linkError);
+    }
+  }, [linkError]);
+
+  // Fetch linked wallets from API
+  const fetchLinkedWallets = useCallback(async () => {
+    if (!address) return;
+    
+    try {
+      const response = await fetch(`/api/kyc/link/list?wallet=${address}`)
+      const data = await response.json();
+      
+      if (data.success && data.wallets) {
+        setLinkedWallets(data.wallets);
+      }
+    } catch (error) {
+      console.error('Failed to fetch linked wallets:', error);
+    }
+  }, [address]);
 
   // Handle generate link code
   const handleGenerateCode = useCallback(async () => {
@@ -370,20 +404,24 @@ export function WalletLinking() {
     setLocalError(null);
 
     try {
-      const result = await useLinkCode(code);
-      if (result.success) {
+      const success = await useLinkCode(code);
+      if (success) {
         setLinkSuccess(true);
-        // Refresh linked wallets
-        await getLinkedWallets();
+        // Refresh linked wallets and KYC status
+        await fetchLinkedWallets();
+        await refreshKYC();
       } else {
-        setLocalError(result.error || "Failed to link wallet");
+        // Error will be set via linkError from context
+        if (!linkError) {
+          setLocalError("Failed to link wallet");
+        }
       }
     } catch (e) {
       setLocalError(e instanceof Error ? e.message : "Failed to link wallet");
     } finally {
       setIsLinking(false);
     }
-  }, [useLinkCode, getLinkedWallets]);
+  }, [useLinkCode, fetchLinkedWallets, refreshKYC, linkError]);
 
   // Not connected state
   if (!isConnected) {
@@ -399,7 +437,7 @@ export function WalletLinking() {
   }
 
   // Check if current wallet has KYC
-  const hasKYC = status?.status === "approved" && status.hasValidProof;
+  const hasKYC = isVerified && tier !== 'None';
   const isPrimaryWallet = linkedWallets.some(
     (w) => w.address.toLowerCase() === address?.toLowerCase() && w.isPrimary
   );
@@ -430,7 +468,7 @@ export function WalletLinking() {
           <div>
             <p className={`font-medium ${hasKYC ? "text-green-400" : "text-yellow-400"}`}>
               {hasKYC 
-                ? `KYC Verified (Level ${status?.currentLevel || 1})` 
+                ? `KYC Verified - ${tier} (${tierInfo.formattedLimit})` 
                 : "KYC Not Verified"
               }
             </p>

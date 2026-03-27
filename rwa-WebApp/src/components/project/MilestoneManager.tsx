@@ -9,31 +9,38 @@ import { useChainConfig } from '@/hooks/useChainConfig';
 
 const MILESTONE_STATUS: Record<number, { label: string; color: string }> = {
   0: { label: 'Pending', color: 'bg-gray-500/20 text-gray-400' },
-  1: { label: 'Submitted', color: 'bg-yellow-500/20 text-yellow-400' },
-  2: { label: 'Approved', color: 'bg-green-500/20 text-green-400' },
-  3: { label: 'Rejected', color: 'bg-red-500/20 text-red-400' },
-  4: { label: 'Disputed', color: 'bg-orange-500/20 text-orange-400' },
-  5: { label: 'Released', color: 'bg-emerald-500/20 text-emerald-400' },
+  1: { label: 'Approved', color: 'bg-green-500/20 text-green-400' },
+  2: { label: 'Released', color: 'bg-emerald-500/20 text-emerald-400' },
+  3: { label: 'Disputed', color: 'bg-orange-500/20 text-orange-400' },
+  4: { label: 'Cancelled', color: 'bg-red-500/20 text-red-400' },
+  5: { label: 'Rejected', color: 'bg-red-500/20 text-red-400' },
 };
 
+// Matches the ABI's getMilestones output
 interface Milestone {
+  id: bigint;
   description: string;
-  percentage: bigint;
+  targetAmount: bigint;
+  releasedAmount: bigint;
+  deadline: bigint;
   status: number;
   proofURI: string;
-  submittedAt: bigint;
-  approvedAt: bigint;
-  releasedAmount: bigint;
-  rejectionReason: string;
-  disputeRaiser: string;
-  disputeReason: string;
 }
 
-interface FundingData {
-  totalRaised: bigint;
-  totalReleased: bigint;
-  fundingComplete: boolean;
+// Matches the contract's Project struct from getProject
+interface ProjectData {
+  projectId: bigint;
   projectOwner: string;
+  securityToken: string;
+  paymentToken: string;
+  priceFeed: string;
+  fundingGoal: bigint;
+  totalRaised: bigint;
+  deadline: bigint;
+  state: number;
+  createdAt: bigint;
+  platformFeeBps: bigint;
+  maxPriceAge: bigint;
 }
 
 interface MilestoneManagerProps {
@@ -46,36 +53,22 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
   const { address } = useAccount();
   const publicClient = usePublicClient();
   
-  // Multichain config
   const {
     chainId,
     chainName,
     isDeployed,
-    nativeCurrency,
     explorerUrl,
     getTxUrl,
   } = useChainConfig();
 
   const [milestones, setMilestones] = useState<Milestone[]>([]);
-  const [fundingData, setFundingData] = useState<FundingData | null>(null);
+  const [projectData, setProjectData] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showAddModal, setShowAddModal] = useState(false);
-  const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [selectedMilestoneIndex, setSelectedMilestoneIndex] = useState<number | null>(null);
 
-  // Form states
-  const [newDescription, setNewDescription] = useState('');
-  const [newPercentage, setNewPercentage] = useState('');
-  const [proofURI, setProofURI] = useState('');
+  const { writeContract: releaseMilestone, data: releaseHash, error: releaseError } = useWriteContract();
+  const { isSuccess: releaseSuccess, isLoading: releasePending } = useWaitForTransactionReceipt({ hash: releaseHash });
 
-  const { writeContract: addMilestone, data: addHash, error: addError } = useWriteContract();
-  const { writeContract: submitMilestone, data: submitHash, error: submitError } = useWriteContract();
-
-  const { isSuccess: addSuccess, isLoading: addPending } = useWaitForTransactionReceipt({ hash: addHash });
-  const { isSuccess: submitSuccess, isLoading: submitPending } = useWaitForTransactionReceipt({ hash: submitHash });
-
-  // Validate escrow vault address
   const escrowVaultAddress = useMemo(() => {
     if (!escrowVault || escrowVault === '0x0000000000000000000000000000000000000000') {
       return null;
@@ -93,7 +86,7 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
       setLoading(true);
       setError(null);
       
-      const [milestonesData, funding] = await Promise.all([
+      const [milestonesData, project] = await Promise.all([
         publicClient.readContract({
           address: escrowVaultAddress,
           abi: RWAEscrowVaultABI,
@@ -103,13 +96,32 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
         publicClient.readContract({
           address: escrowVaultAddress,
           abi: RWAEscrowVaultABI,
-          functionName: 'getProjectFunding',
+          functionName: 'getProject',
           args: [BigInt(projectId)],
         }),
       ]);
 
-      setMilestones(milestonesData as Milestone[]);
-      setFundingData(funding as unknown as FundingData);
+      // Convert readonly array to mutable array with proper typing
+      const milestonesArray = (milestonesData as readonly {
+        id: bigint;
+        description: string;
+        targetAmount: bigint;
+        releasedAmount: bigint;
+        deadline: bigint;
+        status: number;
+        proofURI: string;
+      }[]).map(m => ({
+        id: m.id,
+        description: m.description,
+        targetAmount: m.targetAmount,
+        releasedAmount: m.releasedAmount,
+        deadline: m.deadline,
+        status: m.status,
+        proofURI: m.proofURI,
+      }));
+
+      setMilestones(milestonesArray);
+      setProjectData(project as unknown as ProjectData);
     } catch (err) {
       console.error('Failed to load milestones:', err);
       setError('Failed to load milestone data. Please try again.');
@@ -118,62 +130,42 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
     }
   };
 
-  // Load data when chain or escrow vault changes
   useEffect(() => {
     if (escrowVaultAddress && publicClient) {
       loadData();
     }
   }, [escrowVaultAddress, projectId, chainId, publicClient]);
 
-  // Reload on successful transactions
   useEffect(() => {
-    if (addSuccess || submitSuccess) {
+    if (releaseSuccess) {
       loadData();
-      setShowAddModal(false);
-      setShowSubmitModal(false);
-      setNewDescription('');
-      setNewPercentage('');
-      setProofURI('');
     }
-  }, [addSuccess, submitSuccess]);
+  }, [releaseSuccess]);
 
-  const handleAddMilestone = () => {
+  const handleReleaseMilestone = (milestoneId: bigint) => {
     if (!escrowVaultAddress) return;
     
-    const percentage = Math.round(parseFloat(newPercentage) * 100); // Convert to basis points
-    addMilestone({
+    releaseMilestone({
       address: escrowVaultAddress,
       abi: RWAEscrowVaultABI,
-      functionName: 'addMilestone',
-      args: [BigInt(projectId), newDescription, BigInt(percentage)],
+      functionName: 'releaseMilestoneFunds',
+      args: [BigInt(projectId), milestoneId],
     });
   };
 
-  const handleSubmitMilestone = () => {
-    if (selectedMilestoneIndex === null || !escrowVaultAddress) return;
-    
-    submitMilestone({
-      address: escrowVaultAddress,
-      abi: RWAEscrowVaultABI,
-      functionName: 'submitMilestone',
-      args: [BigInt(projectId), BigInt(selectedMilestoneIndex), proofURI],
-    });
-  };
+  // Calculate totals
+  const totalTargetAmount = milestones.reduce((sum, m) => sum + Number(m.targetAmount), 0);
+  const totalReleasedAmount = milestones.reduce((sum, m) => sum + Number(m.releasedAmount), 0);
 
-  const openSubmitModal = (index: number) => {
-    setSelectedMilestoneIndex(index);
-    setProofURI('');
-    setShowSubmitModal(true);
-  };
+  const totalRaisedUSD = projectData ? Number(projectData.totalRaised) / 1e6 : 0;
+  const fundingGoalUSD = projectData ? Number(projectData.fundingGoal) / 1e6 : 0;
+  const totalReleasedUSD = totalReleasedAmount / 1e6;
+  const totalTargetUSD = totalTargetAmount / 1e6;
+  
+  // Project states: INACTIVE=0, ACTIVE=1, FUNDED=2, COMPLETED=3, CANCELLED=4, DISPUTED=5
+  const isFunded = projectData?.state === 2 || projectData?.state === 3;
+  const projectStateLabel = ['Inactive', 'Active', 'Funded', 'Completed', 'Cancelled', 'Disputed'][projectData?.state ?? 0];
 
-  // Calculate total percentage used
-  const totalPercentage = milestones.reduce((sum, m) => sum + Number(m.percentage), 0) / 100;
-  const remainingPercentage = 100 - totalPercentage;
-
-  const totalRaisedUSD = fundingData ? Number(fundingData.totalRaised) / 1e6 : 0;
-  const totalReleasedUSD = fundingData ? Number(fundingData.totalReleased) / 1e6 : 0;
-
-  // Not deployed state
   if (!isDeployed) {
     return (
       <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
@@ -192,7 +184,6 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
     );
   }
 
-  // No escrow vault
   if (!escrowVaultAddress) {
     return (
       <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
@@ -203,7 +194,6 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
     );
   }
 
-  // Loading state
   if (loading) {
     return (
       <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
@@ -214,7 +204,6 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
@@ -243,42 +232,55 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
         <div>
           <h2 className="text-xl font-semibold text-white">Milestone Management</h2>
           <p className="text-slate-400 text-sm mt-1">
-            Total Raised: ${totalRaisedUSD.toLocaleString()} | Released: ${totalReleasedUSD.toLocaleString()}
+            Raised: ${totalRaisedUSD.toLocaleString()} / ${fundingGoalUSD.toLocaleString()} | 
+            Released: ${totalReleasedUSD.toLocaleString()} / ${totalTargetUSD.toLocaleString()}
           </p>
-          {chainName && (
-            <p className="text-slate-500 text-xs mt-1">
-              Network: {chainName}
-            </p>
-          )}
+          <div className="flex items-center gap-2 mt-1">
+            {chainName && (
+              <span className="text-slate-500 text-xs">Network: {chainName}</span>
+            )}
+            <span className={`text-xs px-2 py-0.5 rounded ${
+              isFunded ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
+            }`}>
+              {projectStateLabel}
+            </span>
+          </div>
         </div>
-        {isOwner && remainingPercentage > 0 && (
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition"
-          >
-            + Add Milestone
-          </button>
-        )}
       </div>
 
-      {/* Progress Bar */}
+      {/* Funding Progress Bar */}
       <div className="mb-6">
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-slate-400">Milestones Configured</span>
-          <span className="text-white">{totalPercentage}% / 100%</span>
+          <span className="text-slate-400">Funding Progress</span>
+          <span className="text-white">
+            {fundingGoalUSD > 0 ? ((totalRaisedUSD / fundingGoalUSD) * 100).toFixed(1) : 0}%
+          </span>
         </div>
         <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
           <div
             className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all"
-            style={{ width: `${totalPercentage}%` }}
+            style={{ width: `${fundingGoalUSD > 0 ? Math.min((totalRaisedUSD / fundingGoalUSD) * 100, 100) : 0}%` }}
           />
         </div>
-        {remainingPercentage > 0 && (
-          <p className="text-yellow-400 text-sm mt-2">
-            ⚠️ {remainingPercentage}% remaining - add more milestones to reach 100%
-          </p>
-        )}
       </div>
+
+      {/* Release Progress Bar */}
+      {totalTargetUSD > 0 && (
+        <div className="mb-6">
+          <div className="flex justify-between text-sm mb-2">
+            <span className="text-slate-400">Funds Released</span>
+            <span className="text-white">
+              {((totalReleasedUSD / totalTargetUSD) * 100).toFixed(1)}%
+            </span>
+          </div>
+          <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-emerald-500 to-green-500 rounded-full transition-all"
+              style={{ width: `${Math.min((totalReleasedUSD / totalTargetUSD) * 100, 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Escrow Contract Link */}
       {explorerUrl && (
@@ -303,257 +305,130 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
       {/* Milestones List */}
       {milestones.length === 0 ? (
         <div className="text-center py-8 bg-slate-700/30 rounded-lg">
-          <p className="text-slate-400 mb-2">No milestones configured yet</p>
-          {isOwner && (
-            <p className="text-slate-500 text-sm">
-              Add milestones to define how funds will be released
-            </p>
-          )}
+          <p className="text-slate-400 mb-2">No milestones configured for this project</p>
+          <p className="text-slate-500 text-sm">
+            Milestones are set during project creation
+          </p>
         </div>
       ) : (
         <div className="space-y-4">
-          {milestones.map((milestone, index) => (
-            <div
-              key={index}
-              className="bg-slate-700/50 rounded-lg p-4 border border-slate-600"
-            >
-              <div className="flex justify-between items-start mb-3">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-1">
-                    <span className="text-white font-medium">
-                      Milestone {index + 1}
-                    </span>
-                    <span className={`px-2 py-0.5 rounded-full text-xs ${MILESTONE_STATUS[milestone.status]?.color}`}>
-                      {MILESTONE_STATUS[milestone.status]?.label}
-                    </span>
-                    <span className="text-slate-400 text-sm">
-                      {Number(milestone.percentage) / 100}%
-                    </span>
+          {milestones.map((milestone, index) => {
+            const targetUSD = Number(milestone.targetAmount) / 1e6;
+            const releasedUSD = Number(milestone.releasedAmount) / 1e6;
+            const isFullyReleased = milestone.releasedAmount >= milestone.targetAmount;
+            const isApproved = milestone.status === 1;
+            const canRelease = isOwner && isApproved && !isFullyReleased && isFunded;
+
+            return (
+              <div
+                key={milestone.id.toString()}
+                className="bg-slate-700/50 rounded-lg p-4 border border-slate-600"
+              >
+                <div className="flex justify-between items-start mb-3">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-1">
+                      <span className="text-white font-medium">
+                        Milestone {index + 1}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${MILESTONE_STATUS[milestone.status]?.color || 'bg-gray-500/20 text-gray-400'}`}>
+                        {MILESTONE_STATUS[milestone.status]?.label || 'Unknown'}
+                      </span>
+                    </div>
+                    <p className="text-slate-300">{milestone.description}</p>
+                    <div className="flex items-center gap-4 mt-2 text-sm">
+                      <span className="text-slate-400">
+                        Target: <span className="text-white">${targetUSD.toLocaleString()}</span>
+                      </span>
+                      <span className="text-slate-400">
+                        Released: <span className={releasedUSD > 0 ? 'text-emerald-400' : 'text-white'}>${releasedUSD.toLocaleString()}</span>
+                      </span>
+                      <span className="text-slate-500">
+                        Deadline: {new Date(Number(milestone.deadline) * 1000).toLocaleDateString()}
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-slate-300">{milestone.description}</p>
+
+                  {/* Release button for approved milestones */}
+                  {canRelease && (
+                    <button
+                      onClick={() => handleReleaseMilestone(milestone.id)}
+                      disabled={releasePending}
+                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-600 text-white text-sm rounded-lg transition"
+                    >
+                      {releasePending ? 'Releasing...' : 'Release Funds'}
+                    </button>
+                  )}
                 </div>
 
-                {/* Actions based on status */}
-                {isOwner && milestone.status === 0 && (
-                  <button
-                    onClick={() => openSubmitModal(index)}
-                    className="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-sm rounded-lg transition"
-                  >
-                    Submit Proof
-                  </button>
+                {/* Progress within milestone */}
+                {targetUSD > 0 && (
+                  <div className="mt-3">
+                    <div className="h-2 bg-slate-600 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full rounded-full transition-all ${isFullyReleased ? 'bg-emerald-500' : 'bg-blue-500'}`}
+                        style={{ width: `${Math.min((releasedUSD / targetUSD) * 100, 100)}%` }}
+                      />
+                    </div>
+                  </div>
                 )}
-                {isOwner && milestone.status === 3 && (
-                  <button
-                    onClick={() => openSubmitModal(index)}
-                    className="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-sm rounded-lg transition"
-                  >
-                    Resubmit
-                  </button>
+
+                {/* Proof URI if available */}
+                {milestone.proofURI && (
+                  <div className="mt-3 p-2 bg-slate-800 rounded">
+                    <p className="text-slate-400 text-xs mb-1">Proof:</p>
+                    <a
+                      href={milestone.proofURI}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-400 hover:text-blue-300 text-sm break-all"
+                    >
+                      {milestone.proofURI}
+                    </a>
+                  </div>
+                )}
+
+                {/* Fully released indicator */}
+                {isFullyReleased && (
+                  <div className="mt-3 p-2 bg-green-500/10 border border-green-500/30 rounded">
+                    <p className="text-green-400 text-sm flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Fully Released
+                    </p>
+                  </div>
                 )}
               </div>
-
-              {/* Proof URI if submitted */}
-              {milestone.proofURI && (
-                <div className="mt-2 p-2 bg-slate-800 rounded">
-                  <p className="text-slate-400 text-xs mb-1">Proof:</p>
-                  <a
-                    href={milestone.proofURI}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 text-sm break-all"
-                  >
-                    {milestone.proofURI}
-                  </a>
-                </div>
-              )}
-
-              {/* Rejection reason if rejected */}
-              {milestone.status === 3 && milestone.rejectionReason && (
-                <div className="mt-2 p-2 bg-red-500/10 border border-red-500/30 rounded">
-                  <p className="text-red-400 text-sm">
-                    <strong>Rejection Reason:</strong> {milestone.rejectionReason}
-                  </p>
-                </div>
-              )}
-
-              {/* Released amount */}
-              {milestone.status === 5 && (
-                <div className="mt-2 p-2 bg-green-500/10 border border-green-500/30 rounded">
-                  <p className="text-green-400 text-sm">
-                    Released: ${(Number(milestone.releasedAmount) / 1e6).toLocaleString()}
-                  </p>
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {/* Transaction Status */}
-      {(addHash || submitHash) && (
+      {releaseHash && (
         <div className="mt-4 p-3 bg-slate-700/50 rounded-lg">
-          {addHash && (
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-sm">
-                {addPending ? 'Adding milestone...' : addSuccess ? 'Milestone added!' : 'Transaction pending'}
-              </span>
-              <a
-                href={getTxUrl(addHash)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 text-sm"
-              >
-                View TX
-              </a>
-            </div>
-          )}
-          {submitHash && (
-            <div className="flex items-center justify-between">
-              <span className="text-slate-400 text-sm">
-                {submitPending ? 'Submitting proof...' : submitSuccess ? 'Proof submitted!' : 'Transaction pending'}
-              </span>
-              <a
-                href={getTxUrl(submitHash)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 text-sm"
-              >
-                View TX
-              </a>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Add Milestone Modal */}
-      {showAddModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-slate-700">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-white">Add Milestone</h3>
-              <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-white">
-                ✕
-              </button>
-            </div>
-
-            {/* Network info */}
-            {chainName && (
-              <div className="mb-4 p-2 bg-slate-700/50 rounded text-center">
-                <span className="text-slate-400 text-sm">Network: </span>
-                <span className="text-white text-sm">{chainName}</span>
-              </div>
-            )}
-
-            {addError && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                <p className="text-red-400 text-sm">
-                  {addError.message || 'Failed to add milestone'}
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm text-slate-400 mb-2">Description</label>
-                <input
-                  type="text"
-                  value={newDescription}
-                  onChange={(e) => setNewDescription(e.target.value)}
-                  placeholder="e.g., Phase 1 - Initial Development"
-                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm text-slate-400 mb-2">
-                  Percentage (max {remainingPercentage}%)
-                </label>
-                <input
-                  type="number"
-                  value={newPercentage}
-                  onChange={(e) => setNewPercentage(e.target.value)}
-                  placeholder="e.g., 25"
-                  max={remainingPercentage}
-                  min={1}
-                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
-                />
-                <p className="text-slate-500 text-xs mt-1">
-                  This percentage of total raised funds will be released when milestone is approved
-                </p>
-              </div>
-
-              <button
-                onClick={handleAddMilestone}
-                disabled={!newDescription || !newPercentage || parseFloat(newPercentage) > remainingPercentage || addPending}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition"
-              >
-                {addPending ? 'Adding...' : 'Add Milestone'}
-              </button>
-            </div>
+          <div className="flex items-center justify-between">
+            <span className="text-slate-400 text-sm">
+              {releasePending ? 'Releasing funds...' : releaseSuccess ? 'Funds released!' : 'Transaction pending'}
+            </span>
+            <a
+              href={getTxUrl(releaseHash)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-400 hover:text-blue-300 text-sm"
+            >
+              View TX
+            </a>
           </div>
         </div>
       )}
 
-      {/* Submit Proof Modal */}
-      {showSubmitModal && selectedMilestoneIndex !== null && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 rounded-2xl max-w-md w-full p-6 border border-slate-700">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-xl font-bold text-white">
-                Submit Proof - Milestone {selectedMilestoneIndex + 1}
-              </h3>
-              <button onClick={() => setShowSubmitModal(false)} className="text-slate-400 hover:text-white">
-                ✕
-              </button>
-            </div>
-
-            {/* Network info */}
-            {chainName && (
-              <div className="mb-4 p-2 bg-slate-700/50 rounded text-center">
-                <span className="text-slate-400 text-sm">Network: </span>
-                <span className="text-white text-sm">{chainName}</span>
-              </div>
-            )}
-
-            {submitError && (
-              <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                <p className="text-red-400 text-sm">
-                  {submitError.message || 'Failed to submit proof'}
-                </p>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              <div className="p-3 bg-slate-700/50 rounded-lg">
-                <p className="text-slate-300">{milestones[selectedMilestoneIndex]?.description}</p>
-                <p className="text-slate-400 text-sm mt-1">
-                  {Number(milestones[selectedMilestoneIndex]?.percentage) / 100}% of funds
-                </p>
-              </div>
-
-              <div>
-                <label className="block text-sm text-slate-400 mb-2">Proof URI</label>
-                <input
-                  type="text"
-                  value={proofURI}
-                  onChange={(e) => setProofURI(e.target.value)}
-                  placeholder="https://... or ipfs://..."
-                  className="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
-                />
-                <p className="text-slate-500 text-xs mt-1">
-                  Link to documentation, report, or evidence of milestone completion
-                </p>
-              </div>
-
-              <button
-                onClick={handleSubmitMilestone}
-                disabled={!proofURI || submitPending}
-                className="w-full py-3 bg-yellow-600 hover:bg-yellow-500 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition"
-              >
-                {submitPending ? 'Submitting...' : 'Submit for Review'}
-              </button>
-            </div>
-          </div>
+      {/* Error display */}
+      {releaseError && (
+        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
+          <p className="text-red-400 text-sm">
+            {releaseError.message || 'Transaction failed'}
+          </p>
         </div>
       )}
     </div>

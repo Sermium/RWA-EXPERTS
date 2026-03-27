@@ -1,482 +1,1599 @@
+// src/app/exchange/ExchangeClient.tsx
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useAccount, useWriteContract, useWaitForTransactionReceipt, usePublicClient, useChainId } from 'wagmi';
-import { parseUnits, Address } from 'viem';
-import { ZERO_ADDRESS, SupportedChainId } from '@/config/contracts';
-import { useChainConfig } from '@/hooks/useChainConfig';
-import { RWAProjectNFTABI, RWASecurityTokenABI, ERC20ABI } from '@/config/abis';
-
-// Local imports
-import { TRADABLE_STATUSES, MEXC_CONFIG, ExtendedExchangeABI } from './constants';
-import { 
-  MexcOrderBook, MexcTicker, SecurityTokenData, TradingPair, 
-  TokenBalance, ListedToken, SecurityOrderBookData, CategoryCount 
-} from './types';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useAccount, useSignMessage, useChainId, useReadContract } from 'wagmi';
+import { DEPLOYMENTS } from '@/config/deployments';
+import type { SupportedChainId } from '@/config/chains';
+import { formatUnits, parseUnits } from 'viem';
+import { RWASecurityTokenABI, ERC20ABI } from '@/config/abis';
+import PriceChart from '@/components/PriceChart';
 import {
-  NetworkBadge,
-  WrongChainWarning,
-  CryptoTab,
-  SecurityTab,
-  DepositModal,
-  WithdrawModal,
-} from './components';
+  TrendingUp,
+  TrendingDown,
+  RefreshCw,
+  Search,
+  ArrowUpDown,
+  Wallet,
+  AlertTriangle,
+  Loader2,
+  ExternalLink,
+  ChevronDown,
+  X,
+  Check,
+  Clock,
+  DollarSign,
+  BarChart3,
+  Activity,
+  Shield,
+  Store,
+  Filter,
+  Coins,
+} from 'lucide-react';
+
+// MEXC Config - inline to avoid import issues
+const MEXC_CONFIG = {
+  tradingFee: 0.001,
+  platformMarkup: 0.005,
+  platformFee: 0.01,
+  supportedPairs: ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'AVAXUSDT', 'ARBUSDT', 'OPUSDT', 'POLUSDT'],
+  refreshInterval: 10000,
+};
+
+const TOKEN_ICONS: Record<string, string> = {
+  BTC: '/chains/bitcoin.svg',
+  ETH: '/chains/ethereum.svg',
+  BNB: '/chains/bnb.svg',
+  AVAX: '/chains/avalanche.svg',
+  ARB: '/chains/arbitrum.svg',
+  OP: '/chains/optimism.svg',
+  POL: '/chains/polygon.svg',
+  USDT: '/chains/tether.svg',
+  USDC: '/chains/usdc.svg',
+};
+
+// Types
+interface CryptoPair {
+  symbol: string;
+  baseAsset: string;
+  quoteAsset: string;
+  price: string;
+  change24h: string;
+  high24h: string;
+  low24h: string;
+  volume24h: string;
+  icon?: string;
+}
+
+interface MexcOrderBookEntry {
+  price: string;
+  amount: string;
+}
+
+interface SecurityToken {
+  id: string;
+  address: string;
+  symbol: string;
+  name: string;
+  owner: string;
+  chainId: number;
+  tradingPair: string;
+  price: string;
+  marketCap: string;
+  minOrder: string;
+  maxOrder: string;
+  status: string;
+  listedAt: string;
+  logoUrl?: string;
+  totalSupply?: string;
+  projectId?: string;
+  estimatedValue?: string;
+}
+
+interface OrderBookEntry {
+  price: string;
+  amount: string;
+  total: string;
+  orderCount?: number;
+}
+
+interface Order {
+  id: string;
+  token_address: string;
+  side: 'buy' | 'sell';
+  order_type: 'limit' | 'market';
+  price: string;
+  amount: string;
+  filled_amount: string;
+  status: string;
+  created_at: string;
+  exchange_listings?: {
+    token_symbol: string;
+    token_name: string;
+    trading_pair: string;
+  };
+}
+
+interface Trade {
+  id: string;
+  price: string;
+  amount: string;
+  total: string;
+  side?: string;
+  created_at: string;
+  buyer_address?: string;
+  seller_address?: string;
+}
+
+// Helper functions
+function formatNumber(num: number | string, decimals = 2): string {
+  const n = typeof num === 'string' ? parseFloat(num) : num;
+  if (isNaN(n)) return '0';
+  
+  if (n >= 1000000000) {
+    return (n / 1000000000).toLocaleString('en-US', { maximumFractionDigits: decimals }) + 'B';
+  }
+  if (n >= 1000000) {
+    return (n / 1000000).toLocaleString('en-US', { maximumFractionDigits: decimals }) + 'M';
+  }
+  
+  return n.toLocaleString('en-US', { 
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals 
+  });
+}
+
+function truncateAddress(address: string): string {
+  if (!address) return '';
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
+
+function formatTime(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
 
 export default function ExchangeClient() {
   const { address, isConnected } = useAccount();
-  const publicClient = usePublicClient();
-  const walletChainId = useChainId();
-  
-  const {
-    chainId, chainName, contracts, tokens, explorerUrl,
-    nativeCurrency, isDeployed, isTestnet, switchToChain,
-    isSwitching, deployedChains,
-  } = useChainConfig();
+  const { signMessageAsync } = useSignMessage();
+  const chainId = useChainId();
 
-  // Contract addresses
-  const exchangeAddress = contracts?.RWASecurityExchange as Address | undefined;
-  const projectNFTAddress = contracts?.RWAProjectNFT as Address | undefined;
-  const usdcAddress = tokens?.USDC as Address | undefined;
-  const usdtAddress = tokens?.USDT as Address | undefined;
+  // Main tab state
+  const [marketType, setMarketType] = useState<'crypto' | 'security'>('crypto');
+  const [activeTab, setActiveTab] = useState<'trade' | 'orders' | 'history'>('trade');
 
-  // Check wrong chain
-  const isWrongChain = useMemo(() => {
-    if (!isConnected) return false;
-    return walletChainId !== chainId;
-  }, [isConnected, walletChainId, chainId]);
+  // ============ CRYPTO STATE (MEXC) ============
+  const [cryptoPairs, setCryptoPairs] = useState<CryptoPair[]>([]);
+  const [selectedCryptoPair, setSelectedCryptoPair] = useState<CryptoPair | null>(null);
+  const [cryptoOrderBook, setCryptoOrderBook] = useState<{ bids: MexcOrderBookEntry[]; asks: MexcOrderBookEntry[] }>({ bids: [], asks: [] });
+  const [cryptoLoading, setCryptoLoading] = useState(true);
+  const [cryptoOrderBookLoading, setCryptoOrderBookLoading] = useState(false);
 
-  // UI State
-  const [activeTab, setActiveTab] = useState<'crypto' | 'security'>('crypto');
-  const [showDepositModal, setShowDepositModal] = useState(false);
-  const [showWithdrawModal, setShowWithdrawModal] = useState(false);
+  // Crypto order form
+  const [cryptoOrderSide, setCryptoOrderSide] = useState<'buy' | 'sell'>('buy');
+  const [cryptoOrderType, setCryptoOrderType] = useState<'limit' | 'market'>('limit');
+  const [cryptoOrderPrice, setCryptoOrderPrice] = useState('');
+  const [cryptoOrderAmount, setCryptoOrderAmount] = useState('');
+  const [cryptoSubmitting, setCryptoSubmitting] = useState(false);
+  const [cryptoSliderValue, setCryptoSliderValue] = useState(0);
 
-  // Crypto Tab State
-  const [selectedMexcPair, setSelectedMexcPair] = useState('AVAXUSDT');
-  const [mexcOrderBook, setMexcOrderBook] = useState<MexcOrderBook | null>(null);
-  const [mexcTicker, setMexcTicker] = useState<MexcTicker | null>(null);
-  const [mexcTickers, setMexcTickers] = useState<Record<string, MexcTicker>>({});
-  const [cryptoOrderType, setCryptoOrderType] = useState<'market' | 'limit'>('market');
-  const [cryptoTradeType, setCryptoTradeType] = useState<'buy' | 'sell'>('buy');
-  const [cryptoTradeAmount, setCryptoTradeAmount] = useState('');
-  const [cryptoLimitPrice, setCryptoLimitPrice] = useState('');
+  // Crypto balances
+  const [cryptoQuoteBalance, setCryptoQuoteBalance] = useState(0);
+  const [cryptoBaseBalance, setCryptoBaseBalance] = useState(0);
 
-  // Security Tab State
-  const [securityTokens, setSecurityTokens] = useState<SecurityTokenData[]>([]);
-  const [listedTokens, setListedTokens] = useState<ListedToken[]>([]);
-  const [selectedSecurityToken, setSelectedSecurityToken] = useState<SecurityTokenData | null>(null);
-  const [selectedListedToken, setSelectedListedToken] = useState<ListedToken | null>(null);
-  const [securityTokenLoading, setSecurityTokenLoading] = useState(true);
-  const [listedTokensLoading, setListedTokensLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [categoryCounts, setCategoryCounts] = useState<CategoryCount>({});
-  const [securityOrderBook, setSecurityOrderBook] = useState<SecurityOrderBookData>({
-    bids: [], asks: [], spread: '0', spreadPercent: '0', bestBid: 0, bestAsk: 0
-  });
-  const [securityOrderBookLoading, setSecurityOrderBookLoading] = useState(false);
-  const [securityOrderType, setSecurityOrderType] = useState<'market' | 'limit'>('limit');
+  // ============ SECURITY TOKEN STATE ============
+  const [securityTokens, setSecurityTokens] = useState<SecurityToken[]>([]);
+  const [selectedSecurityToken, setSelectedSecurityToken] = useState<SecurityToken | null>(null);
+  const [securityOrderBook, setSecurityOrderBook] = useState<{ bids: OrderBookEntry[]; asks: OrderBookEntry[]; spread: any }>({ bids: [], asks: [], spread: null });
+  const [securityTrades, setSecurityTrades] = useState<Trade[]>([]);
+  const [securityOrders, setSecurityOrders] = useState<Order[]>([]);
+  const [securityLoading, setSecurityLoading] = useState(true);
+
+  // Security order form
   const [securityOrderSide, setSecurityOrderSide] = useState<'buy' | 'sell'>('buy');
+  const [securityOrderType, setSecurityOrderType] = useState<'limit' | 'market'>('limit');
   const [securityOrderPrice, setSecurityOrderPrice] = useState('');
   const [securityOrderAmount, setSecurityOrderAmount] = useState('');
-  const [securityOrderError, setSecurityOrderError] = useState<string | null>(null);
-  const [securityOrderSubmitting, setSecurityOrderSubmitting] = useState(false);
+  const [securitySubmitting, setSecuritySubmitting] = useState(false);
+  const [securityQuoteCurrency, setSecurityQuoteCurrency] = useState<'USDC' | 'USDT'>('USDC');
+  const [securitySliderValue, setSecuritySliderValue] = useState(0);
 
-  // Transaction state
-  const { writeContract, data: txHash, isPending: isWritePending } = useWriteContract();
-  const { isLoading: isTxConfirming, isSuccess: isTxSuccess } = useWaitForTransactionReceipt({ hash: txHash });
+  // Balances
+  const [securityQuoteBalance, setSecurityQuoteBalance] = useState(0);
+  const [securityTokenBalance, setSecurityTokenBalance] = useState(0);
 
-  // Safe deployed chains
-  const safeDeployedChains = Array.isArray(deployedChains) 
-    ? deployedChains 
-    : typeof deployedChains === 'object' && deployedChains !== null
-      ? Object.keys(deployedChains).map(Number).filter(n => !isNaN(n))
-      : [];
+  const [isDragging, setIsDragging] = useState(false);
+  const cryptoSliderRef = useRef<HTMLDivElement>(null);
+  const securitySliderRef = useRef<HTMLDivElement>(null);
 
-  // Network switch handler
-  const handleSwitchNetwork = useCallback(async (targetChainId?: number) => {
-    if (!targetChainId) return;
-    try {
-      await switchToChain(targetChainId as SupportedChainId);
-    } catch (error) {
-      console.error('Failed to switch network:', error);
+  // Search
+  const [cryptoSearchQuery, setCryptoSearchQuery] = useState('');
+  const [securitySearchQuery, setSecuritySearchQuery] = useState('');
+  const [showCryptoSelector, setShowCryptoSelector] = useState(false);
+  const [showSecuritySelector, setShowSecuritySelector] = useState(false);
+
+  // ============ SLIDER HANDLERS ============
+  
+  const handleCryptoSliderChange = (value: number) => {
+    setCryptoSliderValue(value);
+    if (!selectedCryptoPair) return;
+    
+    const price = parseFloat(cryptoOrderPrice) || parseFloat(selectedCryptoPair.price) || 0;
+    if (price <= 0) return;
+    
+    if (cryptoOrderSide === 'buy') {
+      const maxAmount = cryptoQuoteBalance / price;
+      const amount = (maxAmount * value / 100).toFixed(6);
+      setCryptoOrderAmount(amount);
+    } else {
+      const amount = (cryptoBaseBalance * value / 100).toFixed(6);
+      setCryptoOrderAmount(amount);
     }
-  }, [switchToChain]);
+  };
 
-  // ===== MEXC Data Fetching =====
-  const fetchMexcOrderBook = useCallback(async (symbol: string) => {
-    try {
-      const response = await fetch(`/api/exchange/mexc/orderbook?symbol=${symbol}&limit=40`);
-      if (!response.ok) return;
-      const data = await response.json();
-      setMexcOrderBook({
-        asks: Array.isArray(data.asks) ? data.asks : [],
-        bids: Array.isArray(data.bids) ? data.bids : [],
-        timestamp: Date.now(),
-      });
-    } catch (error) {
-      console.error('[OrderBook] Error:', error);
+  const getStablecoinAddress = (chain: number, currency: 'USDC' | 'USDT'): `0x${string}` | undefined => {
+    const deployment = DEPLOYMENTS[chain as SupportedChainId];
+    if (!deployment?.tokens) return undefined;
+    
+    const address = deployment.tokens[currency];
+    // Check if it's not the zero address
+    if (!address || address === '0x0000000000000000000000000000000000000000') {
+      return undefined;
     }
-  }, []);
+    
+    return address as `0x${string}`;
+  };
 
-  const fetchMexcTicker = useCallback(async (symbol: string) => {
-    try {
-      const response = await fetch(`/api/exchange/mexc/ticker?symbol=${symbol}`);
-      if (response.ok) {
-        const data = await response.json();
-        setMexcTicker(data);
-      }
-    } catch (error) {
-      console.error('Error fetching MEXC ticker:', error);
+  const stablecoinAddress = getStablecoinAddress(chainId, securityQuoteCurrency);
+
+  const handleSecuritySliderChange = (value: number) => {
+    setSecuritySliderValue(value);
+    if (!selectedSecurityToken) return;
+    
+    const price = parseFloat(securityOrderPrice) || parseFloat(selectedSecurityToken.price) || 0;
+    if (price <= 0) return;
+    
+    if (securityOrderSide === 'buy') {
+      const maxAmount = securityQuoteBalance / price;
+      const amount = (maxAmount * value / 100).toFixed(2);
+      setSecurityOrderAmount(amount);
+    } else {
+      const amount = (securityTokenBalance * value / 100).toFixed(2);
+      setSecurityOrderAmount(amount);
     }
-  }, []);
+  };
 
-  const fetchAllMexcTickers = useCallback(async () => {
+  const { data: quoteBalanceData, refetch: refetchQuoteBalance } = useReadContract({
+    address: stablecoinAddress,
+    abi: ERC20ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address && !!stablecoinAddress,
+    },
+  });
+
+  const { data: quoteDecimalsData } = useReadContract({
+    address: stablecoinAddress,
+    abi: ERC20ABI,
+    functionName: 'decimals',
+    query: {
+      enabled: !!stablecoinAddress,
+    },
+  });
+
+  const { data: tokenBalanceData, refetch: refetchTokenBalance } = useReadContract({
+    address: selectedSecurityToken?.address as `0x${string}` | undefined,
+    abi: RWASecurityTokenABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: !!address && !!selectedSecurityToken?.address,
+    },
+  });
+
+  const { data: tokenDecimalsData } = useReadContract({
+    address: selectedSecurityToken?.address as `0x${string}` | undefined,
+    abi: RWASecurityTokenABI,
+    functionName: 'decimals',
+    query: {
+      enabled: !!selectedSecurityToken?.address,
+    },
+  });
+
+  // ============ MEXC CRYPTO FUNCTIONS ============
+
+  const fetchMexcPrices = useCallback(async () => {
     try {
-      const tickersData: Record<string, MexcTicker> = {};
-      for (const pair of MEXC_CONFIG.supportedPairs) {
-        const response = await fetch(`/api/exchange/mexc/ticker?symbol=${pair}`);
-        if (response.ok) {
-          tickersData[pair] = await response.json();
+      const res = await fetch('/api/exchange/mexc/prices');
+      const data = await res.json();
+      
+      if (data.pairs) {
+        setCryptoPairs(data.pairs);
+        
+        if (!selectedCryptoPair && data.pairs.length > 0) {
+          setSelectedCryptoPair(data.pairs[0]);
         }
       }
-      setMexcTickers(tickersData);
-    } catch (error) {
-      console.error('Error fetching MEXC tickers:', error);
-    }
-  }, []);
-
-  // ===== Listed Tokens Loading =====
-  const loadListedTokens = useCallback(async () => {
-    if (!chainId) return;
-    setListedTokensLoading(true);
-    try {
-      const params = new URLSearchParams({ chainId: chainId.toString() });
-      if (selectedCategory !== 'all') {
-        params.append('category', selectedCategory);
-      }
-      const response = await fetch(`/api/exchange/listed-tokens?${params}`);
-      const data = await response.json();
-      setListedTokens(data.tokens || []);
-      setCategoryCounts(data.categoryCounts || {});
-    } catch (error) {
-      console.error('Error loading listed tokens:', error);
-      setListedTokens([]);
+    } catch (err) {
+      console.error('Failed to fetch MEXC prices:', err);
     } finally {
-      setListedTokensLoading(false);
+      setCryptoLoading(false);
     }
-  }, [chainId, selectedCategory]);
+  }, [selectedCryptoPair]);
 
-  // ===== Security Order Book Loading =====
-  const loadSecurityOrderBook = useCallback(async () => {
-    const tokenAddress = selectedListedToken?.token_address;
-    if (!tokenAddress) return;
-    setSecurityOrderBookLoading(true);
+  const fetchMexcOrderBook = useCallback(async () => {
+    if (!selectedCryptoPair) return;
+    
+    setCryptoOrderBookLoading(true);
     try {
-      const response = await fetch(`/api/exchange/security-orderbook?tokenAddress=${tokenAddress}`);
-      if (response.ok) {
-        setSecurityOrderBook(await response.json());
-      }
-    } catch (error) {
-      console.error('Error loading security order book:', error);
+      const res = await fetch(`/api/exchange/mexc/orderbook?symbol=${selectedCryptoPair.symbol}`);
+      const data = await res.json();
+      
+      setCryptoOrderBook({
+        bids: data.bids || [],
+        asks: data.asks || [],
+      });
+    } catch (err) {
+      console.error('Failed to fetch MEXC order book:', err);
     } finally {
-      setSecurityOrderBookLoading(false);
+      setCryptoOrderBookLoading(false);
     }
-  }, [selectedListedToken?.token_address]);
+  }, [selectedCryptoPair]);
 
-  // ===== On-chain Security Tokens Loading =====
-  const loadSecurityTokens = useCallback(async () => {
-    // Extra safety: verify we have the right chain's contracts
-    if (!publicClient || !projectNFTAddress || !exchangeAddress || !isDeployed) {
-      setSecurityTokenLoading(false);
-      return;
+  // Fetch crypto balances (placeholder)
+  useEffect(() => {
+    if (address && selectedCryptoPair) {
+      // TODO: Replace with actual balance fetching
+      setCryptoQuoteBalance(5000);
+      setCryptoBaseBalance(0.5);
     }
+  }, [address, selectedCryptoPair]);
 
-    // Verify contract exists on current chain before proceeding
+  // Update quote balance when data changes
+  useEffect(() => {
+    if (quoteBalanceData !== undefined && quoteDecimalsData !== undefined) {
+      const balance = Number(formatUnits(quoteBalanceData as bigint, quoteDecimalsData as number));
+      setSecurityQuoteBalance(balance);
+    } else {
+      setSecurityQuoteBalance(0);
+    }
+  }, [quoteBalanceData, quoteDecimalsData]);
+
+  // Update token balance when data changes
+  useEffect(() => {
+    if (tokenBalanceData !== undefined && tokenDecimalsData !== undefined) {
+      const balance = Number(formatUnits(tokenBalanceData as bigint, tokenDecimalsData as number));
+      setSecurityTokenBalance(balance);
+    } else {
+      setSecurityTokenBalance(0);
+    }
+  }, [tokenBalanceData, tokenDecimalsData]);
+
+  const handleCryptoOrder = async () => {
+    if (!selectedCryptoPair || !cryptoOrderAmount) return;
+    
+    setCryptoSubmitting(true);
     try {
-      const code = await publicClient.getCode({ address: projectNFTAddress });
-      if (!code || code === '0x') {
-        console.log('ProjectNFT not deployed on this chain, skipping...');
-        setSecurityTokens([]);
-        setSecurityTokenLoading(false);
-        return;
+      alert(`To ${cryptoOrderSide} ${cryptoOrderAmount} ${selectedCryptoPair.baseAsset}, you will be redirected to MEXC or our fiat on-ramp partner.`);
+    } catch (err) {
+      console.error('Crypto order error:', err);
+    } finally {
+      setCryptoSubmitting(false);
+    }
+  };
+
+  // ============ SECURITY TOKEN FUNCTIONS ============
+
+  const fetchSecurityTokens = useCallback(async () => {
+    setSecurityLoading(true);
+    try {
+      const res = await fetch(`/api/exchange/security/tokens?chainId=${chainId}`);
+      const data = await res.json();
+      
+      if (data.tokens) {
+        setSecurityTokens(data.tokens);
+        
+        if (data.tokens.length > 0) {
+          const currentStillValid = selectedSecurityToken && 
+            data.tokens.some((t: SecurityToken) => t.id === selectedSecurityToken.id);
+          
+          if (!currentStillValid) {
+            setSelectedSecurityToken(data.tokens[0]);
+          }
+        } else {
+          setSelectedSecurityToken(null);
+        }
       }
     } catch (err) {
-      console.log('Error checking contract, skipping on-chain tokens');
-      setSecurityTokens([]);
-      setSecurityTokenLoading(false);
-      return;
-    }
-
-    setSecurityTokenLoading(true);
-    
-    try {
-      const totalProjects = await publicClient.readContract({
-        address: projectNFTAddress,
-        abi: RWAProjectNFTABI,
-        functionName: 'totalProjects',
-      }) as bigint;
-
-      // ... rest of the function
-    } catch (error) {
-      console.error('Error loading security tokens:', error);
-      setSecurityTokens([]);
+      console.error('Failed to fetch security tokens:', err);
     } finally {
-      setSecurityTokenLoading(false);
+      setSecurityLoading(false);
     }
-  }, [publicClient, projectNFTAddress, exchangeAddress, isDeployed]);
-  
-  // ===== Effects =====
-  useEffect(() => {
-    if (isDeployed) {
-      fetchAllMexcTickers();
-      loadListedTokens();
-    }
-  }, [isDeployed, chainId, selectedCategory, fetchAllMexcTickers, loadListedTokens]);
+  }, [chainId, selectedSecurityToken]);
 
-  useEffect(() => {
-    if (!isDeployed) return;
-    fetchMexcOrderBook(selectedMexcPair);
-    fetchMexcTicker(selectedMexcPair);
-    const interval = setInterval(() => {
-      fetchMexcOrderBook(selectedMexcPair);
-      fetchMexcTicker(selectedMexcPair);
-      fetchAllMexcTickers();
-    }, MEXC_CONFIG.refreshInterval);
-    return () => clearInterval(interval);
-  }, [selectedMexcPair, fetchMexcOrderBook, fetchMexcTicker, fetchAllMexcTickers, isDeployed]);
-
-  useEffect(() => {
-    if (selectedListedToken) {
-      loadSecurityOrderBook();
-      const interval = setInterval(loadSecurityOrderBook, 5000);
-      return () => clearInterval(interval);
-    }
-  }, [selectedListedToken, loadSecurityOrderBook]);
-
-  useEffect(() => {
-    // Don't load if chain is switching or wrong chain
-    if (!isDeployed || isWrongChain || isSwitching) {
-      setSecurityTokenLoading(false);
-      return;
-    }
-    
-    // Add a small delay to let chain config settle
-    const timer = setTimeout(() => {
-      loadSecurityTokens();
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, [loadSecurityTokens, isDeployed, isWrongChain, isSwitching]);
-
-  // ===== Handlers =====
-  const handleCryptoTrade = useCallback(() => {
-    const marketPrice = mexcTickers[selectedMexcPair]?.lastPrice ? parseFloat(mexcTickers[selectedMexcPair].lastPrice) : 0;
-    const executionPrice = cryptoOrderType === 'limit' ? parseFloat(cryptoLimitPrice) : marketPrice;
-    const amount = parseFloat(cryptoTradeAmount);
-    
-    alert(`${cryptoTradeType.toUpperCase()} ${cryptoOrderType} Order - ${amount} ${selectedMexcPair.replace('USDT', '')} @ $${executionPrice.toFixed(2)}\n\nNote: This is a demo.`);
-    setCryptoTradeAmount('');
-    setCryptoLimitPrice('');
-  }, [cryptoTradeAmount, cryptoTradeType, cryptoOrderType, cryptoLimitPrice, selectedMexcPair, mexcTickers]);
-
-  const handleSecurityOrderSubmit = useCallback(async () => {
-    if (!address || !selectedListedToken) return;
-    setSecurityOrderSubmitting(true);
-    setSecurityOrderError(null);
+  const fetchSecurityOrderBook = useCallback(async () => {
+    if (!selectedSecurityToken) return;
     try {
-      // TODO: Implement actual order submission to database
-      alert(`${securityOrderSide.toUpperCase()} ${securityOrderType} Order\n${securityOrderAmount} ${selectedListedToken.symbol} @ $${securityOrderPrice || 'Market'}`);
-      setSecurityOrderPrice('');
-      setSecurityOrderAmount('');
-      loadSecurityOrderBook();
-    } catch (error: any) {
-      setSecurityOrderError(error.message || 'Failed to submit order');
-    } finally {
-      setSecurityOrderSubmitting(false);
+      const res = await fetch(`/api/exchange/security/orderbook?tokenAddress=${selectedSecurityToken.address}`);
+      const data = await res.json();
+      setSecurityOrderBook({
+        bids: data.bids || [],
+        asks: data.asks || [],
+        spread: data.spread,
+      });
+    } catch (err) {
+      console.error('Failed to fetch security order book:', err);
     }
-  }, [address, selectedListedToken, securityOrderSide, securityOrderType, securityOrderAmount, securityOrderPrice, loadSecurityOrderBook]);
+  }, [selectedSecurityToken]);
 
-  const handleWithdraw = async (token: string, amount: string) => {
+  const fetchSecurityTrades = useCallback(async () => {
+    if (!selectedSecurityToken) return;
+    try {
+      const res = await fetch(`/api/exchange/security/trades?tokenAddress=${selectedSecurityToken.address}&limit=20`);
+      const data = await res.json();
+      setSecurityTrades(data.trades || []);
+    } catch (err) {
+      console.error('Failed to fetch security trades:', err);
+    }
+  }, [selectedSecurityToken]);
+
+  const fetchSecurityOrders = useCallback(async () => {
     if (!address) return;
     try {
-      await fetch('/api/exchange/balance', {
+      const res = await fetch(`/api/exchange/security/order?wallet=${address}&chainId=${chainId}`);
+      const data = await res.json();
+      setSecurityOrders(data.orders || []);
+    } catch (err) {
+      console.error('Failed to fetch security orders:', err);
+    }
+  }, [address, chainId]);
+
+  const handlePlaceSecurityOrder = async () => {
+    if (!selectedSecurityToken || !address || !securityOrderAmount) return;
+    if (securityOrderType === 'limit' && !securityOrderPrice) return;
+
+    setSecuritySubmitting(true);
+    try {
+      const timestamp = Date.now().toString();
+      const price = securityOrderType === 'market' 
+        ? selectedSecurityToken.price 
+        : securityOrderPrice;
+      
+      const message = `Place ${securityOrderSide} order on RWA Exchange\nToken: ${selectedSecurityToken.address}\nAmount: ${securityOrderAmount}\nPrice: ${price}\nQuote: ${securityQuoteCurrency}\nTimestamp: ${timestamp}`;
+      
+      const signature = await signMessageAsync({ message });
+
+      const res = await fetch('/api/exchange/security/order', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-chain-id': chainId.toString() },
-        body: JSON.stringify({ address, action: 'withdraw', token, amount }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tokenAddress: selectedSecurityToken.address,
+          chainId: selectedSecurityToken.chainId,
+          side: securityOrderSide,
+          orderType: securityOrderType,
+          price: price,
+          amount: securityOrderAmount,
+          quoteCurrency: securityQuoteCurrency,
+          walletAddress: address,
+          signature,
+          timestamp,
+        }),
       });
-    } catch (error) {
-      console.error('Withdraw error:', error);
+
+      const data = await res.json();
+
+      if (data.success) {
+        setSecurityOrderPrice('');
+        setSecurityOrderAmount('');
+        setSecuritySliderValue(0);
+        fetchSecurityOrderBook();
+        fetchSecurityOrders();
+        refetchQuoteBalance();
+        refetchTokenBalance();
+        alert(`Order placed successfully!`);
+      } else {
+        throw new Error(data.error || 'Failed to place order');
+      }
+    } catch (err) {
+      console.error('Security order error:', err);
+      alert(err instanceof Error ? err.message : 'Failed to place order');
+    } finally {
+      setSecuritySubmitting(false);
     }
   };
 
-  const handleSelectListedToken = (token: ListedToken) => {
-    setSelectedListedToken(token);
-    setSelectedSecurityToken(null);
+  const handleCancelSecurityOrder = async (orderId: string) => {
+    if (!address) return;
+    try {
+      const res = await fetch(`/api/exchange/security/order?orderId=${orderId}&wallet=${address}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchSecurityOrders();
+        fetchSecurityOrderBook();
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (err) {
+      console.error('Cancel error:', err);
+      alert('Failed to cancel order');
+    }
   };
 
-  const handleSelectSecurityToken = (token: SecurityTokenData) => {
-    setSelectedSecurityToken(token);
-    setSelectedListedToken(null);
+  const handleSliderMouseDown = (e: React.MouseEvent<HTMLDivElement>, type: 'crypto' | 'security') => {
+    setIsDragging(true);
+    updateSliderFromEvent(e, type);
   };
 
-  // ===== Not Deployed View =====
-  if (!isDeployed) {
+  const handleSliderTouchStart = (e: React.TouchEvent<HTMLDivElement>, type: 'crypto' | 'security') => {
+    setIsDragging(true);
+    updateSliderFromTouch(e, type);
+  };
+
+  const updateSliderFromEvent = (e: React.MouseEvent<HTMLDivElement> | MouseEvent, type: 'crypto' | 'security') => {
+    const ref = type === 'crypto' ? cryptoSliderRef : securitySliderRef;
+    if (!ref.current) return;
+    
+    const rect = ref.current.getBoundingClientRect();
+    const x = 'clientX' in e ? e.clientX : 0;
+    const percentage = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
+    
+    if (type === 'crypto') {
+      handleCryptoSliderChange(Math.round(percentage));
+    } else {
+      handleSecuritySliderChange(Math.round(percentage));
+    }
+  };
+
+  const updateSliderFromTouch = (e: React.TouchEvent<HTMLDivElement> | TouchEvent, type: 'crypto' | 'security') => {
+    const ref = type === 'crypto' ? cryptoSliderRef : securitySliderRef;
+    if (!ref.current || !e.touches[0]) return;
+    
+    const rect = ref.current.getBoundingClientRect();
+    const x = e.touches[0].clientX;
+    const percentage = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
+    
+    if (type === 'crypto') {
+      handleCryptoSliderChange(Math.round(percentage));
+    } else {
+      handleSecuritySliderChange(Math.round(percentage));
+    }
+  };
+
+  // ============ EFFECTS ============
+
+  useEffect(() => {
+    if (marketType === 'crypto') {
+      fetchMexcPrices();
+    }
+  }, [marketType, fetchMexcPrices]);
+
+  useEffect(() => {
+    if (marketType === 'crypto' && selectedCryptoPair) {
+      fetchMexcOrderBook();
+    }
+  }, [marketType, selectedCryptoPair, fetchMexcOrderBook]);
+
+  useEffect(() => {
+    if (marketType !== 'crypto') return;
+    
+    const interval = setInterval(() => {
+      fetchMexcPrices();
+      if (selectedCryptoPair) {
+        fetchMexcOrderBook();
+      }
+    }, MEXC_CONFIG.refreshInterval);
+
+    return () => clearInterval(interval);
+  }, [marketType, selectedCryptoPair, fetchMexcPrices, fetchMexcOrderBook]);
+
+  useEffect(() => {
+    if (marketType === 'security') {
+      fetchSecurityTokens();
+    }
+  }, [marketType, chainId, fetchSecurityTokens]);
+
+  useEffect(() => {
+    if (marketType === 'security' && selectedSecurityToken) {
+      fetchSecurityOrderBook();
+      fetchSecurityTrades();
+    }
+  }, [marketType, selectedSecurityToken, fetchSecurityOrderBook, fetchSecurityTrades]);
+
+  useEffect(() => {
+    if (address && marketType === 'security') {
+      fetchSecurityOrders();
+    }
+  }, [address, marketType, chainId, fetchSecurityOrders]);
+
+  useEffect(() => {
+    if (marketType !== 'security' || !selectedSecurityToken) return;
+    
+    const interval = setInterval(() => {
+      fetchSecurityOrderBook();
+      fetchSecurityTrades();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [marketType, selectedSecurityToken, fetchSecurityOrderBook, fetchSecurityTrades]);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDragging) return;
+      const type = marketType;
+      updateSliderFromEvent(e as any, type);
+    };
+    
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+    
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!isDragging) return;
+      const type = marketType;
+      updateSliderFromTouch(e as any, type);
+    };
+    
+    const handleTouchEnd = () => {
+      setIsDragging(false);
+    };
+    
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener('touchmove', handleTouchMove);
+      window.addEventListener('touchend', handleTouchEnd);
+    }
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('touchmove', handleTouchMove);
+      window.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, [isDragging, marketType]);
+
+  // Filter functions
+  const filteredCryptoPairs = cryptoPairs.filter(pair =>
+    pair.baseAsset.toLowerCase().includes(cryptoSearchQuery.toLowerCase()) ||
+    pair.symbol.toLowerCase().includes(cryptoSearchQuery.toLowerCase())
+  );
+
+  const filteredSecurityTokens = securityTokens.filter(token =>
+    token.symbol.toLowerCase().includes(securitySearchQuery.toLowerCase()) ||
+    token.name.toLowerCase().includes(securitySearchQuery.toLowerCase())
+  );
+
+  // Calculate order totals
+  const cryptoOrderTotal = cryptoOrderPrice && cryptoOrderAmount 
+    ? (parseFloat(cryptoOrderPrice) * parseFloat(cryptoOrderAmount)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : selectedCryptoPair && cryptoOrderAmount
+    ? (parseFloat(selectedCryptoPair.price) * parseFloat(cryptoOrderAmount)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : '0.00';
+
+  const securityOrderTotal = securityOrderPrice && securityOrderAmount 
+    ? (parseFloat(securityOrderPrice) * parseFloat(securityOrderAmount)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : selectedSecurityToken && securityOrderAmount
+    ? (parseFloat(selectedSecurityToken.price) * parseFloat(securityOrderAmount)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    : '0.00';
+
+  const getChainName = (id: number) => {
+    const chains: Record<number, string> = {
+      1: 'Ethereum',
+      137: 'Polygon',
+      80002: 'Polygon Amoy',
+      43114: 'Avalanche',
+      43113: 'Avalanche Fuji',
+      56: 'BSC',
+      97: 'BSC Testnet',
+      42161: 'Arbitrum',
+      421614: 'Arbitrum Sepolia',
+    };
+    return chains[id] || `Chain ${id}`;
+  };
+
+  const isLoading = marketType === 'crypto' ? cryptoLoading : securityLoading;
+
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <div className="max-w-2xl mx-auto px-4 py-16 text-center">
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-8">
-            <h2 className="text-2xl font-bold mb-2">Network Not Supported</h2>
-            <p className="text-gray-400 mb-6">The Exchange is not deployed on {chainName}.</p>
-            <div className="flex flex-wrap justify-center gap-3">
-              {safeDeployedChains.slice(0, 4).map((chain: any, index: number) => {
-                const chainIdNum = typeof chain === 'object' ? chain.id : chain;
-                const chainNameStr = typeof chain === 'object' ? chain.name : `Chain ${chain}`;
-                return (
-                  <button
-                    key={chainIdNum || index}
-                    onClick={() => handleSwitchNetwork(chainIdNum)}
-                    disabled={isSwitching}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg font-medium"
-                  >
-                    {chainNameStr}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
+      <div className="min-h-screen bg-[#0a0a14] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+          <p className="text-gray-400">Loading exchange...</p>
         </div>
       </div>
     );
   }
 
-  // ===== Main Render =====
-  return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Page Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-3xl font-bold">Exchange</h1>
-            <p className="text-gray-400 mt-1">Trade crypto and security tokens</p>
+  // ============ SHARED ORDER FORM COMPONENT ============
+  const renderOrderForm = (type: 'crypto' | 'security') => {
+    const isCrypto = type === 'crypto';
+    const orderSide = isCrypto ? cryptoOrderSide : securityOrderSide;
+    const setOrderSide = isCrypto ? setCryptoOrderSide : setSecurityOrderSide;
+    const orderType = isCrypto ? cryptoOrderType : securityOrderType;
+    const setOrderType = isCrypto ? setCryptoOrderType : setSecurityOrderType;
+    const orderPrice = isCrypto ? cryptoOrderPrice : securityOrderPrice;
+    const setOrderPrice = isCrypto ? setCryptoOrderPrice : setSecurityOrderPrice;
+    const orderAmount = isCrypto ? cryptoOrderAmount : securityOrderAmount;
+    const setOrderAmount = isCrypto ? setCryptoOrderAmount : setSecurityOrderAmount;
+    const sliderValue = isCrypto ? cryptoSliderValue : securitySliderValue;
+    const handleSliderChange = isCrypto ? handleCryptoSliderChange : handleSecuritySliderChange;
+    const submitting = isCrypto ? cryptoSubmitting : securitySubmitting;
+    const handleOrder = isCrypto ? handleCryptoOrder : handlePlaceSecurityOrder;
+    const orderTotal = isCrypto ? cryptoOrderTotal : securityOrderTotal;
+    
+    const baseSymbol = isCrypto ? selectedCryptoPair?.baseAsset : selectedSecurityToken?.symbol;
+    const quoteSymbol = isCrypto ? 'USDT' : securityQuoteCurrency;
+    const currentPrice = isCrypto ? selectedCryptoPair?.price : selectedSecurityToken?.price;
+    const quoteBalance = isCrypto ? cryptoQuoteBalance : securityQuoteBalance;
+    const baseBalance = isCrypto ? cryptoBaseBalance : securityTokenBalance;
+    
+    const accentColor = isCrypto ? 'blue' : 'purple';
+    
+    return (
+      <div className="p-3 space-y-3">
+        {/* Available Balance Section */}
+        <div className="p-2.5 bg-[#0d0d1a] rounded-lg border border-gray-800">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[10px] text-gray-500 uppercase tracking-wide">Available</span>
+            <Wallet className="w-3 h-3 text-gray-500" />
           </div>
-          <div className="flex items-center gap-4">
-            <NetworkBadge chainName={chainName} isTestnet={isTestnet} />
-            {explorerUrl && exchangeAddress && (
-              <a href={`${explorerUrl}/address/${exchangeAddress}`} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:text-blue-300">
-                View Contract →
-              </a>
+          <div className="flex items-center justify-between">
+            <div>
+              <span className="text-sm font-medium text-white">
+                {orderSide === 'buy' 
+                  ? quoteBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) 
+                  : baseBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
+              </span>
+              <span className="text-xs text-gray-500 ml-1">{orderSide === 'buy' ? quoteSymbol : baseSymbol}</span>
+            </div>
+            <div className="text-right">
+              <span className="text-[10px] text-gray-500">≈ $</span>
+              <span className="text-xs text-gray-400">
+                {orderSide === 'buy' 
+                  ? quoteBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                  : (baseBalance * parseFloat(currentPrice || '0')).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                }
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Order Type Tabs */}
+        <div className="flex gap-4 border-b border-gray-800 pb-1">
+          <button
+            onClick={() => setOrderType('limit')}
+            className={`text-xs font-medium pb-1 border-b-2 transition-colors ${
+              orderType === 'limit'
+                ? `text-white border-${accentColor}-500`
+                : 'text-gray-500 border-transparent hover:text-gray-300'
+            }`}
+          >
+            Limit
+          </button>
+          <button
+            onClick={() => setOrderType('market')}
+            className={`text-xs font-medium pb-1 border-b-2 transition-colors ${
+              orderType === 'market'
+                ? `text-white border-${accentColor}-500`
+                : 'text-gray-500 border-transparent hover:text-gray-300'
+            }`}
+          >
+            Market
+          </button>
+        </div>
+
+        {/* Quote Currency Selector (Security only) */}
+        {!isCrypto && (
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] text-gray-500">Quote:</span>
+            <div className="flex bg-[#0d0d1a] rounded p-0.5 border border-gray-800">
+              <button
+                onClick={() => setSecurityQuoteCurrency('USDC')}
+                className={`px-2 py-0.5 rounded text-[10px] font-medium transition-all ${
+                  securityQuoteCurrency === 'USDC'
+                    ? 'bg-purple-600 text-white'
+                    : 'text-gray-500 hover:text-white'
+                }`}
+              >
+                USDC
+              </button>
+              <button
+                onClick={() => setSecurityQuoteCurrency('USDT')}
+                className={`px-2 py-0.5 rounded text-[10px] font-medium transition-all ${
+                  securityQuoteCurrency === 'USDT'
+                    ? 'bg-purple-600 text-white'
+                    : 'text-gray-500 hover:text-white'
+                }`}
+              >
+                USDT
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Price Input */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-[10px] text-gray-500">Price</label>
+            {orderType === 'limit' && currentPrice && (
+              <button 
+                onClick={() => setOrderPrice(currentPrice)}
+                className="text-[10px] text-gray-500 hover:text-white"
+              >
+                Last: {currentPrice}
+              </button>
             )}
           </div>
+          {orderType === 'limit' ? (
+            <div className="relative">
+              <input
+                type="number"
+                value={orderPrice}
+                onChange={(e) => setOrderPrice(e.target.value)}
+                placeholder="0.00"
+                className="w-full px-3 py-2 text-sm bg-[#0d0d1a] border border-gray-800 rounded focus:border-gray-600 outline-none text-right pr-14"
+              />
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">{quoteSymbol}</span>
+            </div>
+          ) : (
+            <div className="px-3 py-2 text-sm bg-[#0d0d1a] border border-gray-800 rounded text-gray-500 text-right">
+              Market Price
+            </div>
+          )}
         </div>
 
-        {/* Wrong Chain Warning */}
-        {isWrongChain && (
-          <WrongChainWarning
-            chainName={chainName}
-            chainId={chainId}
-            onSwitchNetwork={handleSwitchNetwork}
-            isSwitching={isSwitching}
-          />
-        )}
+        {/* Amount Input */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-[10px] text-gray-500">Amount</label>
+          </div>
+          <div className="relative">
+            <input
+              type="number"
+              value={orderAmount}
+              onChange={(e) => {
+                setOrderAmount(e.target.value);
+                // Update slider based on amount
+                const price = parseFloat(orderPrice) || parseFloat(currentPrice || '0');
+                if (price > 0) {
+                  const maxAmount = orderSide === 'buy' ? quoteBalance / price : baseBalance;
+                  const pct = Math.min(100, (parseFloat(e.target.value) / maxAmount) * 100);
+                  if (isCrypto) setCryptoSliderValue(pct);
+                  else setSecuritySliderValue(pct);
+                }
+              }}
+              placeholder="0.00"
+              className="w-full px-3 py-2 text-sm bg-[#0d0d1a] border border-gray-800 rounded focus:border-gray-600 outline-none text-right pr-14"
+            />
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">{baseSymbol}</span>
+          </div>
+        </div>
 
-        {/* Tab Navigation */}
-        <div className="flex gap-4 mb-8 border-b border-gray-800">
-          <button
-            onClick={() => setActiveTab('crypto')}
-            className={`px-4 py-3 font-medium transition-colors ${
-              activeTab === 'crypto' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'
-            }`}
+        {/* Progress Bar Slider */}
+        <div className="space-y-2">
+          <div 
+            ref={isCrypto ? cryptoSliderRef : securitySliderRef}
+            className="relative h-3 bg-[#0d0d1a] rounded-full cursor-pointer select-none"
+            onMouseDown={(e) => handleSliderMouseDown(e, isCrypto ? 'crypto' : 'security')}
+            onTouchStart={(e) => handleSliderTouchStart(e, isCrypto ? 'crypto' : 'security')}
           >
-            Crypto Trading
+            {/* Filled track */}
+            <div 
+              className={`absolute left-0 top-0 h-full rounded-full pointer-events-none ${
+                orderSide === 'buy' ? 'bg-green-500' : 'bg-red-500'
+              }`}
+              style={{ width: `${sliderValue}%` }}
+            />
+            {/* Dot markers */}
+            <div className="absolute inset-0 flex items-center justify-between pointer-events-none">
+              {[0, 25, 50, 75, 100].map((pct) => (
+                <div
+                  key={pct}
+                  className={`w-2.5 h-2.5 rounded-full border-2 transition-colors ${
+                    sliderValue >= pct
+                      ? orderSide === 'buy' 
+                        ? 'bg-green-500 border-green-400' 
+                        : 'bg-red-500 border-red-400'
+                      : 'bg-[#1a1a2e] border-gray-700'
+                  }`}
+                />
+              ))}
+            </div>
+            {/* Draggable Thumb */}
+            <div 
+              className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 shadow-lg pointer-events-none ${
+                orderSide === 'buy' 
+                  ? 'bg-green-500 border-green-300' 
+                  : 'bg-red-500 border-red-300'
+              } ${isDragging ? 'scale-110' : ''}`}
+              style={{ 
+                left: `calc(${sliderValue}% - 8px)`,
+                transition: isDragging ? 'none' : 'left 0.1s ease-out'
+              }}
+            />
+          </div>
+          {/* Percentage labels */}
+          <div className="flex justify-between text-[10px] text-gray-600">
+            {[0, 25, 50, 75, 100].map((pct) => (
+              <button
+                key={pct}
+                onClick={() => {
+                  if (isCrypto) handleCryptoSliderChange(pct);
+                  else handleSecuritySliderChange(pct);
+                }}
+                className={`hover:text-gray-400 transition-colors w-6 text-center ${
+                  sliderValue >= pct 
+                    ? orderSide === 'buy' ? 'text-green-500' : 'text-red-500' 
+                    : ''
+                }`}
+              >
+                {pct}%
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Total */}
+        <div className="flex items-center justify-between p-2 bg-[#0d0d1a] rounded border border-gray-800">
+          <span className="text-[10px] text-gray-500">Total</span>
+          <div>
+            <span className="text-sm font-medium text-white">{orderTotal}</span>
+            <span className="text-xs text-gray-500 ml-1">{quoteSymbol}</span>
+          </div>
+        </div>
+
+        {/* Buy/Sell Buttons */}
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={() => {
+              setOrderSide('buy');
+              if (isCrypto) setCryptoSliderValue(0);
+              else setSecuritySliderValue(0);
+              setOrderAmount('');
+            }}
+            disabled={!isConnected || submitting}
+            className={`py-2 rounded text-xs font-medium transition-all ${
+              orderSide === 'buy'
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-[#0d0d1a] border border-gray-800 text-gray-400 hover:text-white hover:border-green-600'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            Buy {baseSymbol}
           </button>
           <button
-            onClick={() => setActiveTab('security')}
-            className={`px-4 py-3 font-medium transition-colors ${
-              activeTab === 'security' ? 'text-blue-500 border-b-2 border-blue-500' : 'text-gray-400 hover:text-white'
-            }`}
+            onClick={() => {
+              setOrderSide('sell');
+              if (isCrypto) setCryptoSliderValue(0);
+              else setSecuritySliderValue(0);
+              setOrderAmount('');
+            }}
+            disabled={!isConnected || submitting}
+            className={`py-2 rounded text-xs font-medium transition-all ${
+              orderSide === 'sell'
+                ? 'bg-red-600 hover:bg-red-700 text-white'
+                : 'bg-[#0d0d1a] border border-gray-800 text-gray-400 hover:text-white hover:border-red-600'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            Security Tokens
+            Sell {baseSymbol}
           </button>
         </div>
 
-        {/* Crypto Tab */}
-        {activeTab === 'crypto' && (
-          <CryptoTab
-            selectedPair={selectedMexcPair}
-            orderBook={mexcOrderBook}
-            ticker={mexcTicker}
-            tickers={mexcTickers}
-            orderType={cryptoOrderType}
-            tradeType={cryptoTradeType}
-            tradeAmount={cryptoTradeAmount}
-            limitPrice={cryptoLimitPrice}
-            onPairSelect={setSelectedMexcPair}
-            onOrderTypeChange={setCryptoOrderType}
-            onTradeTypeChange={setCryptoTradeType}
-            onAmountChange={setCryptoTradeAmount}
-            onLimitPriceChange={setCryptoLimitPrice}
-            onSubmit={handleCryptoTrade}
-            onDepositClick={() => setShowDepositModal(true)}
-          />
+        {/* Submit Order Button */}
+        {orderAmount && parseFloat(orderAmount) > 0 && (
+          <button
+            onClick={handleOrder}
+            disabled={!isConnected || submitting || (orderType === 'limit' && !orderPrice)}
+            className={`w-full py-2.5 rounded text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+              orderSide === 'buy'
+                ? 'bg-green-600 hover:bg-green-700'
+                : 'bg-red-600 hover:bg-red-700'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+          >
+            {submitting ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <>
+                {orderSide === 'buy' ? 'Buy' : 'Sell'} {orderAmount} {baseSymbol}
+              </>
+            )}
+          </button>
         )}
 
-        {/* Security Tab */}
-        {activeTab === 'security' && (
-          <SecurityTab
-            securityTokens={securityTokens}
-            listedTokens={listedTokens}
-            selectedSecurityToken={selectedSecurityToken}
-            selectedListedToken={selectedListedToken}
-            securityTokenLoading={securityTokenLoading}
-            listedTokensLoading={listedTokensLoading}
-            selectedCategory={selectedCategory}
-            categoryCounts={categoryCounts}
-            securityOrderBook={securityOrderBook}
-            securityOrderBookLoading={securityOrderBookLoading}
-            isConnected={isConnected}
-            isWrongChain={isWrongChain}
-            chainName={chainName}
-            chainId={chainId}
-            orderType={securityOrderType}
-            orderSide={securityOrderSide}
-            orderPrice={securityOrderPrice}
-            orderAmount={securityOrderAmount}
-            orderError={securityOrderError}
-            orderSubmitting={securityOrderSubmitting}
-            txHash={txHash}
-            explorerUrl={explorerUrl}
-            onSelectSecurityToken={handleSelectSecurityToken}
-            onSelectListedToken={handleSelectListedToken}
-            onCategoryChange={setSelectedCategory}
-            onOrderTypeChange={setSecurityOrderType}
-            onOrderSideChange={setSecurityOrderSide}
-            onPriceChange={setSecurityOrderPrice}
-            onAmountChange={setSecurityOrderAmount}
-            onSubmit={handleSecurityOrderSubmit}
-            onSwitchNetwork={handleSwitchNetwork}
-          />
+        {!isConnected && (
+          <p className="text-center text-yellow-500 text-[10px]">
+            Connect wallet to trade
+          </p>
         )}
-
-        {/* Modals */}
-        <DepositModal
-          isOpen={showDepositModal}
-          onClose={() => setShowDepositModal(false)}
-          chainId={chainId}
-          chainName={chainName}
-          isTestnet={isTestnet}
-          nativeCurrency={nativeCurrency || 'POL'}
-          usdtAvailable={!!usdtAddress}
-          usdcAvailable={!!usdcAddress}
-        />
-
-        <WithdrawModal
-          isOpen={showWithdrawModal}
-          onClose={() => setShowWithdrawModal(false)}
-          nativeCurrency={nativeCurrency || 'POL'}
-          usdtAvailable={!!usdtAddress}
-          usdcAvailable={!!usdcAddress}
-          onWithdraw={handleWithdraw}
-        />
       </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0a14] text-white">
+      {/* Header */}
+      <div className="border-b border-gray-800 bg-[#0d0d1a]">
+        <div className="max-w-7xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Store className="w-5 h-5 text-blue-400" />
+              <h1 className="text-lg font-bold">RWA Exchange</h1>
+              <span className="px-1.5 py-0.5 bg-green-500/20 text-green-400 text-[10px] rounded">Live</span>
+            </div>
+
+            {/* MAIN MARKET TYPE TABS */}
+            <div className="flex items-center gap-1 bg-[#1a1a2e] rounded-lg p-0.5">
+              <button
+                onClick={() => setMarketType('crypto')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  marketType === 'crypto'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Coins className="w-3 h-3" />
+                Crypto
+              </button>
+              <button
+                onClick={() => setMarketType('security')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                  marketType === 'security'
+                    ? 'bg-purple-600 text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                <Shield className="w-3 h-3" />
+                Security Tokens
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3">
+              {/* Chain indicator for security tokens */}
+              {marketType === 'security' && (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-purple-500/10 text-purple-400 rounded text-xs">
+                  <Activity className="w-3 h-3" />
+                  {getChainName(chainId)}
+                </div>
+              )}
+
+              {/* Wallet Status */}
+              {isConnected ? (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 text-green-400 rounded text-xs">
+                  <Wallet className="w-3 h-3" />
+                  {truncateAddress(address || '')}
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-yellow-500/10 text-yellow-400 rounded text-xs">
+                  <AlertTriangle className="w-3 h-3" />
+                  Connect Wallet
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ============ CRYPTO MARKET (MEXC) ============ */}
+      {marketType === 'crypto' && (
+        <>
+          {cryptoPairs.length === 0 ? (
+            <div className="max-w-7xl mx-auto px-4 py-16">
+              <div className="text-center">
+                <Coins className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold mb-2">Loading Crypto Pairs...</h2>
+                <p className="text-gray-400">Fetching live prices from MEXC</p>
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-7xl mx-auto px-4 py-4">
+              {/* Compact Market Info Bar */}
+              {selectedCryptoPair && (
+                <div className="flex items-center gap-4 mb-4 p-3 bg-[#1a1a2e] rounded-lg border border-gray-800">
+                  <div className="flex items-center gap-2">
+                    {selectedCryptoPair.icon && (
+                      <img src={selectedCryptoPair.icon} alt="" className="w-8 h-8" />
+                    )}
+                    <div>
+                      <h2 className="text-sm font-bold">{selectedCryptoPair.baseAsset}/{selectedCryptoPair.quoteAsset}</h2>
+                      <p className="text-[10px] text-gray-500">MEXC Spot</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1 flex items-center gap-6 text-xs">
+                    <div>
+                      <span className="text-gray-500">Price </span>
+                      <span className="font-bold text-lg">${selectedCryptoPair.price}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">24h </span>
+                      <span className={`font-medium ${parseFloat(selectedCryptoPair.change24h) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                        {parseFloat(selectedCryptoPair.change24h) >= 0 ? '+' : ''}{selectedCryptoPair.change24h}%
+                      </span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">High </span>
+                      <span className="text-white">${selectedCryptoPair.high24h}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Low </span>
+                      <span className="text-white">${selectedCryptoPair.low24h}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Vol </span>
+                      <span className="text-white">${formatNumber(selectedCryptoPair.volume24h)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Price Chart */}
+              {selectedCryptoPair && (
+                <div className="mb-4">
+                  <PriceChart
+                    symbol={selectedCryptoPair.symbol}
+                    type="crypto"
+                    height={200}
+                  />
+                </div>
+              )}
+
+              {/* Main Trading Interface */}
+              <div className="grid grid-cols-12 gap-3">
+                {/* Left - All Pairs List */}
+                <div className="col-span-3 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col">
+                  <div className="p-2 border-b border-gray-800">
+                    <div className="relative">
+                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500" />
+                      <input
+                        type="text"
+                        value={cryptoSearchQuery}
+                        onChange={(e) => setCryptoSearchQuery(e.target.value)}
+                        placeholder="Search..."
+                        className="w-full pl-7 pr-3 py-1.5 bg-[#0d0d1a] rounded border border-gray-700 focus:border-blue-500 outline-none text-xs"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center text-[10px] text-gray-500 px-2 py-1 border-b border-gray-800">
+                    <span className="flex-1">Pair</span>
+                    <span className="w-20 text-right">Price</span>
+                    <span className="w-16 text-right">24h %</span>
+                  </div>
+                  
+                  <div className="flex-1 overflow-y-auto">
+                    {filteredCryptoPairs.map((pair) => (
+                      <button
+                        key={pair.symbol}
+                        onClick={() => setSelectedCryptoPair(pair)}
+                        className={`w-full px-2 py-2 flex items-center hover:bg-white/5 transition-colors ${
+                          selectedCryptoPair?.symbol === pair.symbol ? 'bg-blue-500/10 border-l-2 border-blue-500' : ''
+                        }`}
+                      >
+                        <div className="flex items-center gap-1.5 flex-1">
+                          {pair.icon ? (
+                            <img src={pair.icon} alt="" className="w-5 h-5" />
+                          ) : (
+                            <div className="w-5 h-5 bg-gray-700 rounded-full flex items-center justify-center text-[8px]">
+                              {pair.baseAsset.slice(0, 2)}
+                            </div>
+                          )}
+                          <span className="font-medium text-xs">{pair.baseAsset}</span>
+                        </div>
+                        <span className="w-20 text-right text-xs">${pair.price}</span>
+                        <span className={`w-16 text-right text-xs ${
+                          parseFloat(pair.change24h) >= 0 ? 'text-green-400' : 'text-red-400'
+                        }`}>
+                          {parseFloat(pair.change24h) >= 0 ? '+' : ''}{pair.change24h}%
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Middle - Order Book */}
+                <div className="col-span-5 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col">
+                  <div className="p-2 border-b border-gray-800 flex items-center justify-between">
+                    <span className="text-xs font-medium">Order Book</span>
+                    <button onClick={fetchMexcOrderBook} className="p-1 hover:bg-white/10 rounded">
+                      <RefreshCw className={`w-3 h-3 ${cryptoOrderBookLoading ? 'animate-spin' : ''}`} />
+                    </button>
+                  </div>
+
+                  {/* Order Book Header */}
+                  <div className="grid grid-cols-2 text-[10px] text-gray-500 border-b border-gray-800">
+                    <div className="flex px-2 py-1 border-r border-gray-800">
+                      <span className="flex-1">Bid</span>
+                      <span className="flex-1 text-right">Amount</span>
+                    </div>
+                    <div className="flex px-2 py-1">
+                      <span className="flex-1">Ask</span>
+                      <span className="flex-1 text-right">Amount</span>
+                    </div>
+                  </div>
+
+                  {/* Order Book Body */}
+                  <div className="flex-1 grid grid-cols-2 overflow-hidden">
+                    {/* Bids */}
+                    <div className="border-r border-gray-800 overflow-y-auto">
+                      {cryptoOrderBook.bids.slice(0, 15).map((bid, i) => {
+                        const maxAmount = Math.max(...cryptoOrderBook.bids.slice(0, 15).map(b => parseFloat(b.amount)));
+                        const widthPct = (parseFloat(bid.amount) / maxAmount) * 100;
+                        return (
+                          <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-green-500/10 cursor-pointer"
+                            onClick={() => setCryptoOrderPrice(bid.price)}>
+                            <div className="absolute right-0 top-0 bottom-0 bg-green-500/10" style={{ width: `${widthPct}%` }} />
+                            <span className="flex-1 text-green-400 font-mono relative z-10">{parseFloat(bid.price).toFixed(2)}</span>
+                            <span className="flex-1 text-right text-gray-400 font-mono relative z-10">{parseFloat(bid.amount).toFixed(4)}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {/* Asks */}
+                    <div className="overflow-y-auto">
+                      {cryptoOrderBook.asks.slice(0, 15).map((ask, i) => {
+                        const maxAmount = Math.max(...cryptoOrderBook.asks.slice(0, 15).map(a => parseFloat(a.amount)));
+                        const widthPct = (parseFloat(ask.amount) / maxAmount) * 100;
+                        return (
+                          <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-red-500/10 cursor-pointer"
+                            onClick={() => setCryptoOrderPrice(ask.price)}>
+                            <div className="absolute left-0 top-0 bottom-0 bg-red-500/10" style={{ width: `${widthPct}%` }} />
+                            <span className="flex-1 text-red-400 font-mono relative z-10">{parseFloat(ask.price).toFixed(2)}</span>
+                            <span className="flex-1 text-right text-gray-400 font-mono relative z-10">{parseFloat(ask.amount).toFixed(4)}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Spread */}
+                  <div className="p-2 border-t border-gray-800 text-center">
+                    <span className="text-lg font-bold">${selectedCryptoPair?.price}</span>
+                  </div>
+                </div>
+
+                {/* Right - Order Form */}
+                <div className="col-span-4 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col overflow-hidden">
+                  <div className="p-2 border-b border-gray-800">
+                    <span className="text-xs font-medium">{selectedCryptoPair?.baseAsset}/USDT</span>
+                  </div>
+                  <div className="flex-1 overflow-y-auto">
+                    {renderOrderForm('crypto')}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+
+      {/* ============ SECURITY TOKEN MARKET ============ */}
+      {marketType === 'security' && (
+        <>
+          {securityTokens.length === 0 ? (
+            <div className="max-w-7xl mx-auto px-4 py-16">
+              <div className="text-center">
+                <Shield className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <h2 className="text-2xl font-bold mb-2">No Security Tokens on {getChainName(chainId)}</h2>
+                <p className="text-gray-400 mb-6">No tokenized assets are currently listed on this network.</p>
+                <a href="/dashboard" className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded text-sm">
+                  List Your Asset <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div className="max-w-7xl mx-auto px-4 py-4">
+              {/* Compact Market Info Bar */}
+              {selectedSecurityToken && (
+                <div className="flex items-center gap-4 mb-4 p-3 bg-[#1a1a2e] rounded-lg border border-purple-800/30">
+                  <div className="flex items-center gap-2">
+                    {selectedSecurityToken.logoUrl ? (
+                      <img src={selectedSecurityToken.logoUrl} alt="" className="w-8 h-8 rounded" />
+                    ) : (
+                      <div className="w-8 h-8 bg-purple-700 rounded flex items-center justify-center text-xs font-bold">
+                        {selectedSecurityToken.symbol?.slice(0, 2)}
+                      </div>
+                    )}
+                    <div>
+                      <h2 className="text-sm font-bold">{selectedSecurityToken.symbol}/{selectedSecurityToken.tradingPair}</h2>
+                      <p className="text-[10px] text-gray-500">{selectedSecurityToken.name}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex-1 flex items-center gap-6 text-xs">
+                    <div>
+                      <span className="text-gray-500">Price </span>
+                      <span className="font-bold text-lg">${selectedSecurityToken.price}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">MCap </span>
+                      <span className="text-white">${formatNumber(selectedSecurityToken.marketCap || '0')}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-500">Supply </span>
+                      <span className="text-white">{formatNumber(selectedSecurityToken.totalSupply || '0')}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Price Chart */}
+              {selectedSecurityToken && (
+                <div className="mb-4">
+                  <PriceChart
+                    symbol={selectedSecurityToken.symbol}
+                    type="security"
+                    tokenAddress={selectedSecurityToken.address}
+                    currentPrice={selectedSecurityToken.price}
+                    height={200}
+                  />
+                </div>
+              )}
+
+              {/* Main Trading Interface */}
+              <div className="grid grid-cols-12 gap-3">
+                {/* Left - Token List & Recent Trades */}
+                <div className="col-span-3 space-y-3">
+                  {/* Token List */}
+                  <div className="bg-[#1a1a2e] rounded-lg border border-gray-800 h-[280px] flex flex-col">
+                    <div className="p-2 border-b border-gray-800">
+                      <div className="relative">
+                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500" />
+                        <input
+                          type="text"
+                          value={securitySearchQuery}
+                          onChange={(e) => setSecuritySearchQuery(e.target.value)}
+                          placeholder="Search..."
+                          className="w-full pl-7 pr-3 py-1.5 bg-[#0d0d1a] rounded border border-gray-700 focus:border-purple-500 outline-none text-xs"
+                        />
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center text-[10px] text-gray-500 px-2 py-1 border-b border-gray-800">
+                      <span className="flex-1">Token</span>
+                      <span className="w-16 text-right">Price</span>
+                      <span className="w-16 text-right">MCap</span>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto">
+                      {filteredSecurityTokens.map((token) => (
+                        <button
+                          key={token.id}
+                          onClick={() => setSelectedSecurityToken(token)}
+                          className={`w-full px-2 py-1.5 flex items-center hover:bg-white/5 transition-colors ${
+                            selectedSecurityToken?.id === token.id ? 'bg-purple-500/10 border-l-2 border-purple-500' : ''
+                          }`}
+                        >
+                          <div className="flex items-center gap-1.5 flex-1">
+                            {token.logoUrl ? (
+                              <img src={token.logoUrl} alt="" className="w-4 h-4 rounded" />
+                            ) : (
+                              <div className="w-4 h-4 bg-purple-700 rounded flex items-center justify-center text-[8px]">
+                                {token.symbol?.slice(0, 2)}
+                              </div>
+                            )}
+                            <span className="font-medium text-xs">{token.symbol}</span>
+                          </div>
+                          <span className="w-16 text-right text-xs">${token.price}</span>
+                          <span className="w-16 text-right text-[10px] text-gray-500">${formatNumber(token.marketCap || '0')}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Recent Trades */}
+                  <div className="bg-[#1a1a2e] rounded-lg border border-gray-800 h-[200px] flex flex-col">
+                    <div className="p-2 border-b border-gray-800 flex items-center justify-between">
+                      <span className="text-xs font-medium">Recent Trades</span>
+                      <button onClick={fetchSecurityTrades} className="p-1 hover:bg-white/10 rounded">
+                        <RefreshCw className="w-3 h-3" />
+                      </button>
+                    </div>
+                    
+                    <div className="flex items-center text-[10px] text-gray-500 px-2 py-1 border-b border-gray-800">
+                      <span className="flex-1">Price</span>
+                      <span className="flex-1 text-right">Amount</span>
+                      <span className="flex-1 text-right">Time</span>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto">
+                      {securityTrades.length === 0 ? (
+                        <div className="text-center text-gray-600 text-[10px] py-6">No trades yet</div>
+                      ) : (
+                        securityTrades.map((trade) => (
+                          <div key={trade.id} className="flex text-[10px] px-2 py-0.5 hover:bg-white/5">
+                            <span className={`flex-1 ${trade.side === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
+                              {parseFloat(trade.price).toFixed(4)}
+                            </span>
+                            <span className="flex-1 text-right text-gray-400">{formatNumber(trade.amount)}</span>
+                            <span className="flex-1 text-right text-gray-600">{formatTime(trade.created_at)}</span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Middle - Order Book */}
+                <div className="col-span-5 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col">
+                  <div className="p-2 border-b border-gray-800 flex items-center justify-between">
+                    <span className="text-xs font-medium">Order Book</span>
+                    <button onClick={fetchSecurityOrderBook} className="p-1 hover:bg-white/10 rounded">
+                      <RefreshCw className="w-3 h-3" />
+                    </button>
+                  </div>
+
+                  {/* Order Book Header */}
+                  <div className="grid grid-cols-2 text-[10px] text-gray-500 border-b border-gray-800">
+                    <div className="flex px-2 py-1 border-r border-gray-800">
+                      <span className="flex-1">Bid</span>
+                      <span className="flex-1 text-right">Amount</span>
+                    </div>
+                    <div className="flex px-2 py-1">
+                      <span className="flex-1">Ask</span>
+                      <span className="flex-1 text-right">Amount</span>
+                    </div>
+                  </div>
+
+                  {/* Order Book Body */}
+                  <div className="flex-1 grid grid-cols-2 overflow-hidden">
+                    {/* Bids */}
+                    <div className="border-r border-gray-800 overflow-y-auto">
+                      {securityOrderBook.bids.length === 0 ? (
+                        Array.from({ length: 15 }).map((_, i) => (
+                          <div key={i} className="flex text-[10px] px-2 py-0.5">
+                            <span className="flex-1 text-green-400/20">-</span>
+                            <span className="flex-1 text-right text-gray-700">-</span>
+                          </div>
+                        ))
+                      ) : (
+                        securityOrderBook.bids.slice(0, 15).map((bid, i) => {
+                          const maxAmount = Math.max(...securityOrderBook.bids.slice(0, 15).map(b => parseFloat(b.amount)));
+                          const widthPct = maxAmount > 0 ? (parseFloat(bid.amount) / maxAmount) * 100 : 0;
+                          return (
+                            <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-green-500/10 cursor-pointer"
+                              onClick={() => setSecurityOrderPrice(bid.price)}>
+                              <div className="absolute right-0 top-0 bottom-0 bg-green-500/10" style={{ width: `${widthPct}%` }} />
+                              <span className="flex-1 text-green-400 font-mono relative z-10">{parseFloat(bid.price).toFixed(4)}</span>
+                              <span className="flex-1 text-right text-gray-400 font-mono relative z-10">{formatNumber(bid.amount)}</span>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                    {/* Asks */}
+                    <div className="overflow-y-auto">
+                      {securityOrderBook.asks.length === 0 ? (
+                        Array.from({ length: 15 }).map((_, i) => (
+                          <div key={i} className="flex text-[10px] px-2 py-0.5">
+                            <span className="flex-1 text-red-400/20">-</span>
+                            <span className="flex-1 text-right text-gray-700">-</span>
+                          </div>
+                        ))
+                      ) : (
+                        securityOrderBook.asks.slice(0, 15).map((ask, i) => {
+                          const maxAmount = Math.max(...securityOrderBook.asks.slice(0, 15).map(a => parseFloat(a.amount)));
+                          const widthPct = maxAmount > 0 ? (parseFloat(ask.amount) / maxAmount) * 100 : 0;
+                          return (
+                            <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-red-500/10 cursor-pointer"
+                              onClick={() => setSecurityOrderPrice(ask.price)}>
+                              <div className="absolute left-0 top-0 bottom-0 bg-red-500/10" style={{ width: `${widthPct}%` }} />
+                              <span className="flex-1 text-red-400 font-mono relative z-10">{parseFloat(ask.price).toFixed(4)}</span>
+                              <span className="flex-1 text-right text-gray-400 font-mono relative z-10">{formatNumber(ask.amount)}</span>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Spread */}
+                  <div className="p-2 border-t border-gray-800 text-center">
+                    <span className="text-lg font-bold">${selectedSecurityToken?.price}</span>
+                  </div>
+                </div>
+
+                {/* Right - Order Form */}
+                <div className="col-span-4 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col overflow-hidden">
+                  {/* Tabs */}
+                  <div className="flex border-b border-gray-800">
+                    {(['trade', 'orders', 'history'] as const).map((tab) => (
+                      <button
+                        key={tab}
+                        onClick={() => setActiveTab(tab)}
+                        className={`flex-1 py-2 text-xs font-medium transition-colors ${
+                          activeTab === tab
+                            ? 'text-purple-400 border-b-2 border-purple-400'
+                            : 'text-gray-500 hover:text-white'
+                        }`}
+                      >
+                        {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="flex-1 overflow-y-auto">
+                    {activeTab === 'trade' && renderOrderForm('security')}
+
+                    {activeTab === 'orders' && (
+                      <div className="p-3">
+                        <h4 className="text-xs font-medium mb-2">Open Orders</h4>
+                        {securityOrders.filter(o => o.status === 'open' || o.status === 'partial').length === 0 ? (
+                          <div className="text-center text-gray-600 text-[10px] py-8">No open orders</div>
+                        ) : (
+                          <div className="space-y-2">
+                            {securityOrders
+                              .filter(o => o.status === 'open' || o.status === 'partial')
+                              .map((order) => (
+                                <div key={order.id} className="p-2 bg-[#0d0d1a] rounded flex items-center justify-between">
+                                  <div>
+                                    <div className="flex items-center gap-1">
+                                      <span className={`px-1 py-0.5 rounded text-[8px] ${
+                                        order.side === 'buy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                                      }`}>
+                                        {order.side?.toUpperCase()}
+                                      </span>
+                                      <span className="text-[10px] font-medium">{selectedSecurityToken?.symbol}</span>
+                                    </div>
+                                    <div className="text-[9px] text-gray-500 mt-0.5">
+                                      @ ${order.price} • {formatNumber(order.amount)} tokens
+                                    </div>
+                                  </div>
+                                  <button
+                                    onClick={() => handleCancelSecurityOrder(order.id)}
+                                    className="p-1 text-red-400 hover:bg-red-500/10 rounded"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {activeTab === 'history' && (
+                      <div className="p-3">
+                        <h4 className="text-xs font-medium mb-2">Order History</h4>
+                        {securityOrders.filter(o => o.status === 'filled' || o.status === 'cancelled').length === 0 ? (
+                          <div className="text-center text-gray-600 text-[10px] py-8">No order history</div>
+                        ) : (
+                          <div className="space-y-2">
+                            {securityOrders
+                              .filter(o => o.status === 'filled' || o.status === 'cancelled')
+                              .map((order) => (
+                                <div key={order.id} className="p-2 bg-[#0d0d1a] rounded">
+                                  <div className="flex items-center gap-1">
+                                    <span className={`px-1 py-0.5 rounded text-[8px] ${
+                                      order.side === 'buy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                                    }`}>
+                                      {order.side?.toUpperCase()}
+                                    </span>
+                                    <span className="text-[10px] font-medium">{selectedSecurityToken?.symbol}</span>
+                                    <span className={`px-1 py-0.5 rounded text-[8px] ${
+                                      order.status === 'filled' ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'
+                                    }`}>
+                                      {order.status}
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between text-[9px] text-gray-500 mt-0.5">
+                                    <span>@ ${order.price}</span>
+                                    <span>{formatTime(order.created_at)}</span>
+                                  </div>
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }

@@ -1,65 +1,73 @@
 // src/app/api/kyc/status/[address]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import {
-  TierName,
-  tierNumberToName,
-  getLimitForTier,
-  getRemainingLimit,
-  formatLimit,
-  DEFAULT_LIMITS,
-} from '@/lib/kycLimits';
 
-// KYC expiry duration (1 year)
 const KYC_EXPIRY_DAYS = 365;
 
-// Initialize Supabase client
 function getSupabaseClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  if (!supabaseUrl || !supabaseKey) {
-    return null;
-  }
-
+  if (!supabaseUrl || !supabaseKey) return null;
   return createClient(supabaseUrl, supabaseKey);
 }
 
-// Default response for non-KYC'd users
-function getDefaultResponse(wallet: string) {
+function formatLimit(value: number | null): string {
+  if (value === null) return 'Unlimited';
+  if (value === 0) return '$0';
+  if (value >= 1000000) return `$${(value / 1000000).toFixed(value % 1000000 === 0 ? 0 : 1)}M`;
+  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
+  return `$${value.toLocaleString()}`;
+}
+
+const TIER_NAMES = ['None', 'Bronze', 'Silver', 'Gold', 'Diamond'] as const;
+type TierName = typeof TIER_NAMES[number];
+
+function tierNumberToName(num: number): TierName {
+  return TIER_NAMES[num] || 'None';
+}
+
+// Fetch tier limits from DB
+async function getTierLimitsFromDB(supabase: any): Promise<Record<TierName, number | null>> {
+  const { data, error } = await supabase
+    .from('kyc_tier_limits')
+    .select('tier_name, investment_limit');
+
+  if (error || !data) {
+    console.error('[KYC Status] Failed to fetch tier limits:', error);
+    // Return empty - will show as 0 limits
+    return { None: 0, Bronze: null, Silver: null, Gold: null, Diamond: null };
+  }
+
+  const limits: Record<string, number | null> = { None: 0, Bronze: null, Silver: null, Gold: null, Diamond: null };
+  for (const tier of data) {
+    limits[tier.tier_name] = tier.investment_limit === null ? null : Number(tier.investment_limit);
+  }
+  return limits as Record<TierName, number | null>;
+}
+
+function getDefaultResponse(wallet: string, tierLimits: Record<TierName, number | null>) {
   return {
     success: true,
     found: false,
     wallet: wallet.toLowerCase(),
-    
-    // Status
     status: 'none' as const,
     applicationStatus: 'none' as const,
-    
-    // Tier info
     tier: 'None' as TierName,
     tierNumber: 0,
-    kycLevel: 0, // Alias for tierNumber (backward compatibility)
-    
-    // Verification
+    kycLevel: 0,
     isVerified: false,
     isExpired: false,
     canInvest: false,
-    
-    // Limits
     limit: 0,
     used: 0,
     remaining: 0,
     limitFormatted: '$0',
     remainingFormatted: '$0',
-    
-    // Dates
     submittedAt: null,
     approvedAt: null,
     expiresAt: null,
-    
-    // Linked wallets
     linkedWallets: [],
+    tierLimits, // Include all limits for context
   };
 }
 
@@ -71,18 +79,20 @@ export async function GET(
     const { address } = await params;
     const wallet = address?.toLowerCase();
 
-    // Validate wallet address
     if (!wallet || !/^0x[a-fA-F0-9]{40}$/i.test(wallet)) {
-      return NextResponse.json(getDefaultResponse(wallet || 'invalid'));
+      return NextResponse.json({ success: false, error: 'Invalid address' }, { status: 400 });
     }
 
     const supabase = getSupabaseClient();
     if (!supabase) {
       console.warn('[KYC Status] Supabase not configured');
-      return NextResponse.json(getDefaultResponse(wallet));
+      return NextResponse.json({ success: false, error: 'Database not configured' }, { status: 500 });
     }
 
-    // Query KYC application - check both direct wallet and linked wallets
+    // Fetch tier limits from DB first
+    const tierLimits = await getTierLimitsFromDB(supabase);
+
+    // Query KYC application
     const { data: kycData, error: kycError } = await supabase
       .from('kyc_applications')
       .select('*')
@@ -95,12 +105,11 @@ export async function GET(
       console.error('[KYC Status] Database error:', kycError);
     }
 
-    // No KYC application found
     if (!kycData) {
-      return NextResponse.json(getDefaultResponse(wallet));
+      return NextResponse.json(getDefaultResponse(wallet, tierLimits));
     }
 
-    // Extract data from DB
+    // Extract data
     const dbStatus = kycData.status || 'none';
     const tierNumber = kycData.current_level || kycData.kyc_tier || 0;
     const requestedLevel = kycData.requested_level || 0;
@@ -113,7 +122,6 @@ export async function GET(
       expiresAt = new Date(approvedAt);
       expiresAt.setDate(expiresAt.getDate() + KYC_EXPIRY_DAYS);
     }
-    // Override with DB expiry if set
     if (kycData.expires_at) {
       expiresAt = new Date(kycData.expires_at);
     }
@@ -121,18 +129,19 @@ export async function GET(
     const isExpired = expiresAt ? new Date() > expiresAt : false;
     const isApproved = dbStatus === 'approved' && !isExpired;
 
-    // Determine effective status
     let effectiveStatus: 'none' | 'pending' | 'approved' | 'rejected' | 'expired' = dbStatus;
     if (isExpired && dbStatus === 'approved') {
       effectiveStatus = 'expired';
     }
 
-    // Get tier info
     const effectiveTierNumber = isApproved ? tierNumber : 0;
     const tier = tierNumberToName(effectiveTierNumber);
-    const limit = getLimitForTier(tier);
+    
+    // Get limit from DB-fetched limits
+    const limit = tierLimits[tier];
+    const limitValue = limit === null ? Infinity : (limit || 0);
 
-    // Get total invested from investments table
+    // Get total invested
     let totalInvested = 0;
     try {
       const { data: investments } = await supabase
@@ -141,86 +150,57 @@ export async function GET(
         .or(`investor_address.ilike.${wallet},investor_address.ilike.${kycData.wallet_address}`);
 
       totalInvested = investments?.reduce((sum, inv) => {
-        const amount = parseFloat(inv.amount) || 0;
-        return sum + amount;
+        return sum + (parseFloat(inv.amount) || 0);
       }, 0) || 0;
     } catch (e) {
       console.warn('[KYC Status] Could not fetch investments:', e);
     }
 
-    const remaining = getRemainingLimit(tier, totalInvested);
+    const remaining = limit === null ? null : Math.max(0, limitValue - totalInvested);
 
     return NextResponse.json({
       success: true,
       found: true,
-      wallet: wallet,
-      
-      // Status
+      wallet,
       status: effectiveStatus,
       applicationStatus: dbStatus,
-      
-      // Tier info
       tier,
       tierNumber: effectiveTierNumber,
-      kycLevel: effectiveTierNumber, // Backward compatibility
+      kycLevel: effectiveTierNumber,
       requestedLevel,
-      
-      // Verification
       isVerified: isApproved,
       isExpired,
       canInvest: isApproved && effectiveTierNumber >= 1,
-      
-      // Limits
-      limit: limit === Infinity ? null : limit,
+      limit: limit,
       used: totalInvested,
-      remaining: remaining === Infinity ? null : remaining,
+      remaining: remaining,
       limitFormatted: formatLimit(limit),
       remainingFormatted: formatLimit(remaining),
-      
-      // Dates
       submittedAt: kycData.submitted_at || kycData.created_at,
       approvedAt: kycData.approved_at,
       expiresAt: expiresAt?.toISOString() || null,
       reviewedAt: kycData.reviewed_at,
-      
-      // Rejection info
       rejectionReason: kycData.rejection_reason,
-      
-      // Linked wallets
       linkedWallets,
       primaryWallet: kycData.wallet_address,
-      
-      // Status flags for UI
       isPending: effectiveStatus === 'pending',
       isRejected: effectiveStatus === 'rejected',
       canResubmit: effectiveStatus === 'rejected' || effectiveStatus === 'expired',
-      
-      // Personal info (limited)
       firstName: kycData.first_name,
       country: kycData.country,
       countryCode: kycData.country_code,
-      
-      // Legacy submission object for backward compatibility
+      tierLimits, // All limits for context to use
       submission: {
         level: effectiveTierNumber,
-        status: effectiveStatus === 'approved' ? 1 
-              : effectiveStatus === 'rejected' ? 2 
-              : effectiveStatus === 'expired' ? 3 
-              : 0,
+        status: effectiveStatus === 'approved' ? 1 : effectiveStatus === 'rejected' ? 2 : effectiveStatus === 'expired' ? 3 : 0,
         countryCode: kycData.country_code || 0,
         requestedLevel,
         expiresAt: expiresAt ? Math.floor(expiresAt.getTime() / 1000) : null,
         totalInvested,
       },
     });
-
-    } catch (error) {
-      console.error('[KYC Status] Error:', error);
-      const defaultResponse = getDefaultResponse('error');
-      return NextResponse.json({
-        ...defaultResponse,
-        success: false,
-        error: 'Internal server error',
-      }, { status: 500 });
-    }
+  } catch (error) {
+    console.error('[KYC Status] Error:', error);
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
+  }
 }

@@ -10,42 +10,52 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "../interfaces/IRWASecurityToken.sol";
 import "../interfaces/IRWAProjectNFT.sol";
-import "../interfaces/IAggregatorV3.sol";
 import "../libraries/Constants.sol";
 import "../interfaces/IKYCVerifier.sol";
 
-contract RWAEscrowVault is Initializable, AccessControlUpgradeable, UUPSUpgradeable, PausableUpgradeable, ReentrancyGuardUpgradeable {
+interface IPlatformFeeManager {
+    function receiveFees(
+        uint256 projectId,
+        address usdtToken,
+        uint256 usdtAmount,
+        address securityToken,
+        uint256 tokenAmount
+    ) external;
+    function refundUSDTForDispute(uint256 projectId, address escrowAddress) external;
+    function liquidityWallet() external view returns (address);
+    function treasuryWallet() external view returns (address);
+    function feeReceiver() external view returns (address);
+}
+
+contract RWAEscrowVault is 
+    Initializable, 
+    AccessControlUpgradeable, 
+    UUPSUpgradeable, 
+    PausableUpgradeable, 
+    ReentrancyGuardUpgradeable 
+{
     using SafeERC20 for IERC20;
 
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
-    bytes32 public constant DISPUTE_RESOLVER_ROLE = keccak256("DISPUTE_RESOLVER_ROLE");
+    bytes32 public constant DISPUTE_MANAGER_ROLE = keccak256("DISPUTE_MANAGER_ROLE");
 
     enum ProjectState { INACTIVE, ACTIVE, FUNDED, COMPLETED, CANCELLED, DISPUTED }
-    enum MilestoneState { PENDING, APPROVED, RELEASED, DISPUTED, CANCELLED }
-
-    struct Milestone {
-        string description;
-        uint256 amount;
-        uint256 deadline;
-        MilestoneState state;
-        uint256 releasedAt;
-        uint256 approvedAt;
-    }
 
     struct Project {
         uint256 projectId;
         address projectOwner;
         address securityToken;
         address paymentToken;
-        address priceFeed;
         uint256 fundingGoal;
         uint256 totalRaised;
         uint256 deadline;
         ProjectState state;
         uint256 createdAt;
-        uint256 platformFeeBps;
-        uint256 maxPriceAge;
+        uint256 fundedAt;
+        uint256 completedAt;
+        uint256 totalSupply;
+        bool platformFeesTransferred;
     }
 
     struct Investment {
@@ -55,6 +65,7 @@ contract RWAEscrowVault is Initializable, AccessControlUpgradeable, UUPSUpgradea
         uint256 timestamp;
         bool refunded;
         string paymentReference;
+        address paymentToken;
     }
 
     struct KYCProof {
@@ -64,74 +75,79 @@ contract RWAEscrowVault is Initializable, AccessControlUpgradeable, UUPSUpgradea
         bytes signature;
     }
 
+    // Platform fee configuration (in BPS)
+    uint256 public constant PLATFORM_USDT_FEE_BPS = 150;    // 1.5% of raised amount
+    uint256 public constant PLATFORM_TOKEN_FEE_BPS = 100;   // 1% of token supply
+    uint256 public constant INVESTOR_TOKEN_BPS = 9900;      // 99% of token supply
+
+    // Storage
     mapping(uint256 => Project) public projects;
-    mapping(uint256 => Milestone[]) public milestones;
     mapping(uint256 => Investment[]) public investments;
-    mapping(uint256 => mapping(address => uint256)) public investorTokenBalance;
+    mapping(uint256 => address[]) public projectInvestors;
+    mapping(uint256 => mapping(address => uint256)) public investorTokenAllocation;
     mapping(uint256 => mapping(address => uint256)) public investorContribution;
-    mapping(uint256 => uint256) public projectInvestorCount;
-    mapping(string => bool) private _usedPaymentReferences;
-    mapping(string => uint256) private _paymentReferenceToProject;
+    mapping(uint256 => mapping(address => bool)) public isProjectInvestor;
+    mapping(uint256 => mapping(address => bool)) public hasClaimed;
     mapping(uint256 => mapping(address => address)) public investmentTokens;
-    mapping(uint256 => mapping(address => uint256)) public tokensClaimed;
+    mapping(uint256 => uint256) public projectInvestorCount;
+    mapping(uint256 => uint256) public projectReleasedFunds;
+    mapping(uint256 => bool) public projectBlockedByDispute;
+    mapping(uint256 => uint256) public projectSnapshotId;
+    mapping(string => bool) private _usedPaymentReferences;
     
+
+    // Claim fee
     uint256 public claimFeeBps;
-    address public feeRecipient;
+    address public claimFeeRecipient;
 
-    uint256 public lastValidPrice;
-    uint256 public lastPriceUpdateTime;
-    uint256 public transactionFee;
-
-    address public platformFeeRecipient;
+    // External contracts
+    IPlatformFeeManager public platformFeeManager;
     IKYCVerifier public kycVerifier;
     IRWAProjectNFT public projectNFT;
     IERC20 public usdc;
     IERC20 public usdt;
 
-    event ProjectCreated(uint256 indexed projectId, address indexed owner, uint256 fundingGoal, uint256 deadline);
-    event InvestmentReceived(uint256 indexed projectId, address indexed investor, uint256 amount, uint256 tokenAmount);
-    event OffChainInvestmentRecorded(uint256 indexed projectId, address indexed investor, uint256 amount, string paymentReference);
-    event MilestoneAdded(uint256 indexed projectId, uint256 milestoneIndex, uint256 amount, uint256 deadline);
-    event MilestoneApproved(uint256 indexed projectId, uint256 milestoneIndex);
-    event MilestoneFundsReleased(uint256 indexed projectId, uint256 milestoneIndex, uint256 amount);
+    mapping(uint256 => uint256) public projectOffChainAmount;
+
+    // Events
+    event ProjectCreated(uint256 indexed projectId, address indexed owner, uint256 fundingGoal, uint256 deadline, uint256 totalSupply);
+    event ProjectActivated(uint256 indexed projectId);
+    event InvestmentReceived(uint256 indexed projectId, address indexed investor, uint256 amount, uint256 tokenAllocation, address paymentToken);
+    event OffChainInvestmentRecorded(uint256 indexed projectId, address indexed investor, uint256 amount, uint256 tokenAllocation, string paymentReference);
+    event ProjectFunded(uint256 indexed projectId, uint256 totalRaised);
+    event ProjectForceFunded(uint256 indexed projectId, uint256 totalRaised, uint256 fundingGoal, string reason);
+    event ProjectCompleted(uint256 indexed projectId, uint256 platformUSDT, uint256 platformTokens, address liquidityWallet, address treasuryWallet);
+    event TokensClaimed(uint256 indexed projectId, address indexed investor, uint256 grossAmount, uint256 fee, uint256 netAmount);
+    event MilestoneFundsReleased(uint256 indexed projectId, uint256 amount, string milestoneRef);
     event RefundClaimed(uint256 indexed projectId, address indexed investor, uint256 amount);
     event ProjectStateChanged(uint256 indexed projectId, ProjectState newState);
-    event DisputeRaised(uint256 indexed projectId, uint256 milestoneIndex, string reason);
-    event DisputeResolved(uint256 indexed projectId, uint256 milestoneIndex, bool approved);
-    event PlatformFeeUpdated(uint256 indexed projectId, uint256 newFeeBps);
-    event PriceFeedUpdated(uint256 indexed projectId, address newPriceFeed);
-    event PriceDeviationDetected(uint256 oldPrice, uint256 newPrice, uint256 deviationBps);
-    event KYCVerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
-    event ProjectFinalized(uint256 indexed projectId, uint256 totalRaised);
-    event TokensClaimed(uint256 indexed projectId, address indexed investor, uint256 tokenAmount, uint256 fee);
+    event ProjectBlockedByDisputeEvent(uint256 indexed projectId, uint256 snapshotId);
+    event ProjectUnblocked(uint256 indexed projectId);
+    event DisputeRefundProcessed(uint256 indexed projectId, uint256 totalRefunded, uint256 holdersCount);
     event ClaimFeeUpdated(uint256 oldFee, uint256 newFee);
-    event FeeRecipientUpdated(address oldRecipient, address newRecipient);
-    event TransactionFeeUpdated(uint256 oldFee, uint256 newFee);
-    event ProjectForceFunded(uint256 indexed projectId, uint256 totalRaised, uint256 fundingGoal, string reason);
+    event ClaimFeeRecipientUpdated(address oldRecipient, address newRecipient);
+    event KYCVerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
+    event PlatformFeeManagerUpdated(address indexed oldManager, address indexed newManager);
+    event OffChainFundsInjected(uint256 indexed projectId, uint256 amount, uint256 remainingOffChain, address paymentToken);
 
+    // Errors
     error InvalidProject();
     error InvalidState();
     error InvalidAmount();
     error InvalidAddress();
     error DeadlinePassed();
-    error DeadlineNotPassed();
-    error FundingGoalNotMet();
-    error FundingGoalMet();
-    error MilestoneNotApproved();
-    error MilestoneAlreadyReleased();
+    error FundingGoalExceeded();
     error InsufficientBalance();
-    error AlreadyRefunded();
+    error AlreadyClaimed();
     error NotInvestor();
-    error InvalidMilestone();
-    error BatchTooLarge();
     error PaymentReferenceUsed();
-    error StalePrice();
-    error InvalidPrice();
-    error PriceDeviationTooHigh();
-    error FeeTooHigh();
-    error TooManyMilestones();
     error NoFundsRaised();
     error KYCNotVerified();
+    error ProjectIsBlocked();
+    error NotAuthorized();
+    error FeeTooHigh();
+    error NothingToRelease();
+    error PlatformFeesNotTransferred();
 
     modifier validProject(uint256 _projectId) {
         if (projects[_projectId].projectOwner == address(0)) revert InvalidProject();
@@ -143,465 +159,812 @@ contract RWAEscrowVault is Initializable, AccessControlUpgradeable, UUPSUpgradea
         _;
     }
 
-    function setTransactionFee(uint256 _fee) external onlyRole(ADMIN_ROLE) {
-        uint256 oldFee = transactionFee;
-        transactionFee = _fee;
-        emit TransactionFeeUpdated(oldFee, _fee);
+    modifier notBlocked(uint256 _projectId) {
+        if (projectBlockedByDispute[_projectId]) revert ProjectIsBlocked();
+        _;
     }
 
-    function initialize(address _admin, address _platformFeeRecipient, address _projectNFT) external initializer {
-        if (_admin == address(0) || _platformFeeRecipient == address(0) || _projectNFT == address(0)) revert InvalidAddress();
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(
+        address _admin,
+        address _platformFeeManager,
+        address _projectNFT
+    ) external initializer {
+        if (_admin == address(0) || _platformFeeManager == address(0) || _projectNFT == address(0)) 
+            revert InvalidAddress();
+
         __AccessControl_init();
         __UUPSUpgradeable_init();
         __Pausable_init();
         __ReentrancyGuard_init();
+
         _grantRole(DEFAULT_ADMIN_ROLE, _admin);
         _grantRole(ADMIN_ROLE, _admin);
         _grantRole(OPERATOR_ROLE, _admin);
-        _grantRole(DISPUTE_RESOLVER_ROLE, _admin);
-        platformFeeRecipient = _platformFeeRecipient;
+
+        platformFeeManager = IPlatformFeeManager(_platformFeeManager);
         projectNFT = IRWAProjectNFT(_projectNFT);
+        
+        claimFeeBps = 0;
     }
 
     function _authorizeUpgrade(address newImplementation) internal override onlyRole(DEFAULT_ADMIN_ROLE) {}
 
-    function setKYCVerifier(address _kycVerifier) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(_kycVerifier != address(0), "Zero address");
+    // ============================================
+    // ADMIN CONFIGURATION
+    // ============================================
+
+    function setKYCVerifier(address _kycVerifier) external onlyRole(ADMIN_ROLE) {
+        if (_kycVerifier == address(0)) revert InvalidAddress();
         address oldVerifier = address(kycVerifier);
         kycVerifier = IKYCVerifier(_kycVerifier);
         emit KYCVerifierUpdated(oldVerifier, _kycVerifier);
     }
 
-    function setPaymentTokens(address _usdc, address _usdt) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        require(_usdc != address(0) && _usdt != address(0), "Zero address");
+    function setPlatformFeeManager(address _feeManager) external onlyRole(ADMIN_ROLE) {
+        if (_feeManager == address(0)) revert InvalidAddress();
+        address oldManager = address(platformFeeManager);
+        platformFeeManager = IPlatformFeeManager(_feeManager);
+        emit PlatformFeeManagerUpdated(oldManager, _feeManager);
+    }
+
+    function setPaymentTokens(address _usdc, address _usdt) external onlyRole(ADMIN_ROLE) {
+        if (_usdc == address(0) || _usdt == address(0)) revert InvalidAddress();
         usdc = IERC20(_usdc);
         usdt = IERC20(_usdt);
     }
 
-    function claimTokens(uint256 _projectId) external payable nonReentrant validProject(_projectId) {
-        Project storage project = projects[_projectId];
-        require(project.state == ProjectState.FUNDED || project.state == ProjectState.COMPLETED, "Cannot claim");
-
-        uint256 totalTokens = investorTokenBalance[_projectId][msg.sender];
-        require(totalTokens > 0, "No tokens to claim");
-
-        uint256 releasedAmount = _getReleasedAmount(_projectId);
-        uint256 releasedBps = (releasedAmount * Constants.BPS_DENOMINATOR) / project.totalRaised;
-
-        uint256 totalClaimable = (totalTokens * releasedBps) / Constants.BPS_DENOMINATOR;
-        uint256 alreadyClaimed = tokensClaimed[_projectId][msg.sender];
-        uint256 claimableNow = totalClaimable - alreadyClaimed;
-
-        require(claimableNow > 0, "Nothing to claim");
-
-        uint256 fee = (claimableNow * claimFeeBps) / Constants.BPS_DENOMINATOR;
-        uint256 netTokens = claimableNow - fee;
-
-        tokensClaimed[_projectId][msg.sender] = totalClaimable;
-
-        IRWASecurityToken(project.securityToken).mint(msg.sender, netTokens);
-
-        if (fee > 0 && feeRecipient != address(0)) {
-            IRWASecurityToken(project.securityToken).mint(feeRecipient, fee);
-        }
-
-        emit TokensClaimed(_projectId, msg.sender, netTokens, fee);
-    }
-
-    function getClaimableTokens(uint256 _projectId, address _investor) external view returns (uint256) {
-        Project storage project = projects[_projectId];
-        if (project.state != ProjectState.FUNDED && project.state != ProjectState.COMPLETED) {
-            return 0;
-        }
-
-        uint256 totalTokens = investorTokenBalance[_projectId][_investor];
-        if (totalTokens == 0) return 0;
-
-        uint256 releasedAmount = _getReleasedAmount(_projectId);
-        uint256 releasedBps = project.totalRaised > 0 ? (releasedAmount * Constants.BPS_DENOMINATOR) / project.totalRaised : 0;
-        uint256 totalClaimable = (totalTokens * releasedBps) / Constants.BPS_DENOMINATOR;
-        uint256 alreadyClaimed = tokensClaimed[_projectId][_investor];
-
-        return totalClaimable > alreadyClaimed ? totalClaimable - alreadyClaimed : 0;
-    }
-
     function setClaimFee(uint256 _feeBps) external onlyRole(ADMIN_ROLE) {
-        require(_feeBps <= Constants.MAX_FEE_BPS, "Fee too high");
+        if (_feeBps > Constants.MAX_FEE_BPS) revert FeeTooHigh();
         uint256 oldFee = claimFeeBps;
         claimFeeBps = _feeBps;
         emit ClaimFeeUpdated(oldFee, _feeBps);
     }
 
-    function setFeeRecipient(address _recipient) external onlyRole(ADMIN_ROLE) {
-        require(_recipient != address(0), "Zero address");
-        address oldRecipient = feeRecipient;
-        feeRecipient = _recipient;
-        emit FeeRecipientUpdated(oldRecipient, _recipient);
+    function setClaimFeeRecipient(address _recipient) external onlyRole(ADMIN_ROLE) {
+        if (_recipient == address(0)) revert InvalidAddress();
+        address oldRecipient = claimFeeRecipient;
+        claimFeeRecipient = _recipient;
+        emit ClaimFeeRecipientUpdated(oldRecipient, _recipient);
     }
 
-    function createProject(uint256 _projectId, address _securityToken, address _paymentToken, address _priceFeed, uint256 _fundingGoal, uint256 _deadline, uint256 _platformFeeBps, uint256 _maxPriceAge) external payable whenNotPaused {
+    // ============================================
+    // PROJECT CREATION & ACTIVATION
+    // ============================================
+
+    /**
+     * @notice Create a new project
+     * @param _projectId Unique project ID (from ProjectNFT)
+     * @param _securityToken Security token address for this project
+     * @param _fundingGoal Funding goal in payment token units (6 decimals for USDC/USDT)
+     * @param _deadline Funding deadline timestamp
+     * @param _totalSupply Total token supply for this project
+     */
+    function createProject(
+        uint256 _projectId,
+        address _securityToken,
+        uint256 _fundingGoal,
+        uint256 _deadline,
+        uint256 _totalSupply
+    ) external whenNotPaused {
         if (_securityToken == address(0)) revert InvalidAddress();
         if (_fundingGoal < Constants.MIN_FUNDING_GOAL) revert InvalidAmount();
         if (_deadline <= block.timestamp + Constants.MIN_FUNDRAISE_DURATION) revert DeadlinePassed();
-        if (_platformFeeBps > Constants.MAX_FEE_BPS) revert FeeTooHigh();
-        if (_maxPriceAge < Constants.MIN_PRICE_AGE || _maxPriceAge > Constants.MAX_PRICE_AGE_LIMIT) revert InvalidAmount();
         if (projects[_projectId].projectOwner != address(0)) revert InvalidProject();
+        if (_totalSupply == 0) revert InvalidAmount();
 
         projects[_projectId] = Project({
             projectId: _projectId,
             projectOwner: msg.sender,
             securityToken: _securityToken,
-            paymentToken: _paymentToken,
-            priceFeed: _priceFeed,
+            paymentToken: address(0),
             fundingGoal: _fundingGoal,
             totalRaised: 0,
             deadline: _deadline,
             state: ProjectState.INACTIVE,
             createdAt: block.timestamp,
-            platformFeeBps: _platformFeeBps,
-            maxPriceAge: _maxPriceAge
+            fundedAt: 0,
+            completedAt: 0,
+            totalSupply: _totalSupply,
+            platformFeesTransferred: false
         });
 
-        emit ProjectCreated(_projectId, msg.sender, _fundingGoal, _deadline);
+        emit ProjectCreated(_projectId, msg.sender, _fundingGoal, _deadline, _totalSupply);
         emit ProjectStateChanged(_projectId, ProjectState.INACTIVE);
     }
 
-    function activateProject(uint256 _projectId) external onlyRole(OPERATOR_ROLE) validProject(_projectId) inState(_projectId, ProjectState.INACTIVE) {
+    /**
+     * @notice Admin activates project after reviewing documentation
+     */
+    function activateProject(uint256 _projectId) 
+        external 
+        onlyRole(OPERATOR_ROLE) 
+        validProject(_projectId) 
+        inState(_projectId, ProjectState.INACTIVE) 
+    {
         projects[_projectId].state = ProjectState.ACTIVE;
+        emit ProjectActivated(_projectId);
         emit ProjectStateChanged(_projectId, ProjectState.ACTIVE);
     }
 
-    function addMilestone(uint256 _projectId, string calldata _description, uint256 _amount, uint256 _deadline) external payable validProject(_projectId) {
-        Project storage project = projects[_projectId];
-        require(msg.sender == project.projectOwner || hasRole(OPERATOR_ROLE, msg.sender), "Not authorized");
-
-        if (milestones[_projectId].length >= Constants.MAX_MILESTONES) revert TooManyMilestones();
-        if (_amount == 0) revert InvalidAmount();
-        if (_deadline <= block.timestamp) revert DeadlinePassed();
-
-        milestones[_projectId].push(Milestone({
-            description: _description,
-            amount: _amount,
-            deadline: _deadline,
-            state: MilestoneState.PENDING,
-            releasedAt: 0,
-            approvedAt: 0
-        }));
-
-        emit MilestoneAdded(_projectId, milestones[_projectId].length - 1, _amount, _deadline);
-    }
+    // ============================================
+    // INVESTMENT
+    // ============================================
 
     /**
      * @notice Invest in a project with KYC proof
-     * @param _projectId Project ID
-     * @param _amount Amount to invest (for token payments)
-     * @param _paymentToken Payment token address (address(0) for native)
-     * @param _kycProof KYC proof containing level, country, expiry, and signature
      */
     function invest(
         uint256 _projectId,
         uint256 _amount,
         address _paymentToken,
         KYCProof calldata _kycProof
-    ) external payable nonReentrant whenNotPaused validProject(_projectId) inState(_projectId, ProjectState.ACTIVE) {
+    ) external nonReentrant whenNotPaused validProject(_projectId) inState(_projectId, ProjectState.ACTIVE) {
         Project storage project = projects[_projectId];
-        require(block.timestamp <= project.deadline, "Outside funding window");
         
-        // Verify KYC with signature
+        if (block.timestamp > project.deadline) revert DeadlinePassed();
+        if (_amount == 0) revert InvalidAmount();
+        if (_paymentToken != address(usdc) && _paymentToken != address(usdt)) revert InvalidAddress();
+
+        // Verify KYC
         if (!kycVerifier.verify(msg.sender, _kycProof.level, _kycProof.countryCode, _kycProof.expiry, _kycProof.signature)) {
             revert KYCNotVerified();
         }
 
-        uint256 investmentAmount;
+        // Check funding goal not exceeded
+        if (project.totalRaised + _amount > project.fundingGoal) revert FundingGoalExceeded();
 
-        if (_paymentToken == address(0)) {
-            investmentAmount = msg.value;
-        } else {
-            require(_paymentToken == address(usdc) || _paymentToken == address(usdt), "Invalid payment token");
-            require(msg.value == 0, "ETH not accepted with token payment");
-            investmentAmount = _amount;
-            IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), _amount);
+        // Transfer payment
+        IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), _amount);
+
+        // Set payment token on first investment
+        if (project.paymentToken == address(0)) {
+            project.paymentToken = _paymentToken;
         }
 
-        require(investmentAmount > 0, "Invalid investment amount");
-        require(project.totalRaised + investmentAmount <= project.fundingGoal, "Exceeds funding goal");
+        // Update project
+        project.totalRaised += _amount;
 
-        project.totalRaised += investmentAmount;
-        investorContribution[_projectId][msg.sender] += investmentAmount;
-        investmentTokens[_projectId][msg.sender] = _paymentToken;
-
-        if (investorContribution[_projectId][msg.sender] == investmentAmount) {
+        // Track investor
+        if (!isProjectInvestor[_projectId][msg.sender]) {
+            isProjectInvestor[_projectId][msg.sender] = true;
+            projectInvestors[_projectId].push(msg.sender);
             projectInvestorCount[_projectId]++;
         }
 
-        uint256 tokenAmount = _calculateTokenAmount(_projectId, investmentAmount);
-        investorTokenBalance[_projectId][msg.sender] += tokenAmount;
+        investorContribution[_projectId][msg.sender] += _amount;
+        investmentTokens[_projectId][msg.sender] = _paymentToken;
+
+        // Calculate token allocation (proportional to contribution, 99% of supply for investors)
+        uint256 tokenAllocation = (_amount * project.totalSupply * INVESTOR_TOKEN_BPS) / (project.fundingGoal * Constants.BPS_DENOMINATOR);
+        investorTokenAllocation[_projectId][msg.sender] += tokenAllocation;
 
         investments[_projectId].push(Investment({
             investor: msg.sender,
-            amount: investmentAmount,
-            tokenAmount: tokenAmount,
+            amount: _amount,
+            tokenAmount: tokenAllocation,
             timestamp: block.timestamp,
             refunded: false,
-            paymentReference: ""
+            paymentReference: "",
+            paymentToken: _paymentToken
         }));
 
-        emit InvestmentReceived(_projectId, msg.sender, investmentAmount, tokenAmount);
+        emit InvestmentReceived(_projectId, msg.sender, _amount, tokenAllocation, _paymentToken);
 
+        // Check if funded
         if (project.totalRaised >= project.fundingGoal) {
-            project.state = ProjectState.FUNDED;
-            emit ProjectStateChanged(_projectId, ProjectState.FUNDED);
-            projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.FUNDED);
+            _markProjectFunded(_projectId);
         }
     }
 
-    function recordOffChainInvestment(uint256 _projectId, address _investor, uint256 _amount, uint256 _tokenAmount, string calldata _paymentReference) external nonReentrant onlyRole(OPERATOR_ROLE) validProject(_projectId) inState(_projectId, ProjectState.ACTIVE) {
+    /**
+     * @notice Record off-chain investment (fiat, wire transfer, etc.)
+     */
+    function recordOffChainInvestment(
+        uint256 _projectId,
+        address _investor,
+        uint256 _amount,
+        string calldata _paymentReference
+    ) external nonReentrant onlyRole(OPERATOR_ROLE) validProject(_projectId) inState(_projectId, ProjectState.ACTIVE) {
         if (_investor == address(0)) revert InvalidAddress();
-        if (_amount == 0 || _tokenAmount == 0) revert InvalidAmount();
+        if (_amount == 0) revert InvalidAmount();
         if (bytes(_paymentReference).length == 0) revert InvalidAmount();
         if (_usedPaymentReferences[_paymentReference]) revert PaymentReferenceUsed();
 
         Project storage project = projects[_projectId];
         if (block.timestamp > project.deadline) revert DeadlinePassed();
+        if (project.totalRaised + _amount > project.fundingGoal) revert FundingGoalExceeded();
 
         _usedPaymentReferences[_paymentReference] = true;
-        _paymentReferenceToProject[_paymentReference] = _projectId;
         project.totalRaised += _amount;
-        investorContribution[_projectId][_investor] += _amount;
-        investorTokenBalance[_projectId][_investor] += _tokenAmount;
 
-        if (investorContribution[_projectId][_investor] == _amount) {
+        // Track off-chain amount for later injection
+        projectOffChainAmount[_projectId] += _amount;
+
+        // Track investor
+        if (!isProjectInvestor[_projectId][_investor]) {
+            isProjectInvestor[_projectId][_investor] = true;
+            projectInvestors[_projectId].push(_investor);
             projectInvestorCount[_projectId]++;
         }
+
+        investorContribution[_projectId][_investor] += _amount;
+
+        // Calculate token allocation
+        uint256 tokenAllocation = (_amount * project.totalSupply * INVESTOR_TOKEN_BPS) / (project.fundingGoal * Constants.BPS_DENOMINATOR);
+        investorTokenAllocation[_projectId][_investor] += tokenAllocation;
 
         investments[_projectId].push(Investment({
             investor: _investor,
             amount: _amount,
-            tokenAmount: _tokenAmount,
+            tokenAmount: tokenAllocation,
             timestamp: block.timestamp,
             refunded: false,
-            paymentReference: _paymentReference
+            paymentReference: _paymentReference,
+            paymentToken: address(0)
         }));
 
-        emit OffChainInvestmentRecorded(_projectId, _investor, _amount, _paymentReference);
+        emit OffChainInvestmentRecorded(_projectId, _investor, _amount, tokenAllocation, _paymentReference);
 
         if (project.totalRaised >= project.fundingGoal) {
-            project.state = ProjectState.FUNDED;
-            emit ProjectStateChanged(_projectId, ProjectState.FUNDED);
-            projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.FUNDED);
+            _markProjectFunded(_projectId);
         }
     }
 
-    function forceMarkFunded(uint256 _projectId, string calldata _reason) external onlyRole(ADMIN_ROLE) validProject(_projectId) inState(_projectId, ProjectState.ACTIVE) {
+    /**
+     * @notice Force mark project as funded (admin override)
+     */
+    function forceMarkFunded(uint256 _projectId, string calldata _reason) 
+        external 
+        onlyRole(ADMIN_ROLE) 
+        validProject(_projectId) 
+        inState(_projectId, ProjectState.ACTIVE) 
+    {
         Project storage project = projects[_projectId];
-        
         if (project.totalRaised == 0) revert NoFundsRaised();
-        
+
         project.state = ProjectState.FUNDED;
-        emit ProjectStateChanged(_projectId, ProjectState.FUNDED);
+        project.fundedAt = block.timestamp;
+
         emit ProjectForceFunded(_projectId, project.totalRaised, project.fundingGoal, _reason);
-        
+        emit ProjectStateChanged(_projectId, ProjectState.FUNDED);
+
         projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.FUNDED);
     }
 
-    function approveMilestone(uint256 _projectId, uint256 _milestoneIndex) external validProject(_projectId) onlyRole(OPERATOR_ROLE) {
-        if (_milestoneIndex >= milestones[_projectId].length) revert InvalidMilestone();
-        Milestone storage milestone = milestones[_projectId][_milestoneIndex];
-        if (milestone.state != MilestoneState.PENDING) revert InvalidState();
+    function _markProjectFunded(uint256 _projectId) internal {
+        Project storage project = projects[_projectId];
+        project.state = ProjectState.FUNDED;
+        project.fundedAt = block.timestamp;
 
-        milestone.state = MilestoneState.APPROVED;
-        milestone.approvedAt = block.timestamp;
+        emit ProjectFunded(_projectId, project.totalRaised);
+        emit ProjectStateChanged(_projectId, ProjectState.FUNDED);
 
-        emit MilestoneApproved(_projectId, _milestoneIndex);
+        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.FUNDED);
     }
 
-    function releaseMilestoneFunds(uint256 _projectId, uint256 _milestoneIndex) external payable nonReentrant validProject(_projectId) {
+    // ============================================
+    // PROJECT COMPLETION (Owner triggers)
+    // ============================================
+
+    /**
+     * @notice Owner terminates fundraising and moves to COMPLETED
+     * @dev Transfers platform fees (1.5% USDT + 1% tokens)
+     *      Investors can then claim their 99% tokens via dashboard
+     *      98.5% USDT remains in escrow for milestone releases
+     */
+    function completeProject(uint256 _projectId) 
+    external 
+    nonReentrant 
+    validProject(_projectId) 
+    inState(_projectId, ProjectState.FUNDED) 
+{
+    Project storage project = projects[_projectId];
+    if (msg.sender != project.projectOwner && !hasRole(ADMIN_ROLE, msg.sender)) revert NotAuthorized();
+    if (project.platformFeesTransferred) revert InvalidState();
+
+    // Calculate platform fees
+    uint256 platformUSDT = (project.totalRaised * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
+    uint256 platformTokens = (project.totalSupply * PLATFORM_TOKEN_FEE_BPS) / Constants.BPS_DENOMINATOR;
+
+    // Get wallet addresses directly from fee manager public variables
+    address liquidityWallet = platformFeeManager.liquidityWallet();
+    address treasuryWallet = platformFeeManager.treasuryWallet();
+
+    // Mint platform tokens directly to wallets (50/50 split)
+    uint256 tokensToLiquidity = platformTokens / 2;
+    uint256 tokensToTreasury = platformTokens - tokensToLiquidity;
+
+    IRWASecurityToken securityToken = IRWASecurityToken(project.securityToken);
+    if (tokensToLiquidity > 0) {
+        securityToken.mint(liquidityWallet, tokensToLiquidity);
+    }
+    if (tokensToTreasury > 0) {
+        securityToken.mint(treasuryWallet, tokensToTreasury);
+    }
+
+    // Transfer USDT fees to platform fee manager (for 34/33/33 distribution)
+    if (project.paymentToken != address(0) && platformUSDT > 0) {
+        IERC20(project.paymentToken).safeApprove(address(platformFeeManager), platformUSDT);
+        platformFeeManager.receiveFees(
+            _projectId,
+            project.paymentToken,
+            platformUSDT,
+            project.securityToken,
+            0
+        );
+    }
+
+    project.platformFeesTransferred = true;
+    project.completedAt = block.timestamp;
+    project.state = ProjectState.COMPLETED;
+
+    emit ProjectCompleted(_projectId, platformUSDT, platformTokens, liquidityWallet, treasuryWallet);
+    emit ProjectStateChanged(_projectId, ProjectState.COMPLETED);
+
+    projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.COMPLETED);
+}
+
+    // ============================================
+    // TOKEN CLAIMING (Investors via dashboard)
+    // ============================================
+
+    /**
+     * @notice Investor claims their token allocation
+     * @dev Applies claim fee if set
+     */
+    function claimTokens(uint256 _projectId) 
+        external 
+        nonReentrant 
+        validProject(_projectId) 
+        notBlocked(_projectId)
+    {
         Project storage project = projects[_projectId];
-        require(msg.sender == project.projectOwner, "Not project owner");
-        if (project.state != ProjectState.FUNDED && project.state != ProjectState.COMPLETED) revert InvalidState();
-        if (_milestoneIndex >= milestones[_projectId].length) revert InvalidMilestone();
+        if (project.state != ProjectState.COMPLETED) revert InvalidState();
+        if (!project.platformFeesTransferred) revert PlatformFeesNotTransferred();
+        if (hasClaimed[_projectId][msg.sender]) revert AlreadyClaimed();
 
-        Milestone storage milestone = milestones[_projectId][_milestoneIndex];
-        if (milestone.state != MilestoneState.APPROVED) revert MilestoneNotApproved();
+        uint256 allocation = investorTokenAllocation[_projectId][msg.sender];
+        if (allocation == 0) revert NotInvestor();
 
-        uint256 releaseAmount = milestone.amount;
-        uint256 platformFee = (releaseAmount * project.platformFeeBps) / Constants.BPS_DENOMINATOR;
-        if (platformFee < Constants.MIN_FEE) platformFee = Constants.MIN_FEE;
-        uint256 netAmount = releaseAmount - platformFee;
+        hasClaimed[_projectId][msg.sender] = true;
 
-        milestone.state = MilestoneState.RELEASED;
-        milestone.releasedAt = block.timestamp;
-
-        _transferFunds(platformFeeRecipient, platformFee, project.paymentToken);
-        _transferFunds(project.projectOwner, netAmount, project.paymentToken);
-
-        emit MilestoneFundsReleased(_projectId, _milestoneIndex, releaseAmount);
-
-        bool allReleased = true;
-        uint256 length = milestones[_projectId].length;
-        for (uint256 i = 0; i < length; ++i) {
-            if (milestones[_projectId][i].state != MilestoneState.RELEASED && milestones[_projectId][i].state != MilestoneState.CANCELLED) {
-                allReleased = false;
-                break;
-            }
-        }
+        // Calculate fee
+        uint256 fee = 0;
+        uint256 netAmount = allocation;
         
-        if (allReleased) {
-            project.state = ProjectState.COMPLETED;
-            emit ProjectStateChanged(_projectId, ProjectState.COMPLETED);
-            projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.COMPLETED);
+        if (claimFeeBps > 0 && claimFeeRecipient != address(0)) {
+            fee = (allocation * claimFeeBps) / Constants.BPS_DENOMINATOR;
+            netAmount = allocation - fee;
         }
+
+        // Mint tokens
+        IRWASecurityToken securityToken = IRWASecurityToken(project.securityToken);
+        securityToken.mint(msg.sender, netAmount);
+
+        if (fee > 0) {
+            securityToken.mint(claimFeeRecipient, fee);
+        }
+
+        emit TokensClaimed(_projectId, msg.sender, allocation, fee, netAmount);
     }
 
-    function claimRefund(uint256 _projectId) external payable nonReentrant validProject(_projectId) {
+    /**
+     * @notice Get claimable token amount for an investor
+     */
+    function getClaimableTokens(uint256 _projectId, address _investor) external view returns (uint256) {
         Project storage project = projects[_projectId];
-        require(project.state == ProjectState.CANCELLED, "Refund not available");
+        
+        if (project.state != ProjectState.COMPLETED) return 0;
+        if (!project.platformFeesTransferred) return 0;
+        if (hasClaimed[_projectId][_investor]) return 0;
+
+        return investorTokenAllocation[_projectId][_investor];
+    }
+
+    // ============================================
+    // MILESTONE FUND RELEASE (Admin triggered, DB managed)
+    // ============================================
+
+    /**
+     * @notice Admin releases milestone funds to project owner
+     * @dev Milestones are managed in DB, this just releases amounts
+     * @param _projectId Project ID
+     * @param _amount Amount to release
+     * @param _milestoneRef DB reference for the milestone (for tracking)
+     */
+    function releaseMilestoneFunds(
+        uint256 _projectId,
+        uint256 _amount,
+        string calldata _milestoneRef
+    ) 
+        external 
+        nonReentrant 
+        onlyRole(OPERATOR_ROLE) 
+        validProject(_projectId) 
+        notBlocked(_projectId) 
+    {
+        Project storage project = projects[_projectId];
+        if (project.state != ProjectState.COMPLETED) revert InvalidState();
+        if (_amount == 0) revert InvalidAmount();
+
+        // Calculate available funds (total - platform fee - already released)
+        uint256 platformFee = (project.totalRaised * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
+        uint256 availableFunds = project.totalRaised - platformFee - projectReleasedFunds[_projectId];
+
+        if (_amount > availableFunds) revert InsufficientBalance();
+
+        projectReleasedFunds[_projectId] += _amount;
+
+        // Transfer to project owner
+        if (project.paymentToken != address(0)) {
+            IERC20(project.paymentToken).safeTransfer(project.projectOwner, _amount);
+        }
+
+        emit MilestoneFundsReleased(_projectId, _amount, _milestoneRef);
+    }
+
+    /**
+     * @notice Get remaining funds available for milestone releases
+     */
+    function getAvailableFunds(uint256 _projectId) external view returns (uint256) {
+        Project storage project = projects[_projectId];
+        uint256 platformFee = (project.totalRaised * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
+        uint256 released = projectReleasedFunds[_projectId];
+        
+        if (project.totalRaised <= platformFee + released) return 0;
+        return project.totalRaised - platformFee - released;
+    }
+
+    // ============================================
+    // REFUNDS (Failed raise)
+    // ============================================
+
+    /**
+     * @notice Investor claims refund if project failed to reach goal
+     */
+    function claimRefund(uint256 _projectId) 
+        external 
+        nonReentrant 
+        validProject(_projectId) 
+    {
+        Project storage project = projects[_projectId];
+        
+        // Can refund if: CANCELLED OR (ACTIVE and deadline passed and goal not met)
+        bool canRefund = project.state == ProjectState.CANCELLED ||
+            (project.state == ProjectState.ACTIVE && 
+             block.timestamp > project.deadline && 
+             project.totalRaised < project.fundingGoal);
+        
+        if (!canRefund) revert InvalidState();
 
         uint256 contribution = investorContribution[_projectId][msg.sender];
-        require(contribution > 0, "No investment found");
+        if (contribution == 0) revert NotInvestor();
 
         address paymentToken = investmentTokens[_projectId][msg.sender];
 
-        uint256 releasedAmount = _getReleasedAmount(_projectId);
-        uint256 releasedBps = project.totalRaised > 0 ? (releasedAmount * Constants.BPS_DENOMINATOR) / project.totalRaised : 0;
-        uint256 unreleasedBps = Constants.BPS_DENOMINATOR - releasedBps;
-        uint256 refundAmount = (contribution * unreleasedBps) / Constants.BPS_DENOMINATOR;
-
+        // Clear investor data
         investorContribution[_projectId][msg.sender] = 0;
-        investorTokenBalance[_projectId][msg.sender] = 0;
-        investmentTokens[_projectId][msg.sender] = address(0);
+        investorTokenAllocation[_projectId][msg.sender] = 0;
 
-        uint256 len = investments[_projectId].length;
-        for (uint256 i = 0; i < len; ++i) {
-            if (investments[_projectId][i].investor == msg.sender) {
-                investments[_projectId][i].refunded = true;
+        // Mark investments as refunded
+        Investment[] storage projectInvestments = investments[_projectId];
+        for (uint256 i = 0; i < projectInvestments.length; i++) {
+            if (projectInvestments[i].investor == msg.sender) {
+                projectInvestments[i].refunded = true;
             }
         }
 
-        if (refundAmount > 0) {
-            _transferFunds(msg.sender, refundAmount, paymentToken);
+        // Transfer refund
+        if (paymentToken != address(0) && contribution > 0) {
+            IERC20(paymentToken).safeTransfer(msg.sender, contribution);
         }
 
-        emit RefundClaimed(_projectId, msg.sender, refundAmount);
+        emit RefundClaimed(_projectId, msg.sender, contribution);
     }
 
-    function _getReleasedAmount(uint256 _projectId) internal view returns (uint256) {
-        uint256 released = 0;
-        uint256 len = milestones[_projectId].length;
-        for (uint256 i = 0; i < len; ++i) {
-            if (milestones[_projectId][i].state == MilestoneState.RELEASED) {
-                released += milestones[_projectId][i].amount;
-            }
-        }
-        return released;
-    }
+    // ============================================
+    // DISPUTE MANAGEMENT (Called by DisputeManager)
+    // ============================================
 
-    function raiseDispute(uint256 _projectId, uint256 _milestoneIndex, string calldata _reason) external payable validProject(_projectId) {
+    /**
+     * @notice Block project and take snapshot for fair refund calculation
+     */
+    function blockProject(uint256 _projectId) 
+        external 
+        onlyRole(DISPUTE_MANAGER_ROLE) 
+        validProject(_projectId) 
+    {
         Project storage project = projects[_projectId];
-        require(msg.sender == project.projectOwner || hasRole(DISPUTE_RESOLVER_ROLE, msg.sender), "Not authorized");
-        if (_milestoneIndex >= milestones[_projectId].length) revert InvalidMilestone();
-
-        Milestone storage milestone = milestones[_projectId][_milestoneIndex];
-        milestone.state = MilestoneState.DISPUTED;
+        projectBlockedByDispute[_projectId] = true;
         project.state = ProjectState.DISPUTED;
+        
+        // Take snapshot for fair refund calculation
+        uint256 snapshotId = IRWASecurityToken(project.securityToken).snapshot();
+        projectSnapshotId[_projectId] = snapshotId;
 
-        emit DisputeRaised(_projectId, _milestoneIndex, _reason);
+        emit ProjectBlockedByDisputeEvent(_projectId, snapshotId);
         emit ProjectStateChanged(_projectId, ProjectState.DISPUTED);
     }
 
-    function resolveDispute(uint256 _projectId, uint256 _milestoneIndex, bool _approve) external onlyRole(DISPUTE_RESOLVER_ROLE) validProject(_projectId) {
-        if (_milestoneIndex >= milestones[_projectId].length) revert InvalidMilestone();
-        Milestone storage milestone = milestones[_projectId][_milestoneIndex];
-        if (milestone.state != MilestoneState.DISPUTED) revert InvalidState();
-
-        if (_approve) {
-            milestone.state = MilestoneState.APPROVED;
-            milestone.approvedAt = block.timestamp;
-        } else {
-            milestone.state = MilestoneState.CANCELLED;
-        }
-
-        projects[_projectId].state = ProjectState.FUNDED;
-        emit DisputeResolved(_projectId, _milestoneIndex, _approve);
-        emit ProjectStateChanged(_projectId, ProjectState.FUNDED);
+    /**
+     * @notice Unblock project (dispute dismissed)
+     */
+    function unblockProject(uint256 _projectId) 
+        external 
+        onlyRole(DISPUTE_MANAGER_ROLE) 
+        validProject(_projectId) 
+    {
+        projectBlockedByDispute[_projectId] = false;
+        projects[_projectId].state = ProjectState.COMPLETED;
+        
+        emit ProjectUnblocked(_projectId);
+        emit ProjectStateChanged(_projectId, ProjectState.COMPLETED);
     }
 
-    function cancelProject(uint256 _projectId) external onlyRole(ADMIN_ROLE) validProject(_projectId) {
+    /**
+     * @notice Process USDT refund for dispute resolution
+     * @dev Refunds remaining USDT proportionally to token holders at snapshot
+     *      Tokens are NOT returned - they become worthless
+     */
+    function refundForDispute(uint256 _projectId) 
+        external 
+        nonReentrant 
+        onlyRole(DISPUTE_MANAGER_ROLE) 
+        validProject(_projectId) 
+    {
         Project storage project = projects[_projectId];
-        if (project.state == ProjectState.COMPLETED) revert InvalidState();
+        if (project.state != ProjectState.DISPUTED) revert InvalidState();
+
+        // Calculate remaining USDT
+        uint256 platformFee = (project.totalRaised * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
+        uint256 remainingFunds = project.totalRaised - platformFee - projectReleasedFunds[_projectId];
+
+        // Try to get platform USDT back (if not distributed)
+        try platformFeeManager.refundUSDTForDispute(_projectId, address(this)) {
+            // Platform USDT returned
+        } catch {
+            // Already distributed to wallets - continue without it
+        }
+
+        // Get current balance (may include returned platform fees)
+        uint256 refundPool = 0;
+        if (project.paymentToken != address(0)) {
+            uint256 balance = IERC20(project.paymentToken).balanceOf(address(this));
+            refundPool = balance < remainingFunds ? balance : remainingFunds;
+        }
+
+        if (refundPool == 0) {
+            // No funds to refund, just cancel
+            project.state = ProjectState.CANCELLED;
+            emit ProjectStateChanged(_projectId, ProjectState.CANCELLED);
+            projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
+            return;
+        }
+
+        // Get snapshot data
+        IRWASecurityToken securityToken = IRWASecurityToken(project.securityToken);
+        uint256 snapshotId = projectSnapshotId[_projectId];
+        uint256 totalSupplyAtSnapshot = securityToken.totalSupplyAt(snapshotId);
+
+        if (totalSupplyAtSnapshot == 0) {
+            // No tokens minted yet, refund based on contributions
+            _refundByContribution(_projectId, refundPool);
+        } else {
+            // Refund based on token holdings at snapshot
+            _refundBySnapshot(_projectId, refundPool, snapshotId, totalSupplyAtSnapshot);
+        }
 
         project.state = ProjectState.CANCELLED;
         emit ProjectStateChanged(_projectId, ProjectState.CANCELLED);
         projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
     }
 
-    function _calculateTokenAmount(uint256 _projectId, uint256 _paymentAmount) internal returns (uint256) {
+    function _refundByContribution(uint256 _projectId, uint256 _refundPool) internal {
         Project storage project = projects[_projectId];
-        if (project.priceFeed == address(0)) {
-            return _paymentAmount;
-        }
+        address[] memory investors = projectInvestors[_projectId];
+        
+        uint256 totalRefunded = 0;
+        uint256 holdersRefunded = 0;
 
-        uint256 price = _getValidatedPrice(project.priceFeed, project.maxPriceAge);
-        return (_paymentAmount * (10 ** Constants.TOKEN_DECIMALS)) / price;
-    }
-
-    function _getValidatedPrice(address _priceFeed, uint256 _maxAge) internal returns (uint256) {
-        (, int256 price, , uint256 updatedAt, ) = AggregatorV3Interface(_priceFeed).latestRoundData();
-
-        if (price <= 0) revert InvalidPrice();
-        if (block.timestamp - updatedAt > _maxAge) revert StalePrice();
-
-        uint256 currentPrice = uint256(price);
-
-        if (lastValidPrice > 0) {
-            uint256 deviation;
-            if (currentPrice > lastValidPrice) {
-                deviation = ((currentPrice - lastValidPrice) * Constants.BPS_DENOMINATOR) / lastValidPrice;
-            } else {
-                deviation = ((lastValidPrice - currentPrice) * Constants.BPS_DENOMINATOR) / lastValidPrice;
-            }
-
-            if (deviation > Constants.MAX_PRICE_DEVIATION_BPS) {
-                emit PriceDeviationDetected(lastValidPrice, currentPrice, deviation);
-                revert PriceDeviationTooHigh();
+        for (uint256 i = 0; i < investors.length; i++) {
+            address investor = investors[i];
+            uint256 contribution = investorContribution[_projectId][investor];
+            
+            if (contribution > 0) {
+                uint256 refundAmount = (_refundPool * contribution) / project.totalRaised;
+                
+                if (refundAmount > 0 && project.paymentToken != address(0)) {
+                    IERC20(project.paymentToken).safeTransfer(investor, refundAmount);
+                    totalRefunded += refundAmount;
+                    holdersRefunded++;
+                }
             }
         }
 
-        lastValidPrice = currentPrice;
-        lastPriceUpdateTime = block.timestamp;
-
-        return currentPrice;
+        emit DisputeRefundProcessed(_projectId, totalRefunded, holdersRefunded);
     }
 
-    function _transferFunds(address _to, uint256 _amount, address _token) internal {
-        if (_token == Constants.NATIVE_TOKEN) {
-            (bool success, ) = _to.call{value: _amount}("");
-            require(success, "Transfer failed");
-        } else {
-            IERC20(_token).safeTransfer(_to, _amount);
+    function _refundBySnapshot(
+        uint256 _projectId, 
+        uint256 _refundPool, 
+        uint256 _snapshotId,
+        uint256 _totalSupply
+    ) internal {
+        Project storage project = projects[_projectId];
+        IRWASecurityToken securityToken = IRWASecurityToken(project.securityToken);
+        
+        // Get all potential holders (investors + platform wallets)
+        address[] memory investors = projectInvestors[_projectId];
+        
+        // Get wallet addresses directly from public variables
+        address feeReceiver = platformFeeManager.feeReceiver();
+        address liquidityWallet = platformFeeManager.liquidityWallet();
+        address treasuryWallet = platformFeeManager.treasuryWallet();
+
+        uint256 totalRefunded = 0;
+        uint256 holdersRefunded = 0;
+
+        // Refund investors
+        for (uint256 i = 0; i < investors.length; i++) {
+            address holder = investors[i];
+            uint256 balanceAtSnapshot = securityToken.balanceOfAt(holder, _snapshotId);
+            
+            if (balanceAtSnapshot > 0) {
+                uint256 refundAmount = (_refundPool * balanceAtSnapshot) / _totalSupply;
+                
+                if (refundAmount > 0 && project.paymentToken != address(0)) {
+                    IERC20(project.paymentToken).safeTransfer(holder, refundAmount);
+                    totalRefunded += refundAmount;
+                    holdersRefunded++;
+                }
+            }
         }
+
+        // Refund platform wallets (they hold tokens too)
+        address[3] memory platformWallets = [feeReceiver, liquidityWallet, treasuryWallet];
+        
+        for (uint256 i = 0; i < 3; i++) {
+            if (platformWallets[i] != address(0)) {
+                uint256 balanceAtSnapshot = securityToken.balanceOfAt(platformWallets[i], _snapshotId);
+                
+                if (balanceAtSnapshot > 0) {
+                    uint256 refundAmount = (_refundPool * balanceAtSnapshot) / _totalSupply;
+                    
+                    if (refundAmount > 0 && project.paymentToken != address(0)) {
+                        IERC20(project.paymentToken).safeTransfer(platformWallets[i], refundAmount);
+                        totalRefunded += refundAmount;
+                        holdersRefunded++;
+                    }
+                }
+            }
+        }
+
+        emit DisputeRefundProcessed(_projectId, totalRefunded, holdersRefunded);
     }
 
-    function setPlatformFeeRecipient(address _recipient) external onlyRole(ADMIN_ROLE) {
-        if (_recipient == address(0)) revert InvalidAddress();
-        platformFeeRecipient = _recipient;
+    // ============================================
+    // ADMIN ACTIONS
+    // ============================================
+
+    /**
+     * @notice Cancel project (admin only)
+     */
+    function cancelProject(uint256 _projectId) 
+        external 
+        onlyRole(ADMIN_ROLE) 
+        validProject(_projectId) 
+    {
+        Project storage project = projects[_projectId];
+        if (project.state == ProjectState.COMPLETED || project.state == ProjectState.CANCELLED) 
+            revert InvalidState();
+
+        project.state = ProjectState.CANCELLED;
+        emit ProjectStateChanged(_projectId, ProjectState.CANCELLED);
+        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
     }
 
-    function updateProjectPriceFeed(uint256 _projectId, address _priceFeed) external onlyRole(ADMIN_ROLE) validProject(_projectId) {
-        if (_priceFeed == address(0)) revert InvalidAddress();
-        projects[_projectId].priceFeed = _priceFeed;
-        emit PriceFeedUpdated(_projectId, _priceFeed);
+    function grantDisputeManagerRole(address _disputeManager) external onlyRole(ADMIN_ROLE) {
+        if (_disputeManager == address(0)) revert InvalidAddress();
+        _grantRole(DISPUTE_MANAGER_ROLE, _disputeManager);
     }
 
-    function getProject(uint256 _projectId) external view returns (Project memory) { return projects[_projectId]; }
-    function getMilestones(uint256 _projectId) external view returns (Milestone[] memory) { return milestones[_projectId]; }
-    function getInvestments(uint256 _projectId) external view returns (Investment[] memory) { return investments[_projectId]; }
-    function getInvestorBalance(uint256 _projectId, address _investor) external view returns (uint256) { return investorTokenBalance[_projectId][_investor]; }
-    function getInvestorContribution(uint256 _projectId, address _investor) external view returns (uint256) { return investorContribution[_projectId][_investor]; }
-    function isPaymentReferenceUsed(string calldata _ref) external view returns (bool) { return _usedPaymentReferences[_ref]; }
+    // ============================================
+    // VIEW FUNCTIONS
+    // ============================================
 
-    function pause() external onlyRole(ADMIN_ROLE) { _pause(); }
-    function unpause() external onlyRole(ADMIN_ROLE) { _unpause(); }
+    function getProject(uint256 _projectId) external view returns (Project memory) {
+        return projects[_projectId];
+    }
+
+    function getInvestments(uint256 _projectId) external view returns (Investment[] memory) {
+        return investments[_projectId];
+    }
+
+    function getProjectInvestors(uint256 _projectId) external view returns (address[] memory) {
+        return projectInvestors[_projectId];
+    }
+
+    function getInvestorAllocation(uint256 _projectId, address _investor) external view returns (uint256) {
+        return investorTokenAllocation[_projectId][_investor];
+    }
+
+    function getInvestorContribution(uint256 _projectId, address _investor) external view returns (uint256) {
+        return investorContribution[_projectId][_investor];
+    }
+
+    function hasInvestorClaimed(uint256 _projectId, address _investor) external view returns (bool) {
+        return hasClaimed[_projectId][_investor];
+    }
+
+    function isPaymentReferenceUsed(string calldata _ref) external view returns (bool) {
+        return _usedPaymentReferences[_ref];
+    }
+
+    // ============================================
+    // PAUSABLE
+    // ============================================
+
+    function pause() external onlyRole(ADMIN_ROLE) {
+        _pause();
+    }
+
+    function unpause() external onlyRole(ADMIN_ROLE) {
+        _unpause();
+    }
 
     receive() external payable {}
+
+    /**
+     * @notice Inject USDC/USDT to convert off-chain recorded payments to on-chain
+     * @dev Decreases projectOffChainAmount until it reaches 0
+     * @param _projectId Project ID
+     * @param _amount Amount to inject
+     * @param _paymentToken USDC or USDT address
+     */
+    function injectOffChainFunds(
+        uint256 _projectId,
+        uint256 _amount,
+        address _paymentToken
+    ) external nonReentrant onlyRole(ADMIN_ROLE) validProject(_projectId) {
+        if (_amount == 0) revert InvalidAmount();
+        if (_paymentToken != address(usdc) && _paymentToken != address(usdt)) revert InvalidAddress();
+        
+        Project storage project = projects[_projectId];
+        
+        // Can inject for active, funded, or completed projects
+        if (project.state == ProjectState.INACTIVE || 
+            project.state == ProjectState.CANCELLED ||
+            project.state == ProjectState.DISPUTED) revert InvalidState();
+
+        // Cannot inject more than off-chain amount
+        uint256 offChainRemaining = projectOffChainAmount[_projectId];
+        if (_amount > offChainRemaining) revert InvalidAmount();
+
+        // Transfer funds from admin to escrow
+        IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), _amount);
+
+        // Decrease off-chain tracking
+        projectOffChainAmount[_projectId] -= _amount;
+
+        // Set payment token if not set
+        if (project.paymentToken == address(0)) {
+            project.paymentToken = _paymentToken;
+        }
+
+        emit OffChainFundsInjected(_projectId, _amount, projectOffChainAmount[_projectId], _paymentToken);
+    }
+
+    /**
+     * @notice Get off-chain amount pending injection
+     * @param _projectId Project ID
+     * @return Remaining off-chain amount to be injected
+     */
+    function getOffChainPending(uint256 _projectId) external view returns (uint256) {
+        return projectOffChainAmount[_projectId];
+    }
 }

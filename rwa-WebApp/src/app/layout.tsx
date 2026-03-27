@@ -4,7 +4,8 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import { Providers } from '@/components/Providers';
 import { NetworkGuard } from '@/components/NetworkGuard';
-import Header from '@/components/Header';  // ADD THIS
+import { FeesInitializer } from '@/components/FeesInitializer';
+import Header from '@/components/Header';
 import Footer from '@/components/footer';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -23,10 +24,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Providers>
-          <NetworkGuard />
-          <Header />
-          <main className="min-h-screen">{children}</main>
-          <Footer />
+          <FeesInitializer>
+            <NetworkGuard />
+            <Header />
+            <main className="min-h-screen">{children}</main>
+            <Footer />
+          </FeesInitializer>
         </Providers>
       </body>
     </html>

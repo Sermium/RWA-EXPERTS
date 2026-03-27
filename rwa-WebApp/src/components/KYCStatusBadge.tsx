@@ -2,23 +2,22 @@
 "use client";
 
 import React, { useState } from "react";
-import { useKYC } from "@/hooks/useKYC";
+import { useKYC } from "@/contexts/KYCContext";
 import { WalletLinkingModal } from "./WalletLinkingModal";
 
-const LEVEL_CONFIG = {
-  0: { name: "Unverified", color: "gray", icon: "○" },
-  1: { name: "Basic", color: "blue", icon: "●" },
-  2: { name: "Standard", color: "green", icon: "●●" },
-  3: { name: "Accredited", color: "purple", icon: "●●●" },
-  4: { name: "Institutional", color: "amber", icon: "●●●●" },
+const TIER_CONFIG = {
+  None: { name: "Unverified", color: "gray", icon: "○" },
+  Bronze: { name: "Bronze", color: "amber", icon: "🥉" },
+  Silver: { name: "Silver", color: "gray", icon: "🥈" },
+  Gold: { name: "Gold", color: "yellow", icon: "🥇" },
+  Diamond: { name: "Diamond", color: "cyan", icon: "💎" },
 };
 
 const COLOR_CLASSES = {
   gray: "bg-gray-500/20 text-gray-400 border-gray-500/30",
-  blue: "bg-blue-500/20 text-blue-400 border-blue-500/30",
-  green: "bg-green-500/20 text-green-400 border-green-500/30",
-  purple: "bg-purple-500/20 text-purple-400 border-purple-500/30",
   amber: "bg-amber-500/20 text-amber-400 border-amber-500/30",
+  yellow: "bg-yellow-500/20 text-yellow-400 border-yellow-500/30",
+  cyan: "bg-cyan-500/20 text-cyan-400 border-cyan-500/30",
 };
 
 interface KYCStatusBadgeProps {
@@ -30,7 +29,7 @@ export function KYCStatusBadge({
   showLinkOption = true, 
   compact = false 
 }: KYCStatusBadgeProps) {
-  const { status, kycLevel, isKYCValid, isLoading } = useKYC();
+  const { tier, tierNumber, isVerified, isLoading, tierInfo } = useKYC();
   const [showLinkModal, setShowLinkModal] = useState(false);
   const [linkMode, setLinkMode] = useState<"generate" | "use">("generate");
 
@@ -40,13 +39,13 @@ export function KYCStatusBadge({
     );
   }
 
-  const config = LEVEL_CONFIG[kycLevel as keyof typeof LEVEL_CONFIG] || LEVEL_CONFIG[0];
-  const colorClass = COLOR_CLASSES[config.color as keyof typeof COLOR_CLASSES];
+  const config = TIER_CONFIG[tier] || TIER_CONFIG.None;
+  const colorClass = COLOR_CLASSES[config.color as keyof typeof COLOR_CLASSES] || COLOR_CLASSES.gray;
 
   if (compact) {
     return (
       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium border ${colorClass}`}>
-        {isKYCValid ? "✓" : "○"} {config.name}
+        {isVerified ? "✓" : "○"} {config.name}
       </span>
     );
   }
@@ -57,14 +56,16 @@ export function KYCStatusBadge({
         <span className="text-sm">{config.icon}</span>
         <div>
           <p className="text-sm font-medium">
-            {isKYCValid ? `KYC Level ${kycLevel}` : "Not Verified"}
+            {isVerified ? `${tier} Tier` : "Not Verified"}
           </p>
-          <p className="text-xs opacity-70">{config.name}</p>
+          <p className="text-xs opacity-70">
+            {isVerified ? tierInfo.formattedLimit : "Complete KYC"}
+          </p>
         </div>
         
         {showLinkOption && (
           <div className="ml-2 pl-2 border-l border-current/20">
-            {isKYCValid ? (
+            {isVerified ? (
               <button
                 onClick={() => {
                   setLinkMode("generate");

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';
 import { loadStripe } from '@stripe/stripe-js';
 import {
   Elements,
@@ -282,6 +282,7 @@ export default function StripeInvestment({
   onCancel,
 }: StripeInvestmentProps) {
   const { address } = useAccount();
+  const chainId = useChainId();
   const [step, setStep] = useState<CheckoutStep>('details');
   const [amount, setAmount] = useState('');
   const [email, setEmail] = useState('');
@@ -331,9 +332,11 @@ export default function StripeInvestment({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           projectId,
-          amountUSD: amountNum,
+          amountUSD: amount,
           investorAddress: address,
           investorEmail: email,
+          chainId, 
+          investmentType: 'crowdfunding_investment',
         }),
       });
 

@@ -10,14 +10,9 @@ import {
 } from 'lucide-react';
 import { CONTACT, SOCIAL, LINKS, mailto, COMPANY } from '@/config/contacts';
 
-export const metadata = {
-  title: `Integration Guide | ${COMPANY.name} Admin`,
-  description: 'Technical integration guide for partners and developers',
-};
-
 export default function IntegrationGuidePage() {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-8xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-blue-500/20 rounded-lg">

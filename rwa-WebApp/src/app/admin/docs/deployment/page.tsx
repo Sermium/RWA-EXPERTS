@@ -16,14 +16,9 @@ import {
 } from 'lucide-react';
 import { COMPANY } from '@/config/contacts';
 
-export const metadata = {
-  title: `Deployment Guide | ${COMPANY.name} Admin`,
-  description: 'Deployment procedures and infrastructure documentation',
-};
-
 export default function DeploymentGuidePage() {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-8xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-green-500/20 rounded-lg">

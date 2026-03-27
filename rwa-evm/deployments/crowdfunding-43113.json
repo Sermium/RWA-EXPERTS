@@ -1,0 +1,46 @@
+{
+  "chainId": 43113,
+  "deployer": "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969",
+  "timestamp": "2026-03-24T16:59:30.050Z",
+  "contracts": {
+    "implementations": {
+      "kycVerifier": "0x9965b27d4fEf0dE4B2e3e42A3d9853FfEEbd2e05",
+      "securityToken": "0x7fb4dcb62826E45B02bfa9062a00c852C246a0d1",
+      "escrowVault": "0x47091da0c641Ee7532B17DE2Ffb9664F658Aec73",
+      "compliance": "0x531E193d3528e56924F3Eb420A45cEc83038BCef",
+      "projectNFT": "0x2B85fa7721ff904E05ffa386250Cac4a2c43b519",
+      "dividend": "0x8A4A7906b7704CD66e8Dff1946723297d9f4C89F",
+      "maxBalanceModule": "0xE8B9956A767D1FF98f8d786939DA818634aEc820",
+      "lockupModule": "0x1D89E68fF52cc5612509d7e6ebd5B08018f22cA7",
+      "platformFeeManager": "0x1a02f318a83E7bDd5886d2fF95B8A8049c702Abf",
+      "disputeManager": "0xf4b24e32110f8D2C79A76e3bD9BD62d06DA8e9a3"
+    },
+    "proxies": {
+      "kycVerifier": "0x3CA5b7e66cF25E8C761aA07f318e06B83d0bde7B",
+      "projectNFT": "0x129287D01f98e32213519345F3bBCCcBA3fe3941",
+      "factory": "0x90FF863603b9450F185E3641c6EF3df469886Bd3",
+      "escrowVault": "0xf6bE123965f80b8eA08627F3AA8545a7A92ECC0A",
+      "platformFeeManager": "0xeC644de34d1A641f2E1A67726445C1688ABd44fd",
+      "disputeManager": "0x1C7496477eAeaBBf4fFAE127772422C57d11f025"
+    }
+  },
+  "platformWallets": {
+    "feeReceiver": "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969",
+    "liquidityWallet": "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969",
+    "treasuryWallet": "0xA2fF1ef754b3186f12d2d8D4D922CC31d7BF1969"
+  },
+  "config": {
+    "usdc": "0x5425890298aed601595a70AB815c96711a31Bc65",
+    "usdt": "0x81C7eb2f9FC7a11beC348Ba8846faC9A6FCC4786",
+    "priceFeed": "0x0000000000000000000000000000000000000000",
+    "registrationFee": "0"
+  },
+  "roles": {
+    "factoryHasMinterRole": true,
+    "factoryHasManagerRole": true,
+    "escrowHasManagerRole": true,
+    "escrowHasDisputeManagerRole": true,
+    "platformFeeManagerHasEscrowRole": true,
+    "platformFeeManagerHasDisputeRole": true
+  }
+}

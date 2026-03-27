@@ -24,61 +24,32 @@ import type {
 } from "../../common";
 
 export declare namespace RWALaunchpadFactory {
-  export type KYCProofStruct = {
-    level: BigNumberish;
-    countryCode: BigNumberish;
-    expiry: BigNumberish;
-    signature: BytesLike;
-  };
-
-  export type KYCProofStructOutput = [
-    level: bigint,
-    countryCode: bigint,
-    expiry: bigint,
-    signature: string
-  ] & { level: bigint; countryCode: bigint; expiry: bigint; signature: string };
-
-  export type DeploymentRecordStruct = {
-    projectId: BigNumberish;
+  export type DeploymentStruct = {
     securityToken: AddressLike;
     escrowVault: AddressLike;
     compliance: AddressLike;
-    dividendDistributor: AddressLike;
-    maxBalanceModule: AddressLike;
-    lockupModule: AddressLike;
     deployer: AddressLike;
     deployedAt: BigNumberish;
     active: boolean;
-    minKYCLevel: BigNumberish;
   };
 
-  export type DeploymentRecordStructOutput = [
-    projectId: bigint,
+  export type DeploymentStructOutput = [
     securityToken: string,
     escrowVault: string,
     compliance: string,
-    dividendDistributor: string,
-    maxBalanceModule: string,
-    lockupModule: string,
     deployer: string,
     deployedAt: bigint,
-    active: boolean,
-    minKYCLevel: bigint
+    active: boolean
   ] & {
-    projectId: bigint;
     securityToken: string;
     escrowVault: string;
     compliance: string;
-    dividendDistributor: string;
-    maxBalanceModule: string;
-    lockupModule: string;
     deployer: string;
     deployedAt: bigint;
     active: boolean;
-    minKYCLevel: bigint;
   };
 
-  export type ImplementationAddressesStruct = {
+  export type ImplementationsStruct = {
     securityToken: AddressLike;
     escrowVault: AddressLike;
     compliance: AddressLike;
@@ -88,7 +59,7 @@ export declare namespace RWALaunchpadFactory {
     lockupModule: AddressLike;
   };
 
-  export type ImplementationAddressesStructOutput = [
+  export type ImplementationsStructOutput = [
     securityToken: string,
     escrowVault: string,
     compliance: string,
@@ -110,31 +81,27 @@ export declare namespace RWALaunchpadFactory {
 export interface RWALaunchpadFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "addDefaultRestrictedCountry"
+      | "ADMIN_ROLE"
+      | "DEFAULT_ADMIN_ROLE"
+      | "DISPUTE_RESOLVER_ROLE"
+      | "OPERATOR_ROLE"
+      | "activateProject"
       | "approvedDeployers"
-      | "batchSetDeployerApproval"
-      | "batchSetProjectCountryRestrictions"
       | "creationFee"
       | "deactivateProject"
       | "defaultPriceFeed"
-      | "defaultRestrictedCountries"
+      | "defaultUSDC"
+      | "defaultUSDT"
       | "deployProject"
-      | "deployProjectWithKYC"
-      | "deployerProjects"
       | "deployments"
-      | "getActiveProjects"
       | "getDefaultRestrictedCountries"
-      | "getDeployerProjectCount"
       | "getDeployerProjects"
       | "getDeployment"
       | "getImplementations"
-      | "getKYCVerifier"
-      | "getProjectMinKYCLevel"
-      | "implementations"
+      | "grantEscrowRole"
+      | "impl"
       | "initialize"
       | "isCountryRestricted"
-      | "isDeployerApproved"
-      | "minKYCLevelForDeployment"
       | "owner"
       | "pause"
       | "paused"
@@ -142,76 +109,72 @@ export interface RWALaunchpadFactoryInterface extends Interface {
       | "platformFeeRecipient"
       | "projectCounter"
       | "projectNFT"
-      | "projectRestrictedCountries"
       | "proxiableUUID"
-      | "removeDefaultRestrictedCountry"
       | "renounceOwnership"
       | "requireApproval"
-      | "requireKYCForDeployment"
-      | "setComplianceImplementation"
+      | "revokeEscrowRole"
+      | "setComplianceImpl"
       | "setCreationFee"
+      | "setDefaultPaymentTokens"
       | "setDefaultPriceFeed"
+      | "setDefaultRestrictedCountry"
       | "setDeployerApproval"
-      | "setDividendDistributorImplementation"
-      | "setEscrowVaultImplementation"
-      | "setKYCRequirement"
+      | "setDividendDistributorImpl"
+      | "setEscrowVaultImpl"
       | "setKYCVerifier"
-      | "setLockupModuleImplementation"
-      | "setMaxBalanceModuleImplementation"
+      | "setLockupModuleImpl"
+      | "setMaxBalanceModuleImpl"
       | "setPlatformFeeBps"
       | "setPlatformFeeRecipient"
-      | "setProjectCountryRestriction"
-      | "setProjectMinKYCLevel"
       | "setProjectNFT"
       | "setRequireApproval"
-      | "setSecurityTokenImplementation"
+      | "setSecurityTokenImpl"
       | "transferOwnership"
       | "unpause"
+      | "updateEscrowPriceFeed"
+      | "upgradeEscrowVault"
       | "upgradeTo"
       | "upgradeToAndCall"
-      | "verifyInvestorKYC"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
       | "AdminChanged"
       | "BeaconUpgraded"
-      | "CreationFeeUpdated"
-      | "DefaultPriceFeedUpdated"
-      | "DefaultRestrictedCountryUpdated"
-      | "DeployerApprovalUpdated"
-      | "FeeRecipientUpdated"
+      | "ConfigUpdated"
       | "ImplementationUpdated"
       | "Initialized"
-      | "KYCRequirementUpdated"
-      | "KYCVerifierUpdated"
       | "OwnershipTransferred"
       | "Paused"
-      | "PlatformFeeUpdated"
-      | "ProjectCountryRestrictionUpdated"
       | "ProjectDeactivated"
       | "ProjectDeployed"
-      | "ProjectKYCLevelUpdated"
-      | "ProjectNFTUpdated"
       | "Unpaused"
       | "Upgraded"
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "addDefaultRestrictedCountry",
+    functionFragment: "ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "DISPUTE_RESOLVER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "OPERATOR_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "activateProject",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "approvedDeployers",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "batchSetDeployerApproval",
-    values: [AddressLike[], boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "batchSetProjectCountryRestrictions",
-    values: [BigNumberish, BigNumberish[], boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "creationFee",
@@ -226,15 +189,18 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "defaultRestrictedCountries",
-    values: [BigNumberish]
+    functionFragment: "defaultUSDC",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "defaultUSDT",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "deployProject",
     values: [
       string,
       string,
-      AddressLike,
       string,
       BigNumberish,
       BigNumberish,
@@ -243,38 +209,12 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "deployProjectWithKYC",
-    values: [
-      string,
-      string,
-      string,
-      BigNumberish,
-      BigNumberish,
-      BigNumberish,
-      string,
-      BigNumberish,
-      RWALaunchpadFactory.KYCProofStruct
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "deployerProjects",
-    values: [AddressLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "deployments",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getActiveProjects",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "getDefaultRestrictedCountries",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getDeployerProjectCount",
-    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getDeployerProjects",
@@ -289,17 +229,10 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "getKYCVerifier",
-    values?: undefined
+    functionFragment: "grantEscrowRole",
+    values: [BigNumberish, BytesLike, AddressLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "getProjectMinKYCLevel",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "implementations",
-    values?: undefined
-  ): string;
+  encodeFunctionData(functionFragment: "impl", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "initialize",
     values: [
@@ -314,15 +247,7 @@ export interface RWALaunchpadFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "isCountryRestricted",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isDeployerApproved",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "minKYCLevelForDeployment",
-    values?: undefined
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
@@ -344,16 +269,8 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "projectRestrictedCountries",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeDefaultRestrictedCountry",
-    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "renounceOwnership",
@@ -364,11 +281,11 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "requireKYCForDeployment",
-    values?: undefined
+    functionFragment: "revokeEscrowRole",
+    values: [BigNumberish, BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setComplianceImplementation",
+    functionFragment: "setComplianceImpl",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -376,35 +293,39 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setDefaultPaymentTokens",
+    values: [AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setDefaultPriceFeed",
     values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setDefaultRestrictedCountry",
+    values: [BigNumberish, boolean]
   ): string;
   encodeFunctionData(
     functionFragment: "setDeployerApproval",
     values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "setDividendDistributorImplementation",
+    functionFragment: "setDividendDistributorImpl",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setEscrowVaultImplementation",
+    functionFragment: "setEscrowVaultImpl",
     values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setKYCRequirement",
-    values: [boolean, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "setKYCVerifier",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setLockupModuleImplementation",
+    functionFragment: "setLockupModuleImpl",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setMaxBalanceModuleImplementation",
+    functionFragment: "setMaxBalanceModuleImpl",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -416,14 +337,6 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "setProjectCountryRestriction",
-    values: [BigNumberish, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setProjectMinKYCLevel",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "setProjectNFT",
     values: [AddressLike]
   ): string;
@@ -432,7 +345,7 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values: [boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "setSecurityTokenImplementation",
+    functionFragment: "setSecurityTokenImpl",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -441,6 +354,14 @@ export interface RWALaunchpadFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
   encodeFunctionData(
+    functionFragment: "updateEscrowPriceFeed",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "upgradeEscrowVault",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "upgradeTo",
     values: [AddressLike]
   ): string;
@@ -448,25 +369,26 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     functionFragment: "upgradeToAndCall",
     values: [AddressLike, BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "verifyInvestorKYC",
-    values: [AddressLike, BigNumberish, RWALaunchpadFactory.KYCProofStruct]
-  ): string;
 
+  decodeFunctionResult(functionFragment: "ADMIN_ROLE", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "addDefaultRestrictedCountry",
+    functionFragment: "DEFAULT_ADMIN_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "DISPUTE_RESOLVER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "OPERATOR_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "activateProject",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "approvedDeployers",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "batchSetDeployerApproval",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "batchSetProjectCountryRestrictions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -482,7 +404,11 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "defaultRestrictedCountries",
+    functionFragment: "defaultUSDC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "defaultUSDT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -490,27 +416,11 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "deployProjectWithKYC",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "deployerProjects",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "deployments",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getActiveProjects",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getDefaultRestrictedCountries",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "getDeployerProjectCount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -526,28 +436,13 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getKYCVerifier",
+    functionFragment: "grantEscrowRole",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(
-    functionFragment: "getProjectMinKYCLevel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "implementations",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "impl", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isCountryRestricted",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isDeployerApproved",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "minKYCLevelForDeployment",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -567,15 +462,7 @@ export interface RWALaunchpadFactoryInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "projectNFT", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "projectRestrictedCountries",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "proxiableUUID",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeDefaultRestrictedCountry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -587,11 +474,11 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "requireKYCForDeployment",
+    functionFragment: "revokeEscrowRole",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setComplianceImplementation",
+    functionFragment: "setComplianceImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -599,7 +486,15 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setDefaultPaymentTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setDefaultPriceFeed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setDefaultRestrictedCountry",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -607,15 +502,11 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setDividendDistributorImplementation",
+    functionFragment: "setDividendDistributorImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setEscrowVaultImplementation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setKYCRequirement",
+    functionFragment: "setEscrowVaultImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -623,11 +514,11 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setLockupModuleImplementation",
+    functionFragment: "setLockupModuleImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setMaxBalanceModuleImplementation",
+    functionFragment: "setMaxBalanceModuleImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -639,14 +530,6 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setProjectCountryRestriction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setProjectMinKYCLevel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "setProjectNFT",
     data: BytesLike
   ): Result;
@@ -655,7 +538,7 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setSecurityTokenImplementation",
+    functionFragment: "setSecurityTokenImpl",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -663,13 +546,17 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "upgradeToAndCall",
+    functionFragment: "updateEscrowPriceFeed",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "verifyInvestorKYC",
+    functionFragment: "upgradeEscrowVault",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "upgradeToAndCall",
     data: BytesLike
   ): Result;
 }
@@ -699,67 +586,11 @@ export namespace BeaconUpgradedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace CreationFeeUpdatedEvent {
-  export type InputTuple = [oldFee: BigNumberish, newFee: BigNumberish];
-  export type OutputTuple = [oldFee: bigint, newFee: bigint];
+export namespace ConfigUpdatedEvent {
+  export type InputTuple = [key: string];
+  export type OutputTuple = [key: string];
   export interface OutputObject {
-    oldFee: bigint;
-    newFee: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace DefaultPriceFeedUpdatedEvent {
-  export type InputTuple = [oldFeed: AddressLike, newFeed: AddressLike];
-  export type OutputTuple = [oldFeed: string, newFeed: string];
-  export interface OutputObject {
-    oldFeed: string;
-    newFeed: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace DefaultRestrictedCountryUpdatedEvent {
-  export type InputTuple = [countryCode: BigNumberish, restricted: boolean];
-  export type OutputTuple = [countryCode: bigint, restricted: boolean];
-  export interface OutputObject {
-    countryCode: bigint;
-    restricted: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace DeployerApprovalUpdatedEvent {
-  export type InputTuple = [deployer: AddressLike, approved: boolean];
-  export type OutputTuple = [deployer: string, approved: boolean];
-  export interface OutputObject {
-    deployer: string;
-    approved: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace FeeRecipientUpdatedEvent {
-  export type InputTuple = [
-    oldRecipient: AddressLike,
-    newRecipient: AddressLike
-  ];
-  export type OutputTuple = [oldRecipient: string, newRecipient: string];
-  export interface OutputObject {
-    oldRecipient: string;
-    newRecipient: string;
+    key: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -768,19 +599,10 @@ export namespace FeeRecipientUpdatedEvent {
 }
 
 export namespace ImplementationUpdatedEvent {
-  export type InputTuple = [
-    contractType: string,
-    oldImpl: AddressLike,
-    newImpl: AddressLike
-  ];
-  export type OutputTuple = [
-    contractType: string,
-    oldImpl: string,
-    newImpl: string
-  ];
+  export type InputTuple = [contractType: string, newImpl: AddressLike];
+  export type OutputTuple = [contractType: string, newImpl: string];
   export interface OutputObject {
     contractType: string;
-    oldImpl: string;
     newImpl: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
@@ -794,32 +616,6 @@ export namespace InitializedEvent {
   export type OutputTuple = [version: bigint];
   export interface OutputObject {
     version: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace KYCRequirementUpdatedEvent {
-  export type InputTuple = [required: boolean, minLevel: BigNumberish];
-  export type OutputTuple = [required: boolean, minLevel: bigint];
-  export interface OutputObject {
-    required: boolean;
-    minLevel: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace KYCVerifierUpdatedEvent {
-  export type InputTuple = [oldVerifier: AddressLike, newVerifier: AddressLike];
-  export type OutputTuple = [oldVerifier: string, newVerifier: string];
-  export interface OutputObject {
-    oldVerifier: string;
-    newVerifier: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -852,41 +648,6 @@ export namespace PausedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace PlatformFeeUpdatedEvent {
-  export type InputTuple = [oldFee: BigNumberish, newFee: BigNumberish];
-  export type OutputTuple = [oldFee: bigint, newFee: bigint];
-  export interface OutputObject {
-    oldFee: bigint;
-    newFee: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ProjectCountryRestrictionUpdatedEvent {
-  export type InputTuple = [
-    projectId: BigNumberish,
-    countryCode: BigNumberish,
-    restricted: boolean
-  ];
-  export type OutputTuple = [
-    projectId: bigint,
-    countryCode: bigint,
-    restricted: boolean
-  ];
-  export interface OutputObject {
-    projectId: bigint;
-    countryCode: bigint;
-    restricted: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace ProjectDeactivatedEvent {
   export type InputTuple = [projectId: BigNumberish];
   export type OutputTuple = [projectId: bigint];
@@ -905,16 +666,14 @@ export namespace ProjectDeployedEvent {
     deployer: AddressLike,
     securityToken: AddressLike,
     escrowVault: AddressLike,
-    compliance: AddressLike,
-    minKYCLevel: BigNumberish
+    compliance: AddressLike
   ];
   export type OutputTuple = [
     projectId: bigint,
     deployer: string,
     securityToken: string,
     escrowVault: string,
-    compliance: string,
-    minKYCLevel: bigint
+    compliance: string
   ];
   export interface OutputObject {
     projectId: bigint;
@@ -922,42 +681,6 @@ export namespace ProjectDeployedEvent {
     securityToken: string;
     escrowVault: string;
     compliance: string;
-    minKYCLevel: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ProjectKYCLevelUpdatedEvent {
-  export type InputTuple = [
-    projectId: BigNumberish,
-    oldLevel: BigNumberish,
-    newLevel: BigNumberish
-  ];
-  export type OutputTuple = [
-    projectId: bigint,
-    oldLevel: bigint,
-    newLevel: bigint
-  ];
-  export interface OutputObject {
-    projectId: bigint;
-    oldLevel: bigint;
-    newLevel: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace ProjectNFTUpdatedEvent {
-  export type InputTuple = [oldNFT: AddressLike, newNFT: AddressLike];
-  export type OutputTuple = [oldNFT: string, newNFT: string];
-  export interface OutputObject {
-    oldNFT: string;
-    newNFT: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1032,8 +755,16 @@ export interface RWALaunchpadFactory extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  addDefaultRestrictedCountry: TypedContractMethod<
-    [_countryCode: BigNumberish],
+  ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+
+  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
+
+  DISPUTE_RESOLVER_ROLE: TypedContractMethod<[], [string], "view">;
+
+  OPERATOR_ROLE: TypedContractMethod<[], [string], "view">;
+
+  activateProject: TypedContractMethod<
+    [_projectId: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -1042,22 +773,6 @@ export interface RWALaunchpadFactory extends BaseContract {
     [arg0: AddressLike],
     [boolean],
     "view"
-  >;
-
-  batchSetDeployerApproval: TypedContractMethod<
-    [_deployers: AddressLike[], _approved: boolean],
-    [void],
-    "nonpayable"
-  >;
-
-  batchSetProjectCountryRestrictions: TypedContractMethod<
-    [
-      _projectId: BigNumberish,
-      _countryCodes: BigNumberish[],
-      _restricted: boolean
-    ],
-    [void],
-    "nonpayable"
   >;
 
   creationFee: TypedContractMethod<[], [bigint], "view">;
@@ -1070,136 +785,66 @@ export interface RWALaunchpadFactory extends BaseContract {
 
   defaultPriceFeed: TypedContractMethod<[], [string], "view">;
 
-  defaultRestrictedCountries: TypedContractMethod<
-    [arg0: BigNumberish],
-    [bigint],
-    "view"
-  >;
+  defaultUSDC: TypedContractMethod<[], [string], "view">;
+
+  defaultUSDT: TypedContractMethod<[], [string], "view">;
 
   deployProject: TypedContractMethod<
     [
       _name: string,
       _symbol: string,
-      arg2: AddressLike,
       _category: string,
       _maxSupply: BigNumberish,
       _fundingGoal: BigNumberish,
       _deadlineDays: BigNumberish,
       _metadataUri: string
     ],
-    [
-      [bigint, string, string, string] & {
-        projectId: bigint;
-        securityToken: string;
-        escrowVault: string;
-        compliance: string;
-      }
-    ],
-    "payable"
-  >;
-
-  deployProjectWithKYC: TypedContractMethod<
-    [
-      _name: string,
-      _symbol: string,
-      _category: string,
-      _maxSupply: BigNumberish,
-      _fundingGoal: BigNumberish,
-      _deadlineDays: BigNumberish,
-      _metadataUri: string,
-      _minKYCLevel: BigNumberish,
-      _kycProof: RWALaunchpadFactory.KYCProofStruct
-    ],
-    [
-      [bigint, string, string, string] & {
-        projectId: bigint;
-        securityToken: string;
-        escrowVault: string;
-        compliance: string;
-      }
-    ],
-    "payable"
-  >;
-
-  deployerProjects: TypedContractMethod<
-    [arg0: AddressLike, arg1: BigNumberish],
     [bigint],
-    "view"
+    "payable"
   >;
 
   deployments: TypedContractMethod<
     [arg0: BigNumberish],
     [
-      [
-        bigint,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        bigint,
-        boolean,
-        bigint
-      ] & {
-        projectId: bigint;
+      [string, string, string, string, bigint, boolean] & {
         securityToken: string;
         escrowVault: string;
         compliance: string;
-        dividendDistributor: string;
-        maxBalanceModule: string;
-        lockupModule: string;
         deployer: string;
         deployedAt: bigint;
         active: boolean;
-        minKYCLevel: bigint;
       }
     ],
     "view"
   >;
 
-  getActiveProjects: TypedContractMethod<
-    [_offset: BigNumberish, _limit: BigNumberish],
-    [bigint[]],
-    "view"
-  >;
-
   getDefaultRestrictedCountries: TypedContractMethod<[], [bigint[]], "view">;
 
-  getDeployerProjectCount: TypedContractMethod<
-    [_deployer: AddressLike],
-    [bigint],
-    "view"
-  >;
-
   getDeployerProjects: TypedContractMethod<
-    [_deployer: AddressLike],
+    [_d: AddressLike],
     [bigint[]],
     "view"
   >;
 
   getDeployment: TypedContractMethod<
-    [_projectId: BigNumberish],
-    [RWALaunchpadFactory.DeploymentRecordStructOutput],
+    [_id: BigNumberish],
+    [RWALaunchpadFactory.DeploymentStructOutput],
     "view"
   >;
 
   getImplementations: TypedContractMethod<
     [],
-    [RWALaunchpadFactory.ImplementationAddressesStructOutput],
+    [RWALaunchpadFactory.ImplementationsStructOutput],
     "view"
   >;
 
-  getKYCVerifier: TypedContractMethod<[], [string], "view">;
-
-  getProjectMinKYCLevel: TypedContractMethod<
-    [_projectId: BigNumberish],
-    [bigint],
-    "view"
+  grantEscrowRole: TypedContractMethod<
+    [_projectId: BigNumberish, _role: BytesLike, _account: AddressLike],
+    [void],
+    "nonpayable"
   >;
 
-  implementations: TypedContractMethod<
+  impl: TypedContractMethod<
     [],
     [
       [string, string, string, string, string, string, string] & {
@@ -1230,18 +875,10 @@ export interface RWALaunchpadFactory extends BaseContract {
   >;
 
   isCountryRestricted: TypedContractMethod<
-    [_countryCode: BigNumberish, _projectId: BigNumberish],
+    [_country: BigNumberish],
     [boolean],
     "view"
   >;
-
-  isDeployerApproved: TypedContractMethod<
-    [_deployer: AddressLike],
-    [boolean],
-    "view"
-  >;
-
-  minKYCLevelForDeployment: TypedContractMethod<[], [bigint], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -1257,27 +894,19 @@ export interface RWALaunchpadFactory extends BaseContract {
 
   projectNFT: TypedContractMethod<[], [string], "view">;
 
-  projectRestrictedCountries: TypedContractMethod<
-    [arg0: BigNumberish, arg1: BigNumberish],
-    [boolean],
-    "view"
-  >;
-
   proxiableUUID: TypedContractMethod<[], [string], "view">;
-
-  removeDefaultRestrictedCountry: TypedContractMethod<
-    [_countryCode: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
 
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   requireApproval: TypedContractMethod<[], [boolean], "view">;
 
-  requireKYCForDeployment: TypedContractMethod<[], [boolean], "view">;
+  revokeEscrowRole: TypedContractMethod<
+    [_projectId: BigNumberish, _role: BytesLike, _account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
 
-  setComplianceImplementation: TypedContractMethod<
+  setComplianceImpl: TypedContractMethod<
     [_impl: AddressLike],
     [void],
     "nonpayable"
@@ -1289,95 +918,77 @@ export interface RWALaunchpadFactory extends BaseContract {
     "nonpayable"
   >;
 
+  setDefaultPaymentTokens: TypedContractMethod<
+    [_usdc: AddressLike, _usdt: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   setDefaultPriceFeed: TypedContractMethod<
-    [_priceFeed: AddressLike],
+    [_feed: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setDefaultRestrictedCountry: TypedContractMethod<
+    [_country: BigNumberish, _add: boolean],
     [void],
     "nonpayable"
   >;
 
   setDeployerApproval: TypedContractMethod<
-    [_deployer: AddressLike, _approved: boolean],
+    [_d: AddressLike, _a: boolean],
     [void],
     "nonpayable"
   >;
 
-  setDividendDistributorImplementation: TypedContractMethod<
+  setDividendDistributorImpl: TypedContractMethod<
     [_impl: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  setEscrowVaultImplementation: TypedContractMethod<
+  setEscrowVaultImpl: TypedContractMethod<
     [_impl: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  setKYCRequirement: TypedContractMethod<
-    [_required: boolean, _minLevel: BigNumberish],
     [void],
     "nonpayable"
   >;
 
   setKYCVerifier: TypedContractMethod<
-    [_verifier: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  setLockupModuleImplementation: TypedContractMethod<
     [_impl: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  setMaxBalanceModuleImplementation: TypedContractMethod<
+  setLockupModuleImpl: TypedContractMethod<
+    [_impl: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setMaxBalanceModuleImpl: TypedContractMethod<
     [_impl: AddressLike],
     [void],
     "nonpayable"
   >;
 
   setPlatformFeeBps: TypedContractMethod<
-    [_feeBps: BigNumberish],
+    [_bps: BigNumberish],
     [void],
     "nonpayable"
   >;
 
   setPlatformFeeRecipient: TypedContractMethod<
-    [_recipient: AddressLike],
+    [_r: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  setProjectCountryRestriction: TypedContractMethod<
-    [
-      _projectId: BigNumberish,
-      _countryCode: BigNumberish,
-      _restricted: boolean
-    ],
-    [void],
-    "nonpayable"
-  >;
+  setProjectNFT: TypedContractMethod<[_nft: AddressLike], [void], "nonpayable">;
 
-  setProjectMinKYCLevel: TypedContractMethod<
-    [_projectId: BigNumberish, _minLevel: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+  setRequireApproval: TypedContractMethod<[_r: boolean], [void], "nonpayable">;
 
-  setProjectNFT: TypedContractMethod<
-    [_projectNFT: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  setRequireApproval: TypedContractMethod<
-    [_require: boolean],
-    [void],
-    "nonpayable"
-  >;
-
-  setSecurityTokenImplementation: TypedContractMethod<
+  setSecurityTokenImpl: TypedContractMethod<
     [_impl: AddressLike],
     [void],
     "nonpayable"
@@ -1391,6 +1002,18 @@ export interface RWALaunchpadFactory extends BaseContract {
 
   unpause: TypedContractMethod<[], [void], "nonpayable">;
 
+  updateEscrowPriceFeed: TypedContractMethod<
+    [_projectId: BigNumberish, _priceFeed: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  upgradeEscrowVault: TypedContractMethod<
+    [_projectId: BigNumberish, _newImpl: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   upgradeTo: TypedContractMethod<
     [newImplementation: AddressLike],
     [void],
@@ -1403,44 +1026,28 @@ export interface RWALaunchpadFactory extends BaseContract {
     "payable"
   >;
 
-  verifyInvestorKYC: TypedContractMethod<
-    [
-      _investor: AddressLike,
-      _projectId: BigNumberish,
-      _proof: RWALaunchpadFactory.KYCProofStruct
-    ],
-    [boolean],
-    "view"
-  >;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "addDefaultRestrictedCountry"
-  ): TypedContractMethod<[_countryCode: BigNumberish], [void], "nonpayable">;
+    nameOrSignature: "ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "DEFAULT_ADMIN_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "DISPUTE_RESOLVER_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "OPERATOR_ROLE"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "activateProject"
+  ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "approvedDeployers"
   ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "batchSetDeployerApproval"
-  ): TypedContractMethod<
-    [_deployers: AddressLike[], _approved: boolean],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "batchSetProjectCountryRestrictions"
-  ): TypedContractMethod<
-    [
-      _projectId: BigNumberish,
-      _countryCodes: BigNumberish[],
-      _restricted: boolean
-    ],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "creationFee"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -1451,133 +1058,71 @@ export interface RWALaunchpadFactory extends BaseContract {
     nameOrSignature: "defaultPriceFeed"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "defaultRestrictedCountries"
-  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+    nameOrSignature: "defaultUSDC"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "defaultUSDT"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "deployProject"
   ): TypedContractMethod<
     [
       _name: string,
       _symbol: string,
-      arg2: AddressLike,
       _category: string,
       _maxSupply: BigNumberish,
       _fundingGoal: BigNumberish,
       _deadlineDays: BigNumberish,
       _metadataUri: string
     ],
-    [
-      [bigint, string, string, string] & {
-        projectId: bigint;
-        securityToken: string;
-        escrowVault: string;
-        compliance: string;
-      }
-    ],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "deployProjectWithKYC"
-  ): TypedContractMethod<
-    [
-      _name: string,
-      _symbol: string,
-      _category: string,
-      _maxSupply: BigNumberish,
-      _fundingGoal: BigNumberish,
-      _deadlineDays: BigNumberish,
-      _metadataUri: string,
-      _minKYCLevel: BigNumberish,
-      _kycProof: RWALaunchpadFactory.KYCProofStruct
-    ],
-    [
-      [bigint, string, string, string] & {
-        projectId: bigint;
-        securityToken: string;
-        escrowVault: string;
-        compliance: string;
-      }
-    ],
-    "payable"
-  >;
-  getFunction(
-    nameOrSignature: "deployerProjects"
-  ): TypedContractMethod<
-    [arg0: AddressLike, arg1: BigNumberish],
     [bigint],
-    "view"
+    "payable"
   >;
   getFunction(
     nameOrSignature: "deployments"
   ): TypedContractMethod<
     [arg0: BigNumberish],
     [
-      [
-        bigint,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        string,
-        bigint,
-        boolean,
-        bigint
-      ] & {
-        projectId: bigint;
+      [string, string, string, string, bigint, boolean] & {
         securityToken: string;
         escrowVault: string;
         compliance: string;
-        dividendDistributor: string;
-        maxBalanceModule: string;
-        lockupModule: string;
         deployer: string;
         deployedAt: bigint;
         active: boolean;
-        minKYCLevel: bigint;
       }
     ],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "getActiveProjects"
-  ): TypedContractMethod<
-    [_offset: BigNumberish, _limit: BigNumberish],
-    [bigint[]],
     "view"
   >;
   getFunction(
     nameOrSignature: "getDefaultRestrictedCountries"
   ): TypedContractMethod<[], [bigint[]], "view">;
   getFunction(
-    nameOrSignature: "getDeployerProjectCount"
-  ): TypedContractMethod<[_deployer: AddressLike], [bigint], "view">;
-  getFunction(
     nameOrSignature: "getDeployerProjects"
-  ): TypedContractMethod<[_deployer: AddressLike], [bigint[]], "view">;
+  ): TypedContractMethod<[_d: AddressLike], [bigint[]], "view">;
   getFunction(
     nameOrSignature: "getDeployment"
   ): TypedContractMethod<
-    [_projectId: BigNumberish],
-    [RWALaunchpadFactory.DeploymentRecordStructOutput],
+    [_id: BigNumberish],
+    [RWALaunchpadFactory.DeploymentStructOutput],
     "view"
   >;
   getFunction(
     nameOrSignature: "getImplementations"
   ): TypedContractMethod<
     [],
-    [RWALaunchpadFactory.ImplementationAddressesStructOutput],
+    [RWALaunchpadFactory.ImplementationsStructOutput],
     "view"
   >;
   getFunction(
-    nameOrSignature: "getKYCVerifier"
-  ): TypedContractMethod<[], [string], "view">;
+    nameOrSignature: "grantEscrowRole"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _role: BytesLike, _account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
-    nameOrSignature: "getProjectMinKYCLevel"
-  ): TypedContractMethod<[_projectId: BigNumberish], [bigint], "view">;
-  getFunction(
-    nameOrSignature: "implementations"
+    nameOrSignature: "impl"
   ): TypedContractMethod<
     [],
     [
@@ -1610,17 +1155,7 @@ export interface RWALaunchpadFactory extends BaseContract {
   >;
   getFunction(
     nameOrSignature: "isCountryRestricted"
-  ): TypedContractMethod<
-    [_countryCode: BigNumberish, _projectId: BigNumberish],
-    [boolean],
-    "view"
-  >;
-  getFunction(
-    nameOrSignature: "isDeployerApproved"
-  ): TypedContractMethod<[_deployer: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "minKYCLevelForDeployment"
-  ): TypedContractMethod<[], [bigint], "view">;
+  ): TypedContractMethod<[_country: BigNumberish], [boolean], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -1643,18 +1178,8 @@ export interface RWALaunchpadFactory extends BaseContract {
     nameOrSignature: "projectNFT"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "projectRestrictedCountries"
-  ): TypedContractMethod<
-    [arg0: BigNumberish, arg1: BigNumberish],
-    [boolean],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "proxiableUUID"
   ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "removeDefaultRestrictedCountry"
-  ): TypedContractMethod<[_countryCode: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
@@ -1662,78 +1187,67 @@ export interface RWALaunchpadFactory extends BaseContract {
     nameOrSignature: "requireApproval"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
-    nameOrSignature: "requireKYCForDeployment"
-  ): TypedContractMethod<[], [boolean], "view">;
+    nameOrSignature: "revokeEscrowRole"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _role: BytesLike, _account: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
-    nameOrSignature: "setComplianceImplementation"
+    nameOrSignature: "setComplianceImpl"
   ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setCreationFee"
   ): TypedContractMethod<[_fee: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setDefaultPaymentTokens"
+  ): TypedContractMethod<
+    [_usdc: AddressLike, _usdt: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "setDefaultPriceFeed"
-  ): TypedContractMethod<[_priceFeed: AddressLike], [void], "nonpayable">;
+  ): TypedContractMethod<[_feed: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setDefaultRestrictedCountry"
+  ): TypedContractMethod<
+    [_country: BigNumberish, _add: boolean],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "setDeployerApproval"
-  ): TypedContractMethod<
-    [_deployer: AddressLike, _approved: boolean],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[_d: AddressLike, _a: boolean], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setDividendDistributorImplementation"
+    nameOrSignature: "setDividendDistributorImpl"
   ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setEscrowVaultImplementation"
+    nameOrSignature: "setEscrowVaultImpl"
   ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setKYCRequirement"
-  ): TypedContractMethod<
-    [_required: boolean, _minLevel: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "setKYCVerifier"
-  ): TypedContractMethod<[_verifier: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setLockupModuleImplementation"
   ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setMaxBalanceModuleImplementation"
+    nameOrSignature: "setLockupModuleImpl"
+  ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setMaxBalanceModuleImpl"
   ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setPlatformFeeBps"
-  ): TypedContractMethod<[_feeBps: BigNumberish], [void], "nonpayable">;
+  ): TypedContractMethod<[_bps: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setPlatformFeeRecipient"
-  ): TypedContractMethod<[_recipient: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setProjectCountryRestriction"
-  ): TypedContractMethod<
-    [
-      _projectId: BigNumberish,
-      _countryCode: BigNumberish,
-      _restricted: boolean
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "setProjectMinKYCLevel"
-  ): TypedContractMethod<
-    [_projectId: BigNumberish, _minLevel: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[_r: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setProjectNFT"
-  ): TypedContractMethod<[_projectNFT: AddressLike], [void], "nonpayable">;
+  ): TypedContractMethod<[_nft: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setRequireApproval"
-  ): TypedContractMethod<[_require: boolean], [void], "nonpayable">;
+  ): TypedContractMethod<[_r: boolean], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setSecurityTokenImplementation"
+    nameOrSignature: "setSecurityTokenImpl"
   ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "transferOwnership"
@@ -1741,6 +1255,20 @@ export interface RWALaunchpadFactory extends BaseContract {
   getFunction(
     nameOrSignature: "unpause"
   ): TypedContractMethod<[], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "updateEscrowPriceFeed"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _priceFeed: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "upgradeEscrowVault"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _newImpl: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "upgradeTo"
   ): TypedContractMethod<
@@ -1754,17 +1282,6 @@ export interface RWALaunchpadFactory extends BaseContract {
     [newImplementation: AddressLike, data: BytesLike],
     [void],
     "payable"
-  >;
-  getFunction(
-    nameOrSignature: "verifyInvestorKYC"
-  ): TypedContractMethod<
-    [
-      _investor: AddressLike,
-      _projectId: BigNumberish,
-      _proof: RWALaunchpadFactory.KYCProofStruct
-    ],
-    [boolean],
-    "view"
   >;
 
   getEvent(
@@ -1782,39 +1299,11 @@ export interface RWALaunchpadFactory extends BaseContract {
     BeaconUpgradedEvent.OutputObject
   >;
   getEvent(
-    key: "CreationFeeUpdated"
+    key: "ConfigUpdated"
   ): TypedContractEvent<
-    CreationFeeUpdatedEvent.InputTuple,
-    CreationFeeUpdatedEvent.OutputTuple,
-    CreationFeeUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "DefaultPriceFeedUpdated"
-  ): TypedContractEvent<
-    DefaultPriceFeedUpdatedEvent.InputTuple,
-    DefaultPriceFeedUpdatedEvent.OutputTuple,
-    DefaultPriceFeedUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "DefaultRestrictedCountryUpdated"
-  ): TypedContractEvent<
-    DefaultRestrictedCountryUpdatedEvent.InputTuple,
-    DefaultRestrictedCountryUpdatedEvent.OutputTuple,
-    DefaultRestrictedCountryUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "DeployerApprovalUpdated"
-  ): TypedContractEvent<
-    DeployerApprovalUpdatedEvent.InputTuple,
-    DeployerApprovalUpdatedEvent.OutputTuple,
-    DeployerApprovalUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "FeeRecipientUpdated"
-  ): TypedContractEvent<
-    FeeRecipientUpdatedEvent.InputTuple,
-    FeeRecipientUpdatedEvent.OutputTuple,
-    FeeRecipientUpdatedEvent.OutputObject
+    ConfigUpdatedEvent.InputTuple,
+    ConfigUpdatedEvent.OutputTuple,
+    ConfigUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "ImplementationUpdated"
@@ -1831,20 +1320,6 @@ export interface RWALaunchpadFactory extends BaseContract {
     InitializedEvent.OutputObject
   >;
   getEvent(
-    key: "KYCRequirementUpdated"
-  ): TypedContractEvent<
-    KYCRequirementUpdatedEvent.InputTuple,
-    KYCRequirementUpdatedEvent.OutputTuple,
-    KYCRequirementUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "KYCVerifierUpdated"
-  ): TypedContractEvent<
-    KYCVerifierUpdatedEvent.InputTuple,
-    KYCVerifierUpdatedEvent.OutputTuple,
-    KYCVerifierUpdatedEvent.OutputObject
-  >;
-  getEvent(
     key: "OwnershipTransferred"
   ): TypedContractEvent<
     OwnershipTransferredEvent.InputTuple,
@@ -1859,20 +1334,6 @@ export interface RWALaunchpadFactory extends BaseContract {
     PausedEvent.OutputObject
   >;
   getEvent(
-    key: "PlatformFeeUpdated"
-  ): TypedContractEvent<
-    PlatformFeeUpdatedEvent.InputTuple,
-    PlatformFeeUpdatedEvent.OutputTuple,
-    PlatformFeeUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "ProjectCountryRestrictionUpdated"
-  ): TypedContractEvent<
-    ProjectCountryRestrictionUpdatedEvent.InputTuple,
-    ProjectCountryRestrictionUpdatedEvent.OutputTuple,
-    ProjectCountryRestrictionUpdatedEvent.OutputObject
-  >;
-  getEvent(
     key: "ProjectDeactivated"
   ): TypedContractEvent<
     ProjectDeactivatedEvent.InputTuple,
@@ -1885,20 +1346,6 @@ export interface RWALaunchpadFactory extends BaseContract {
     ProjectDeployedEvent.InputTuple,
     ProjectDeployedEvent.OutputTuple,
     ProjectDeployedEvent.OutputObject
-  >;
-  getEvent(
-    key: "ProjectKYCLevelUpdated"
-  ): TypedContractEvent<
-    ProjectKYCLevelUpdatedEvent.InputTuple,
-    ProjectKYCLevelUpdatedEvent.OutputTuple,
-    ProjectKYCLevelUpdatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "ProjectNFTUpdated"
-  ): TypedContractEvent<
-    ProjectNFTUpdatedEvent.InputTuple,
-    ProjectNFTUpdatedEvent.OutputTuple,
-    ProjectNFTUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "Unpaused"
@@ -1938,62 +1385,18 @@ export interface RWALaunchpadFactory extends BaseContract {
       BeaconUpgradedEvent.OutputObject
     >;
 
-    "CreationFeeUpdated(uint256,uint256)": TypedContractEvent<
-      CreationFeeUpdatedEvent.InputTuple,
-      CreationFeeUpdatedEvent.OutputTuple,
-      CreationFeeUpdatedEvent.OutputObject
+    "ConfigUpdated(string)": TypedContractEvent<
+      ConfigUpdatedEvent.InputTuple,
+      ConfigUpdatedEvent.OutputTuple,
+      ConfigUpdatedEvent.OutputObject
     >;
-    CreationFeeUpdated: TypedContractEvent<
-      CreationFeeUpdatedEvent.InputTuple,
-      CreationFeeUpdatedEvent.OutputTuple,
-      CreationFeeUpdatedEvent.OutputObject
-    >;
-
-    "DefaultPriceFeedUpdated(address,address)": TypedContractEvent<
-      DefaultPriceFeedUpdatedEvent.InputTuple,
-      DefaultPriceFeedUpdatedEvent.OutputTuple,
-      DefaultPriceFeedUpdatedEvent.OutputObject
-    >;
-    DefaultPriceFeedUpdated: TypedContractEvent<
-      DefaultPriceFeedUpdatedEvent.InputTuple,
-      DefaultPriceFeedUpdatedEvent.OutputTuple,
-      DefaultPriceFeedUpdatedEvent.OutputObject
+    ConfigUpdated: TypedContractEvent<
+      ConfigUpdatedEvent.InputTuple,
+      ConfigUpdatedEvent.OutputTuple,
+      ConfigUpdatedEvent.OutputObject
     >;
 
-    "DefaultRestrictedCountryUpdated(uint16,bool)": TypedContractEvent<
-      DefaultRestrictedCountryUpdatedEvent.InputTuple,
-      DefaultRestrictedCountryUpdatedEvent.OutputTuple,
-      DefaultRestrictedCountryUpdatedEvent.OutputObject
-    >;
-    DefaultRestrictedCountryUpdated: TypedContractEvent<
-      DefaultRestrictedCountryUpdatedEvent.InputTuple,
-      DefaultRestrictedCountryUpdatedEvent.OutputTuple,
-      DefaultRestrictedCountryUpdatedEvent.OutputObject
-    >;
-
-    "DeployerApprovalUpdated(address,bool)": TypedContractEvent<
-      DeployerApprovalUpdatedEvent.InputTuple,
-      DeployerApprovalUpdatedEvent.OutputTuple,
-      DeployerApprovalUpdatedEvent.OutputObject
-    >;
-    DeployerApprovalUpdated: TypedContractEvent<
-      DeployerApprovalUpdatedEvent.InputTuple,
-      DeployerApprovalUpdatedEvent.OutputTuple,
-      DeployerApprovalUpdatedEvent.OutputObject
-    >;
-
-    "FeeRecipientUpdated(address,address)": TypedContractEvent<
-      FeeRecipientUpdatedEvent.InputTuple,
-      FeeRecipientUpdatedEvent.OutputTuple,
-      FeeRecipientUpdatedEvent.OutputObject
-    >;
-    FeeRecipientUpdated: TypedContractEvent<
-      FeeRecipientUpdatedEvent.InputTuple,
-      FeeRecipientUpdatedEvent.OutputTuple,
-      FeeRecipientUpdatedEvent.OutputObject
-    >;
-
-    "ImplementationUpdated(string,address,address)": TypedContractEvent<
+    "ImplementationUpdated(string,address)": TypedContractEvent<
       ImplementationUpdatedEvent.InputTuple,
       ImplementationUpdatedEvent.OutputTuple,
       ImplementationUpdatedEvent.OutputObject
@@ -2013,28 +1416,6 @@ export interface RWALaunchpadFactory extends BaseContract {
       InitializedEvent.InputTuple,
       InitializedEvent.OutputTuple,
       InitializedEvent.OutputObject
-    >;
-
-    "KYCRequirementUpdated(bool,uint8)": TypedContractEvent<
-      KYCRequirementUpdatedEvent.InputTuple,
-      KYCRequirementUpdatedEvent.OutputTuple,
-      KYCRequirementUpdatedEvent.OutputObject
-    >;
-    KYCRequirementUpdated: TypedContractEvent<
-      KYCRequirementUpdatedEvent.InputTuple,
-      KYCRequirementUpdatedEvent.OutputTuple,
-      KYCRequirementUpdatedEvent.OutputObject
-    >;
-
-    "KYCVerifierUpdated(address,address)": TypedContractEvent<
-      KYCVerifierUpdatedEvent.InputTuple,
-      KYCVerifierUpdatedEvent.OutputTuple,
-      KYCVerifierUpdatedEvent.OutputObject
-    >;
-    KYCVerifierUpdated: TypedContractEvent<
-      KYCVerifierUpdatedEvent.InputTuple,
-      KYCVerifierUpdatedEvent.OutputTuple,
-      KYCVerifierUpdatedEvent.OutputObject
     >;
 
     "OwnershipTransferred(address,address)": TypedContractEvent<
@@ -2059,28 +1440,6 @@ export interface RWALaunchpadFactory extends BaseContract {
       PausedEvent.OutputObject
     >;
 
-    "PlatformFeeUpdated(uint256,uint256)": TypedContractEvent<
-      PlatformFeeUpdatedEvent.InputTuple,
-      PlatformFeeUpdatedEvent.OutputTuple,
-      PlatformFeeUpdatedEvent.OutputObject
-    >;
-    PlatformFeeUpdated: TypedContractEvent<
-      PlatformFeeUpdatedEvent.InputTuple,
-      PlatformFeeUpdatedEvent.OutputTuple,
-      PlatformFeeUpdatedEvent.OutputObject
-    >;
-
-    "ProjectCountryRestrictionUpdated(uint256,uint16,bool)": TypedContractEvent<
-      ProjectCountryRestrictionUpdatedEvent.InputTuple,
-      ProjectCountryRestrictionUpdatedEvent.OutputTuple,
-      ProjectCountryRestrictionUpdatedEvent.OutputObject
-    >;
-    ProjectCountryRestrictionUpdated: TypedContractEvent<
-      ProjectCountryRestrictionUpdatedEvent.InputTuple,
-      ProjectCountryRestrictionUpdatedEvent.OutputTuple,
-      ProjectCountryRestrictionUpdatedEvent.OutputObject
-    >;
-
     "ProjectDeactivated(uint256)": TypedContractEvent<
       ProjectDeactivatedEvent.InputTuple,
       ProjectDeactivatedEvent.OutputTuple,
@@ -2092,7 +1451,7 @@ export interface RWALaunchpadFactory extends BaseContract {
       ProjectDeactivatedEvent.OutputObject
     >;
 
-    "ProjectDeployed(uint256,address,address,address,address,uint8)": TypedContractEvent<
+    "ProjectDeployed(uint256,address,address,address,address)": TypedContractEvent<
       ProjectDeployedEvent.InputTuple,
       ProjectDeployedEvent.OutputTuple,
       ProjectDeployedEvent.OutputObject
@@ -2101,28 +1460,6 @@ export interface RWALaunchpadFactory extends BaseContract {
       ProjectDeployedEvent.InputTuple,
       ProjectDeployedEvent.OutputTuple,
       ProjectDeployedEvent.OutputObject
-    >;
-
-    "ProjectKYCLevelUpdated(uint256,uint8,uint8)": TypedContractEvent<
-      ProjectKYCLevelUpdatedEvent.InputTuple,
-      ProjectKYCLevelUpdatedEvent.OutputTuple,
-      ProjectKYCLevelUpdatedEvent.OutputObject
-    >;
-    ProjectKYCLevelUpdated: TypedContractEvent<
-      ProjectKYCLevelUpdatedEvent.InputTuple,
-      ProjectKYCLevelUpdatedEvent.OutputTuple,
-      ProjectKYCLevelUpdatedEvent.OutputObject
-    >;
-
-    "ProjectNFTUpdated(address,address)": TypedContractEvent<
-      ProjectNFTUpdatedEvent.InputTuple,
-      ProjectNFTUpdatedEvent.OutputTuple,
-      ProjectNFTUpdatedEvent.OutputObject
-    >;
-    ProjectNFTUpdated: TypedContractEvent<
-      ProjectNFTUpdatedEvent.InputTuple,
-      ProjectNFTUpdatedEvent.OutputTuple,
-      ProjectNFTUpdatedEvent.OutputObject
     >;
 
     "Unpaused(address)": TypedContractEvent<

@@ -4,44 +4,57 @@
 import Link from "next/link";
 import { useAccount, useChainId, useBalance, useWalletClient, useSignMessage } from "wagmi";
 import { writeContract, waitForTransactionReceipt } from "wagmi/actions";
-import { parseEther, formatEther } from "viem";
-import { useKYC } from "@/hooks/useKYC";
+import { formatUnits, parseEther, formatEther } from "viem";
+import { useKYC, KYCTier } from "@/contexts/KYCContext";
 import { config } from "@/config/wagmi";
-import { CONTRACTS, getFees, getNativeCurrency } from "@/config/contracts";
-import {
-  TierName,
-  DEFAULT_LIMITS,
-  formatLimit,
-  tierNumberToName,
-} from "@/lib/kycLimits";
+import { CONTRACTS, getNativeCurrency } from "@/config/contracts";
+import { getChainFees } from "@/lib/feesService";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { getLivenessChecker, LivenessChallenge, LivenessResult } from "@/lib/livenessCheck";
 import { Upload, Check, AlertCircle, X, Camera, Clock } from 'lucide-react';
 import { useRouter } from "next/navigation";
 import { DocumentTypeSelector, MobileCamera } from '@/components/kyc/KYCComponents';
 import { validateIdDocument, DocumentValidationResult, DocumentType } from "@/lib/documentValidation";
+import { getNativeTokenPrice, getNativeDecimals, getNativeSymbol } from '@/lib/priceService';
 
 // ============================================================================
 // CONSTANTS
 // ============================================================================
 
-const getKycFee = (): string => {
-  const fees = getFees();
-  return fees.KYC_FEE || fees.CREATION_FEE || "50000000000000000";
+const getKycFee = (chainId: number): string => {
+  const fees = getChainFees(chainId);
+  return fees.KYC_FEE || '0';
 };
 
-const getKycFeeFormatted = (): string => {
-  const fees = getFees();
-  return fees.KYC_FEE_FORMATTED || fees.CREATION_FEE_FORMATTED || "0.05";
+const getKycFeeFormatted = (chainId: number): string => {
+  const fees = getChainFees(chainId);
+  const decimals = getNativeDecimals(chainId);
+  return formatUnits(BigInt(fees.KYC_FEE || '0'), decimals);
 };
 
 const getNativeToken = (): string => {
   return getNativeCurrency();
 };
 
-// Tier configuration aligned with kycLimits.ts
-const TIER_CONFIG: Record<number, {
-  name: TierName;
+// Helper to format limit display
+function formatLimitDisplay(value: number): string {
+  if (!isFinite(value)) return 'Unlimited';
+  if (value === 0) return '$0';
+  if (value >= 1000000) return `$${(value / 1000000).toFixed(value % 1000000 === 0 ? 0 : 1)}M`;
+  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
+  return `$${value.toLocaleString()}`;
+}
+
+const TIER_NAME_TO_NUMBER: Record<KYCTier, number> = {
+  'None': 0,
+  'Bronze': 1,
+  'Silver': 2,
+  'Gold': 3,
+  'Diamond': 4,
+};
+
+interface TierConfigItem {
+  name: KYCTier;
   icon: string;
   limit: string;
   color: string;
@@ -50,7 +63,12 @@ const TIER_CONFIG: Record<number, {
   buttonColor: string;
   requirements: string[];
   processingTime: string;
-}> = {
+}
+
+type TierConfigType = Record<number, TierConfigItem>;
+
+// Dynamic tier configuration generator
+const getTierConfig = (limits: Record<KYCTier, number>): TierConfigType => ({
   0: {
     name: "None",
     icon: "⚪",
@@ -65,7 +83,7 @@ const TIER_CONFIG: Record<number, {
   1: {
     name: "Bronze",
     icon: "🥉",
-    limit: formatLimit(DEFAULT_LIMITS.Bronze),
+    limit: formatLimitDisplay(limits.Bronze),
     color: "text-amber-400",
     bgColor: "bg-amber-900/20",
     borderColor: "border-amber-500/30",
@@ -76,7 +94,7 @@ const TIER_CONFIG: Record<number, {
   2: {
     name: "Silver",
     icon: "🥈",
-    limit: formatLimit(DEFAULT_LIMITS.Silver),
+    limit: formatLimitDisplay(limits.Silver),
     color: "text-gray-300",
     bgColor: "bg-gray-700/30",
     borderColor: "border-gray-500/30",
@@ -87,7 +105,7 @@ const TIER_CONFIG: Record<number, {
   3: {
     name: "Gold",
     icon: "🥇",
-    limit: formatLimit(DEFAULT_LIMITS.Gold),
+    limit: formatLimitDisplay(limits.Gold),
     color: "text-yellow-400",
     bgColor: "bg-yellow-900/20",
     borderColor: "border-yellow-500/30",
@@ -106,7 +124,7 @@ const TIER_CONFIG: Record<number, {
     requirements: ["Gold requirements", "Accredited investor documentation"],
     processingTime: "5-10 business days",
   },
-};
+});
 
 const documentRequiresBack = (type: DocumentType): boolean => {
   return type === 'national_id';
@@ -213,7 +231,7 @@ function TierCard({
   onSelect,
 }: {
   tier: number;
-  config: (typeof TIER_CONFIG)[number];
+  config: TierConfigItem;  // Changed from TierConfigType[number]
   isSelected: boolean;
   isCurrent: boolean;
   isCompleted: boolean;
@@ -251,7 +269,7 @@ function TierCard({
 
       <div className="flex-1">
         <ul className="space-y-2">
-          {config.requirements.map((req, idx) => (
+          {config.requirements.map((req: string, idx: number) => (
             <li key={idx} className="flex items-center gap-2 text-sm text-gray-300">
               <span className={isCompleted || isCurrent ? "text-green-400" : config.color}>
                 {isCompleted || isCurrent ? "✓" : "•"}
@@ -635,17 +653,26 @@ export function KYCSubmissionForm() {
   const [livenessResult, setLivenessResult] = useState<LivenessResult | null>(null);
   const [isLivenessRunning, setIsLivenessRunning] = useState(false);
   const router = useRouter();
+  const [nativePrice, setNativePrice] = useState(0);
 
-  // Use the updated useKYC hook
+  // Use the updated KYC context
   const {
-    status,
-    kycLevel,
+    kycData,
     tier,
-    isVerified,
+    tierInfo,
+    tierLimits,
+    allTiers,
     isLoading: kycLoading,
-    refreshStatus,
-    formattedLimit,
+    isVerified,
+    refreshKYC,
+    formatLimit: formatLimitFromContext,
   } = useKYC();
+
+  // Compute tier config dynamically from context limits
+  const TIER_CONFIG = useMemo(() => getTierConfig(tierLimits), [tierLimits]);
+
+  // Derived values for compatibility
+  const kycLevel = TIER_NAME_TO_NUMBER[kycData.tier] || 0;
 
   // ============================================================================
   // STATE
@@ -709,14 +736,24 @@ export function KYCSubmissionForm() {
     loadCountries();
   }, []);
 
+  useEffect(() => {
+    if (chainId) {
+      getNativeTokenPrice(chainId).then(setNativePrice);
+    }
+  }, [chainId]);
+
+  const kycFeeFormatted = getKycFeeFormatted(chainId);
+  const kycFeeUsd = parseFloat(kycFeeFormatted) * nativePrice;
+  const symbol = getNativeSymbol(chainId);
+
   // ============================================================================
   // COMPUTED
   // ============================================================================
 
   const effectiveTier = kycLevel;
-  const isApplicationPending = status?.applicationStatus === 'pending';
-  const isApproved = isVerified && !status?.isExpired;
-  const hasEnoughBalance = balance ? BigInt(balance.value) >= BigInt(getKycFee()) : false;
+  const isApplicationPending = kycData.status === 'Pending' || kycData.status === 'ManualReview' || kycData.status === 'AutoVerifying';
+  const isApproved = isVerified && kycData.status === 'Approved';
+  const hasEnoughBalance = balance ? BigInt(balance.value) >= BigInt(getKycFee(chainId)) : false;
 
   const canSubmitForm = useMemo(() => {
     const currentLevel = effectiveTier;
@@ -743,7 +780,7 @@ export function KYCSubmissionForm() {
     return true;
   }, [effectiveTier, selectedTier, fullName, email, dateOfBirth, countryCode, documentFront, documentBack, documentNumber, documentExpiry, documentType, selfie, livenessResult, accreditedProof, termsAgreed]);
   
-  const tierConfig = TIER_CONFIG[selectedTier];
+  const tierConfig = TIER_CONFIG[selectedTier as keyof typeof TIER_CONFIG];
 
   // ============================================================================
   // OCR VALIDATION
@@ -868,7 +905,7 @@ export function KYCSubmissionForm() {
 
       // Check balance
       if (!hasEnoughBalance) {
-        setError(`Insufficient balance. You need ${getKycFeeFormatted()} ${getNativeToken()}`);
+        setError(`Insufficient balance. You need ${getKycFeeFormatted(chainId)} ${getNativeToken()}`);
         setIsSubmitting(false);
         return;
       }
@@ -965,7 +1002,7 @@ export function KYCSubmissionForm() {
           BigInt(proofDataResponse.proof.expiry),
           proofDataResponse.proof.signature as `0x${string}`,
         ],
-        value: BigInt(getKycFee()),
+        value: BigInt(getKycFee(chainId)),
       });
 
       console.log('[KYC] TX Hash:', hash);
@@ -1032,7 +1069,7 @@ export function KYCSubmissionForm() {
         throw new Error(result.error || 'Failed to submit KYC');
       }
 
-      await refreshStatus();
+      await refreshKYC();
       setStep('success');
 
     } catch (err: any) {
@@ -1070,7 +1107,7 @@ export function KYCSubmissionForm() {
           BigInt(proofData.expiry),
           proofData.signature as `0x${string}`,
         ],
-        value: BigInt(getKycFee()),
+        value: BigInt(getKycFee(chainId)),
       });
 
       console.log('[KYC] TX Hash:', hash);
@@ -1093,7 +1130,7 @@ export function KYCSubmissionForm() {
           }),
         });
 
-        await refreshStatus();
+        await refreshKYC();
         setStep('success');
       } else {
         throw new Error('Transaction failed');
@@ -1152,7 +1189,7 @@ export function KYCSubmissionForm() {
   const renderStatusBanner = () => {
     if (effectiveTier === 0 && !isApplicationPending) return null;
 
-    const config = TIER_CONFIG[effectiveTier];
+    const config = TIER_CONFIG[effectiveTier as keyof typeof TIER_CONFIG];
 
     if (isApplicationPending) {
       return (
@@ -1215,13 +1252,14 @@ export function KYCSubmissionForm() {
           {effectiveTier > 0 ? "Upgrade Your Verification" : "Select Verification Tier"}
         </h2>
         <p className="text-gray-400">
-          One-time registration fee: <span className="text-white font-medium">{getKycFeeFormatted()} {getNativeToken()}</span>
+          One-time registration fee: <span className="text-white font-medium">{getKycFeeFormatted(chainId)} {getNativeToken()}</span>
+          <span className="text-gray-500 text-sm ml-2">(~${kycFeeUsd.toFixed(2)} USD)</span>
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {[1, 2, 3, 4].map((tierNum) => {
-          const config = TIER_CONFIG[tierNum];
+          const config = TIER_CONFIG[tierNum as keyof typeof TIER_CONFIG];
           const isCurrent = effectiveTier === tierNum;
           const isCompleted = effectiveTier > tierNum;
           const canSelect = tierNum > effectiveTier && !isApplicationPending;
@@ -1283,7 +1321,7 @@ export function KYCSubmissionForm() {
         {currentLevel > 0 && (
           <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-4 mb-6">
             <p className="text-blue-400 text-sm">
-              <span className="font-medium">Upgrading from {TIER_CONFIG[currentLevel].name}:</span> Only new requirements are shown below.
+              <span className="font-medium">Upgrading from {TIER_CONFIG[currentLevel as keyof typeof TIER_CONFIG].name}:</span> Only new requirements are shown below.
             </p>
           </div>
         )}
@@ -1633,7 +1671,7 @@ export function KYCSubmissionForm() {
                   Processing...
                 </>
               ) : (
-                `Submit & Pay ${getKycFeeFormatted()} ${getNativeToken()}`
+                `Submit & Pay ${getKycFeeFormatted(chainId)} ${getNativeToken()}`
               )}
             </button>
           </div>
@@ -1649,7 +1687,7 @@ export function KYCSubmissionForm() {
       </div>
       <h3 className="text-xl font-semibold text-white mb-2">Application Submitted</h3>
       <p className="text-gray-400 mb-4">
-        Your upgrade to {TIER_CONFIG[selectedTier].name} requires manual review.
+        Your upgrade to {TIER_CONFIG[selectedTier as keyof typeof TIER_CONFIG].name} requires manual review.
       </p>
       <p className="text-gray-500 text-sm">
         You'll be notified once your application is approved.
@@ -1675,7 +1713,7 @@ export function KYCSubmissionForm() {
         <div className="bg-gray-900 rounded-xl p-4 mb-6">
           <div className="flex justify-between items-center">
             <span className="text-gray-400">Registration Fee</span>
-            <span className="text-white font-bold text-xl">{getKycFeeFormatted()} {getNativeToken()}</span>
+            <span className="text-white font-bold text-xl">{getKycFeeFormatted(chainId)} {getNativeToken()}</span>
           </div>
           <div className="flex justify-between items-center mt-2 text-sm">
             <span className="text-gray-500">Your Balance</span>
@@ -1708,7 +1746,7 @@ export function KYCSubmissionForm() {
             </>
           ) : (
             <>
-              Pay {getKycFeeFormatted()} {getNativeToken()} & Verify
+              Pay {getKycFeeFormatted(chainId)} {getNativeToken()} & Verify
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
@@ -1791,7 +1829,7 @@ export function KYCSubmissionForm() {
         <button
           onClick={() => {
             setStep("select");
-            refreshStatus();
+            refreshKYC();
           }}
           className="px-6 py-3 border border-gray-600 hover:border-gray-500 text-white font-semibold rounded-xl transition-all"
         >

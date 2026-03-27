@@ -33,15 +33,16 @@ library Constants {
     uint256 constant MIN_PRICE_AGE = 1 minutes;
     uint256 constant MAX_PRICE_AGE_LIMIT = 24 hours;
     uint256 constant MAX_PRICE_DEVIATION_BPS = 1000;
-    uint8 constant USD_DECIMALS = 6;
-    uint8 constant TOKEN_DECIMALS = 18;
+    uint8 constant USD_DECIMALS = 6;      // USDC/USDT decimals
+    uint8 constant TOKEN_DECIMALS = 18;   // Security token decimals
 
-    // ============ Investment Limits ============
-    uint256 constant MIN_FUNDING_GOAL = 10_000 * 1e18;
-    uint256 constant MIN_INVESTMENT = 100 * 1e18;
-    uint256 constant MAX_INVESTMENT_BASIC = 10_000 * 1e18;
-    uint256 constant MAX_INVESTMENT_STANDARD = 100_000 * 1e18;
-    uint256 constant MAX_INVESTMENT_ACCREDITED = 1_000_000 * 1e18;
+    // ============ Project Limits (in stablecoin units, 6 decimals) ============
+    // $10,000 = 10_000 * 10^6 = 10_000_000_000 USDC/USDT units
+    uint256 constant MIN_FUNDING_GOAL = 10_000 * 1e6;    // $10,000
+    uint256 constant MIN_INVESTMENT = 100 * 1e6;          // $100
+    
+    // No max caps - project owners set their own limits, validated by admin
+    // Per-investor limits are handled by KYC tiers in KYCContext
 
     // ============ Batch & Array Limits ============
     uint256 constant MAX_BATCH_SIZE = 50;

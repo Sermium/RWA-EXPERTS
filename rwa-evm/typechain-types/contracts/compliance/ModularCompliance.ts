@@ -27,25 +27,20 @@ export interface ModularComplianceInterface extends Interface {
   getFunction(
     nameOrSignature:
       | "addModule"
-      | "addTokenAgent"
       | "bindToken"
       | "callModuleFunction"
       | "canTransfer"
       | "created"
       | "destroyed"
-      | "getModuleCount"
       | "getModules"
       | "getTokenBound"
       | "initialize"
       | "isModuleBound"
-      | "isTokenAgent"
-      | "isTokenBound"
       | "owner"
       | "pause"
       | "paused"
       | "proxiableUUID"
       | "removeModule"
-      | "removeTokenAgent"
       | "renounceOwnership"
       | "transferOwnership"
       | "transferred"
@@ -61,12 +56,9 @@ export interface ModularComplianceInterface extends Interface {
       | "BeaconUpgraded"
       | "Initialized"
       | "ModuleAdded"
-      | "ModuleFunctionCalled"
       | "ModuleRemoved"
       | "OwnershipTransferred"
       | "Paused"
-      | "TokenAgentAdded"
-      | "TokenAgentRemoved"
       | "TokenBound"
       | "TokenUnbound"
       | "Unpaused"
@@ -75,10 +67,6 @@ export interface ModularComplianceInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "addModule",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "addTokenAgent",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -102,10 +90,6 @@ export interface ModularComplianceInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getModuleCount",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getModules",
     values?: undefined
   ): string;
@@ -121,14 +105,6 @@ export interface ModularComplianceInterface extends Interface {
     functionFragment: "isModuleBound",
     values: [AddressLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "isTokenAgent",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "isTokenBound",
-    values: [AddressLike]
-  ): string;
   encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
@@ -138,10 +114,6 @@ export interface ModularComplianceInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "removeModule",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "removeTokenAgent",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -171,10 +143,6 @@ export interface ModularComplianceInterface extends Interface {
   ): string;
 
   decodeFunctionResult(functionFragment: "addModule", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "addTokenAgent",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "bindToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "callModuleFunction",
@@ -186,10 +154,6 @@ export interface ModularComplianceInterface extends Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "created", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "destroyed", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getModuleCount",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(functionFragment: "getModules", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getTokenBound",
@@ -198,14 +162,6 @@ export interface ModularComplianceInterface extends Interface {
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isModuleBound",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isTokenAgent",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "isTokenBound",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
@@ -217,10 +173,6 @@ export interface ModularComplianceInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "removeModule",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "removeTokenAgent",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -296,28 +248,6 @@ export namespace ModuleAddedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace ModuleFunctionCalledEvent {
-  export type InputTuple = [
-    module: AddressLike,
-    selector: BytesLike,
-    success: boolean
-  ];
-  export type OutputTuple = [
-    module: string,
-    selector: string,
-    success: boolean
-  ];
-  export interface OutputObject {
-    module: string;
-    selector: string;
-    success: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace ModuleRemovedEvent {
   export type InputTuple = [module: AddressLike];
   export type OutputTuple = [module: string];
@@ -348,30 +278,6 @@ export namespace PausedEvent {
   export type OutputTuple = [account: string];
   export interface OutputObject {
     account: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace TokenAgentAddedEvent {
-  export type InputTuple = [agent: AddressLike];
-  export type OutputTuple = [agent: string];
-  export interface OutputObject {
-    agent: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace TokenAgentRemovedEvent {
-  export type InputTuple = [agent: AddressLike];
-  export type OutputTuple = [agent: string];
-  export interface OutputObject {
-    agent: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -472,12 +378,6 @@ export interface ModularCompliance extends BaseContract {
 
   addModule: TypedContractMethod<[_module: AddressLike], [void], "nonpayable">;
 
-  addTokenAgent: TypedContractMethod<
-    [_agent: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   bindToken: TypedContractMethod<[_token: AddressLike], [void], "nonpayable">;
 
   callModuleFunction: TypedContractMethod<
@@ -487,36 +387,30 @@ export interface ModularCompliance extends BaseContract {
   >;
 
   canTransfer: TypedContractMethod<
-    [_from: AddressLike, _to: AddressLike, _value: BigNumberish],
+    [_from: AddressLike, _to: AddressLike, _amount: BigNumberish],
     [boolean],
     "view"
   >;
 
   created: TypedContractMethod<
-    [_to: AddressLike, _value: BigNumberish],
+    [_to: AddressLike, _amount: BigNumberish],
     [void],
     "nonpayable"
   >;
 
   destroyed: TypedContractMethod<
-    [_from: AddressLike, _value: BigNumberish],
+    [_from: AddressLike, _amount: BigNumberish],
     [void],
     "nonpayable"
   >;
-
-  getModuleCount: TypedContractMethod<[], [bigint], "view">;
 
   getModules: TypedContractMethod<[], [string[]], "view">;
 
   getTokenBound: TypedContractMethod<[], [string], "view">;
 
-  initialize: TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
+  initialize: TypedContractMethod<[_admin: AddressLike], [void], "nonpayable">;
 
   isModuleBound: TypedContractMethod<[_module: AddressLike], [boolean], "view">;
-
-  isTokenAgent: TypedContractMethod<[_agent: AddressLike], [boolean], "view">;
-
-  isTokenBound: TypedContractMethod<[_token: AddressLike], [boolean], "view">;
 
   owner: TypedContractMethod<[], [string], "view">;
 
@@ -532,12 +426,6 @@ export interface ModularCompliance extends BaseContract {
     "nonpayable"
   >;
 
-  removeTokenAgent: TypedContractMethod<
-    [_agent: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   transferOwnership: TypedContractMethod<
@@ -547,7 +435,7 @@ export interface ModularCompliance extends BaseContract {
   >;
 
   transferred: TypedContractMethod<
-    [_from: AddressLike, _to: AddressLike, _value: BigNumberish],
+    [_from: AddressLike, _to: AddressLike, _amount: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -576,9 +464,6 @@ export interface ModularCompliance extends BaseContract {
     nameOrSignature: "addModule"
   ): TypedContractMethod<[_module: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "addTokenAgent"
-  ): TypedContractMethod<[_agent: AddressLike], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "bindToken"
   ): TypedContractMethod<[_token: AddressLike], [void], "nonpayable">;
   getFunction(
@@ -591,27 +476,24 @@ export interface ModularCompliance extends BaseContract {
   getFunction(
     nameOrSignature: "canTransfer"
   ): TypedContractMethod<
-    [_from: AddressLike, _to: AddressLike, _value: BigNumberish],
+    [_from: AddressLike, _to: AddressLike, _amount: BigNumberish],
     [boolean],
     "view"
   >;
   getFunction(
     nameOrSignature: "created"
   ): TypedContractMethod<
-    [_to: AddressLike, _value: BigNumberish],
+    [_to: AddressLike, _amount: BigNumberish],
     [void],
     "nonpayable"
   >;
   getFunction(
     nameOrSignature: "destroyed"
   ): TypedContractMethod<
-    [_from: AddressLike, _value: BigNumberish],
+    [_from: AddressLike, _amount: BigNumberish],
     [void],
     "nonpayable"
   >;
-  getFunction(
-    nameOrSignature: "getModuleCount"
-  ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
     nameOrSignature: "getModules"
   ): TypedContractMethod<[], [string[]], "view">;
@@ -620,16 +502,10 @@ export interface ModularCompliance extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "initialize"
-  ): TypedContractMethod<[_owner: AddressLike], [void], "nonpayable">;
+  ): TypedContractMethod<[_admin: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "isModuleBound"
   ): TypedContractMethod<[_module: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "isTokenAgent"
-  ): TypedContractMethod<[_agent: AddressLike], [boolean], "view">;
-  getFunction(
-    nameOrSignature: "isTokenBound"
-  ): TypedContractMethod<[_token: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "owner"
   ): TypedContractMethod<[], [string], "view">;
@@ -646,9 +522,6 @@ export interface ModularCompliance extends BaseContract {
     nameOrSignature: "removeModule"
   ): TypedContractMethod<[_module: AddressLike], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "removeTokenAgent"
-  ): TypedContractMethod<[_agent: AddressLike], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -657,7 +530,7 @@ export interface ModularCompliance extends BaseContract {
   getFunction(
     nameOrSignature: "transferred"
   ): TypedContractMethod<
-    [_from: AddressLike, _to: AddressLike, _value: BigNumberish],
+    [_from: AddressLike, _to: AddressLike, _amount: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -711,13 +584,6 @@ export interface ModularCompliance extends BaseContract {
     ModuleAddedEvent.OutputObject
   >;
   getEvent(
-    key: "ModuleFunctionCalled"
-  ): TypedContractEvent<
-    ModuleFunctionCalledEvent.InputTuple,
-    ModuleFunctionCalledEvent.OutputTuple,
-    ModuleFunctionCalledEvent.OutputObject
-  >;
-  getEvent(
     key: "ModuleRemoved"
   ): TypedContractEvent<
     ModuleRemovedEvent.InputTuple,
@@ -737,20 +603,6 @@ export interface ModularCompliance extends BaseContract {
     PausedEvent.InputTuple,
     PausedEvent.OutputTuple,
     PausedEvent.OutputObject
-  >;
-  getEvent(
-    key: "TokenAgentAdded"
-  ): TypedContractEvent<
-    TokenAgentAddedEvent.InputTuple,
-    TokenAgentAddedEvent.OutputTuple,
-    TokenAgentAddedEvent.OutputObject
-  >;
-  getEvent(
-    key: "TokenAgentRemoved"
-  ): TypedContractEvent<
-    TokenAgentRemovedEvent.InputTuple,
-    TokenAgentRemovedEvent.OutputTuple,
-    TokenAgentRemovedEvent.OutputObject
   >;
   getEvent(
     key: "TokenBound"
@@ -826,17 +678,6 @@ export interface ModularCompliance extends BaseContract {
       ModuleAddedEvent.OutputObject
     >;
 
-    "ModuleFunctionCalled(address,bytes4,bool)": TypedContractEvent<
-      ModuleFunctionCalledEvent.InputTuple,
-      ModuleFunctionCalledEvent.OutputTuple,
-      ModuleFunctionCalledEvent.OutputObject
-    >;
-    ModuleFunctionCalled: TypedContractEvent<
-      ModuleFunctionCalledEvent.InputTuple,
-      ModuleFunctionCalledEvent.OutputTuple,
-      ModuleFunctionCalledEvent.OutputObject
-    >;
-
     "ModuleRemoved(address)": TypedContractEvent<
       ModuleRemovedEvent.InputTuple,
       ModuleRemovedEvent.OutputTuple,
@@ -868,28 +709,6 @@ export interface ModularCompliance extends BaseContract {
       PausedEvent.InputTuple,
       PausedEvent.OutputTuple,
       PausedEvent.OutputObject
-    >;
-
-    "TokenAgentAdded(address)": TypedContractEvent<
-      TokenAgentAddedEvent.InputTuple,
-      TokenAgentAddedEvent.OutputTuple,
-      TokenAgentAddedEvent.OutputObject
-    >;
-    TokenAgentAdded: TypedContractEvent<
-      TokenAgentAddedEvent.InputTuple,
-      TokenAgentAddedEvent.OutputTuple,
-      TokenAgentAddedEvent.OutputObject
-    >;
-
-    "TokenAgentRemoved(address)": TypedContractEvent<
-      TokenAgentRemovedEvent.InputTuple,
-      TokenAgentRemovedEvent.OutputTuple,
-      TokenAgentRemovedEvent.OutputObject
-    >;
-    TokenAgentRemoved: TypedContractEvent<
-      TokenAgentRemovedEvent.InputTuple,
-      TokenAgentRemovedEvent.OutputTuple,
-      TokenAgentRemovedEvent.OutputObject
     >;
 
     "TokenBound(address)": TypedContractEvent<

@@ -1,576 +1,635 @@
+// src/contexts/KYCContext.tsx
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { useAccount } from 'wagmi';
 
+// ============================================================================
+// TYPES
+// ============================================================================
+
 export type KYCTier = 'None' | 'Bronze' | 'Silver' | 'Gold' | 'Diamond';
-export type KYCStatus = 'None' | 'Pending' | 'AutoVerifying' | 'ManualReview' | 'Approved' | 'Rejected' | 'Expired' | 'Revoked';
+export type KYCStatus = 'None' | 'Pending' | 'Approved' | 'Rejected' | 'Expired' | 'ManualReview' | 'AutoVerifying';
+
+export interface KYCData {
+  tier: KYCTier;
+  tierNumber: number;
+  status: KYCStatus;
+  isVerified: boolean;
+  isExpired: boolean;
+  limit: number;
+  limitFormatted: string;
+  used: number;
+  remaining: number;
+  remainingFormatted: string;
+  expiresAt: string | null;
+  canInvest: boolean;
+  canResubmit: boolean;
+}
+
+export interface TierInfo {
+  name: KYCTier;
+  level: number;
+  limit: number;
+  formattedLimit: string;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  icon: string;
+  label: string;
+  description: string;
+}
+
+export interface TierLimits {
+  None: number;
+  Bronze: number;
+  Silver: number;
+  Gold: number;
+  Diamond: number;
+}
+
+// ============================================================================
+// CONSTANTS & MAPPINGS
+// ============================================================================
+
+export const KYC_TIERS: KYCTier[] = ['None', 'Bronze', 'Silver', 'Gold', 'Diamond'];
 
 export const CONTRACT_LEVEL_TO_TIER: Record<number, KYCTier> = {
   0: 'None',
   1: 'Bronze',
   2: 'Silver',
   3: 'Gold',
-  4: 'Diamond'
-};
-
-export const CONTRACT_STATUS_TO_STRING: Record<number, KYCStatus> = {
-  0: 'Pending',
-  1: 'Approved',
-  2: 'Rejected',
-  3: 'Expired'
+  4: 'Diamond',
 };
 
 export const TIER_TO_CONTRACT_LEVEL: Record<KYCTier, number> = {
-  'None': 0,
-  'Bronze': 1,
-  'Silver': 2,
-  'Gold': 3,
-  'Diamond': 4
-};
-
-export interface KYCData {
-  tier: KYCTier;
-  status: KYCStatus;
-  investmentLimit: number;
-  usedLimit: number;
-  remainingLimit: number;
-  expiresAt?: number;
-  countryCode?: number;
-  requestedLevel?: number;
-  rejectionReason?: number;
-  isLoading: boolean;
-  error: string | null;
-}
-
-export interface TierInfo {
-  name: KYCTier;
-  contractLevel: number;
-  label: string;
-  limit: string;
-  limitValue: number;
-  color: string;
-  bgColor: string;
-  borderColor: string;
-  icon: string;
-  requirements: string[];
-  description: string;
-}
-
-// ============================================
-// GLOBAL CACHE
-// ============================================
-const globalCache = {
-  tierLimits: null as Record<KYCTier, number> | null,
-  tierLimitsTimestamp: 0,
-  isFetchingLimits: false,
-  statusCache: new Map<string, { data: any; timestamp: number }>(),
-  isFetchingStatus: new Set<string>()
-};
-
-const CACHE_DURATION = 5 * 60 * 1000;
-const MIN_FETCH_INTERVAL = 3000;
-
-const DEFAULT_TIER_LIMITS: Record<KYCTier, number> = {
   None: 0,
-  Bronze: 10000,
-  Silver: 100000,
-  Gold: 1000000,
-  Diamond: Infinity
+  Bronze: 1,
+  Silver: 2,
+  Gold: 3,
+  Diamond: 4,
 };
 
-function formatLimitDisplay(value: number): string {
+// Fallback limits - only used if API fails
+const FALLBACK_LIMITS: TierLimits = {
+  None: 0,
+  Bronze: 0,
+  Silver: 0,
+  Gold: 0,
+  Diamond: Infinity,
+};
+
+// ============================================================================
+// HELPERS
+// ============================================================================
+
+export function formatLimitDisplay(value: number | null | undefined): string {
+  if (value === null || value === undefined) return 'Unlimited';
   if (!isFinite(value)) return 'Unlimited';
-  if (value >= 1000000) return `$${(value / 1000000).toFixed(1)}M`;
-  if (value >= 1000) return `$${(value / 1000).toFixed(0)}K`;
+  if (value === 0) return '$0';
+  if (value >= 1_000_000) {
+    const millions = value / 1_000_000;
+    return `$${millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1)}M`;
+  }
+  if (value >= 1_000) {
+    const thousands = value / 1_000;
+    return `$${thousands % 1 === 0 ? thousands.toFixed(0) : thousands.toFixed(1)}K`;
+  }
   return `$${value.toLocaleString()}`;
 }
 
-const createTierInfo = (limits: Record<KYCTier, number>): TierInfo[] => [
-  {
-    name: 'None',
-    contractLevel: 0,
-    label: 'Unverified',
-    limit: '$0',
-    limitValue: 0,
-    color: 'text-gray-400',
-    bgColor: 'bg-gray-800',
-    borderColor: 'border-gray-600',
-    icon: '🚫',
-    requirements: [],
-    description: 'No verification'
-  },
-  {
-    name: 'Bronze',
-    contractLevel: 1,
-    label: 'Bronze',
-    limit: formatLimitDisplay(limits.Bronze),
-    limitValue: limits.Bronze,
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-900/20',
-    borderColor: 'border-amber-600',
-    icon: '🥉',
-    requirements: ['Personal Information', 'Government ID'],
-    description: 'Basic verification'
-  },
-  {
-    name: 'Silver',
-    contractLevel: 2,
-    label: 'Silver',
-    limit: formatLimitDisplay(limits.Silver),
-    limitValue: limits.Silver,
-    color: 'text-gray-300',
-    bgColor: 'bg-gray-700/30',
-    borderColor: 'border-gray-400',
-    icon: '🥈',
-    requirements: ['Selfie verification'],
-    description: 'Standard verification'
-  },
-  {
-    name: 'Gold',
-    contractLevel: 3,
-    label: 'Gold',
-    limit: formatLimitDisplay(limits.Gold),
-    limitValue: limits.Gold,
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-900/20',
-    borderColor: 'border-yellow-500',
-    icon: '🥇',
-    requirements: ['Liveness check', 'Proof of address'],
-    description: 'Enhanced verification'
-  },
-  {
-    name: 'Diamond',
-    contractLevel: 4,
-    label: 'Diamond',
-    limit: 'Unlimited',
-    limitValue: Infinity,
-    color: 'text-cyan-300',
-    bgColor: 'bg-cyan-900/20',
-    borderColor: 'border-cyan-400',
-    icon: '💎',
-    requirements: ['Accredited investor proof'],
-    description: 'Accredited investor'
-  }
-];
+export function getTierInfo(tier: KYCTier, limit?: number): TierInfo {
+  const configs: Record<KYCTier, { color: string; bgColor: string; borderColor: string; icon: string; label: string; description: string }> = {
+    None: { 
+      color: 'text-gray-400', 
+      bgColor: 'bg-gray-500/10', 
+      borderColor: 'border-gray-500',
+      icon: '○', 
+      label: 'Unverified',
+      description: 'Complete KYC to invest' 
+    },
+    Bronze: { 
+      color: 'text-amber-600', 
+      bgColor: 'bg-amber-500/10', 
+      borderColor: 'border-amber-500',
+      icon: '🥉', 
+      label: 'Bronze',
+      description: 'Basic verification' 
+    },
+    Silver: { 
+      color: 'text-gray-300', 
+      bgColor: 'bg-gray-400/10', 
+      borderColor: 'border-gray-400',
+      icon: '🥈', 
+      label: 'Silver',
+      description: 'Standard verification' 
+    },
+    Gold: { 
+      color: 'text-yellow-400', 
+      bgColor: 'bg-yellow-500/10', 
+      borderColor: 'border-yellow-500',
+      icon: '🥇', 
+      label: 'Gold',
+      description: 'Accredited investor' 
+    },
+    Diamond: { 
+      color: 'text-cyan-400', 
+      bgColor: 'bg-cyan-500/10', 
+      borderColor: 'border-cyan-500',
+      icon: '💎', 
+      label: 'Diamond',
+      description: 'Institutional investor' 
+    },
+  };
 
-export const meetsMinimumTier = (currentTier: KYCTier, requiredTier: KYCTier): boolean => {
-  const tierOrder: KYCTier[] = ['None', 'Bronze', 'Silver', 'Gold', 'Diamond'];
-  return tierOrder.indexOf(currentTier) >= tierOrder.indexOf(requiredTier);
-};
+  const config = configs[tier];
+  const level = TIER_TO_CONTRACT_LEVEL[tier];
+  const limitValue = limit ?? 0;
 
-interface KYCContextValue {
-  kycData: KYCData;
-  tierInfo: TierInfo;
-  allTiers: TierInfo[];
-  tierLimits: Record<KYCTier, number>;
-  refreshKYC: () => Promise<void>;
-  canInvest: (amount: number) => { allowed: boolean; reason?: string };
-  canCreateProject: () => { allowed: boolean; reason?: string };
-  formatLimit: (value: number) => string;
-  getTierInfo: (tier: KYCTier) => TierInfo;
-  getTierByContractLevel: (level: number) => TierInfo;
+  return {
+    name: tier,
+    level,
+    limit: limitValue,
+    formattedLimit: formatLimitDisplay(limitValue),
+    ...config,
+  };
 }
 
-const defaultKycData: KYCData = {
-  tier: 'None',
-  status: 'None',
-  investmentLimit: 0,
-  usedLimit: 0,
-  remainingLimit: 0,
-  isLoading: false,
-  error: null
+export function meetsMinimumTier(
+  userTier: KYCTier | string | undefined | null,
+  requiredTier: KYCTier | string
+): boolean {
+  if (!userTier) return false;
+  
+  const userLevel = TIER_TO_CONTRACT_LEVEL[userTier as KYCTier];
+  const requiredLevel = TIER_TO_CONTRACT_LEVEL[requiredTier as KYCTier];
+  
+  // If either tier is not recognized, return false
+  if (userLevel === undefined || requiredLevel === undefined) return false;
+  
+  return userLevel >= requiredLevel;
+}
+
+// ============================================================================
+// GLOBAL CACHE
+// ============================================================================
+
+interface GlobalCache {
+  tierLimits: TierLimits | null;
+  tierLimitsTimestamp: number;
+  kycStatus: Record<string, { data: KYCData; timestamp: number }>;
+}
+
+const globalCache: GlobalCache = {
+  tierLimits: null,
+  tierLimitsTimestamp: 0,
+  kycStatus: {},
 };
 
-const KYCContext = createContext<KYCContextValue>({
-  kycData: defaultKycData,
-  tierInfo: createTierInfo(DEFAULT_TIER_LIMITS)[0],
-  allTiers: createTierInfo(DEFAULT_TIER_LIMITS),
-  tierLimits: DEFAULT_TIER_LIMITS,
-  refreshKYC: async () => {},
-  canInvest: () => ({ allowed: false, reason: 'Not initialized' }),
-  canCreateProject: () => ({ allowed: false, reason: 'Not initialized' }),
-  formatLimit: () => '$0',
-  getTierInfo: () => createTierInfo(DEFAULT_TIER_LIMITS)[0],
-  getTierByContractLevel: () => createTierInfo(DEFAULT_TIER_LIMITS)[0]
-});
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-// ============================================
-// Global fetch functions
-// ============================================
-async function fetchTierLimitsGlobal(force = false): Promise<Record<KYCTier, number>> {
+async function fetchTierLimitsGlobal(forceRefresh = false): Promise<TierLimits> {
   const now = Date.now();
   
-  // Return cached if valid and not forcing
-  if (!force && globalCache.tierLimits && (now - globalCache.tierLimitsTimestamp) < CACHE_DURATION) {
+  if (!forceRefresh && globalCache.tierLimits && (now - globalCache.tierLimitsTimestamp) < CACHE_TTL) {
     return globalCache.tierLimits;
   }
-  
-  // Wait for any in-progress fetch to complete
-  if (globalCache.isFetchingLimits) {
-    // Wait longer and keep checking
-    for (let i = 0; i < 30; i++) {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      if (!globalCache.isFetchingLimits && globalCache.tierLimits) {
-        return globalCache.tierLimits;
-      }
-    }
-    // If still fetching after 3 seconds, continue anyway
-  }
-  
-  globalCache.isFetchingLimits = true;
-  
+
   try {
     const response = await fetch('/api/kyc/limits');
-    const data = await response.json();
+    if (!response.ok) throw new Error('Failed to fetch limits');
     
-    console.log('[KYCContext] API response:', data);
+    const data = await response.json();
     
     if (data.success && data.limits) {
-      const newLimits: Record<KYCTier, number> = {
-        None: 0,
-        Bronze: data.limits.Bronze ?? DEFAULT_TIER_LIMITS.Bronze,
-        Silver: data.limits.Silver ?? DEFAULT_TIER_LIMITS.Silver,
-        Gold: data.limits.Gold ?? DEFAULT_TIER_LIMITS.Gold,
-        Diamond: data.limits.Diamond === null ? Infinity : (data.limits.Diamond ?? Infinity)
+      const limits: TierLimits = {
+        None: data.limits.None ?? 0,
+        Bronze: data.limits.Bronze ?? 0,
+        Silver: data.limits.Silver ?? 0,
+        Gold: data.limits.Gold ?? 0,
+        Diamond: data.limits.Diamond === null ? Infinity : (data.limits.Diamond ?? Infinity),
       };
       
-      globalCache.tierLimits = newLimits;
-      globalCache.tierLimitsTimestamp = Date.now();
-      console.log('[KYCContext] Tier limits loaded (global):', newLimits);
-      return newLimits;
+      globalCache.tierLimits = limits;
+      globalCache.tierLimitsTimestamp = now;
+      
+      console.log('[KYCContext] Loaded tier limits from API:', limits);
+      return limits;
     }
   } catch (error) {
-    console.error('[KYCContext] Failed to fetch tier limits:', error);
-  } finally {
-    globalCache.isFetchingLimits = false;
+    console.error('[KYCContext] Error fetching tier limits:', error);
   }
-  
-  return globalCache.tierLimits || DEFAULT_TIER_LIMITS;
+
+  return globalCache.tierLimits || FALLBACK_LIMITS;
 }
 
-async function fetchKYCStatusGlobal(address: string, force = false): Promise<any> {
+async function fetchKYCStatusGlobal(address: string, forceRefresh = false): Promise<KYCData | null> {
   const now = Date.now();
-  const cached = globalCache.statusCache.get(address);
+  const cached = globalCache.kycStatus[address.toLowerCase()];
   
-  if (!force && cached && (now - cached.timestamp) < MIN_FETCH_INTERVAL) {
+  if (!forceRefresh && cached && (now - cached.timestamp) < CACHE_TTL) {
     return cached.data;
   }
-  
-  if (globalCache.isFetchingStatus.has(address)) {
-    await new Promise(resolve => setTimeout(resolve, 100));
-    return globalCache.statusCache.get(address)?.data || null;
-  }
-  
-  globalCache.isFetchingStatus.add(address);
-  
+
   try {
     const response = await fetch(`/api/kyc/status/${address}`);
+    if (!response.ok) throw new Error('Failed to fetch KYC status');
+    
     const data = await response.json();
     
-    globalCache.statusCache.set(address, { data, timestamp: now });
-    return data;
+    if (data.success) {
+      // Update tier limits if returned by status endpoint
+      if (data.tierLimits) {
+        globalCache.tierLimits = {
+          None: data.tierLimits.None ?? 0,
+          Bronze: data.tierLimits.Bronze ?? 0,
+          Silver: data.tierLimits.Silver ?? 0,
+          Gold: data.tierLimits.Gold ?? 0,
+          Diamond: data.tierLimits.Diamond === null ? Infinity : (data.tierLimits.Diamond ?? Infinity),
+        };
+        globalCache.tierLimitsTimestamp = now;
+      }
+
+      // Convert status from lowercase to PascalCase
+      const statusMap: Record<string, KYCStatus> = {
+        'none': 'None',
+        'pending': 'Pending',
+        'approved': 'Approved',
+        'rejected': 'Rejected',
+        'expired': 'Expired',
+        'manual_review': 'ManualReview',
+        'manualreview': 'ManualReview',
+        'auto_verifying': 'AutoVerifying',
+        'autoverifying': 'AutoVerifying',
+      };
+
+      const rawStatus = (data.status || 'none').toLowerCase();
+      const normalizedStatus: KYCStatus = statusMap[rawStatus] || 'None';
+
+      // Handle limit values - API returns null for unlimited (Diamond)
+      const limitValue = data.limit === null ? Infinity : (data.limit ?? 0);
+      const remainingValue = data.remaining === null ? Infinity : (data.remaining ?? 0);
+
+      const kycData: KYCData = {
+        tier: data.tier || 'None',
+        tierNumber: data.tierNumber ?? data.kycLevel ?? 0,
+        status: normalizedStatus,
+        isVerified: data.isVerified ?? false,
+        isExpired: data.isExpired ?? false,
+        limit: limitValue,
+        limitFormatted: data.limitFormatted || formatLimitDisplay(limitValue),
+        used: data.used ?? 0,
+        remaining: remainingValue,
+        remainingFormatted: data.remainingFormatted || formatLimitDisplay(remainingValue),
+        expiresAt: data.expiresAt || null,
+        canInvest: data.canInvest ?? false,
+        canResubmit: data.canResubmit ?? false,
+      };
+
+      globalCache.kycStatus[address.toLowerCase()] = {
+        data: kycData,
+        timestamp: now,
+      };
+
+      console.log('[KYCContext] Loaded KYC status:', kycData);
+
+      return kycData;
+    }
   } catch (error) {
-    console.error('[KYCContext] Failed to fetch KYC status:', error);
-    return null;
-  } finally {
-    globalCache.isFetchingStatus.delete(address);
+    console.error('[KYCContext] Error fetching KYC status:', error);
   }
+
+  return null;
 }
 
-export function KYCProvider({ children }: { children: ReactNode }) {
-  const { address, isConnected } = useAccount();
-  const [kycData, setKycData] = useState<KYCData>(defaultKycData);
-  const [tierLimits, setTierLimits] = useState<Record<KYCTier, number>>(
-    globalCache.tierLimits || DEFAULT_TIER_LIMITS
-  );
-  const [allTiers, setAllTiers] = useState<TierInfo[]>(
-    createTierInfo(globalCache.tierLimits || DEFAULT_TIER_LIMITS)
-  );
+// ============================================================================
+// CONTEXT
+// ============================================================================
+
+interface KYCContextValue {
+  // Core data
+  kycData: KYCData;
+  tierLimits: TierLimits;
+  allTiers: TierInfo[];
+  tierInfo: TierInfo;
   
-  const mountedRef = useRef(true);
-  const lastAddressRef = useRef<string | null>(null);
+  // Convenience accessors
+  tier: KYCTier;
+  tierNumber: number;
+  status: KYCStatus;
+  isVerified: boolean;
+  isLoading: boolean;
+  
+  // Investment limits
+  investmentLimit: number;
+  remainingLimit: number;
+  usedLimit: number;
+  
+  // Wallet linking
+  generateLinkCode: () => Promise<{ code: string; expiresAt: string } | null>;
+  useLinkCode: (code: string, label?: string) => Promise<boolean>;
+  linkError: string | null;
+  
+  // Functions
+  refreshKYC: () => Promise<void>;
+  canInvest: (amount: number) => { allowed: boolean; reason: string };
+  canCreateProject: () => { allowed: boolean; reason: string };
+  formatLimit: (value: number) => string;
+  getTierInfoByName: (tierName: KYCTier) => TierInfo;
+  getTierByContractLevel: (level: number) => KYCTier;
+}
+
+const defaultKYCData: KYCData = {
+  tier: 'None',
+  tierNumber: 0,
+  status: 'None',
+  isVerified: false,
+  isExpired: false,
+  limit: 0,
+  limitFormatted: '$0',
+  used: 0,
+  remaining: 0,
+  remainingFormatted: '$0',
+  expiresAt: null,
+  canInvest: false,
+  canResubmit: true,
+};
+
+const KYCContext = createContext<KYCContextValue | undefined>(undefined);
+
+// ============================================================================
+// PROVIDER
+// ============================================================================
+
+export function KYCProvider({ children }: { children: ReactNode }) {
+  const { address } = useAccount();
+  
+  const [kycData, setKycData] = useState<KYCData>(defaultKYCData);
+  const [tierLimits, setTierLimits] = useState<TierLimits>(FALLBACK_LIMITS);
+  const [isLoading, setIsLoading] = useState(true);
+  const [linkError, setLinkError] = useState<string | null>(null);
+
+  // Build all tiers info
+  const allTiers = useMemo<TierInfo[]>(() => {
+    return KYC_TIERS.map((tier, index) => {
+      const limit = tierLimits[tier];
+      return getTierInfo(tier, limit);
+    });
+  }, [tierLimits]);
+
+  // Current tier info
+  const tierInfo = useMemo<TierInfo>(() => {
+    const info = getTierInfo(kycData.tier, kycData.limit);
+    return info;
+  }, [kycData.tier, kycData.limit]);
 
   // Load tier limits on mount
   useEffect(() => {
-    let cancelled = false;
-    
-    const loadLimits = async () => {
-      globalCache.tierLimits = null;
-      globalCache.tierLimitsTimestamp = 0;
-      
-      const limits = await fetchTierLimitsGlobal(true);
-      if (!cancelled && mountedRef.current) {
-        setTierLimits(limits);
-        setAllTiers(createTierInfo(limits));
-      }
-    };
-    
-    loadLimits();
-    
-    return () => {
-      cancelled = true;
-    };
+    fetchTierLimitsGlobal().then(limits => {
+      setTierLimits(limits);
+    });
   }, []);
 
   // Load KYC status when address changes
   useEffect(() => {
-    if (!address || !isConnected) {
-      setKycData(defaultKycData);
-      lastAddressRef.current = null;
+    if (!address) {
+      setKycData(defaultKYCData);
+      setIsLoading(false);
       return;
     }
 
-    if (lastAddressRef.current === address && !kycData.isLoading && kycData.tier !== 'None') {
-      return;
-    }
-    lastAddressRef.current = address;
-    
-    let cancelled = false;
-    
-    const loadStatus = async () => {
-      setKycData(prev => ({ ...prev, isLoading: true }));
-      
-      // ✅ ALWAYS fetch fresh limits FIRST
-      const currentLimits = await fetchTierLimitsGlobal(true);  // Force fresh fetch
-      
-      // Update limits state immediately
-      setTierLimits(currentLimits);
-      setAllTiers(createTierInfo(currentLimits));
-      
-      const data = await fetchKYCStatusGlobal(address);
-      
-      if (cancelled || !mountedRef.current) return;
-      
-      if (data?.found && data.submission) {
-        const submission = data.submission;
-        const tier = CONTRACT_LEVEL_TO_TIER[submission.level] || 'None';
-        
-        // ✅ Use currentLimits (just fetched), NOT data.investmentLimit
-        const investmentLimit = tier === 'Diamond' ? Infinity : (currentLimits[tier] || 0);
-        const usedLimit = submission.totalInvested || 0;
-        const remainingLimit = tier === 'Diamond' ? Infinity : Math.max(0, investmentLimit - usedLimit);
-        
-        console.log('[KYCContext] Setting kycData with:', { tier, investmentLimit, currentLimits });
-        
-        setKycData({
-          tier,
-          status: CONTRACT_STATUS_TO_STRING[submission.status] || 'None',
-          investmentLimit,  // ✅ From currentLimits
-          usedLimit,
-          remainingLimit,   // ✅ Calculated from currentLimits
-          expiresAt: submission.expiresAt,
-          countryCode: submission.countryCode,
-          requestedLevel: submission.requestedLevel,
-          rejectionReason: submission.rejectionReason,
-          isLoading: false,
-          error: null
-        });
+    setIsLoading(true);
+    fetchKYCStatusGlobal(address).then(data => {
+      if (data) {
+        setKycData(data);
       } else {
-        setKycData({ ...defaultKycData, isLoading: false });
+        setKycData(defaultKYCData);
       }
-    };
-    
-    loadStatus();
-    
-    return () => {
-      cancelled = true;
-    };
-  }, [address, isConnected]);
-
-  // Cleanup on unmount
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
+      setIsLoading(false);
+    });
+  }, [address]);
 
   // Auto-refresh every 5 minutes
   useEffect(() => {
-    if (!isConnected || !address) return;
-    
-    const interval = setInterval(async () => {
-      // Fetch fresh limits
-      const currentLimits = await fetchTierLimitsGlobal(true);
-      
-      const data = await fetchKYCStatusGlobal(address, true);
-      
-      if (!mountedRef.current) return;
-      
-      setTierLimits(currentLimits);
-      setAllTiers(createTierInfo(currentLimits));
-      
-      if (data?.found && data.submission) {
-        const submission = data.submission;
-        const tier = CONTRACT_LEVEL_TO_TIER[submission.level] || 'None';
-        
-        const investmentLimit = tier === 'Diamond' ? Infinity : (currentLimits[tier] || 0);
-        const usedLimit = submission.totalInvested || 0;
-        const remainingLimit = tier === 'Diamond' ? Infinity : Math.max(0, investmentLimit - usedLimit);
-        
-        setKycData(prev => ({
-          ...prev,
-          tier,
-          status: CONTRACT_STATUS_TO_STRING[submission.status] || 'None',
-          investmentLimit,
-          usedLimit,
-          remainingLimit
-        }));
-      }
-    }, 300000);
-    
+    if (!address) return;
+
+    const interval = setInterval(() => {
+      fetchKYCStatusGlobal(address, true).then(data => {
+        if (data) setKycData(data);
+      });
+    }, CACHE_TTL);
+
     return () => clearInterval(interval);
-  }, [isConnected, address]);
+  }, [address]);
 
   // Listen for cache invalidation events
   useEffect(() => {
-    const handleCacheUpdate = async () => {
-      console.log('[KYCContext] Cache invalidation triggered, refreshing...');
-      
-      // Clear global cache
-      globalCache.tierLimits = null;
-      globalCache.tierLimitsTimestamp = 0;
-      
-      // Fetch fresh limits
-      const limits = await fetchTierLimitsGlobal(true);
-      
-      if (!mountedRef.current) return;
-      
-      setTierLimits(limits);
-      setAllTiers(createTierInfo(limits));
-      
-      // Update kycData with new limits
-      setKycData(prev => {
-        if (prev.tier === 'None' || prev.status !== 'Approved') return prev;
-        
-        const newInvestmentLimit = prev.tier === 'Diamond' ? Infinity : (limits[prev.tier] || 0);
-        const newRemainingLimit = prev.tier === 'Diamond' ? Infinity : Math.max(0, newInvestmentLimit - prev.usedLimit);
-        
-        console.log('[KYCContext] Updated kycData with new limits:', { 
-          tier: prev.tier, 
-          oldLimit: prev.investmentLimit,
-          newLimit: newInvestmentLimit 
-        });
-        
-        return {
-          ...prev,
-          investmentLimit: newInvestmentLimit,
-          remainingLimit: newRemainingLimit,
-        };
-      });
-    };
-
-    if (typeof window !== 'undefined') {
-      window.addEventListener('kyc-limits-updated', handleCacheUpdate);
-      return () => {
-        window.removeEventListener('kyc-limits-updated', handleCacheUpdate);
-      };
-    }
-  }, []);
-
-  const refreshKYC = useCallback(async () => {
-    // Clear cache and fetch fresh
-    globalCache.tierLimits = null;
-    globalCache.tierLimitsTimestamp = 0;
-    
-    const limits = await fetchTierLimitsGlobal(true);
-    setTierLimits(limits);
-    setAllTiers(createTierInfo(limits));
-    
-    if (address) {
-      globalCache.statusCache.delete(address);
-      const data = await fetchKYCStatusGlobal(address, true);
-      
-      if (data?.found && data.submission) {
-        const submission = data.submission;
-        const tier = CONTRACT_LEVEL_TO_TIER[submission.level] || 'None';
-        const investmentLimit = tier === 'Diamond' ? Infinity : (limits[tier] || 0);
-        const usedLimit = submission.totalInvested || 0;
-        const remainingLimit = tier === 'Diamond' ? Infinity : Math.max(0, investmentLimit - usedLimit);
-        
-        setKycData({
-          tier,
-          status: CONTRACT_STATUS_TO_STRING[submission.status] || 'None',
-          investmentLimit,
-          usedLimit,
-          remainingLimit,
-          expiresAt: submission.expiresAt,
-          countryCode: submission.countryCode,
-          requestedLevel: submission.requestedLevel,
-          rejectionReason: submission.rejectionReason,
-          isLoading: false,
-          error: null
+    const handleInvalidate = () => {
+      if (address) {
+        fetchKYCStatusGlobal(address, true).then(data => {
+          if (data) setKycData(data);
         });
       }
+    };
+
+    const handleLimitsUpdate = () => {
+      fetchTierLimitsGlobal(true).then(setTierLimits);
+    };
+
+    window.addEventListener('kyc-cache-invalidate', handleInvalidate);
+    window.addEventListener('kyc-limits-updated', handleLimitsUpdate);
+
+    return () => {
+      window.removeEventListener('kyc-cache-invalidate', handleInvalidate);
+      window.removeEventListener('kyc-limits-updated', handleLimitsUpdate);
+    };
+  }, [address]);
+
+  // Refresh function
+  const refreshKYC = useCallback(async () => {
+    if (!address) return;
+    
+    setIsLoading(true);
+    const [limits, status] = await Promise.all([
+      fetchTierLimitsGlobal(true),
+      fetchKYCStatusGlobal(address, true),
+    ]);
+    
+    setTierLimits(limits);
+    if (status) setKycData(status);
+    setIsLoading(false);
+  }, [address]);
+
+  // Wallet linking: Generate link code
+  const generateLinkCode = useCallback(async (): Promise<{ code: string; expiresAt: string } | null> => {
+    if (!address) {
+      setLinkError('No wallet connected');
+      return null;
+    }
+
+    setLinkError(null);
+    
+    try {
+      const response = await fetch('/api/kyc/link/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ walletAddress: address }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setLinkError(data.error || 'Failed to generate link code');
+        return null;
+      }
+
+      return {
+        code: data.code,
+        expiresAt: data.expiresAt,
+      };
+    } catch (error) {
+      console.error('[KYCContext] Error generating link code:', error);
+      setLinkError('Network error generating link code');
+      return null;
     }
   }, [address]);
 
-  const currentTierInfo = allTiers.find(t => t.name === kycData.tier) || allTiers[0];
+  // Wallet linking: Use link code
+  const useLinkCode = useCallback(async (code: string, label?: string): Promise<boolean> => {
+    if (!address) {
+      setLinkError('No wallet connected');
+      return false;
+    }
 
-  const getTierInfoByName = useCallback((tier: KYCTier): TierInfo => {
-    return allTiers.find(t => t.name === tier) || allTiers[0];
-  }, [allTiers]);
+    setLinkError(null);
 
-  const getTierByContractLevel = useCallback((level: number): TierInfo => {
-    return allTiers.find(t => t.contractLevel === level) || allTiers[0];
-  }, [allTiers]);
+    try {
+      const response = await fetch('/api/kyc/link/use', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          walletAddress: address,
+          code: code.toUpperCase(),
+          label: label || undefined,
+        }),
+      });
 
-  const canInvest = useCallback((amount: number): { allowed: boolean; reason?: string } => {
-    if (kycData.status !== 'Approved') {
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        setLinkError(data.error || 'Failed to link wallet');
+        return false;
+      }
+
+      // Refresh KYC status after successful linking
+      await refreshKYC();
+      
+      // Dispatch event for other components
+      window.dispatchEvent(new CustomEvent('kyc-cache-invalidate'));
+      
+      return true;
+    } catch (error) {
+      console.error('[KYCContext] Error using link code:', error);
+      setLinkError('Network error linking wallet');
+      return false;
+    }
+  }, [address, refreshKYC]);
+
+  // Can invest check
+  const canInvestCheck = useCallback((amount: number): { allowed: boolean; reason: string } => {
+    if (!kycData.isVerified) {
       return { allowed: false, reason: 'KYC verification required' };
+    }
+    if (kycData.isExpired) {
+      return { allowed: false, reason: 'KYC verification has expired' };
     }
     if (kycData.tier === 'None') {
-      return { allowed: false, reason: 'Please complete KYC verification' };
+      return { allowed: false, reason: 'Complete KYC to invest' };
     }
     if (kycData.tier === 'Diamond') {
-      return { allowed: true };
+      return { allowed: true, reason: 'No limit for Diamond tier' };
     }
-    if (amount > kycData.remainingLimit) {
-      return { allowed: false, reason: `Amount exceeds your remaining limit of ${formatLimitDisplay(kycData.remainingLimit)}` };
+    if (amount > kycData.remaining) {
+      return { 
+        allowed: false, 
+        reason: `Amount exceeds remaining limit (${formatLimitDisplay(kycData.remaining)})` 
+      };
     }
-    return { allowed: true };
+    return { allowed: true, reason: '' };
   }, [kycData]);
 
-  const canCreateProject = useCallback((): { allowed: boolean; reason?: string } => {
-    if (kycData.status !== 'Approved') {
-      return { allowed: false, reason: 'KYC verification required' };
+  // Can create project check
+  const canCreateProject = useCallback((): { allowed: boolean; reason: string } => {
+    if (!kycData.isVerified) {
+      return { allowed: false, reason: 'KYC verification required to create projects' };
     }
-    if (!meetsMinimumTier(kycData.tier, 'Gold')) {
-      return { allowed: false, reason: 'Gold tier or higher required to create projects' };
+    if (kycData.tierNumber < 3) { // Gold or Diamond required
+      return { allowed: false, reason: 'Gold or Diamond tier required to create projects' };
     }
-    return { allowed: true };
+    return { allowed: true, reason: '' };
   }, [kycData]);
 
-  const formatLimit = useCallback((value: number): string => {
-    return formatLimitDisplay(value);
+  // Get tier info by name
+  const getTierInfoByName = useCallback((tierName: KYCTier): TierInfo => {
+    const limit = tierLimits[tierName];
+    return getTierInfo(tierName, limit);
+  }, [tierLimits]);
+
+  // Get tier by contract level
+  const getTierByContractLevel = useCallback((level: number): KYCTier => {
+    return CONTRACT_LEVEL_TO_TIER[level] || 'None';
   }, []);
 
-  const contextValue: KYCContextValue = {
+  const value: KYCContextValue = {
     kycData,
-    tierInfo: currentTierInfo,
-    allTiers,
     tierLimits,
+    allTiers,
+    tierInfo,
+    
+    tier: kycData.tier,
+    tierNumber: kycData.tierNumber,
+    status: kycData.status,
+    isVerified: kycData.isVerified,
+    isLoading,
+    
+    investmentLimit: kycData.limit,
+    remainingLimit: kycData.remaining,
+    usedLimit: kycData.used,
+    
+    generateLinkCode,
+    useLinkCode,
+    linkError,
+    
     refreshKYC,
-    canInvest,
+    canInvest: canInvestCheck,
     canCreateProject,
-    formatLimit,
-    getTierInfo: getTierInfoByName,
-    getTierByContractLevel
+    formatLimit: formatLimitDisplay,
+    getTierInfoByName,
+    getTierByContractLevel,
   };
 
   return (
-    <KYCContext.Provider value={contextValue}>
+    <KYCContext.Provider value={value}>
       {children}
     </KYCContext.Provider>
   );
 }
 
+// ============================================================================
+// HOOK
+// ============================================================================
+
 export function useKYC(): KYCContextValue {
-  return useContext(KYCContext);
+  const context = useContext(KYCContext);
+  if (!context) {
+    throw new Error('useKYC must be used within a KYCProvider');
+  }
+  return context;
 }
 
-export { formatLimitDisplay };
-export const KYC_TIERS = createTierInfo(DEFAULT_TIER_LIMITS);
-export const getTierInfo = (tier: KYCTier): TierInfo => KYC_TIERS.find(t => t.name === tier) || KYC_TIERS[0];
-export const getTierByContractLevel = (level: number): TierInfo => KYC_TIERS.find(t => t.contractLevel === level) || KYC_TIERS[0];
+// ============================================================================
+// EXPORTS
+// ============================================================================
+
+export { formatLimitDisplay as formatLimit };
+export const getTierByContractLevel = (level: number): KYCTier => CONTRACT_LEVEL_TO_TIER[level] || 'None';

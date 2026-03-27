@@ -112,6 +112,7 @@ export const ASSET_TYPE_LABELS: Record<string, string> = {
 
 export type AdminTab = 
   | 'overview' 
+  | 'crowdfunding'
   | 'projects' 
   | 'tokenization'
   | 'trade'
@@ -291,6 +292,7 @@ export interface TokenizationApplication {
   phone?: string;
   additional_info?: string;
   total_supply?: number;
+  chain_id?: number;
 }
 
 export interface TokenizationDocument {

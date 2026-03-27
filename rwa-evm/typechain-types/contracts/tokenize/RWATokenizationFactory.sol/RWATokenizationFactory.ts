@@ -23,7 +23,7 @@ import type {
   TypedContractMethod,
 } from "../../../common";
 
-export declare namespace RWATokenizationFactory {
+export declare namespace KYCLib {
   export type KYCProofStruct = {
     level: BigNumberish;
     countryCode: BigNumberish;
@@ -37,7 +37,9 @@ export declare namespace RWATokenizationFactory {
     expiry: bigint,
     signature: string
   ] & { level: bigint; countryCode: bigint; expiry: bigint; signature: string };
+}
 
+export declare namespace RWATokenizationFactory {
   export type TokenDeploymentStruct = {
     deploymentId: BigNumberish;
     owner: AddressLike;
@@ -104,31 +106,29 @@ export declare namespace RWATokenizationFactory {
 export interface RWATokenizationFactoryInterface extends Interface {
   getFunction(
     nameOrSignature:
-      | "addDefaultRestrictedCountry"
       | "addDividendModule"
       | "addEscrow"
       | "approvedDeployers"
-      | "batchSetDeploymentCountryRestrictions"
       | "deactivateDeployment"
       | "defaultRestrictedCountries"
       | "deployNFTAndToken"
+      | "deployNFTAndTokenWithKYC"
       | "deployProjectNFT"
       | "deployToken"
       | "deployWithEscrow"
+      | "deployWithEscrowAndKYC"
       | "deploymentCounter"
       | "deploymentRestrictedCountries"
       | "deployments"
       | "escrowTransactionFeeBps"
       | "getDefaultRestrictedCountries"
       | "getDeployment"
-      | "getDeploymentMinKYCLevel"
       | "getImplementations"
       | "getKYCVerifier"
       | "getOwnerDeploymentCount"
       | "getOwnerDeployments"
       | "implementations"
       | "initialize"
-      | "isCountryRestricted"
       | "isDeployerApproved"
       | "kycVerifier"
       | "minKYCLevelForDeployment"
@@ -138,40 +138,36 @@ export interface RWATokenizationFactoryInterface extends Interface {
       | "paused"
       | "platformFeeRecipient"
       | "proxiableUUID"
-      | "removeDefaultRestrictedCountry"
       | "renounceOwnership"
       | "requireApproval"
       | "requireKYCForDeployment"
+      | "setComplianceImplementation"
       | "setDeployerApproval"
-      | "setDeploymentCountryRestriction"
-      | "setDeploymentMinKYCLevel"
+      | "setDividendDistributorImplementation"
       | "setEscrowTransactionFee"
-      | "setImplementation"
       | "setKYCRequirement"
       | "setKYCVerifier"
       | "setPlatformFeeRecipient"
+      | "setProjectNFTImplementation"
       | "setRequireApproval"
+      | "setSecurityTokenImplementation"
+      | "setTradeEscrowImplementation"
       | "transferOwnership"
       | "unpause"
       | "upgradeTo"
       | "upgradeToAndCall"
-      | "verifyHolderKYC"
   ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
       | "AdminChanged"
       | "BeaconUpgraded"
-      | "DefaultRestrictedCountryUpdated"
       | "DeployerApprovalUpdated"
-      | "DeploymentCountryRestrictionUpdated"
       | "DeploymentDeactivated"
-      | "DeploymentKYCLevelUpdated"
       | "DividendModuleDeployed"
       | "EscrowDeployed"
       | "ImplementationUpdated"
       | "Initialized"
-      | "KYCRequirementUpdated"
       | "KYCVerifierUpdated"
       | "OwnershipTransferred"
       | "Paused"
@@ -181,10 +177,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
       | "Upgraded"
   ): EventFragment;
 
-  encodeFunctionData(
-    functionFragment: "addDefaultRestrictedCountry",
-    values: [BigNumberish]
-  ): string;
   encodeFunctionData(
     functionFragment: "addDividendModule",
     values: [BigNumberish]
@@ -198,10 +190,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "batchSetDeploymentCountryRestrictions",
-    values: [BigNumberish, BigNumberish[], boolean]
-  ): string;
-  encodeFunctionData(
     functionFragment: "deactivateDeployment",
     values: [BigNumberish]
   ): string;
@@ -211,39 +199,40 @@ export interface RWATokenizationFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "deployNFTAndToken",
+    values: [string, string, BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deployNFTAndTokenWithKYC",
     values: [
       string,
       string,
       BigNumberish,
       string,
       BigNumberish,
-      RWATokenizationFactory.KYCProofStruct
+      KYCLib.KYCProofStruct
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "deployProjectNFT",
-    values: [string, string, string, RWATokenizationFactory.KYCProofStruct]
+    values: [string, string, string]
   ): string;
   encodeFunctionData(
     functionFragment: "deployToken",
-    values: [
-      string,
-      string,
-      BigNumberish,
-      string,
-      BigNumberish,
-      RWATokenizationFactory.KYCProofStruct
-    ]
+    values: [string, string, BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "deployWithEscrow",
+    values: [string, string, BigNumberish, string]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "deployWithEscrowAndKYC",
     values: [
       string,
       string,
       BigNumberish,
       string,
       BigNumberish,
-      RWATokenizationFactory.KYCProofStruct
+      KYCLib.KYCProofStruct
     ]
   ): string;
   encodeFunctionData(
@@ -268,10 +257,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getDeployment",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getDeploymentMinKYCLevel",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -306,10 +291,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "isCountryRestricted",
-    values: [BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "isDeployerApproved",
     values: [AddressLike]
   ): string;
@@ -337,10 +318,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "removeDefaultRestrictedCountry",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -353,24 +330,20 @@ export interface RWATokenizationFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setComplianceImplementation",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setDeployerApproval",
     values: [AddressLike, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "setDeploymentCountryRestriction",
-    values: [BigNumberish, BigNumberish, boolean]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setDeploymentMinKYCLevel",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "setDividendDistributorImplementation",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setEscrowTransactionFee",
     values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setImplementation",
-    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "setKYCRequirement",
@@ -385,8 +358,20 @@ export interface RWATokenizationFactoryInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "setProjectNFTImplementation",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setRequireApproval",
     values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setSecurityTokenImplementation",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setTradeEscrowImplementation",
+    values: [AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -401,15 +386,7 @@ export interface RWATokenizationFactoryInterface extends Interface {
     functionFragment: "upgradeToAndCall",
     values: [AddressLike, BytesLike]
   ): string;
-  encodeFunctionData(
-    functionFragment: "verifyHolderKYC",
-    values: [AddressLike, BigNumberish, RWATokenizationFactory.KYCProofStruct]
-  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "addDefaultRestrictedCountry",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "addDividendModule",
     data: BytesLike
@@ -417,10 +394,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
   decodeFunctionResult(functionFragment: "addEscrow", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "approvedDeployers",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "batchSetDeploymentCountryRestrictions",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -436,6 +409,10 @@ export interface RWATokenizationFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "deployNFTAndTokenWithKYC",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "deployProjectNFT",
     data: BytesLike
   ): Result;
@@ -445,6 +422,10 @@ export interface RWATokenizationFactoryInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "deployWithEscrow",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "deployWithEscrowAndKYC",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -472,10 +453,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getDeploymentMinKYCLevel",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getImplementations",
     data: BytesLike
   ): Result;
@@ -496,10 +473,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "isCountryRestricted",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "isDeployerApproved",
     data: BytesLike
@@ -528,10 +501,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "removeDefaultRestrictedCountry",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -544,23 +513,19 @@ export interface RWATokenizationFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setComplianceImplementation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setDeployerApproval",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "setDeploymentCountryRestriction",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setDeploymentMinKYCLevel",
+    functionFragment: "setDividendDistributorImplementation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "setEscrowTransactionFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setImplementation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -576,7 +541,19 @@ export interface RWATokenizationFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setProjectNFTImplementation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setRequireApproval",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setSecurityTokenImplementation",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setTradeEscrowImplementation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -587,10 +564,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeToAndCall",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "verifyHolderKYC",
     data: BytesLike
   ): Result;
 }
@@ -620,19 +593,6 @@ export namespace BeaconUpgradedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace DefaultRestrictedCountryUpdatedEvent {
-  export type InputTuple = [countryCode: BigNumberish, restricted: boolean];
-  export type OutputTuple = [countryCode: bigint, restricted: boolean];
-  export interface OutputObject {
-    countryCode: bigint;
-    restricted: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace DeployerApprovalUpdatedEvent {
   export type InputTuple = [deployer: AddressLike, approved: boolean];
   export type OutputTuple = [deployer: string, approved: boolean];
@@ -646,55 +606,11 @@ export namespace DeployerApprovalUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace DeploymentCountryRestrictionUpdatedEvent {
-  export type InputTuple = [
-    deploymentId: BigNumberish,
-    countryCode: BigNumberish,
-    restricted: boolean
-  ];
-  export type OutputTuple = [
-    deploymentId: bigint,
-    countryCode: bigint,
-    restricted: boolean
-  ];
-  export interface OutputObject {
-    deploymentId: bigint;
-    countryCode: bigint;
-    restricted: boolean;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace DeploymentDeactivatedEvent {
   export type InputTuple = [deploymentId: BigNumberish];
   export type OutputTuple = [deploymentId: bigint];
   export interface OutputObject {
     deploymentId: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace DeploymentKYCLevelUpdatedEvent {
-  export type InputTuple = [
-    deploymentId: BigNumberish,
-    oldLevel: BigNumberish,
-    newLevel: BigNumberish
-  ];
-  export type OutputTuple = [
-    deploymentId: bigint,
-    oldLevel: bigint,
-    newLevel: bigint
-  ];
-  export interface OutputObject {
-    deploymentId: bigint;
-    oldLevel: bigint;
-    newLevel: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -748,17 +664,17 @@ export namespace EscrowDeployedEvent {
 
 export namespace ImplementationUpdatedEvent {
   export type InputTuple = [
-    implType: BigNumberish,
+    contractType: string,
     oldImpl: AddressLike,
     newImpl: AddressLike
   ];
   export type OutputTuple = [
-    implType: bigint,
+    contractType: string,
     oldImpl: string,
     newImpl: string
   ];
   export interface OutputObject {
-    implType: bigint;
+    contractType: string;
     oldImpl: string;
     newImpl: string;
   }
@@ -773,19 +689,6 @@ export namespace InitializedEvent {
   export type OutputTuple = [version: bigint];
   export interface OutputObject {
     version: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace KYCRequirementUpdatedEvent {
-  export type InputTuple = [required: boolean, minLevel: BigNumberish];
-  export type OutputTuple = [required: boolean, minLevel: bigint];
-  export interface OutputObject {
-    required: boolean;
-    minLevel: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -954,12 +857,6 @@ export interface RWATokenizationFactory extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  addDefaultRestrictedCountry: TypedContractMethod<
-    [_countryCode: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   addDividendModule: TypedContractMethod<
     [_deploymentId: BigNumberish],
     [string],
@@ -978,18 +875,8 @@ export interface RWATokenizationFactory extends BaseContract {
     "view"
   >;
 
-  batchSetDeploymentCountryRestrictions: TypedContractMethod<
-    [
-      _deploymentId: BigNumberish,
-      _countryCodes: BigNumberish[],
-      _restricted: boolean
-    ],
-    [void],
-    "nonpayable"
-  >;
-
   deactivateDeployment: TypedContractMethod<
-    [_deploymentId: BigNumberish],
+    [_id: BigNumberish],
     [void],
     "nonpayable"
   >;
@@ -1005,9 +892,26 @@ export interface RWATokenizationFactory extends BaseContract {
       _name: string,
       _symbol: string,
       _supply: BigNumberish,
+      _metadataURI: string
+    ],
+    [
+      [bigint, string, string] & {
+        deploymentId: bigint;
+        securityToken: string;
+        projectNFT: string;
+      }
+    ],
+    "nonpayable"
+  >;
+
+  deployNFTAndTokenWithKYC: TypedContractMethod<
+    [
+      _name: string,
+      _symbol: string,
+      _supply: BigNumberish,
       _metadataURI: string,
       _minKYCLevel: BigNumberish,
-      _kycProof: RWATokenizationFactory.KYCProofStruct
+      _kycProof: KYCLib.KYCProofStruct
     ],
     [
       [bigint, string, string] & {
@@ -1020,12 +924,7 @@ export interface RWATokenizationFactory extends BaseContract {
   >;
 
   deployProjectNFT: TypedContractMethod<
-    [
-      _name: string,
-      _symbol: string,
-      _metadataURI: string,
-      _kycProof: RWATokenizationFactory.KYCProofStruct
-    ],
+    [_name: string, _symbol: string, _metadataURI: string],
     [[bigint, string] & { deploymentId: bigint; projectNFT: string }],
     "nonpayable"
   >;
@@ -1035,9 +934,7 @@ export interface RWATokenizationFactory extends BaseContract {
       _name: string,
       _symbol: string,
       _supply: BigNumberish,
-      _metadataURI: string,
-      _minKYCLevel: BigNumberish,
-      _kycProof: RWATokenizationFactory.KYCProofStruct
+      _metadataURI: string
     ],
     [[bigint, string] & { deploymentId: bigint; securityToken: string }],
     "nonpayable"
@@ -1048,9 +945,27 @@ export interface RWATokenizationFactory extends BaseContract {
       _name: string,
       _symbol: string,
       _supply: BigNumberish,
+      _metadataURI: string
+    ],
+    [
+      [bigint, string, string, string] & {
+        deploymentId: bigint;
+        securityToken: string;
+        projectNFT: string;
+        tradeEscrow: string;
+      }
+    ],
+    "nonpayable"
+  >;
+
+  deployWithEscrowAndKYC: TypedContractMethod<
+    [
+      _name: string,
+      _symbol: string,
+      _supply: BigNumberish,
       _metadataURI: string,
       _minKYCLevel: BigNumberish,
-      _kycProof: RWATokenizationFactory.KYCProofStruct
+      _kycProof: KYCLib.KYCProofStruct
     ],
     [
       [bigint, string, string, string] & {
@@ -1108,14 +1023,8 @@ export interface RWATokenizationFactory extends BaseContract {
   getDefaultRestrictedCountries: TypedContractMethod<[], [bigint[]], "view">;
 
   getDeployment: TypedContractMethod<
-    [_deploymentId: BigNumberish],
+    [_id: BigNumberish],
     [RWATokenizationFactory.TokenDeploymentStructOutput],
-    "view"
-  >;
-
-  getDeploymentMinKYCLevel: TypedContractMethod<
-    [_deploymentId: BigNumberish],
-    [bigint],
     "view"
   >;
 
@@ -1128,13 +1037,13 @@ export interface RWATokenizationFactory extends BaseContract {
   getKYCVerifier: TypedContractMethod<[], [string], "view">;
 
   getOwnerDeploymentCount: TypedContractMethod<
-    [_owner: AddressLike],
+    [_o: AddressLike],
     [bigint],
     "view"
   >;
 
   getOwnerDeployments: TypedContractMethod<
-    [_owner: AddressLike],
+    [_o: AddressLike],
     [bigint[]],
     "view"
   >;
@@ -1166,17 +1075,7 @@ export interface RWATokenizationFactory extends BaseContract {
     "nonpayable"
   >;
 
-  isCountryRestricted: TypedContractMethod<
-    [_countryCode: BigNumberish, _deploymentId: BigNumberish],
-    [boolean],
-    "view"
-  >;
-
-  isDeployerApproved: TypedContractMethod<
-    [_deployer: AddressLike],
-    [boolean],
-    "view"
-  >;
+  isDeployerApproved: TypedContractMethod<[_d: AddressLike], [boolean], "view">;
 
   kycVerifier: TypedContractMethod<[], [string], "view">;
 
@@ -1198,36 +1097,26 @@ export interface RWATokenizationFactory extends BaseContract {
 
   proxiableUUID: TypedContractMethod<[], [string], "view">;
 
-  removeDefaultRestrictedCountry: TypedContractMethod<
-    [_countryCode: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   requireApproval: TypedContractMethod<[], [boolean], "view">;
 
   requireKYCForDeployment: TypedContractMethod<[], [boolean], "view">;
 
+  setComplianceImplementation: TypedContractMethod<
+    [_impl: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   setDeployerApproval: TypedContractMethod<
-    [_deployer: AddressLike, _approved: boolean],
+    [_d: AddressLike, _a: boolean],
     [void],
     "nonpayable"
   >;
 
-  setDeploymentCountryRestriction: TypedContractMethod<
-    [
-      _deploymentId: BigNumberish,
-      _countryCode: BigNumberish,
-      _restricted: boolean
-    ],
-    [void],
-    "nonpayable"
-  >;
-
-  setDeploymentMinKYCLevel: TypedContractMethod<
-    [_deploymentId: BigNumberish, _minLevel: BigNumberish],
+  setDividendDistributorImplementation: TypedContractMethod<
+    [_impl: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1238,32 +1127,36 @@ export interface RWATokenizationFactory extends BaseContract {
     "nonpayable"
   >;
 
-  setImplementation: TypedContractMethod<
-    [_implType: BigNumberish, _impl: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
   setKYCRequirement: TypedContractMethod<
-    [_required: boolean, _minLevel: BigNumberish],
+    [_r: boolean, _l: BigNumberish],
     [void],
     "nonpayable"
   >;
 
-  setKYCVerifier: TypedContractMethod<
-    [_verifier: AddressLike],
-    [void],
-    "nonpayable"
-  >;
+  setKYCVerifier: TypedContractMethod<[_v: AddressLike], [void], "nonpayable">;
 
   setPlatformFeeRecipient: TypedContractMethod<
-    [_recipient: AddressLike],
+    [_r: AddressLike],
     [void],
     "nonpayable"
   >;
 
-  setRequireApproval: TypedContractMethod<
-    [_require: boolean],
+  setProjectNFTImplementation: TypedContractMethod<
+    [_impl: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setRequireApproval: TypedContractMethod<[_r: boolean], [void], "nonpayable">;
+
+  setSecurityTokenImplementation: TypedContractMethod<
+    [_impl: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
+  setTradeEscrowImplementation: TypedContractMethod<
+    [_impl: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1288,23 +1181,10 @@ export interface RWATokenizationFactory extends BaseContract {
     "payable"
   >;
 
-  verifyHolderKYC: TypedContractMethod<
-    [
-      _holder: AddressLike,
-      _deploymentId: BigNumberish,
-      _proof: RWATokenizationFactory.KYCProofStruct
-    ],
-    [boolean],
-    "view"
-  >;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
-  getFunction(
-    nameOrSignature: "addDefaultRestrictedCountry"
-  ): TypedContractMethod<[_countryCode: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "addDividendModule"
   ): TypedContractMethod<[_deploymentId: BigNumberish], [string], "nonpayable">;
@@ -1315,19 +1195,8 @@ export interface RWATokenizationFactory extends BaseContract {
     nameOrSignature: "approvedDeployers"
   ): TypedContractMethod<[arg0: AddressLike], [boolean], "view">;
   getFunction(
-    nameOrSignature: "batchSetDeploymentCountryRestrictions"
-  ): TypedContractMethod<
-    [
-      _deploymentId: BigNumberish,
-      _countryCodes: BigNumberish[],
-      _restricted: boolean
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
     nameOrSignature: "deactivateDeployment"
-  ): TypedContractMethod<[_deploymentId: BigNumberish], [void], "nonpayable">;
+  ): TypedContractMethod<[_id: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "defaultRestrictedCountries"
   ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
@@ -1338,9 +1207,27 @@ export interface RWATokenizationFactory extends BaseContract {
       _name: string,
       _symbol: string,
       _supply: BigNumberish,
+      _metadataURI: string
+    ],
+    [
+      [bigint, string, string] & {
+        deploymentId: bigint;
+        securityToken: string;
+        projectNFT: string;
+      }
+    ],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "deployNFTAndTokenWithKYC"
+  ): TypedContractMethod<
+    [
+      _name: string,
+      _symbol: string,
+      _supply: BigNumberish,
       _metadataURI: string,
       _minKYCLevel: BigNumberish,
-      _kycProof: RWATokenizationFactory.KYCProofStruct
+      _kycProof: KYCLib.KYCProofStruct
     ],
     [
       [bigint, string, string] & {
@@ -1354,12 +1241,7 @@ export interface RWATokenizationFactory extends BaseContract {
   getFunction(
     nameOrSignature: "deployProjectNFT"
   ): TypedContractMethod<
-    [
-      _name: string,
-      _symbol: string,
-      _metadataURI: string,
-      _kycProof: RWATokenizationFactory.KYCProofStruct
-    ],
+    [_name: string, _symbol: string, _metadataURI: string],
     [[bigint, string] & { deploymentId: bigint; projectNFT: string }],
     "nonpayable"
   >;
@@ -1370,9 +1252,7 @@ export interface RWATokenizationFactory extends BaseContract {
       _name: string,
       _symbol: string,
       _supply: BigNumberish,
-      _metadataURI: string,
-      _minKYCLevel: BigNumberish,
-      _kycProof: RWATokenizationFactory.KYCProofStruct
+      _metadataURI: string
     ],
     [[bigint, string] & { deploymentId: bigint; securityToken: string }],
     "nonpayable"
@@ -1384,9 +1264,28 @@ export interface RWATokenizationFactory extends BaseContract {
       _name: string,
       _symbol: string,
       _supply: BigNumberish,
+      _metadataURI: string
+    ],
+    [
+      [bigint, string, string, string] & {
+        deploymentId: bigint;
+        securityToken: string;
+        projectNFT: string;
+        tradeEscrow: string;
+      }
+    ],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "deployWithEscrowAndKYC"
+  ): TypedContractMethod<
+    [
+      _name: string,
+      _symbol: string,
+      _supply: BigNumberish,
       _metadataURI: string,
       _minKYCLevel: BigNumberish,
-      _kycProof: RWATokenizationFactory.KYCProofStruct
+      _kycProof: KYCLib.KYCProofStruct
     ],
     [
       [bigint, string, string, string] & {
@@ -1450,13 +1349,10 @@ export interface RWATokenizationFactory extends BaseContract {
   getFunction(
     nameOrSignature: "getDeployment"
   ): TypedContractMethod<
-    [_deploymentId: BigNumberish],
+    [_id: BigNumberish],
     [RWATokenizationFactory.TokenDeploymentStructOutput],
     "view"
   >;
-  getFunction(
-    nameOrSignature: "getDeploymentMinKYCLevel"
-  ): TypedContractMethod<[_deploymentId: BigNumberish], [bigint], "view">;
   getFunction(
     nameOrSignature: "getImplementations"
   ): TypedContractMethod<
@@ -1469,10 +1365,10 @@ export interface RWATokenizationFactory extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "getOwnerDeploymentCount"
-  ): TypedContractMethod<[_owner: AddressLike], [bigint], "view">;
+  ): TypedContractMethod<[_o: AddressLike], [bigint], "view">;
   getFunction(
     nameOrSignature: "getOwnerDeployments"
-  ): TypedContractMethod<[_owner: AddressLike], [bigint[]], "view">;
+  ): TypedContractMethod<[_o: AddressLike], [bigint[]], "view">;
   getFunction(
     nameOrSignature: "implementations"
   ): TypedContractMethod<
@@ -1503,15 +1399,8 @@ export interface RWATokenizationFactory extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "isCountryRestricted"
-  ): TypedContractMethod<
-    [_countryCode: BigNumberish, _deploymentId: BigNumberish],
-    [boolean],
-    "view"
-  >;
-  getFunction(
     nameOrSignature: "isDeployerApproved"
-  ): TypedContractMethod<[_deployer: AddressLike], [boolean], "view">;
+  ): TypedContractMethod<[_d: AddressLike], [boolean], "view">;
   getFunction(
     nameOrSignature: "kycVerifier"
   ): TypedContractMethod<[], [string], "view">;
@@ -1541,9 +1430,6 @@ export interface RWATokenizationFactory extends BaseContract {
     nameOrSignature: "proxiableUUID"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "removeDefaultRestrictedCountry"
-  ): TypedContractMethod<[_countryCode: BigNumberish], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -1553,56 +1439,38 @@ export interface RWATokenizationFactory extends BaseContract {
     nameOrSignature: "requireKYCForDeployment"
   ): TypedContractMethod<[], [boolean], "view">;
   getFunction(
+    nameOrSignature: "setComplianceImplementation"
+  ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setDeployerApproval"
-  ): TypedContractMethod<
-    [_deployer: AddressLike, _approved: boolean],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[_d: AddressLike, _a: boolean], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setDeploymentCountryRestriction"
-  ): TypedContractMethod<
-    [
-      _deploymentId: BigNumberish,
-      _countryCode: BigNumberish,
-      _restricted: boolean
-    ],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "setDeploymentMinKYCLevel"
-  ): TypedContractMethod<
-    [_deploymentId: BigNumberish, _minLevel: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+    nameOrSignature: "setDividendDistributorImplementation"
+  ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setEscrowTransactionFee"
   ): TypedContractMethod<[_feeBps: BigNumberish], [void], "nonpayable">;
   getFunction(
-    nameOrSignature: "setImplementation"
-  ): TypedContractMethod<
-    [_implType: BigNumberish, _impl: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
     nameOrSignature: "setKYCRequirement"
-  ): TypedContractMethod<
-    [_required: boolean, _minLevel: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
+  ): TypedContractMethod<[_r: boolean, _l: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setKYCVerifier"
-  ): TypedContractMethod<[_verifier: AddressLike], [void], "nonpayable">;
+  ): TypedContractMethod<[_v: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setPlatformFeeRecipient"
-  ): TypedContractMethod<[_recipient: AddressLike], [void], "nonpayable">;
+  ): TypedContractMethod<[_r: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setProjectNFTImplementation"
+  ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setRequireApproval"
-  ): TypedContractMethod<[_require: boolean], [void], "nonpayable">;
+  ): TypedContractMethod<[_r: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setSecurityTokenImplementation"
+  ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setTradeEscrowImplementation"
+  ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "transferOwnership"
   ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
@@ -1623,17 +1491,6 @@ export interface RWATokenizationFactory extends BaseContract {
     [void],
     "payable"
   >;
-  getFunction(
-    nameOrSignature: "verifyHolderKYC"
-  ): TypedContractMethod<
-    [
-      _holder: AddressLike,
-      _deploymentId: BigNumberish,
-      _proof: RWATokenizationFactory.KYCProofStruct
-    ],
-    [boolean],
-    "view"
-  >;
 
   getEvent(
     key: "AdminChanged"
@@ -1650,13 +1507,6 @@ export interface RWATokenizationFactory extends BaseContract {
     BeaconUpgradedEvent.OutputObject
   >;
   getEvent(
-    key: "DefaultRestrictedCountryUpdated"
-  ): TypedContractEvent<
-    DefaultRestrictedCountryUpdatedEvent.InputTuple,
-    DefaultRestrictedCountryUpdatedEvent.OutputTuple,
-    DefaultRestrictedCountryUpdatedEvent.OutputObject
-  >;
-  getEvent(
     key: "DeployerApprovalUpdated"
   ): TypedContractEvent<
     DeployerApprovalUpdatedEvent.InputTuple,
@@ -1664,25 +1514,11 @@ export interface RWATokenizationFactory extends BaseContract {
     DeployerApprovalUpdatedEvent.OutputObject
   >;
   getEvent(
-    key: "DeploymentCountryRestrictionUpdated"
-  ): TypedContractEvent<
-    DeploymentCountryRestrictionUpdatedEvent.InputTuple,
-    DeploymentCountryRestrictionUpdatedEvent.OutputTuple,
-    DeploymentCountryRestrictionUpdatedEvent.OutputObject
-  >;
-  getEvent(
     key: "DeploymentDeactivated"
   ): TypedContractEvent<
     DeploymentDeactivatedEvent.InputTuple,
     DeploymentDeactivatedEvent.OutputTuple,
     DeploymentDeactivatedEvent.OutputObject
-  >;
-  getEvent(
-    key: "DeploymentKYCLevelUpdated"
-  ): TypedContractEvent<
-    DeploymentKYCLevelUpdatedEvent.InputTuple,
-    DeploymentKYCLevelUpdatedEvent.OutputTuple,
-    DeploymentKYCLevelUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "DividendModuleDeployed"
@@ -1711,13 +1547,6 @@ export interface RWATokenizationFactory extends BaseContract {
     InitializedEvent.InputTuple,
     InitializedEvent.OutputTuple,
     InitializedEvent.OutputObject
-  >;
-  getEvent(
-    key: "KYCRequirementUpdated"
-  ): TypedContractEvent<
-    KYCRequirementUpdatedEvent.InputTuple,
-    KYCRequirementUpdatedEvent.OutputTuple,
-    KYCRequirementUpdatedEvent.OutputObject
   >;
   getEvent(
     key: "KYCVerifierUpdated"
@@ -1792,17 +1621,6 @@ export interface RWATokenizationFactory extends BaseContract {
       BeaconUpgradedEvent.OutputObject
     >;
 
-    "DefaultRestrictedCountryUpdated(uint16,bool)": TypedContractEvent<
-      DefaultRestrictedCountryUpdatedEvent.InputTuple,
-      DefaultRestrictedCountryUpdatedEvent.OutputTuple,
-      DefaultRestrictedCountryUpdatedEvent.OutputObject
-    >;
-    DefaultRestrictedCountryUpdated: TypedContractEvent<
-      DefaultRestrictedCountryUpdatedEvent.InputTuple,
-      DefaultRestrictedCountryUpdatedEvent.OutputTuple,
-      DefaultRestrictedCountryUpdatedEvent.OutputObject
-    >;
-
     "DeployerApprovalUpdated(address,bool)": TypedContractEvent<
       DeployerApprovalUpdatedEvent.InputTuple,
       DeployerApprovalUpdatedEvent.OutputTuple,
@@ -1814,17 +1632,6 @@ export interface RWATokenizationFactory extends BaseContract {
       DeployerApprovalUpdatedEvent.OutputObject
     >;
 
-    "DeploymentCountryRestrictionUpdated(uint256,uint16,bool)": TypedContractEvent<
-      DeploymentCountryRestrictionUpdatedEvent.InputTuple,
-      DeploymentCountryRestrictionUpdatedEvent.OutputTuple,
-      DeploymentCountryRestrictionUpdatedEvent.OutputObject
-    >;
-    DeploymentCountryRestrictionUpdated: TypedContractEvent<
-      DeploymentCountryRestrictionUpdatedEvent.InputTuple,
-      DeploymentCountryRestrictionUpdatedEvent.OutputTuple,
-      DeploymentCountryRestrictionUpdatedEvent.OutputObject
-    >;
-
     "DeploymentDeactivated(uint256)": TypedContractEvent<
       DeploymentDeactivatedEvent.InputTuple,
       DeploymentDeactivatedEvent.OutputTuple,
@@ -1834,17 +1641,6 @@ export interface RWATokenizationFactory extends BaseContract {
       DeploymentDeactivatedEvent.InputTuple,
       DeploymentDeactivatedEvent.OutputTuple,
       DeploymentDeactivatedEvent.OutputObject
-    >;
-
-    "DeploymentKYCLevelUpdated(uint256,uint8,uint8)": TypedContractEvent<
-      DeploymentKYCLevelUpdatedEvent.InputTuple,
-      DeploymentKYCLevelUpdatedEvent.OutputTuple,
-      DeploymentKYCLevelUpdatedEvent.OutputObject
-    >;
-    DeploymentKYCLevelUpdated: TypedContractEvent<
-      DeploymentKYCLevelUpdatedEvent.InputTuple,
-      DeploymentKYCLevelUpdatedEvent.OutputTuple,
-      DeploymentKYCLevelUpdatedEvent.OutputObject
     >;
 
     "DividendModuleDeployed(uint256,address,address)": TypedContractEvent<
@@ -1869,7 +1665,7 @@ export interface RWATokenizationFactory extends BaseContract {
       EscrowDeployedEvent.OutputObject
     >;
 
-    "ImplementationUpdated(uint8,address,address)": TypedContractEvent<
+    "ImplementationUpdated(string,address,address)": TypedContractEvent<
       ImplementationUpdatedEvent.InputTuple,
       ImplementationUpdatedEvent.OutputTuple,
       ImplementationUpdatedEvent.OutputObject
@@ -1889,17 +1685,6 @@ export interface RWATokenizationFactory extends BaseContract {
       InitializedEvent.InputTuple,
       InitializedEvent.OutputTuple,
       InitializedEvent.OutputObject
-    >;
-
-    "KYCRequirementUpdated(bool,uint8)": TypedContractEvent<
-      KYCRequirementUpdatedEvent.InputTuple,
-      KYCRequirementUpdatedEvent.OutputTuple,
-      KYCRequirementUpdatedEvent.OutputObject
-    >;
-    KYCRequirementUpdated: TypedContractEvent<
-      KYCRequirementUpdatedEvent.InputTuple,
-      KYCRequirementUpdatedEvent.OutputTuple,
-      KYCRequirementUpdatedEvent.OutputObject
     >;
 
     "KYCVerifierUpdated(address,address)": TypedContractEvent<

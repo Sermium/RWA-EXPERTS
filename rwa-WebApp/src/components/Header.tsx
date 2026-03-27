@@ -31,10 +31,22 @@ function canRefer(tier: KYCTier): boolean {
 
 // KYC Badge Component
 function KYCBadge() {
-  const { kycData, tierInfo, formatLimit } = useKYC();
+  const { 
+    tier, 
+    status, 
+    tierInfo, 
+    isLoading, 
+    isVerified,
+    investmentLimit,
+    remainingLimit,
+    usedLimit,
+    formatLimit,
+    kycData 
+  } = useKYC();
+  
   const [showDropdown, setShowDropdown] = useState(false);
 
-  if (kycData.isLoading) {
+  if (isLoading) {
     return (
       <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg animate-pulse">
         <div className="w-4 h-4 bg-gray-600 rounded-full" />
@@ -43,14 +55,14 @@ function KYCBadge() {
     );
   }
 
-  const isPending = ['Pending', 'AutoVerifying', 'ManualReview'].includes(kycData.status);
-  const isRejected = kycData.status === 'Rejected';
-  const isExpired = kycData.status === 'Expired';
-  const isApproved = kycData.status === 'Approved';
-  const isDiamond = kycData.tier === 'Diamond';
+  const isPending = ['Pending', 'AutoVerifying', 'ManualReview'].includes(status);
+  const isRejected = status === 'Rejected';
+  const isExpired = status === 'Expired' || kycData?.isExpired;
+  const isApproved = status === 'Approved';
+  const isDiamond = tier === 'Diamond';
 
   const displayLimit = (value: number) => {
-    if (isDiamond) return '∞';
+    if (isDiamond || !isFinite(value)) return '∞';
     return formatLimit(value);
   };
 
@@ -58,7 +70,7 @@ function KYCBadge() {
     if (isPending) return 'bg-yellow-900/30 border-yellow-600 text-yellow-400';
     if (isRejected) return 'bg-red-900/30 border-red-600 text-red-400';
     if (isExpired) return 'bg-orange-900/30 border-orange-600 text-orange-400';
-    if (isApproved && kycData.tier !== 'None') {
+    if (isApproved && tier !== 'None') {
       return `${tierInfo.bgColor} ${tierInfo.borderColor} ${tierInfo.color}`;
     }
     return 'bg-gray-800 border-gray-600 text-gray-400';
@@ -68,7 +80,7 @@ function KYCBadge() {
     if (isPending) return '⏳';
     if (isRejected) return '❌';
     if (isExpired) return '⚠️';
-    if (isApproved && kycData.tier !== 'None') return tierInfo.icon;
+    if (isApproved && tier !== 'None') return tierInfo.icon;
     return '🔒';
   };
 
@@ -76,7 +88,7 @@ function KYCBadge() {
     if (isPending) return 'Pending';
     if (isRejected) return 'Rejected';
     if (isExpired) return 'Expired';
-    if (isApproved && kycData.tier !== 'None') return tierInfo.label;
+    if (isApproved && tier !== 'None') return tierInfo.label;
     return 'Verify';
   };
 
@@ -89,9 +101,9 @@ function KYCBadge() {
       >
         <span className="text-sm">{getStatusIcon()}</span>
         <span className="text-sm font-medium hidden sm:inline">{getStatusLabel()}</span>
-        {isApproved && kycData.tier !== 'None' && (
+        {isApproved && tier !== 'None' && (
           <span className="text-xs opacity-70 hidden md:inline">
-            {displayLimit(kycData.remainingLimit)}
+            {displayLimit(remainingLimit)}
           </span>
         )}
         <svg
@@ -121,20 +133,20 @@ function KYCBadge() {
           </div>
 
           {/* Role badges */}
-          {isApproved && kycData.tier !== 'None' && (
+          {isApproved && tier !== 'None' && (
             <div className="px-4 py-2 border-b border-gray-700">
               <div className="flex flex-wrap gap-2">
-                {canInvest(kycData.tier) && (
+                {canInvest(tier) && (
                   <span className="px-2 py-0.5 text-xs bg-green-900/30 text-green-400 rounded-full">
                     Investor
                   </span>
                 )}
-                {canOwn(kycData.tier) && (
+                {canOwn(tier) && (
                   <span className="px-2 py-0.5 text-xs bg-purple-900/30 text-purple-400 rounded-full">
                     Owner
                   </span>
                 )}
-                {canRefer(kycData.tier) && (
+                {canRefer(tier) && (
                   <span className="px-2 py-0.5 text-xs bg-blue-900/30 text-blue-400 rounded-full">
                     Referrer
                   </span>
@@ -143,7 +155,7 @@ function KYCBadge() {
             </div>
           )}
 
-          {isApproved && kycData.tier !== 'None' && (
+          {isApproved && tier !== 'None' && (
             <div className="px-4 py-3 border-b border-gray-700">
               <div className="text-xs text-gray-500 mb-2">Investment Limits</div>
               <div className="space-y-2">
@@ -153,13 +165,13 @@ function KYCBadge() {
                     {isDiamond ? (
                       <span className="text-cyan-400">∞ Unlimited</span>
                     ) : (
-                      formatLimit(kycData.investmentLimit)
+                      formatLimit(investmentLimit)
                     )}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Used</span>
-                  <span className="text-gray-300">{formatLimit(kycData.usedLimit)}</span>
+                  <span className="text-gray-300">{formatLimit(usedLimit)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Remaining</span>
@@ -167,17 +179,17 @@ function KYCBadge() {
                     {isDiamond ? (
                       <span className="text-cyan-400">∞ Unlimited</span>
                     ) : (
-                      formatLimit(kycData.remainingLimit)
+                      formatLimit(remainingLimit)
                     )}
                   </span>
                 </div>
-                {!isDiamond && (
+                {!isDiamond && investmentLimit > 0 && (
                   <div className="mt-2">
                     <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                       <div
                         className={`h-full ${tierInfo.color.replace('text-', 'bg-')} transition-all`}
                         style={{ 
-                          width: `${Math.min(100, (kycData.usedLimit / kycData.investmentLimit) * 100)}%` 
+                          width: `${Math.min(100, (usedLimit / investmentLimit) * 100)}%` 
                         }}
                       />
                     </div>
@@ -187,17 +199,17 @@ function KYCBadge() {
             </div>
           )}
 
-          {isApproved && kycData.tier !== 'Diamond' && (
+          {isApproved && tier !== 'Diamond' && tier !== 'None' && (
             <div className="px-4 py-3 border-b border-gray-700">
               <div className="text-xs text-gray-500 mb-2">Upgrade Available</div>
               <div className="flex items-center gap-2 text-sm">
                 <span className={tierInfo.color}>{tierInfo.icon}</span>
                 <span className="text-gray-400">→</span>
-                <span className={getTierInfo(getNextTier(kycData.tier)).color}>
-                  {getTierInfo(getNextTier(kycData.tier)).icon}
+                <span className={getTierInfo(getNextTier(tier)).color}>
+                  {getTierInfo(getNextTier(tier)).icon}
                 </span>
                 <span className="text-gray-300">
-                  {getTierInfo(getNextTier(kycData.tier)).label}
+                  {getTierInfo(getNextTier(tier)).label}
                 </span>
               </div>
             </div>
@@ -337,16 +349,18 @@ export default function Header() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [chainModalOpen, setChainModalOpen] = useState(false);
-  const { kycData } = useKYC();
+  
+  // Use the KYC context correctly
+  const { tier, status, isVerified, isLoading } = useKYC();
   
   // Use the admin hook instead of hardcoded addresses
   const { isAdmin, isSuperAdmin } = useAdmin();
 
   // Check if user has KYC and can access dashboard
-  const hasKYC = kycData.status === 'Approved' && kycData.tier !== 'None';
-  const isInvestor = canInvest(kycData.tier);
-  const isOwner = canOwn(kycData.tier);
-  const isReferrer = canRefer(kycData.tier);
+  const hasKYC = status === 'Approved' && tier !== 'None';
+  const isInvestor = canInvest(tier);
+  const isOwner = canOwn(tier);
+  const isReferrer = canRefer(tier);
   const showDashboard = isConnected && hasKYC && isInvestor;
 
   // Determine current section for active states
@@ -372,8 +386,8 @@ export default function Header() {
 
   const platformItems = [
     { href: '/exchange', label: 'Exchange', description: 'Trade tokenized assets' },
-    { href: '/projects', label: 'Projects', description: 'Browse all projects' },
-    { href: '/create', label: 'Create Project', description: 'Launch your project' },
+    { href: '/projects', label: 'CrowdFunding', description: 'Browse all raising projects' },
+    { href: '/create', label: 'Create Raise', description: 'Launch your raise' },
     { href: '/kyc', label: 'Identity (KYC)', description: 'Verify your identity' },
   ];
 

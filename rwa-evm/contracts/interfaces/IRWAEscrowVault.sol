@@ -1,45 +1,76 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.20;
 
 interface IRWAEscrowVault {
     
-    enum MilestoneStatus { Pending, Submitted, Approved, Rejected, Released, Disputed}
+    enum ProjectState { INACTIVE, ACTIVE, FUNDED, COMPLETED, CANCELLED, DISPUTED }
+    enum MilestoneState { PENDING, APPROVED, RELEASED, DISPUTED, CANCELLED }
     
     struct Milestone {
         string description;
-        uint256 percentage;
-        MilestoneStatus status;
-        string proofURI;
-        uint256 submittedAt;
-        uint256 approvedAt;
-        uint256 releasedAmount;
-    }
-    
-    struct ProjectFunding {
-        uint256 projectId;
-        uint256 fundingGoal;
-        uint256 totalRaised;
-        uint256 totalReleased;
+        uint256 amount;
         uint256 deadline;
-        address paymentToken;
-        bool fundingComplete;
-        bool refundsEnabled;
-        uint256 currentMilestone;
+        MilestoneState state;
+        uint256 releasedAt;
+        uint256 approvedAt;
     }
 
-    function invest(uint256 _projectId, uint256 _amount, address _paymentToken) external payable;
-    function addMilestone(uint256 _projectId, string calldata _description, uint256 _percentage) external; 
-    function submitMilestone(uint256 _projectId, uint256 _milestoneIndex, string calldata _proofURI) external;  
-    function approveMilestone(uint256 _projectId, uint256 _milestoneIndex) external;   
-    function rejectMilestone(uint256 _projectId, uint256 _milestoneIndex, string calldata _reason) external;  
-    function releaseMilestoneFunds(uint256 _projectId, uint256 _milestoneIndex) external;  
-    function raiseDispute(uint256 _projectId, uint256 _milestoneIndex, string calldata _reason) external;  
-    function resolveDispute(uint256 _projectId, uint256 _milestoneIndex, bool _approved) external;   
-    function enableRefunds(uint256 _projectId) external;
+    struct Project {
+        uint256 projectId;
+        address projectOwner;
+        address securityToken;
+        address paymentToken;
+        address priceFeed;
+        uint256 fundingGoal;
+        uint256 totalRaised;
+        uint256 deadline;
+        ProjectState state;
+        uint256 createdAt;
+        uint256 platformFeeBps;
+        uint256 maxPriceAge;
+    }
+
+    // Project creation and management
+    function createProject(
+        uint256 _projectId,
+        address _securityToken,
+        address _paymentToken,
+        address _priceFeed,
+        uint256 _fundingGoal,
+        uint256 _deadline,
+        uint256 _platformFeeBps,
+        uint256 _maxPriceAge
+    ) external;
+    
+    function activateProject(uint256 _projectId) external;
+    
+    // Configuration
+    function setKYCVerifier(address _kycVerifier) external;
+    function setPaymentTokens(address _usdc, address _usdt) external;
+    
+    // Milestones
+    function addMilestone(uint256 _projectId, string calldata _description, uint256 _amount, uint256 _deadline) external;
+    function approveMilestone(uint256 _projectId, uint256 _milestoneIndex) external;
+    function releaseMilestoneFunds(uint256 _projectId, uint256 _milestoneIndex) external;
+    function raiseDispute(uint256 _projectId, uint256 _milestoneIndex, string calldata _reason) external;
+    function resolveDispute(uint256 _projectId, uint256 _milestoneIndex, bool _approved) external;
+    
+    // Refunds
+    function cancelProject(uint256 _projectId) external;
     function claimRefund(uint256 _projectId) external;
-    function getProjectFunding(uint256 _projectId) external view returns (ProjectFunding memory);
+    
+    // View functions
+    function getProject(uint256 _projectId) external view returns (Project memory);
     function getMilestones(uint256 _projectId) external view returns (Milestone[] memory);
-    function getInvestorAmount(uint256 _projectId, address _investor) external view returns (uint256);
-    function getReleasableAmount(uint256 _projectId, uint256 _milestoneIndex) external view returns (uint256);
-    function createProject(uint256 projectId, address securityToken, uint256 softCap, uint256 hardCap, uint256 minInvestment, uint256 maxInvestment, uint256 tokenPrice, uint256 startTime, uint256 endTime) external;
+    function getInvestorContribution(uint256 _projectId, address _investor) external view returns (uint256);
+    function getInvestorBalance(uint256 _projectId, address _investor) external view returns (uint256);
+    function getClaimableTokens(uint256 _projectId, address _investor) external view returns (uint256);
+    
+    // Access control (from AccessControlUpgradeable)
+    function grantRole(bytes32 role, address account) external;
+    function revokeRole(bytes32 role, address account) external;
+    
+    // Upgrade
+    function upgradeTo(address newImplementation) external;
+    function updateProjectPriceFeed(uint256 _projectId, address _priceFeed) external;
 }

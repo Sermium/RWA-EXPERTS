@@ -1,0 +1,48 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "KYCLib",
+  "sourceName": "contracts/tokenize/KYCLib.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint16",
+          "name": "countryCode",
+          "type": "uint16"
+        }
+      ],
+      "name": "CountryRestricted",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "InvalidKYCProof",
+      "type": "error"
+    },
+    {
+      "inputs": [],
+      "name": "KYCExpired",
+      "type": "error"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "required",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint8",
+          "name": "provided",
+          "type": "uint8"
+        }
+      ],
+      "name": "KYCLevelTooLow",
+      "type": "error"
+    }
+  ],
+  "bytecode": "0x60808060405234601757603a9081601d823930815050f35b600080fdfe600080fdfea2646970667358221220fa4e01c6044b5c97777b1fffb43138b2094f611d2c6fc7509932d2ce2ec19bcb64736f6c63430008140033",
+  "deployedBytecode": "0x600080fdfea2646970667358221220fa4e01c6044b5c97777b1fffb43138b2094f611d2c6fc7509932d2ce2ec19bcb64736f6c63430008140033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

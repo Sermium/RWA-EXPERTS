@@ -68,7 +68,7 @@ export const CHAINS: Record<SupportedChainId, ChainInfo> = {
     explorerUrl: "https://testnet.snowtrace.io",
     faucetUrl: "https://faucet.avax.network/",
     nativeCurrency: "AVAX",
-    rpcUrl: "https://api.avax-test.network/ext/bc/C/rpc",
+    rpcUrl: 'https://avalanche-fuji-c-chain-rpc.publicnode.com',
     mainnetEquivalent: 43114,
     chain: avalancheFuji,
     contracts: {
@@ -315,11 +315,50 @@ export function getChainPair(chainId: SupportedChainId): { mainnet: ChainInfo | 
   }
 }
 
-export function getSupportedChainIds(): SupportedChainId[] {
-  return Object.keys(CHAINS).map(Number) as SupportedChainId[];
-}
-
 export function getDefaultChain(): ChainInfo {
   const defaultChainId = Number(process.env.NEXT_PUBLIC_DEFAULT_CHAIN_ID || 137) as SupportedChainId;
   return CHAINS[defaultChainId] || CHAINS[137];
 }
+
+// ============================================================================
+// DEPLOYMENT & TRADING CHAIN HELPERS
+// ============================================================================
+
+// Get all supported chain IDs (derived from CHAINS config)
+export const getSupportedChainIds = (): SupportedChainId[] => {
+  return Object.keys(CHAINS).map(Number) as SupportedChainId[];
+};
+
+// Get all testnet chains
+export const getTestnetChainIds = (): SupportedChainId[] => {
+  return Object.values(CHAINS)
+    .filter(chain => chain.testnet)
+    .map(chain => chain.id);
+};
+
+// Get all mainnet chains
+export const getMainnetChainIds = (): SupportedChainId[] => {
+  return Object.values(CHAINS)
+    .filter(chain => !chain.testnet)
+    .map(chain => chain.id);
+};
+
+// Check if deployment is supported on a chain (any chain in our config)
+export const isDeploymentSupported = (chainId: number): boolean => {
+  return isValidChainId(chainId);
+};
+
+// Check if trading is supported on a chain (any chain in our config)
+export const isTradingSupported = (chainId: number): boolean => {
+  return isValidChainId(chainId);
+};
+
+// Get chains that have contracts deployed (check if KYCVerifier exists)
+export const getChainsWithContracts = (): ChainInfo[] => {
+  return Object.values(CHAINS).filter(chain => chain.contracts?.KYCVerifier);
+};
+
+// Get chain IDs that have contracts deployed
+export const getDeployedChainIds = (): SupportedChainId[] => {
+  return getChainsWithContracts().map(chain => chain.id);
+};

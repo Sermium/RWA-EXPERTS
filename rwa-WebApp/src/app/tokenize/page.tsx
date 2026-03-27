@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useAccount, useChainId } from 'wagmi';  // ADD useChainId
 import { Loader2, ChevronLeft, ChevronRight, Send } from 'lucide-react';
 
 // Hooks
@@ -26,6 +26,7 @@ interface PaymentInfo {
 
 export default function TokenizePage() {
   const { address, isConnected } = useAccount();
+  const chainId = useChainId();  // ADD THIS
   
   // Payment state
   const [paymentInfo, setPaymentInfo] = useState<PaymentInfo | null>(null);
@@ -97,6 +98,10 @@ export default function TokenizePage() {
       setSubmitError('Please complete payment first');
       return;
     }
+    if (!chainId) {
+      setSubmitError('Unable to detect network. Please refresh and try again.');
+      return;
+    }
 
     setIsSubmitting(true);
     setSubmitError(null);
@@ -104,6 +109,7 @@ export default function TokenizePage() {
     const payload = {
       ...formData,
       walletAddress: address,
+      chainId: chainId,  // ADD THIS - Send the current chain ID
       // Payment info
       feeTxHash: paymentInfo.txHash,
       feeAmount: paymentInfo.totalAmount.toString(),
@@ -132,6 +138,7 @@ export default function TokenizePage() {
         headers: {
           'Content-Type': 'application/json',
           'x-wallet-address': address,
+          'x-chain-id': chainId.toString(),  // ADD THIS - Also send in header as backup
         },
         body: JSON.stringify(payload),
       });

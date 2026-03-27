@@ -3,4 +3,5 @@
 /* eslint-disable */
 import type * as rwaTokenizationFactorySol from "./RWATokenizationFactory.sol";
 export type { rwaTokenizationFactorySol };
+export type { KYCLib } from "./KYCLib";
 export type { RWATradeEscrow } from "./RWATradeEscrow";

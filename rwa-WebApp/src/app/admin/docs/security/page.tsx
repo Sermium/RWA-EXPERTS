@@ -15,14 +15,9 @@ import {
   FileWarning
 } from 'lucide-react';
 
-export const metadata = {
-  title: `Security Procedures | ${COMPANY.name} Admin`,
-  description: 'Security protocols and procedures for administrators',
-};
-
 export default function SecurityProceduresPage() {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-8xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-red-500/20 rounded-lg">

@@ -1,3 +1,4 @@
+// src/app/api/tokenization/[id]/deploy/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
@@ -8,10 +9,10 @@ const supabase = createClient(
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }  // Changed to Promise
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: applicationId } = await params;  // Await params
+    const { id: applicationId } = await params;
     
     const walletAddress = request.headers.get('x-wallet-address');
     if (!walletAddress) {
@@ -31,6 +32,11 @@ export async function POST(
       tokenName,
       tokenSymbol
     } = body;
+
+    // Validate chainId
+    if (!chainId) {
+      return NextResponse.json({ error: 'Chain ID is required' }, { status: 400 });
+    }
 
     // Verify ownership
     const { data: application, error: fetchError } = await supabase
@@ -59,7 +65,7 @@ export async function POST(
     const finalTotalSupply = totalSupply || application.desired_token_supply || application.token_supply;
     const finalPricePerToken = pricePerToken || application.token_price_estimate || 1;
 
-    // Update application with deployment info
+    // Update application with deployment info - INCLUDING chain_id
     const { data: updated, error: updateError } = await supabase
       .from('tokenization_applications')
       .update({
@@ -72,6 +78,7 @@ export async function POST(
         token_name: finalTokenName,
         token_symbol: finalTokenSymbol,
         token_supply: finalTotalSupply,
+        chain_id: chainId,  // <-- IMPORTANT: Save the chain ID
         deployed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })
@@ -129,7 +136,6 @@ export async function POST(
           is_tradeable: true,
           initial_price: finalPricePerToken,
           current_price: finalPricePerToken,
-          // Include asset type and branding from application
           asset_type: application.asset_type || 'other',
           logo_url: application.logo_url || null,
           banner_url: application.banner_url || null,
@@ -137,15 +143,17 @@ export async function POST(
 
       if (listingError) {
         console.error('Token listing error:', listingError);
-        // Don't fail the whole request, just log it
       } else {
-        console.log('Token listed on exchange:', finalTokenSymbol, 'Category:', application.asset_type);
+        console.log('Token listed on exchange:', finalTokenSymbol, 'Chain:', chainId);
       }
 
       // Auto-create trading pair for the new token (TOKEN/USDC)
-      const USDC_ADDRESS = chainId === 80002 
-        ? '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582' // Amoy USDC
-        : '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359'; // Polygon USDC
+      const USDC_ADDRESSES: Record<number, string> = {
+        80002: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582', // Amoy USDC
+        137: '0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359',   // Polygon USDC
+      };
+      
+      const USDC_ADDRESS = USDC_ADDRESSES[chainId] || USDC_ADDRESSES[80002];
 
       const { error: pairError } = await supabase
         .from('trading_pairs')
@@ -161,15 +169,15 @@ export async function POST(
           price_precision: 4,
           quantity_precision: 2,
           is_active: true,
+          chain_id: chainId,  // <-- Also save chain_id on trading pair
         });
 
       if (pairError) {
-        // Check if it's a duplicate error (pair already exists)
         if (!pairError.message?.includes('duplicate')) {
           console.error('Trading pair creation error:', pairError);
         }
       } else {
-        console.log('Trading pair created:', `${finalTokenSymbol}/USDC`);
+        console.log('Trading pair created:', `${finalTokenSymbol}/USDC`, 'Chain:', chainId);
       }
     }
 
@@ -187,6 +195,7 @@ export async function POST(
       project: project || null,
       tokenListed: !!tokenAddress,
       tradingPairCreated: !!tokenAddress,
+      chainId: chainId,
     });
 
   } catch (error) {

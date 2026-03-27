@@ -16,6 +16,19 @@ const _abi = [
         name: "_projectId",
         type: "uint256",
       },
+    ],
+    name: "activateProject",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_projectId",
+        type: "uint256",
+      },
       {
         internalType: "string",
         name: "_description",
@@ -23,7 +36,12 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "_percentage",
+        name: "_amount",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_deadline",
         type: "uint256",
       },
     ],
@@ -58,60 +76,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "claimRefund",
-    outputs: [],
-    stateMutability: "nonpayable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "projectId",
-        type: "uint256",
-      },
-      {
-        internalType: "address",
-        name: "securityToken",
-        type: "address",
-      },
-      {
-        internalType: "uint256",
-        name: "softCap",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "hardCap",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "minInvestment",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "maxInvestment",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "tokenPrice",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "startTime",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "endTime",
-        type: "uint256",
-      },
-    ],
-    name: "createProject",
+    name: "cancelProject",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -124,7 +89,55 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "enableRefunds",
+    name: "claimRefund",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_projectId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_securityToken",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_paymentToken",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_priceFeed",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "_fundingGoal",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_deadline",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_platformFeeBps",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "_maxPriceAge",
+        type: "uint256",
+      },
+    ],
+    name: "createProject",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -142,7 +155,55 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "getInvestorAmount",
+    name: "getClaimableTokens",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_projectId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_investor",
+        type: "address",
+      },
+    ],
+    name: "getInvestorBalance",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_projectId",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "_investor",
+        type: "address",
+      },
+    ],
+    name: "getInvestorContribution",
     outputs: [
       {
         internalType: "uint256",
@@ -172,32 +233,27 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "percentage",
+            name: "amount",
             type: "uint256",
           },
           {
-            internalType: "enum IRWAEscrowVault.MilestoneStatus",
-            name: "status",
+            internalType: "uint256",
+            name: "deadline",
+            type: "uint256",
+          },
+          {
+            internalType: "enum IRWAEscrowVault.MilestoneState",
+            name: "state",
             type: "uint8",
           },
           {
-            internalType: "string",
-            name: "proofURI",
-            type: "string",
-          },
-          {
             internalType: "uint256",
-            name: "submittedAt",
+            name: "releasedAt",
             type: "uint256",
           },
           {
             internalType: "uint256",
             name: "approvedAt",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
-            name: "releasedAmount",
             type: "uint256",
           },
         ],
@@ -217,7 +273,7 @@ const _abi = [
         type: "uint256",
       },
     ],
-    name: "getProjectFunding",
+    name: "getProject",
     outputs: [
       {
         components: [
@@ -225,6 +281,26 @@ const _abi = [
             internalType: "uint256",
             name: "projectId",
             type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "projectOwner",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "securityToken",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "paymentToken",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "priceFeed",
+            type: "address",
           },
           {
             internalType: "uint256",
@@ -238,36 +314,31 @@ const _abi = [
           },
           {
             internalType: "uint256",
-            name: "totalReleased",
-            type: "uint256",
-          },
-          {
-            internalType: "uint256",
             name: "deadline",
             type: "uint256",
           },
           {
-            internalType: "address",
-            name: "paymentToken",
-            type: "address",
-          },
-          {
-            internalType: "bool",
-            name: "fundingComplete",
-            type: "bool",
-          },
-          {
-            internalType: "bool",
-            name: "refundsEnabled",
-            type: "bool",
+            internalType: "enum IRWAEscrowVault.ProjectState",
+            name: "state",
+            type: "uint8",
           },
           {
             internalType: "uint256",
-            name: "currentMilestone",
+            name: "createdAt",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "platformFeeBps",
+            type: "uint256",
+          },
+          {
+            internalType: "uint256",
+            name: "maxPriceAge",
             type: "uint256",
           },
         ],
-        internalType: "struct IRWAEscrowVault.ProjectFunding",
+        internalType: "struct IRWAEscrowVault.Project",
         name: "",
         type: "tuple",
       },
@@ -278,69 +349,17 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "_projectId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_milestoneIndex",
-        type: "uint256",
-      },
-    ],
-    name: "getReleasableAmount",
-    outputs: [
-      {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_projectId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_amount",
-        type: "uint256",
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
       },
       {
         internalType: "address",
-        name: "_paymentToken",
+        name: "account",
         type: "address",
       },
     ],
-    name: "invest",
-    outputs: [],
-    stateMutability: "payable",
-    type: "function",
-  },
-  {
-    inputs: [
-      {
-        internalType: "uint256",
-        name: "_projectId",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_milestoneIndex",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "_reason",
-        type: "string",
-      },
-    ],
-    name: "raiseDispute",
+    name: "grantRole",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -363,7 +382,7 @@ const _abi = [
         type: "string",
       },
     ],
-    name: "rejectMilestone",
+    name: "raiseDispute",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -412,22 +431,79 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "bytes32",
+        name: "role",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+    ],
+    name: "revokeRole",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_kycVerifier",
+        type: "address",
+      },
+    ],
+    name: "setKYCVerifier",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_usdc",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "_usdt",
+        type: "address",
+      },
+    ],
+    name: "setPaymentTokens",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "uint256",
         name: "_projectId",
         type: "uint256",
       },
       {
-        internalType: "uint256",
-        name: "_milestoneIndex",
-        type: "uint256",
-      },
-      {
-        internalType: "string",
-        name: "_proofURI",
-        type: "string",
+        internalType: "address",
+        name: "_priceFeed",
+        type: "address",
       },
     ],
-    name: "submitMilestone",
+    name: "updateProjectPriceFeed",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newImplementation",
+        type: "address",
+      },
+    ],
+    name: "upgradeTo",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

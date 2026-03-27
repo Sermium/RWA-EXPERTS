@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Using Pinata for IPFS - you can also use NFT.Storage, Web3.Storage, or Infura
 const PINATA_API_KEY = process.env.PINATA_API_KEY;
 const PINATA_SECRET_KEY = process.env.PINATA_SECRET_KEY;
 const PINATA_JWT = process.env.PINATA_JWT;
@@ -12,14 +11,16 @@ export async function POST(request: NextRequest) {
     // Handle JSON metadata upload
     if (contentType.includes('application/json')) {
       const body = await request.json();
-      const { metadata, type } = body;
       
-      if (type === 'metadata' && metadata) {
-        const url = await uploadJsonToPinata(metadata);
-        return NextResponse.json({ url, success: true });
+      // Accept either { metadata, type: 'metadata' } OR just { metadata }
+      const metadata = body.metadata || body;
+      
+      if (!metadata || typeof metadata !== 'object') {
+        return NextResponse.json({ error: 'No metadata provided' }, { status: 400 });
       }
       
-      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+      const url = await uploadJsonToPinata(metadata);
+      return NextResponse.json({ url, uri: url, success: true }); // Return both url and uri for compatibility
     }
     
     // Handle file upload (FormData)
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
         if (!validImageTypes.includes(file.type)) {
           return NextResponse.json({ error: 'Invalid image type' }, { status: 400 });
         }
-        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+        if (file.size > 10 * 1024 * 1024) {
           return NextResponse.json({ error: 'Image too large (max 10MB)' }, { status: 400 });
         }
       } else if (type === 'document') {
@@ -46,13 +47,13 @@ export async function POST(request: NextRequest) {
         if (!validDocTypes.includes(file.type)) {
           return NextResponse.json({ error: 'Invalid document type' }, { status: 400 });
         }
-        if (file.size > 50 * 1024 * 1024) { // 50MB limit
+        if (file.size > 50 * 1024 * 1024) {
           return NextResponse.json({ error: 'Document too large (max 50MB)' }, { status: 400 });
         }
       }
       
       const url = await uploadFileToPinata(file);
-      return NextResponse.json({ url, success: true });
+      return NextResponse.json({ url, uri: url, success: true });
     }
     
     return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
@@ -105,7 +106,7 @@ async function uploadFileToPinata(file: File): Promise<string> {
   }
   
   const data = await response.json();
-  return `https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`;
+  return `ipfs://${data.IpfsHash}`;
 }
 
 async function uploadJsonToPinata(json: object): Promise<string> {
@@ -142,5 +143,5 @@ async function uploadJsonToPinata(json: object): Promise<string> {
   }
   
   const data = await response.json();
-  return `https://gateway.pinata.cloud/ipfs/${data.IpfsHash}`;
+  return `ipfs://${data.IpfsHash}`;
 }

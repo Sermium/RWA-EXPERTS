@@ -72,19 +72,53 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check for existing valid (unused, unexpired) code
+    const { data: existingCode } = await supabase
+      .from("wallet_link_codes")
+      .select("*")
+      .eq("source_wallet", walletAddress.toLowerCase())
+      .eq("used", false)
+      .gt("expires_at", new Date().toISOString())
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .single();
+
+    // If there's a valid existing code, return it
+    if (existingCode) {
+      const expiresAt = Math.floor(new Date(existingCode.expires_at).getTime() / 1000);
+      return NextResponse.json({
+        success: true,
+        code: existingCode.code,
+        expiresAt,
+        expiresIn: expiresAt - now,
+        message: `Existing link code still valid`,
+        reused: true,
+      });
+    }
+
+    // Clean up old expired/used codes for this wallet
+    await supabase
+      .from("wallet_link_codes")
+      .delete()
+      .eq("source_wallet", walletAddress.toLowerCase())
+      .or(`used.eq.true,expires_at.lt.${new Date().toISOString()}`);
+
     // Generate unique link code (8 characters, alphanumeric)
     const code = crypto.randomBytes(4).toString("hex").toUpperCase();
     const expiresAt = Math.floor(Date.now() / 1000) + LINK_CODE_EXPIRY_MINUTES * 60;
 
-    // Store link code
+    // Store link code with used: false
     const { error: insertError } = await supabase
       .from("wallet_link_codes")
       .insert({
         code,
         wallet_hash: walletHash,
-        source_wallet: walletAddress,
+        source_wallet: walletAddress.toLowerCase(),
         expires_at: new Date(expiresAt * 1000).toISOString(),
         created_at: new Date().toISOString(),
+        used: false,
+        used_by: null,
+        used_at: null,
       });
 
     if (insertError) {

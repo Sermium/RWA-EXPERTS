@@ -7,7 +7,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
-import "../interfaces/IKYCVerifier.sol";
+import "./KYCLib.sol";
 
 interface IModularCompliance {
     function bindToken(address _token) external;
@@ -23,10 +23,7 @@ interface IRWAERC3643 {
 
 /**
  * @title RWATokenizationFactory
- * @notice Factory for direct asset tokenization with off-chain KYC verification
- * @dev Deploys ERC3643 tokens + ERC721 project contracts (1 per project)
- * @dev Uses KYCVerifier for signature-based KYC instead of on-chain IdentityRegistry
- * @dev Fees are collected off-chain via the platform's payment system
+ * @notice Factory for RWA tokenization with off-chain KYC
  */
 contract RWATokenizationFactory is 
     Initializable, 
@@ -35,7 +32,7 @@ contract RWATokenizationFactory is
     PausableUpgradeable, 
     ReentrancyGuardUpgradeable 
 {
-    // ============ Structs ============
+    using KYCLib for *;
 
     struct Implementations {
         address securityToken;
@@ -59,21 +56,7 @@ contract RWATokenizationFactory is
         uint8 minKYCLevel;
     }
 
-    enum DeploymentType {
-        TOKEN_ONLY,
-        NFT_ONLY,
-        NFT_AND_TOKEN,
-        NFT_TOKEN_ESCROW
-    }
-
-    struct KYCProof {
-        uint8 level;
-        uint16 countryCode;
-        uint256 expiry;
-        bytes signature;
-    }
-
-    // ============ State Variables ============
+    enum DeploymentType { TOKEN_ONLY, NFT_ONLY, NFT_AND_TOKEN, NFT_TOKEN_ESCROW }
 
     Implementations public implementations;
     address public kycVerifier;
@@ -85,36 +68,20 @@ contract RWATokenizationFactory is
     mapping(address => uint256[]) public ownerDeployments;
     mapping(address => bool) public approvedDeployers;
     mapping(uint256 => mapping(uint16 => bool)) public deploymentRestrictedCountries;
-    
     uint16[] public defaultRestrictedCountries;
     
     bool public requireApproval;
     bool public requireKYCForDeployment;
     uint8 public minKYCLevelForDeployment;
 
-    // ============ Events ============
-
-    event TokenDeployed(
-        uint256 indexed deploymentId, 
-        address indexed owner, 
-        address securityToken, 
-        uint256 supply, 
-        DeploymentType deploymentType,
-        uint8 minKYCLevel
-    );
+    event TokenDeployed(uint256 indexed deploymentId, address indexed owner, address securityToken, uint256 supply, DeploymentType deploymentType, uint8 minKYCLevel);
     event ProjectNFTDeployed(uint256 indexed deploymentId, address indexed owner, address projectNFT, DeploymentType deploymentType);
     event EscrowDeployed(uint256 indexed deploymentId, address indexed owner, address tradeEscrow);
     event DividendModuleDeployed(uint256 indexed deploymentId, address indexed owner, address dividendDistributor);
-    event ImplementationUpdated(uint8 indexed implType, address indexed oldImpl, address indexed newImpl);
+    event ImplementationUpdated(string contractType, address indexed oldImpl, address indexed newImpl);
     event DeployerApprovalUpdated(address indexed deployer, bool approved);
     event DeploymentDeactivated(uint256 indexed deploymentId);
     event KYCVerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
-    event DeploymentKYCLevelUpdated(uint256 indexed deploymentId, uint8 oldLevel, uint8 newLevel);
-    event DeploymentCountryRestrictionUpdated(uint256 indexed deploymentId, uint16 countryCode, bool restricted);
-    event DefaultRestrictedCountryUpdated(uint16 countryCode, bool restricted);
-    event KYCRequirementUpdated(bool required, uint8 minLevel);
-
-    // ============ Errors ============
 
     error InvalidAddress();
     error DeployerNotApproved();
@@ -122,13 +89,7 @@ contract RWATokenizationFactory is
     error NotDeploymentOwner();
     error InvalidSupply();
     error AlreadyHasModule();
-    error InvalidKYCProof();
-    error KYCLevelTooLow(uint8 required, uint8 provided);
-    error KYCExpired();
-    error CountryRestricted(uint16 countryCode);
     error InvalidKYCLevel();
-
-    // ============ Modifiers ============
 
     modifier onlyApprovedDeployer() {
         if (requireApproval && !approvedDeployers[msg.sender] && msg.sender != owner()) {
@@ -136,8 +97,6 @@ contract RWATokenizationFactory is
         }
         _;
     }
-
-    // ============ Initialization ============
 
     function initialize(
         address _admin,
@@ -155,7 +114,6 @@ contract RWATokenizationFactory is
         __UUPSUpgradeable_init();
         __Pausable_init();
         __ReentrancyGuard_init();
-
         _transferOwnership(_admin);
 
         implementations = Implementations({
@@ -170,421 +128,143 @@ contract RWATokenizationFactory is
         platformFeeRecipient = _feeRecipient;
         escrowTransactionFeeBps = 100;
         requireApproval = true;
-        requireKYCForDeployment = false;
-        minKYCLevelForDeployment = 0;
 
-        defaultRestrictedCountries.push(408); // North Korea
-        defaultRestrictedCountries.push(364); // Iran
-        defaultRestrictedCountries.push(760); // Syria
-        defaultRestrictedCountries.push(192); // Cuba
+        defaultRestrictedCountries.push(408);
+        defaultRestrictedCountries.push(364);
+        defaultRestrictedCountries.push(760);
+        defaultRestrictedCountries.push(192);
     }
 
-    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
-    // ============ Internal KYC Verification ============
+    // ============ Deploy Functions (4-param, no KYC) ============
 
-    function _verifyKYCProof(
-        address _user,
-        KYCProof calldata _proof,
-        uint8 _minLevel,
-        uint256 _deploymentId
-    ) internal view {
-        if (kycVerifier == address(0)) return;
-
-        IKYCVerifier verifier = IKYCVerifier(kycVerifier);
-
-        bool valid = verifier.verify(
-            _user,
-            _proof.level,
-            _proof.countryCode,
-            _proof.expiry,
-            _proof.signature
-        );
-
-        if (!valid) revert InvalidKYCProof();
-        if (_proof.level < _minLevel) revert KYCLevelTooLow(_minLevel, _proof.level);
-        if (block.timestamp > _proof.expiry) revert KYCExpired();
-        if (_isCountryRestricted(_proof.countryCode, _deploymentId)) revert CountryRestricted(_proof.countryCode);
+    function deployToken(string calldata _name, string calldata _symbol, uint256 _supply, string calldata _metadataURI
+    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (uint256 deploymentId, address securityToken) {
+        if (requireKYCForDeployment) revert KYCLib.KYCLevelTooLow(minKYCLevelForDeployment, 0);
+        return _deployToken(_name, _symbol, _supply, _metadataURI, 1);
     }
 
-    function _isCountryRestricted(uint16 _countryCode, uint256 _deploymentId) internal view returns (bool) {
-        if (_deploymentId > 0 && deploymentRestrictedCountries[_deploymentId][_countryCode]) {
-            return true;
-        }
-
-        uint256 length = defaultRestrictedCountries.length;
-        for (uint256 i = 0; i < length; ++i) {
-            if (defaultRestrictedCountries[i] == _countryCode) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    // ============ Deployment Functions ============
-
-    /**
-     * @notice Deploy token with KYC verification
-     * @dev Owner can bypass KYC by passing empty proof (expiry = 0)
-     */
-    function deployToken(
-        string calldata _name,
-        string calldata _symbol,
-        uint256 _supply,
-        string calldata _metadataURI,
-        uint8 _minKYCLevel,
-        KYCProof calldata _kycProof
-    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (
-        uint256 deploymentId,
-        address securityToken
-    ) {
-        _validateKYCForDeployment(_kycProof);
-        if (_minKYCLevel > 4) revert InvalidKYCLevel();
-        
-        return _deployToken(_name, _symbol, _supply, _metadataURI, _minKYCLevel);
-    }
-
-    /**
-     * @notice Deploy project NFT with KYC verification
-     * @dev Owner can bypass KYC by passing empty proof (expiry = 0)
-     */
-    function deployProjectNFT(
-        string calldata _name,
-        string calldata _symbol,
-        string calldata _metadataURI,
-        KYCProof calldata _kycProof
-    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (
-        uint256 deploymentId,
-        address projectNFT
-    ) {
-        _validateKYCForDeployment(_kycProof);
-        
+    function deployProjectNFT(string calldata _name, string calldata _symbol, string calldata _metadataURI
+    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (uint256 deploymentId, address projectNFT) {
+        if (requireKYCForDeployment) revert KYCLib.KYCLevelTooLow(minKYCLevelForDeployment, 0);
         return _deployProjectNFTOnly(_name, _symbol, _metadataURI);
     }
 
-    /**
-     * @notice Deploy NFT and token with KYC verification
-     * @dev Owner can bypass KYC by passing empty proof (expiry = 0)
-     */
-    function deployNFTAndToken(
-        string calldata _name,
-        string calldata _symbol,
-        uint256 _supply,
-        string calldata _metadataURI,
-        uint8 _minKYCLevel,
-        KYCProof calldata _kycProof
-    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (
-        uint256 deploymentId,
-        address securityToken,
-        address projectNFT
-    ) {
-        _validateKYCForDeployment(_kycProof);
+    function deployNFTAndToken(string calldata _name, string calldata _symbol, uint256 _supply, string calldata _metadataURI
+    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (uint256 deploymentId, address securityToken, address projectNFT) {
+        if (requireKYCForDeployment) revert KYCLib.KYCLevelTooLow(minKYCLevelForDeployment, 0);
+        return _deployNFTAndToken(_name, _symbol, _supply, _metadataURI, 1);
+    }
+
+    function deployWithEscrow(string calldata _name, string calldata _symbol, uint256 _supply, string calldata _metadataURI
+    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (uint256 deploymentId, address securityToken, address projectNFT, address tradeEscrow) {
+        if (requireKYCForDeployment) revert KYCLib.KYCLevelTooLow(minKYCLevelForDeployment, 0);
+        return _deployWithEscrow(_name, _symbol, _supply, _metadataURI, 1);
+    }
+
+    // ============ Deploy Functions (6-param, with KYC) ============
+
+    function deployNFTAndTokenWithKYC(
+        string calldata _name, string calldata _symbol, uint256 _supply, string calldata _metadataURI,
+        uint8 _minKYCLevel, KYCLib.KYCProof calldata _kycProof
+    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (uint256 deploymentId, address securityToken, address projectNFT) {
+        if (requireKYCForDeployment) {
+            KYCLib.verifyKYCProof(kycVerifier, msg.sender, _kycProof, minKYCLevelForDeployment, defaultRestrictedCountries, deploymentRestrictedCountries, 0);
+        }
         if (_minKYCLevel > 4) revert InvalidKYCLevel();
-        
         return _deployNFTAndToken(_name, _symbol, _supply, _metadataURI, _minKYCLevel);
     }
 
-    /**
-     * @notice Deploy with escrow and KYC verification
-     * @dev Owner can bypass KYC by passing empty proof (expiry = 0)
-     */
-    function deployWithEscrow(
-        string calldata _name,
-        string calldata _symbol,
-        uint256 _supply,
-        string calldata _metadataURI,
-        uint8 _minKYCLevel,
-        KYCProof calldata _kycProof
-    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (
-        uint256 deploymentId,
-        address securityToken,
-        address projectNFT,
-        address tradeEscrow
-    ) {
-        _validateKYCForDeployment(_kycProof);
+    function deployWithEscrowAndKYC(
+        string calldata _name, string calldata _symbol, uint256 _supply, string calldata _metadataURI,
+        uint8 _minKYCLevel, KYCLib.KYCProof calldata _kycProof
+    ) external nonReentrant whenNotPaused onlyApprovedDeployer returns (uint256 deploymentId, address securityToken, address projectNFT, address tradeEscrow) {
+        if (requireKYCForDeployment) {
+            KYCLib.verifyKYCProof(kycVerifier, msg.sender, _kycProof, minKYCLevelForDeployment, defaultRestrictedCountries, deploymentRestrictedCountries, 0);
+        }
         if (_minKYCLevel > 4) revert InvalidKYCLevel();
-        
         return _deployWithEscrow(_name, _symbol, _supply, _metadataURI, _minKYCLevel);
     }
 
-    /**
-     * @notice Validate KYC for deployment - owner can bypass with empty proof
-     */
-    function _validateKYCForDeployment(KYCProof calldata _kycProof) internal view {
-        // Owner can bypass KYC by passing empty proof
-        if (_kycProof.expiry == 0 && msg.sender == owner()) {
-            return;
-        }
-        
-        if (requireKYCForDeployment) {
-            _verifyKYCProof(msg.sender, _kycProof, minKYCLevelForDeployment, 0);
-        }
-    }
+    // ============ Internal Deployment ============
 
-    // ============ Internal Deployment Logic ============
-
-    function _deployToken(
-        string calldata _name,
-        string calldata _symbol,
-        uint256 _supply,
-        string calldata _metadataURI,
-        uint8 _minKYCLevel
+    function _deployToken(string calldata _name, string calldata _symbol, uint256 _supply, string calldata _metadataURI, uint8 _minKYCLevel
     ) internal returns (uint256 deploymentId, address securityToken) {
         if (_supply == 0) revert InvalidSupply();
-
         deploymentId = deploymentCounter++;
-
         address compliance = _deployCompliance();
         securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance);
-
         IRWAERC3643(securityToken).mint(msg.sender, _supply);
         _transferTokenOwnership(securityToken, msg.sender);
 
-        deployments[deploymentId] = TokenDeployment({
-            deploymentId: deploymentId,
-            owner: msg.sender,
-            securityToken: securityToken,
-            projectNFT: address(0),
-            tradeEscrow: address(0),
-            dividendDistributor: address(0),
-            deploymentType: DeploymentType.TOKEN_ONLY,
-            deployedAt: block.timestamp,
-            active: true,
-            metadataURI: _metadataURI,
-            minKYCLevel: _minKYCLevel
-        });
-
+        deployments[deploymentId] = TokenDeployment(deploymentId, msg.sender, securityToken, address(0), address(0), address(0), DeploymentType.TOKEN_ONLY, block.timestamp, true, _metadataURI, _minKYCLevel);
         ownerDeployments[msg.sender].push(deploymentId);
         emit TokenDeployed(deploymentId, msg.sender, securityToken, _supply, DeploymentType.TOKEN_ONLY, _minKYCLevel);
     }
 
-    function _deployProjectNFTOnly(
-        string calldata _name,
-        string calldata _symbol,
-        string calldata _metadataURI
+    function _deployProjectNFTOnly(string calldata _name, string calldata _symbol, string calldata _metadataURI
     ) internal returns (uint256 deploymentId, address projectNFT) {
         deploymentId = deploymentCounter++;
         projectNFT = _deployProjectNFT(_name, _symbol);
-
-        deployments[deploymentId] = TokenDeployment({
-            deploymentId: deploymentId,
-            owner: msg.sender,
-            securityToken: address(0),
-            projectNFT: projectNFT,
-            tradeEscrow: address(0),
-            dividendDistributor: address(0),
-            deploymentType: DeploymentType.NFT_ONLY,
-            deployedAt: block.timestamp,
-            active: true,
-            metadataURI: _metadataURI,
-            minKYCLevel: 0
-        });
-
+        deployments[deploymentId] = TokenDeployment(deploymentId, msg.sender, address(0), projectNFT, address(0), address(0), DeploymentType.NFT_ONLY, block.timestamp, true, _metadataURI, 0);
         ownerDeployments[msg.sender].push(deploymentId);
         emit ProjectNFTDeployed(deploymentId, msg.sender, projectNFT, DeploymentType.NFT_ONLY);
     }
 
-    function _deployNFTAndToken(
-        string calldata _name,
-        string calldata _symbol,
-        uint256 _supply,
-        string calldata _metadataURI,
-        uint8 _minKYCLevel
+    function _deployNFTAndToken(string calldata _name, string calldata _symbol, uint256 _supply, string calldata _metadataURI, uint8 _minKYCLevel
     ) internal returns (uint256 deploymentId, address securityToken, address projectNFT) {
         if (_supply == 0) revert InvalidSupply();
-
         deploymentId = deploymentCounter++;
-
         address compliance = _deployCompliance();
         securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance);
-
-        projectNFT = _deployProjectNFT(
-            string(abi.encodePacked(_name, " Project")), 
-            string(abi.encodePacked(_symbol, "PRJ"))
-        );
-
+        projectNFT = _deployProjectNFT(string(abi.encodePacked(_name, " Project")), string(abi.encodePacked(_symbol, "PRJ")));
         IRWAERC3643(securityToken).mint(msg.sender, _supply);
         _transferTokenOwnership(securityToken, msg.sender);
 
-        deployments[deploymentId] = TokenDeployment({
-            deploymentId: deploymentId,
-            owner: msg.sender,
-            securityToken: securityToken,
-            projectNFT: projectNFT,
-            tradeEscrow: address(0),
-            dividendDistributor: address(0),
-            deploymentType: DeploymentType.NFT_AND_TOKEN,
-            deployedAt: block.timestamp,
-            active: true,
-            metadataURI: _metadataURI,
-            minKYCLevel: _minKYCLevel
-        });
-
+        deployments[deploymentId] = TokenDeployment(deploymentId, msg.sender, securityToken, projectNFT, address(0), address(0), DeploymentType.NFT_AND_TOKEN, block.timestamp, true, _metadataURI, _minKYCLevel);
         ownerDeployments[msg.sender].push(deploymentId);
         emit TokenDeployed(deploymentId, msg.sender, securityToken, _supply, DeploymentType.NFT_AND_TOKEN, _minKYCLevel);
         emit ProjectNFTDeployed(deploymentId, msg.sender, projectNFT, DeploymentType.NFT_AND_TOKEN);
     }
 
-    function _deployWithEscrow(
-        string calldata _name,
-        string calldata _symbol,
-        uint256 _supply,
-        string calldata _metadataURI,
-        uint8 _minKYCLevel
+    function _deployWithEscrow(string calldata _name, string calldata _symbol, uint256 _supply, string calldata _metadataURI, uint8 _minKYCLevel
     ) internal returns (uint256 deploymentId, address securityToken, address projectNFT, address tradeEscrow) {
         if (_supply == 0) revert InvalidSupply();
         if (implementations.tradeEscrow == address(0)) revert InvalidAddress();
-
         deploymentId = deploymentCounter++;
-
         address compliance = _deployCompliance();
         securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance);
-        projectNFT = _deployProjectNFT(
-            string(abi.encodePacked(_name, " Project")), 
-            string(abi.encodePacked(_symbol, "PRJ"))
-        );
+        projectNFT = _deployProjectNFT(string(abi.encodePacked(_name, " Project")), string(abi.encodePacked(_symbol, "PRJ")));
         tradeEscrow = _deployTradeEscrow(securityToken);
-
         IRWAERC3643(securityToken).mint(msg.sender, _supply);
         _transferTokenOwnership(securityToken, msg.sender);
 
-        deployments[deploymentId] = TokenDeployment({
-            deploymentId: deploymentId,
-            owner: msg.sender,
-            securityToken: securityToken,
-            projectNFT: projectNFT,
-            tradeEscrow: tradeEscrow,
-            dividendDistributor: address(0),
-            deploymentType: DeploymentType.NFT_TOKEN_ESCROW,
-            deployedAt: block.timestamp,
-            active: true,
-            metadataURI: _metadataURI,
-            minKYCLevel: _minKYCLevel
-        });
-
+        deployments[deploymentId] = TokenDeployment(deploymentId, msg.sender, securityToken, projectNFT, tradeEscrow, address(0), DeploymentType.NFT_TOKEN_ESCROW, block.timestamp, true, _metadataURI, _minKYCLevel);
         ownerDeployments[msg.sender].push(deploymentId);
         emit TokenDeployed(deploymentId, msg.sender, securityToken, _supply, DeploymentType.NFT_TOKEN_ESCROW, _minKYCLevel);
         emit ProjectNFTDeployed(deploymentId, msg.sender, projectNFT, DeploymentType.NFT_TOKEN_ESCROW);
         emit EscrowDeployed(deploymentId, msg.sender, tradeEscrow);
     }
 
-    // ============ Add Modules ============
-
-    function addEscrow(uint256 _deploymentId) external nonReentrant whenNotPaused returns (address tradeEscrow) {
-        TokenDeployment storage deployment = deployments[_deploymentId];
-        
-        if (deployment.owner == address(0)) revert DeploymentNotFound();
-        if (deployment.owner != msg.sender) revert NotDeploymentOwner();
-        if (deployment.securityToken == address(0)) revert InvalidAddress();
-        if (deployment.tradeEscrow != address(0)) revert AlreadyHasModule();
-        if (implementations.tradeEscrow == address(0)) revert InvalidAddress();
-
-        tradeEscrow = _deployTradeEscrow(deployment.securityToken);
-        deployment.tradeEscrow = tradeEscrow;
-
-        emit EscrowDeployed(_deploymentId, msg.sender, tradeEscrow);
-    }
-
-    function addDividendModule(uint256 _deploymentId) external nonReentrant whenNotPaused returns (address dividendDistributor) {
-        TokenDeployment storage deployment = deployments[_deploymentId];
-        
-        if (deployment.owner == address(0)) revert DeploymentNotFound();
-        if (deployment.owner != msg.sender) revert NotDeploymentOwner();
-        if (deployment.securityToken == address(0)) revert InvalidAddress();
-        if (deployment.dividendDistributor != address(0)) revert AlreadyHasModule();
-        if (implementations.dividendDistributor == address(0)) revert InvalidAddress();
-
-        dividendDistributor = address(new ERC1967Proxy(
-            implementations.dividendDistributor,
-            abi.encodeWithSignature(
-                "initialize(address,address,address)",
-                deployment.securityToken,
-                msg.sender,
-                platformFeeRecipient
-            )
-        ));
-
-        deployment.dividendDistributor = dividendDistributor;
-        emit DividendModuleDeployed(_deploymentId, msg.sender, dividendDistributor);
-    }
-
-    // ============ KYC Verification for Token Holders ============
-
-    function verifyHolderKYC(
-        address _holder,
-        uint256 _deploymentId,
-        KYCProof calldata _proof
-    ) external view returns (bool valid) {
-        TokenDeployment storage deployment = deployments[_deploymentId];
-        if (deployment.owner == address(0)) revert DeploymentNotFound();
-
-        _verifyKYCProof(_holder, _proof, deployment.minKYCLevel, _deploymentId);
-        
-        return true;
-    }
-
-    function getDeploymentMinKYCLevel(uint256 _deploymentId) external view returns (uint8) {
-        return deployments[_deploymentId].minKYCLevel;
-    }
-
     // ============ Internal Helpers ============
 
-    function _deployCompliance() internal returns (address compliance) {
-        compliance = address(new ERC1967Proxy(
-            implementations.compliance,
-            abi.encodeWithSignature("initialize(address)", address(this))
-        ));
+    function _deployCompliance() internal returns (address) {
+        return address(new ERC1967Proxy(implementations.compliance, abi.encodeWithSignature("initialize(address)", address(this))));
     }
 
-    function _deploySecurityToken(
-        string calldata _name,
-        string calldata _symbol,
-        uint256 _maxSupply,
-        address _compliance
-    ) internal returns (address securityToken) {
-        securityToken = address(new ERC1967Proxy(
-            implementations.securityToken,
-            abi.encodeWithSignature(
-                "initialize(string,string,address,address,address,uint256)",
-                _name,
-                _symbol,
-                address(this),
-                _compliance,
-                kycVerifier,
-                _maxSupply
-            )
-        ));
-        IModularCompliance(_compliance).bindToken(securityToken);
+    function _deploySecurityToken(string calldata _name, string calldata _symbol, uint256 _maxSupply, address _compliance) internal returns (address) {
+        address token = address(new ERC1967Proxy(implementations.securityToken, abi.encodeWithSignature("initialize(string,string,address,address,address,uint256)", _name, _symbol, address(this), _compliance, kycVerifier, _maxSupply)));
+        IModularCompliance(_compliance).bindToken(token);
+        return token;
     }
 
-    function _deployProjectNFT(
-        string memory _name,
-        string memory _symbol
-    ) internal returns (address projectNFT) {
-        projectNFT = address(new ERC1967Proxy(
-            implementations.projectNFT,
-            abi.encodeWithSignature(
-                "initialize(string,string,address)",
-                _name,
-                _symbol,
-                msg.sender
-            )
-        ));
+    function _deployProjectNFT(string memory _name, string memory _symbol) internal returns (address) {
+        return address(new ERC1967Proxy(implementations.projectNFT, abi.encodeWithSignature("initialize(string,string,address)", _name, _symbol, msg.sender)));
     }
 
-    function _deployTradeEscrow(address _securityToken) internal returns (address tradeEscrow) {
-        tradeEscrow = address(new ERC1967Proxy(
-            implementations.tradeEscrow,
-            abi.encodeWithSignature(
-                "initialize(address,address,address,address,uint256)",
-                msg.sender,
-                _securityToken,
-                kycVerifier,
-                platformFeeRecipient,
-                escrowTransactionFeeBps
-            )
-        ));
+    function _deployTradeEscrow(address _securityToken) internal returns (address) {
+        return address(new ERC1967Proxy(implementations.tradeEscrow, abi.encodeWithSignature("initialize(address,address,address,address,uint256)", msg.sender, _securityToken, kycVerifier, platformFeeRecipient, escrowTransactionFeeBps)));
     }
 
     function _transferTokenOwnership(address _token, address _newOwner) internal {
@@ -594,189 +274,57 @@ contract RWATokenizationFactory is
         token.renounceRole(token.DEFAULT_ADMIN_ROLE(), address(this));
     }
 
+    // ============ Add Modules ============
+
+    function addEscrow(uint256 _deploymentId) external nonReentrant whenNotPaused returns (address tradeEscrow) {
+        TokenDeployment storage d = deployments[_deploymentId];
+        if (d.owner == address(0)) revert DeploymentNotFound();
+        if (d.owner != msg.sender) revert NotDeploymentOwner();
+        if (d.securityToken == address(0) || d.tradeEscrow != address(0)) revert AlreadyHasModule();
+        if (implementations.tradeEscrow == address(0)) revert InvalidAddress();
+        tradeEscrow = _deployTradeEscrow(d.securityToken);
+        d.tradeEscrow = tradeEscrow;
+        emit EscrowDeployed(_deploymentId, msg.sender, tradeEscrow);
+    }
+
+    function addDividendModule(uint256 _deploymentId) external nonReentrant whenNotPaused returns (address dividendDistributor) {
+        TokenDeployment storage d = deployments[_deploymentId];
+        if (d.owner == address(0)) revert DeploymentNotFound();
+        if (d.owner != msg.sender) revert NotDeploymentOwner();
+        if (d.securityToken == address(0) || d.dividendDistributor != address(0)) revert AlreadyHasModule();
+        if (implementations.dividendDistributor == address(0)) revert InvalidAddress();
+        dividendDistributor = address(new ERC1967Proxy(implementations.dividendDistributor, abi.encodeWithSignature("initialize(address,address,address)", d.securityToken, msg.sender, platformFeeRecipient)));
+        d.dividendDistributor = dividendDistributor;
+        emit DividendModuleDeployed(_deploymentId, msg.sender, dividendDistributor);
+    }
+
     // ============ Admin Functions ============
 
-    /**
-     * @notice Set implementation address
-     * @param _implType 0=securityToken, 1=projectNFT, 2=compliance, 3=tradeEscrow, 4=dividendDistributor
-     */
-    function setImplementation(uint8 _implType, address _impl) external onlyOwner {
-        if (_impl == address(0)) revert InvalidAddress();
-        
-        address oldImpl;
-        if (_implType == 0) {
-            oldImpl = implementations.securityToken;
-            implementations.securityToken = _impl;
-        } else if (_implType == 1) {
-            oldImpl = implementations.projectNFT;
-            implementations.projectNFT = _impl;
-        } else if (_implType == 2) {
-            oldImpl = implementations.compliance;
-            implementations.compliance = _impl;
-        } else if (_implType == 3) {
-            oldImpl = implementations.tradeEscrow;
-            implementations.tradeEscrow = _impl;
-        } else if (_implType == 4) {
-            oldImpl = implementations.dividendDistributor;
-            implementations.dividendDistributor = _impl;
-        }
-        
-        emit ImplementationUpdated(_implType, oldImpl, _impl);
-    }
-
-    function setKYCVerifier(address _verifier) external onlyOwner {
-        if (_verifier == address(0)) revert InvalidAddress();
-        emit KYCVerifierUpdated(kycVerifier, _verifier);
-        kycVerifier = _verifier;
-    }
-
-    function setEscrowTransactionFee(uint256 _feeBps) external onlyOwner {
-        require(_feeBps <= 1000, "Max 10%");
-        escrowTransactionFeeBps = _feeBps;
-    }
-
-    function setPlatformFeeRecipient(address _recipient) external onlyOwner {
-        if (_recipient == address(0)) revert InvalidAddress();
-        platformFeeRecipient = _recipient;
-    }
-
-    function setRequireApproval(bool _require) external onlyOwner {
-        requireApproval = _require;
-    }
-
-    function setDeployerApproval(address _deployer, bool _approved) external onlyOwner {
-        if (_deployer == address(0)) revert InvalidAddress();
-        approvedDeployers[_deployer] = _approved;
-        emit DeployerApprovalUpdated(_deployer, _approved);
-    }
-
-    function deactivateDeployment(uint256 _deploymentId) external onlyOwner {
-        if (deployments[_deploymentId].owner == address(0)) revert DeploymentNotFound();
-        deployments[_deploymentId].active = false;
-        emit DeploymentDeactivated(_deploymentId);
-    }
-
-    // ============ KYC Configuration ============
-
-    function setKYCRequirement(bool _required, uint8 _minLevel) external onlyOwner {
-        if (_minLevel > 4) revert InvalidKYCLevel();
-        requireKYCForDeployment = _required;
-        minKYCLevelForDeployment = _minLevel;
-        emit KYCRequirementUpdated(_required, _minLevel);
-    }
-
-    function setDeploymentMinKYCLevel(uint256 _deploymentId, uint8 _minLevel) external {
-        TokenDeployment storage deployment = deployments[_deploymentId];
-        if (deployment.owner == address(0)) revert DeploymentNotFound();
-        
-        if (msg.sender != deployment.owner && msg.sender != owner()) {
-            revert NotDeploymentOwner();
-        }
-        
-        if (_minLevel > 4) revert InvalidKYCLevel();
-        
-        uint8 oldLevel = deployment.minKYCLevel;
-        deployment.minKYCLevel = _minLevel;
-        emit DeploymentKYCLevelUpdated(_deploymentId, oldLevel, _minLevel);
-    }
-
-    function setDeploymentCountryRestriction(
-        uint256 _deploymentId, 
-        uint16 _countryCode, 
-        bool _restricted
-    ) external {
-        TokenDeployment storage deployment = deployments[_deploymentId];
-        if (deployment.owner == address(0)) revert DeploymentNotFound();
-        
-        if (msg.sender != deployment.owner && msg.sender != owner()) {
-            revert NotDeploymentOwner();
-        }
-        
-        deploymentRestrictedCountries[_deploymentId][_countryCode] = _restricted;
-        emit DeploymentCountryRestrictionUpdated(_deploymentId, _countryCode, _restricted);
-    }
-
-    function batchSetDeploymentCountryRestrictions(
-        uint256 _deploymentId,
-        uint16[] calldata _countryCodes,
-        bool _restricted
-    ) external {
-        TokenDeployment storage deployment = deployments[_deploymentId];
-        if (deployment.owner == address(0)) revert DeploymentNotFound();
-        
-        if (msg.sender != deployment.owner && msg.sender != owner()) {
-            revert NotDeploymentOwner();
-        }
-        
-        uint256 length = _countryCodes.length;
-        for (uint256 i = 0; i < length; ++i) {
-            deploymentRestrictedCountries[_deploymentId][_countryCodes[i]] = _restricted;
-            emit DeploymentCountryRestrictionUpdated(_deploymentId, _countryCodes[i], _restricted);
-        }
-    }
-
-    function addDefaultRestrictedCountry(uint16 _countryCode) external onlyOwner {
-        uint256 length = defaultRestrictedCountries.length;
-        for (uint256 i = 0; i < length; ++i) {
-            if (defaultRestrictedCountries[i] == _countryCode) {
-                return;
-            }
-        }
-        defaultRestrictedCountries.push(_countryCode);
-        emit DefaultRestrictedCountryUpdated(_countryCode, true);
-    }
-
-    function removeDefaultRestrictedCountry(uint16 _countryCode) external onlyOwner {
-        uint256 length = defaultRestrictedCountries.length;
-        for (uint256 i = 0; i < length; ++i) {
-            if (defaultRestrictedCountries[i] == _countryCode) {
-                defaultRestrictedCountries[i] = defaultRestrictedCountries[length - 1];
-                defaultRestrictedCountries.pop();
-                emit DefaultRestrictedCountryUpdated(_countryCode, false);
-                return;
-            }
-        }
-    }
-
-    function getDefaultRestrictedCountries() external view returns (uint16[] memory) {
-        return defaultRestrictedCountries;
-    }
-
-    function isCountryRestricted(uint16 _countryCode, uint256 _deploymentId) external view returns (bool) {
-        return _isCountryRestricted(_countryCode, _deploymentId);
-    }
-
-    // ============ Pause Functions ============
+    function setSecurityTokenImplementation(address _impl) external onlyOwner { if (_impl == address(0)) revert InvalidAddress(); emit ImplementationUpdated("SecurityToken", implementations.securityToken, _impl); implementations.securityToken = _impl; }
+    function setProjectNFTImplementation(address _impl) external onlyOwner { if (_impl == address(0)) revert InvalidAddress(); emit ImplementationUpdated("ProjectNFT", implementations.projectNFT, _impl); implementations.projectNFT = _impl; }
+    function setComplianceImplementation(address _impl) external onlyOwner { if (_impl == address(0)) revert InvalidAddress(); emit ImplementationUpdated("Compliance", implementations.compliance, _impl); implementations.compliance = _impl; }
+    function setTradeEscrowImplementation(address _impl) external onlyOwner { if (_impl == address(0)) revert InvalidAddress(); emit ImplementationUpdated("TradeEscrow", implementations.tradeEscrow, _impl); implementations.tradeEscrow = _impl; }
+    function setDividendDistributorImplementation(address _impl) external onlyOwner { if (_impl == address(0)) revert InvalidAddress(); emit ImplementationUpdated("DividendDistributor", implementations.dividendDistributor, _impl); implementations.dividendDistributor = _impl; }
+    function setKYCVerifier(address _v) external onlyOwner { if (_v == address(0)) revert InvalidAddress(); emit KYCVerifierUpdated(kycVerifier, _v); kycVerifier = _v; }
+    function setEscrowTransactionFee(uint256 _feeBps) external onlyOwner { require(_feeBps <= 1000, "Max 10%"); escrowTransactionFeeBps = _feeBps; }
+    function setPlatformFeeRecipient(address _r) external onlyOwner { if (_r == address(0)) revert InvalidAddress(); platformFeeRecipient = _r; }
+    function setRequireApproval(bool _r) external onlyOwner { requireApproval = _r; }
+    function setDeployerApproval(address _d, bool _a) external onlyOwner { if (_d == address(0)) revert InvalidAddress(); approvedDeployers[_d] = _a; emit DeployerApprovalUpdated(_d, _a); }
+    function deactivateDeployment(uint256 _id) external onlyOwner { if (deployments[_id].owner == address(0)) revert DeploymentNotFound(); deployments[_id].active = false; emit DeploymentDeactivated(_id); }
+    function setKYCRequirement(bool _r, uint8 _l) external onlyOwner { if (_l > 4) revert InvalidKYCLevel(); requireKYCForDeployment = _r; minKYCLevelForDeployment = _l; }
 
     function pause() external onlyOwner { _pause(); }
     function unpause() external onlyOwner { _unpause(); }
 
     // ============ View Functions ============
 
-    function getDeployment(uint256 _deploymentId) external view returns (TokenDeployment memory) {
-        return deployments[_deploymentId];
-    }
-
-    function getOwnerDeployments(address _owner) external view returns (uint256[] memory) {
-        return ownerDeployments[_owner];
-    }
-
-    function getOwnerDeploymentCount(address _owner) external view returns (uint256) {
-        return ownerDeployments[_owner].length;
-    }
-
-    function getImplementations() external view returns (Implementations memory) {
-        return implementations;
-    }
-
-    function isDeployerApproved(address _deployer) external view returns (bool) {
-        if (!requireApproval) return true;
-        return approvedDeployers[_deployer] || _deployer == owner();
-    }
-
-    function getKYCVerifier() external view returns (address) {
-        return kycVerifier;
-    }
+    function getDeployment(uint256 _id) external view returns (TokenDeployment memory) { return deployments[_id]; }
+    function getOwnerDeployments(address _o) external view returns (uint256[] memory) { return ownerDeployments[_o]; }
+    function getOwnerDeploymentCount(address _o) external view returns (uint256) { return ownerDeployments[_o].length; }
+    function getImplementations() external view returns (Implementations memory) { return implementations; }
+    function isDeployerApproved(address _d) external view returns (bool) { return !requireApproval || approvedDeployers[_d] || _d == owner(); }
+    function getKYCVerifier() external view returns (address) { return kycVerifier; }
+    function getDefaultRestrictedCountries() external view returns (uint16[] memory) { return defaultRestrictedCountries; }
 
     receive() external payable {}
 }

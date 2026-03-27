@@ -12,14 +12,10 @@ import {
   Zap
 } from 'lucide-react';
 import { CONTACT, SOCIAL, LINKS, mailto, COMPANY } from '@/config/contacts';
-export const metadata = {
-  title: `Incident Response | ${COMPANY.name} Admin`,
-  description: 'Incident response procedures and escalation paths',
-};
 
 export default function IncidentResponsePage() {
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-8xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-red-500/20 rounded-lg">

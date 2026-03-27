@@ -66,28 +66,39 @@ export async function PATCH(
       return NextResponse.json({ error: 'Cannot update application in current status' }, { status: 400 });
     }
 
-    // Allowed fields to update during token creation
+    // Map frontend field names to database column names
+    const fieldMapping: Record<string, string> = {
+      'token_supply': 'desired_token_supply',
+      'enable_dividends': 'needs_dividends',  
+      'escrow_enabled': 'needs_escrow',       
+      'dividend_enabled': 'needs_dividends', 
+      'funding_goal': 'fundraising_goal', 
+    };
+
+    // Allowed fields (use DB column names)
     const allowedFields = [
       'token_name',
       'token_symbol', 
-      'token_supply',
+      'desired_token_supply',
       'token_price_estimate',
       'asset_description',
       'logo_url',
       'logo_ipfs',
       'banner_url',
       'banner_ipfs',
-      'needs_escrow',
-      'funding_goal',
-      'funding_deadline',
-      'enable_dividends'
+      'needs_escrow',   
+      'needs_dividends',   
+      'fundraising_goal',
     ];
 
-    // Filter only allowed fields
+    // Filter and map fields
     const updateData: Record<string, any> = {};
-    for (const field of allowedFields) {
-      if (body[field] !== undefined) {
-        updateData[field] = body[field];
+    for (const [key, value] of Object.entries(body)) {
+      // Map frontend field names to DB column names
+      const dbField = fieldMapping[key] || key;
+      
+      if (allowedFields.includes(dbField) && value !== undefined) {
+        updateData[dbField] = value;
       }
     }
 
