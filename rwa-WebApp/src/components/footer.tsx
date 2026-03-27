@@ -260,7 +260,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Copyright */}
             <div className="text-gray-500 text-sm text-center md:text-left">
-              © {currentYear} RWA Experts. All rights reserved.
+              © {currentYear} RWA Experts (V: 0.6). All rights reserved.
             </div>
 
             {/* Quick Legal Links */}
