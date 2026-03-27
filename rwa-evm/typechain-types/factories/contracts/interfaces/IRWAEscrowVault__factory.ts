@@ -107,16 +107,6 @@ const _abi = [
         type: "address",
       },
       {
-        internalType: "address",
-        name: "_paymentToken",
-        type: "address",
-      },
-      {
-        internalType: "address",
-        name: "_priceFeed",
-        type: "address",
-      },
-      {
         internalType: "uint256",
         name: "_fundingGoal",
         type: "uint256",
@@ -128,12 +118,7 @@ const _abi = [
       },
       {
         internalType: "uint256",
-        name: "_platformFeeBps",
-        type: "uint256",
-      },
-      {
-        internalType: "uint256",
-        name: "_maxPriceAge",
+        name: "_totalSupply",
         type: "uint256",
       },
     ],

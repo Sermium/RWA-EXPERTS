@@ -92,14 +92,14 @@ const ConnectModalContext = createContext<ConnectModalContextType | null>(null);
 
 export function useConnectModal() {
   const context = useContext(ConnectModalContext);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);  // Local state
   const { isPending } = useConnect();
   
   if (!context) {
     return {
-      openConnectModal: () => setIsOpen(true),
+      openConnectModal: () => setIsOpen(true),  // Sets local state
       closeConnectModal: () => setIsOpen(false),
-      isOpen,
+      isOpen,  // But nothing renders this!
       isConnecting: isPending,
     };
   }

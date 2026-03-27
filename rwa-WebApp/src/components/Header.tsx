@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { ConnectButton } from './ConnectButton';
 import { useAccount } from 'wagmi';
 import { useKYC, getTierInfo, KYCTier } from '@/contexts/KYCContext';
@@ -345,10 +345,15 @@ function MobileDropdown({
 }
 
 export default function Header() {
-  const { isConnected } = useAccount();
+  const { isConnected, address } = useAccount();
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [chainModalOpen, setChainModalOpen] = useState(false);
+  
+  // Track previous connection state for redirect
+  const wasConnectedRef = useRef(false);
+  const hasRedirectedRef = useRef(false);
   
   // Use the KYC context correctly
   const { tier, status, isVerified, isLoading } = useKYC();
@@ -362,6 +367,45 @@ export default function Header() {
   const isOwner = canOwn(tier);
   const isReferrer = canRefer(tier);
   const showDashboard = isConnected && hasKYC && isInvestor;
+
+  // =========================================================================
+  // REDIRECT TO DASHBOARD ON WALLET CONNECT
+  // =========================================================================
+  useEffect(() => {
+    // Pages where we should NOT redirect (user is already in a workflow)
+    const noRedirectPaths = [
+      '/dashboard',
+      '/admin',
+      '/kyc',
+      '/project/',
+      '/crowdfunding/',
+      '/tokenize',
+      '/exchange',
+    ];
+    
+    const shouldSkipRedirect = noRedirectPaths.some(path => pathname.startsWith(path));
+    
+    // Detect fresh connection (wasn't connected before, now is connected)
+    const justConnected = !wasConnectedRef.current && isConnected && address;
+    
+    if (justConnected && !shouldSkipRedirect && !hasRedirectedRef.current) {
+      // Mark that we've redirected to prevent loops
+      hasRedirectedRef.current = true;
+      
+      // Small delay to allow UI to update
+      setTimeout(() => {
+        router.push('/dashboard');
+      }, 100);
+    }
+    
+    // Update the ref for next render
+    wasConnectedRef.current = isConnected;
+    
+    // Reset redirect flag when disconnected
+    if (!isConnected) {
+      hasRedirectedRef.current = false;
+    }
+  }, [isConnected, address, pathname, router]);
 
   // Determine current section for active states
   const isAboutSection = pathname.startsWith('/about') || pathname === '/contact';

@@ -1,11 +1,11 @@
 // src/app/page.tsx
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useAccount } from 'wagmi';
+import { useAccount, useConnect } from 'wagmi';
 import { useChainConfig } from '@/hooks/useChainConfig';
-import { useConnectModal } from '../components/ConnectButton';
+// REMOVE THIS: import { useConnectModal } from '../components/ConnectButton';
 import { 
   Building2, 
   Zap, 
@@ -27,11 +27,88 @@ import {
   ArrowRight,
   Wallet,
   AlertTriangle,
+  X,
 } from 'lucide-react';
+
+// Simple inline wallet modal
+function WalletModal({ onClose }: { onClose: () => void }) {
+  const { connect, connectors, isPending } = useConnect();
+  const { isConnected } = useAccount();
+
+  React.useEffect(() => {
+    if (isConnected) onClose();
+  }, [isConnected, onClose]);
+
+  const walletIcons: Record<string, string> = {
+    metaMask: '🦊',
+    'io.metamask': '🦊',
+    coinbaseWallet: '🔵',
+    coinbaseWalletSDK: '🔵',
+    walletConnect: '🔗',
+    injected: '💼',
+  };
+
+  const walletNames: Record<string, string> = {
+    metaMask: 'MetaMask',
+    'io.metamask': 'MetaMask',
+    coinbaseWallet: 'Coinbase Wallet',
+    coinbaseWalletSDK: 'Coinbase Wallet',
+    walletConnect: 'WalletConnect',
+    injected: 'Browser Wallet',
+  };
+
+  const availableConnectors = connectors.filter((connector, index, self) => 
+    index === self.findIndex(c => c.id === connector.id)
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-gray-900 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+        <div className="flex items-center justify-between p-5 border-b border-gray-700">
+          <h2 className="text-xl font-bold text-white">Connect Wallet</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors p-1">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+        <div className="p-4 space-y-2">
+          {availableConnectors.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-400">No wallets detected.</p>
+              <p className="text-gray-500 text-sm mt-2">Please install MetaMask or another Web3 wallet.</p>
+            </div>
+          ) : (
+            availableConnectors.map((connector) => (
+              <button
+                key={connector.id}
+                onClick={() => connect({ connector })}
+                disabled={isPending}
+                className="w-full flex items-center gap-4 p-4 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-xl transition-all"
+              >
+                <span className="text-3xl">{walletIcons[connector.id] || '💼'}</span>
+                <span className="text-white font-semibold flex-1 text-left">
+                  {walletNames[connector.id] || connector.name}
+                </span>
+                {isPending && (
+                  <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                )}
+              </button>
+            ))
+          )}
+        </div>
+        <div className="p-4 border-t border-gray-700 bg-gray-800/50">
+          <p className="text-gray-400 text-sm text-center">
+            By connecting, you agree to the Terms of Service
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function LandingPage() {
   const { isConnected } = useAccount();
-  const { openConnectModal } = useConnectModal();
+  const [showWalletModal, setShowWalletModal] = useState(false);
   
   // Multichain config
   const {
@@ -109,7 +186,11 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-900">{/* Hero Section */}
+    <div className="min-h-screen bg-gray-900">
+      {/* Wallet Modal */}
+      {showWalletModal && <WalletModal onClose={() => setShowWalletModal(false)} />}
+
+      {/* Hero Section */}
       <section className="relative pt-16 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
           {/* Badge */}
@@ -135,7 +216,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
             {!isConnected ? (
               <button
-                onClick={openConnectModal}
+                onClick={() => setShowWalletModal(true)}
                 className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition flex items-center cursor-pointer"
               >
                 <Wallet className="mr-2 w-5 h-5" /> Connect Wallet
@@ -170,6 +251,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Rest of the page stays the same... */}
       {/* What is RWA Tokenization - Simplified */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
@@ -504,7 +586,7 @@ export default function LandingPage() {
                   Custom token minting for your specific needs. Security tokens, NFTs, and more.
                 </p>
                 <div className="text-xs text-blue-400">
-                  Gold KYC Required � Platform fees apply
+                  Gold KYC Required • Platform fees apply
                 </div>
               </div>
             </Link>
@@ -570,7 +652,7 @@ export default function LandingPage() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             {!isConnected ? (
               <button
-                onClick={openConnectModal}
+                onClick={() => setShowWalletModal(true)}
                 className="px-8 py-4 bg-white text-gray-900 font-semibold rounded-xl hover:bg-gray-100 transition flex items-center cursor-pointer"
               >
                 <Wallet className="mr-2 w-5 h-5" /> Connect Wallet
@@ -646,4 +728,3 @@ export default function LandingPage() {
     </div>
   );
 }
-

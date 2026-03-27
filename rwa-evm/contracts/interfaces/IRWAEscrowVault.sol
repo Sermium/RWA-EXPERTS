@@ -34,14 +34,11 @@ interface IRWAEscrowVault {
     function createProject(
         uint256 _projectId,
         address _securityToken,
-        address _paymentToken,
-        address _priceFeed,
         uint256 _fundingGoal,
         uint256 _deadline,
-        uint256 _platformFeeBps,
-        uint256 _maxPriceAge
+        uint256 _totalSupply
     ) external;
-    
+
     function activateProject(uint256 _projectId) external;
     
     // Configuration

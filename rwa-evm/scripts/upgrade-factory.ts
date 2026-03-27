@@ -1,63 +1,58 @@
 import { ethers, upgrades } from "hardhat";
 
 async function main() {
-  const FACTORY_PROXY = "0x496f98ecc190ac342C78601B5E01563464958E98";
-  
-  console.log("Upgrading RWALaunchpadFactory...");
-  
   const [deployer] = await ethers.getSigners();
-  console.log("Deployer:", await deployer.getAddress());
+  console.log("Upgrading with account:", deployer.address);
 
-  // Force import the existing proxy
+  const FACTORY_PROXY = "0x90FF863603b9450F185E3641c6EF3df469886Bd3";
+
+  console.log("\n=== UPGRADING FACTORY ===");
+  
+  // Get the new implementation
   const RWALaunchpadFactory = await ethers.getContractFactory("RWALaunchpadFactory");
   
-  try {
-    await upgrades.forceImport(FACTORY_PROXY, RWALaunchpadFactory, {
-      kind: 'uups'
-    });
-    console.log("Proxy imported successfully!");
-  } catch (e: any) {
-    if (!e.message.includes("already registered")) {
-      throw e;
-    }
-    console.log("Proxy already registered");
-  }
+  console.log("Current proxy:", FACTORY_PROXY);
+  console.log("Deploying new implementation...");
 
-  // Upgrade
-  const upgraded = await upgrades.upgradeProxy(FACTORY_PROXY, RWALaunchpadFactory, {
-    kind: 'uups'
-  });
+  // Upgrade the proxy
+  const upgraded = await upgrades.upgradeProxy(FACTORY_PROXY, RWALaunchpadFactory);
   await upgraded.waitForDeployment();
 
-  console.log("Factory upgraded!");
-  console.log("New implementation:", await upgrades.erc1967.getImplementationAddress(FACTORY_PROXY));
-  
-  // Now grant yourself roles on the existing escrow vault
+  const newImplAddress = await upgrades.erc1967.getImplementationAddress(FACTORY_PROXY);
+  console.log("New implementation:", newImplAddress);
+  console.log("Proxy address (unchanged):", await upgraded.getAddress());
+
+  // Verify it works
+  console.log("\n=== VERIFYING UPGRADE ===");
   const factory = await ethers.getContractAt("RWALaunchpadFactory", FACTORY_PROXY);
   
-  console.log("\nGranting roles on existing EscrowVault (project 0)...");
-  const yourAddress = await deployer.getAddress();
+  const owner = await factory.owner();
+  console.log("Owner:", owner);
   
+  const impl = await factory.getImplementations();
+  console.log("Security Token impl:", impl.securityToken);
+  console.log("Escrow Vault impl:", impl.escrowVault);
+
+  // Test deployment
+  console.log("\n=== TESTING DEPLOY ===");
   try {
-    const tx = await factory.grantAllEscrowRoles(0, yourAddress);
-    await tx.wait();
-    console.log("All escrow roles granted to:", yourAddress);
-  } catch (e: any) {
-    console.log("Note: grantAllEscrowRoles may fail if factory doesn't have permission yet");
-    console.log("Error:", e.message);
+    const result = await factory.deployProject.staticCall(
+      "Test Token",
+      "TEST", 
+      "real-estate",
+      ethers.parseUnits("1000000", 18),
+      ethers.parseUnits("100000", 6),
+      30n,
+      "ipfs://QmTest123",
+      { value: 0 }
+    );
+    console.log("Simulation SUCCESS! Project ID:", result.toString());
+  } catch (error: any) {
+    console.error("Simulation failed:", error.message);
+    if (error.reason) console.error("Reason:", error.reason);
   }
 
-  // Set price feed to address(0) for stablecoins
-  console.log("\nSetting price feed to address(0) for project 0...");
-  try {
-    const tx2 = await factory.updateEscrowPriceFeed(0, ethers.ZeroAddress);
-    await tx2.wait();
-    console.log("Price feed set to address(0)!");
-  } catch (e: any) {
-    console.log("Error setting price feed:", e.message);
-  }
-
-  console.log("\n✅ Upgrade complete!");
+  console.log("\n=== UPGRADE COMPLETE ===");
 }
 
 main()

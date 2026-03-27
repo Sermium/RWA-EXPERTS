@@ -141,9 +141,6 @@ export interface IRWAEscrowVaultInterface extends Interface {
     values: [
       BigNumberish,
       AddressLike,
-      AddressLike,
-      AddressLike,
-      BigNumberish,
       BigNumberish,
       BigNumberish,
       BigNumberish
@@ -358,12 +355,9 @@ export interface IRWAEscrowVault extends BaseContract {
     [
       _projectId: BigNumberish,
       _securityToken: AddressLike,
-      _paymentToken: AddressLike,
-      _priceFeed: AddressLike,
       _fundingGoal: BigNumberish,
       _deadline: BigNumberish,
-      _platformFeeBps: BigNumberish,
-      _maxPriceAge: BigNumberish
+      _totalSupply: BigNumberish
     ],
     [void],
     "nonpayable"
@@ -495,12 +489,9 @@ export interface IRWAEscrowVault extends BaseContract {
     [
       _projectId: BigNumberish,
       _securityToken: AddressLike,
-      _paymentToken: AddressLike,
-      _priceFeed: AddressLike,
       _fundingGoal: BigNumberish,
       _deadline: BigNumberish,
-      _platformFeeBps: BigNumberish,
-      _maxPriceAge: BigNumberish
+      _totalSupply: BigNumberish
     ],
     [void],
     "nonpayable"

@@ -23,27 +23,35 @@ interface ProjectMetadata {
   };
 }
 
+interface Milestone {
+  id: string;
+  title: string;
+  status: 'pending' | 'in_progress' | 'completed' | 'approved' | 'rejected';
+  percentage: number;
+}
+
 interface Project {
   id: string | number;
   owner: string;
   fundingGoal: bigint;
   totalRaised: bigint;
   deadline: bigint;
-  status: string; // Changed from number to string for DB status
+  status: string;
   securityToken: string;
   escrowVault: string;
   createdAt: bigint;
   metadata?: ProjectMetadata;
   tokenName?: string;
   tokenSymbol?: string;
-  // New fields for cliff/ROI
   cliffPeriod?: number;
   vestingPeriod?: number;
   expectedROI?: number;
   dividendYield?: number;
-  // Images from DB
   images?: string[];
   category?: string;
+  milestones?: Milestone[];
+  activatedAt?: string;
+  raiseEndDate?: string;
 }
 
 interface APIProject {
@@ -65,21 +73,58 @@ interface APIProject {
   dividendYield?: number;
   images?: string[];
   category?: string;
+  milestones?: Milestone[];
+  activatedAt?: string;
+  raiseEndDate?: string;
 }
 
+// ============================================================================
+// STATUS CONFIGURATION
+// ============================================================================
+
+// Statuses visible to investors on the projects page
+const INVESTOR_VISIBLE_STATUSES = ['active', 'funded', 'in_progress', 'completed'];
+
 // Database status labels and colors
-const DB_STATUS_CONFIG: Record<string, { label: string; color: string; priority: number }> = {
-  'draft': { label: 'Draft', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', priority: 5 },
-  'pending_review': { label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', priority: 4 },
-  'pending_payment': { label: 'Pending Payment', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30', priority: 4 },
-  'approved': { label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30', priority: 2 },
-  'active': { label: 'Active', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', priority: 0 },
-  'funded': { label: 'Funded', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', priority: 1 },
-  'in_progress': { label: 'In Progress', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', priority: 1 },
-  'completed': { label: 'Completed', color: 'bg-green-500/20 text-green-400 border-green-500/30', priority: 3 },
-  'rejected': { label: 'Rejected', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 6 },
-  'cancelled': { label: 'Cancelled', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 6 },
-  'failed': { label: 'Failed', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 6 },
+const DB_STATUS_CONFIG: Record<string, { label: string; color: string; priority: number; investorLabel?: string }> = {
+  'active': { 
+    label: 'Active', 
+    color: 'bg-green-500/20 text-green-400 border-green-500/30', 
+    priority: 0,
+    investorLabel: 'Open for Investment'
+  },
+  'funded': { 
+    label: 'Funded', 
+    color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', 
+    priority: 1,
+    investorLabel: 'Fully Funded'
+  },
+  'in_progress': { 
+    label: 'In Progress', 
+    color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', 
+    priority: 2,
+    investorLabel: 'Project Running'
+  },
+  'completed': { 
+    label: 'Completed', 
+    color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', 
+    priority: 3,
+    investorLabel: 'Milestones in Review'
+  },
+  'archived': { 
+    label: 'Archived', 
+    color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', 
+    priority: 10,
+    investorLabel: 'Archived'
+  },
+  // These should NOT appear on the projects page but keeping for reference
+  'draft': { label: 'Draft', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', priority: 99 },
+  'pending_review': { label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', priority: 99 },
+  'pending_payment': { label: 'Pending Payment', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30', priority: 99 },
+  'approved': { label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30', priority: 99 },
+  'rejected': { label: 'Rejected', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 99 },
+  'cancelled': { label: 'Cancelled', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 99 },
+  'failed': { label: 'Failed', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 99 },
 };
 
 const getStatusConfig = (status: string) => {
@@ -87,11 +132,11 @@ const getStatusConfig = (status: string) => {
 };
 
 // ============================================================================
-// LOCAL CACHE (for instant loading)
+// LOCAL CACHE
 // ============================================================================
 
-const LOCAL_CACHE_KEY_PREFIX = 'rwa_projects_v3_';
-const LOCAL_CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+const LOCAL_CACHE_KEY_PREFIX = 'rwa_projects_v4_';
+const LOCAL_CACHE_DURATION = 5 * 60 * 1000;
 
 interface LocalCache {
   projects: Project[];
@@ -106,8 +151,6 @@ function getLocalCache(chainId: number): LocalCache | null {
     if (!cached) return null;
     
     const data = JSON.parse(cached);
-    
-    // Convert string values back to BigInt
     const projects = data.projects.map((p: APIProject) => ({
       ...p,
       fundingGoal: BigInt(p.fundingGoal || '0'),
@@ -116,10 +159,7 @@ function getLocalCache(chainId: number): LocalCache | null {
       createdAt: BigInt(p.createdAt || '0'),
     }));
     
-    return {
-      projects,
-      timestamp: data.timestamp,
-    };
+    return { projects, timestamp: data.timestamp };
   } catch {
     return null;
   }
@@ -129,7 +169,6 @@ function setLocalCache(chainId: number, projects: Project[]): void {
   if (typeof window === 'undefined') return;
   
   try {
-    // Convert BigInt to string for JSON serialization
     const serializable = projects.map(p => ({
       ...p,
       fundingGoal: p.fundingGoal.toString(),
@@ -168,26 +207,47 @@ interface SortConfig {
 
 const SORT_OPTIONS: SortConfig[] = [
   { value: 'newest', label: 'Newest First', icon: '🕐' },
-  { value: 'oldest', label: 'Oldest First', icon: '📅' },
+  { value: 'ending_soon', label: 'Ending Soon', icon: '⏰' },
   { value: 'highest_roi', label: 'Highest ROI', icon: '📈' },
-  { value: 'most_raised', label: 'Most Raised', icon: '💰' },
-  { value: 'least_raised', label: 'Least Raised', icon: '💵' },
   { value: 'most_funded', label: 'Most % Funded', icon: '📊' },
   { value: 'least_funded', label: 'Least % Funded', icon: '📉' },
-  { value: 'status', label: 'By Status', icon: '🏷️' },
-  { value: 'ending_soon', label: 'Ending Soon', icon: '⏰' },
+  { value: 'most_raised', label: 'Most Raised', icon: '💰' },
+  { value: 'oldest', label: 'Oldest First', icon: '📅' },
 ];
 
 // ============================================================================
 // HELPER FUNCTIONS
 // ============================================================================
 
-const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+/**
+ * Check if a project should be archived (all milestones validated)
+ */
+const shouldArchiveProject = (project: Project): boolean => {
+  // If status is completed and all milestones are approved/completed, it can be archived
+  if (project.status === 'completed' && project.milestones && project.milestones.length > 0) {
+    const allMilestonesCompleted = project.milestones.every(
+      m => m.status === 'approved' || m.status === 'completed'
+    );
+    return allMilestonesCompleted;
+  }
+  return false;
+};
 
-const isProjectArchived = (project: Project): boolean => {
-  const archivedStatuses = ['cancelled', 'failed', 'rejected'];
-  const hasNoFundsLeft = project.totalRaised === 0n;
-  return archivedStatuses.includes(project.status) && hasNoFundsLeft;
+/**
+ * Check if project is visible to investors
+ */
+const isVisibleToInvestors = (project: Project): boolean => {
+  // Must be in an investor-visible status
+  if (!INVESTOR_VISIBLE_STATUSES.includes(project.status)) {
+    return false;
+  }
+  
+  // If completed, only show if milestones are still being validated
+  if (project.status === 'completed') {
+    return !shouldArchiveProject(project);
+  }
+  
+  return true;
 };
 
 const formatUSD = (amount: bigint): string => {
@@ -249,10 +309,10 @@ const sortProjects = (projects: Project[], sortBy: SortOption): Project[] => {
       return sorted.sort((a, b) => getStatusPriority(a.status) - getStatusPriority(b.status));
     case 'ending_soon':
       return sorted.sort((a, b) => {
-        if (a.deadline === 0n && b.deadline === 0n) return 0;
-        if (a.deadline === 0n) return 1;
-        if (b.deadline === 0n) return -1;
-        return Number(a.deadline - b.deadline);
+        // Active projects with deadlines first
+        const aDeadline = a.raiseEndDate ? new Date(a.raiseEndDate).getTime() : (a.deadline > 0n ? Number(a.deadline) * 1000 : Infinity);
+        const bDeadline = b.raiseEndDate ? new Date(b.raiseEndDate).getTime() : (b.deadline > 0n ? Number(b.deadline) * 1000 : Infinity);
+        return aDeadline - bDeadline;
       });
     default:
       return sorted;
@@ -421,7 +481,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
 }
 
 // ============================================================================
-// PROJECT CARD COMPONENT (Updated with ROI & Cliff)
+// PROJECT CARD COMPONENT
 // ============================================================================
 
 interface ProjectCardProps {
@@ -431,31 +491,54 @@ interface ProjectCardProps {
 }
 
 function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
-  const isArchived = isProjectArchived(project);
   const statusConfig = getStatusConfig(project.status);
   
   const fundingGoalNum = Number(project.fundingGoal) / 1e6;
   const totalRaisedNum = Number(project.totalRaised) / 1e6;
   const progress = fundingGoalNum > 0 ? (totalRaisedNum / fundingGoalNum) * 100 : 0;
 
-  const deadline = project.deadline > 0n ? new Date(Number(project.deadline) * 1000) : null;
-  const isExpired = deadline ? deadline < new Date() : false;
-  const daysLeft = deadline ? Math.max(0, Math.ceil((deadline.getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : null;
+  // Use raiseEndDate if available, otherwise fall back to deadline
+  const endDate = project.raiseEndDate 
+    ? new Date(project.raiseEndDate) 
+    : (project.deadline > 0n ? new Date(Number(project.deadline) * 1000) : null);
+  
+  const isExpired = endDate ? endDate < new Date() : false;
+  const daysLeft = endDate ? Math.max(0, Math.ceil((endDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))) : null;
 
   const displayName = project.metadata?.name || project.tokenName || `Project #${project.id}`;
   const displayImage = project.images?.[0] || project.metadata?.image;
   const displayCategory = project.category || project.metadata?.attributes?.category;
   const displayROI = project.expectedROI || project.metadata?.attributes?.projected_roi;
 
+  // Check milestone progress for completed projects
+  const milestonesCompleted = project.milestones?.filter(m => m.status === 'approved' || m.status === 'completed').length || 0;
+  const totalMilestones = project.milestones?.length || 0;
+
+  // Determine the investor-friendly label
+  const getInvestorStatusLabel = () => {
+    if (project.status === 'active') {
+      if (daysLeft !== null && daysLeft <= 7) {
+        return `${daysLeft} days left!`;
+      }
+      return 'Open for Investment';
+    }
+    if (project.status === 'funded') {
+      return 'Fully Funded';
+    }
+    if (project.status === 'in_progress') {
+      return 'Project Running';
+    }
+    if (project.status === 'completed') {
+      return `Milestones: ${milestonesCompleted}/${totalMilestones}`;
+    }
+    return statusConfig.investorLabel || statusConfig.label;
+  };
+
   return (
     <Link href={`/projects/${project.id}`}>
-      <div className={`bg-gray-800 rounded-xl border overflow-hidden transition-all group h-full ${
-        isArchived 
-          ? 'border-gray-800 opacity-60 hover:opacity-80' 
-          : 'border-gray-700 hover:border-gray-600 hover:shadow-lg hover:shadow-blue-500/10'
-      }`}>
+      <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden transition-all group h-full hover:border-gray-600 hover:shadow-lg hover:shadow-blue-500/10">
         {/* Image Header */}
-        <div className={`h-40 bg-gradient-to-br from-blue-600/20 to-purple-600/20 relative ${isArchived ? 'grayscale' : ''}`}>
+        <div className="h-40 bg-gradient-to-br from-blue-600/20 to-purple-600/20 relative">
           {displayImage && isValidIPFSHash(displayImage) ? (
             <Image
               src={displayImage.startsWith('ipfs://') 
@@ -476,15 +559,9 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
           
           {/* Status Badge */}
           <div className="absolute top-3 right-3">
-            {isArchived ? (
-              <span className="px-3 py-1 text-xs font-medium rounded-full bg-gray-700/80 text-gray-400 border border-gray-600">
-                📦 Archived
-              </span>
-            ) : (
-              <span className={`px-3 py-1 text-xs font-medium rounded-full border ${statusConfig.color}`}>
-                {statusConfig.label}
-              </span>
-            )}
+            <span className={`px-3 py-1 text-xs font-medium rounded-full border ${statusConfig.color}`}>
+              {getInvestorStatusLabel()}
+            </span>
           </div>
 
           {/* Chain Badge */}
@@ -497,14 +574,21 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
               {chainName}
             </span>
           </div>
+
+          {/* Urgent badge for ending soon */}
+          {project.status === 'active' && daysLeft !== null && daysLeft <= 3 && daysLeft > 0 && (
+            <div className="absolute bottom-3 right-3">
+              <span className="px-2 py-1 text-xs font-bold rounded bg-red-500 text-white animate-pulse">
+                🔥 Ending Soon!
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="p-5">
           {/* Title & Category */}
           <div className="mb-3">
-            <h3 className={`text-lg font-semibold transition-colors truncate ${
-              isArchived ? 'text-gray-400' : 'text-white group-hover:text-blue-400'
-            }`}>
+            <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
               {displayName}
             </h3>
             <div className="flex items-center gap-2 mt-1">
@@ -524,8 +608,8 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
             {project.metadata?.description || 'Tokenized real-world asset investment opportunity'}
           </p>
 
-          {/* ROI & Cliff Badges - NEW */}
-          {!isArchived && (displayROI || project.cliffPeriod) && (
+          {/* ROI & Investment Info Badges */}
+          {(displayROI || project.cliffPeriod) && (
             <div className="flex flex-wrap gap-2 mb-4">
               {displayROI && displayROI > 0 && (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg">
@@ -543,14 +627,6 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
                   </span>
                 </div>
               )}
-              {project.vestingPeriod && project.vestingPeriod > 0 && (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <Clock className="w-3.5 h-3.5 text-blue-400" />
-                  <span className="text-sm text-blue-400 font-medium">
-                    {project.vestingPeriod}d vest
-                  </span>
-                </div>
-              )}
               {project.dividendYield && project.dividendYield > 0 && (
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-lg">
                   <Percent className="w-3.5 h-3.5 text-purple-400" />
@@ -565,8 +641,10 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
           {/* Funding Progress */}
           <div className="mb-4">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-400">Raised</span>
-              <span className={`font-medium ${isArchived ? 'text-gray-500' : 'text-white'}`}>
+              <span className="text-gray-400">
+                {project.status === 'active' ? 'Raised' : 'Total Raised'}
+              </span>
+              <span className="font-medium text-white">
                 {formatUSDC(project.totalRaised)} 
                 <span className="text-gray-500"> / {formatUSD(project.fundingGoal)}</span>
               </span>
@@ -574,37 +652,42 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
             <div className="w-full bg-gray-700 rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all ${
-                  isArchived ? 'bg-gray-600' :
-                  ['cancelled', 'failed', 'rejected'].includes(project.status) ? 'bg-red-500' : 
-                  'bg-gradient-to-r from-blue-500 to-blue-400'
+                  progress >= 100 
+                    ? 'bg-gradient-to-r from-green-500 to-emerald-400' 
+                    : 'bg-gradient-to-r from-blue-500 to-blue-400'
                 }`}
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
             <div className="text-right text-xs text-gray-500 mt-1">
-              {isArchived ? 'Refunded' : `${progress.toFixed(1)}% funded`}
+              {progress >= 100 ? '✓ Goal Reached' : `${progress.toFixed(1)}% funded`}
             </div>
           </div>
 
           {/* Footer */}
           <div className="flex justify-between items-center pt-4 border-t border-gray-700">
             <div className="text-gray-400 text-sm">
-              {isArchived ? 'Archived' : statusConfig.label}
+              {project.status === 'active' && 'Invest Now'}
+              {project.status === 'funded' && 'Fully Funded'}
+              {project.status === 'in_progress' && 'In Progress'}
+              {project.status === 'completed' && 'Review Phase'}
             </div>
             <div className={`text-sm ${
-              isArchived ? 'text-gray-500' :
-              ['cancelled', 'failed', 'rejected'].includes(project.status) ? 'text-red-400' : 
-              !deadline ? 'text-gray-400' :
+              project.status !== 'active' ? 'text-gray-400' :
+              !endDate ? 'text-gray-400' :
               isExpired ? 'text-orange-400' : 
+              daysLeft !== null && daysLeft <= 7 ? 'text-yellow-400' :
               'text-gray-400'
             }`}>
-              {isArchived ? 'Closed' : 
-               project.status === 'cancelled' ? 'Cancelled' : 
-               project.status === 'failed' ? 'Failed' : 
-               project.status === 'rejected' ? 'Rejected' :
-               !deadline ? 'No deadline' :
-               isExpired ? 'Ended' : 
-               `${daysLeft} days left`}
+              {project.status === 'active' ? (
+                !endDate ? 'No deadline' :
+                isExpired ? 'Ended' : 
+                `${daysLeft} days left`
+              ) : (
+                project.status === 'completed' && totalMilestones > 0
+                  ? `${milestonesCompleted}/${totalMilestones} milestones`
+                  : ''
+              )}
             </div>
           </div>
         </div>
@@ -641,19 +724,21 @@ export default function ProjectsClient() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'active' | 'funded' | 'ended' | 'archived'>('all');
+  const [filter, setFilter] = useState<'all' | 'active' | 'funded' | 'in_progress'>('all');
   const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState<SortOption>('newest');
+  const [sortBy, setSortBy] = useState<SortOption>('ending_soon');
   const [lastRefresh, setLastRefresh] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [cacheHit, setCacheHit] = useState(false);
 
-  // Fetch from API
+  // Fetch from API - only investor-visible statuses
   const fetchFromAPI = useCallback(async (showLoading: boolean) => {
     if (showLoading) setLoading(true);
     
     try {
-      const url = `/api/crowdfunding/projects?status=all${chainId ? `&chainId=${chainId}` : ''}`;
+      // Only fetch statuses that investors should see
+      const statusParam = INVESTOR_VISIBLE_STATUSES.join(',');
+      const url = `/api/crowdfunding/projects?status=${statusParam}${chainId ? `&chainId=${chainId}` : ''}`;
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -663,37 +748,40 @@ export default function ProjectsClient() {
       const data = await response.json();
 
       if (data.success && data.projects) {
-        // Convert and map projects
-        const parsedProjects: Project[] = data.projects.map((p: any) => ({
-          id: p.id,
-          owner: p.owner || '',
-          fundingGoal: BigInt(p.fundingGoal || '0'),
-          totalRaised: BigInt(p.totalRaised || '0'),
-          deadline: BigInt(p.deadline || '0'),
-          createdAt: BigInt(p.createdAt || '0'),
-          status: p.status || 'draft', // String status from DB
-          securityToken: p.securityToken || '',
-          escrowVault: p.escrowVault || '',
-          metadata: p.metadata,
-          tokenName: p.tokenName,
-          tokenSymbol: p.tokenSymbol,
-          // New fields
-          cliffPeriod: p.cliffPeriod || p.cliff_period || p.token_cliff,
-          vestingPeriod: p.vestingPeriod || p.vesting_period || p.token_vesting,
-          expectedROI: p.expectedROI || p.expected_roi || p.projected_roi,
-          dividendYield: p.dividendYield || p.dividend_yield,
-          images: p.images || [],
-          category: p.category,
-        }));
+        const parsedProjects: Project[] = data.projects
+          .map((p: any) => ({
+            id: p.id,
+            owner: p.owner || p.wallet_address || '',
+            fundingGoal: BigInt(p.fundingGoal || p.funding_goal || '0'),
+            totalRaised: BigInt(p.totalRaised || p.funded_amount || '0'),
+            deadline: BigInt(p.deadline || '0'),
+            createdAt: BigInt(p.createdAt || Math.floor(new Date(p.created_at || 0).getTime() / 1000) || '0'),
+            status: p.status || 'active',
+            securityToken: p.securityToken || p.security_token_address || '',
+            escrowVault: p.escrowVault || p.escrow_vault_address || '',
+            metadata: p.metadata,
+            tokenName: p.tokenName || p.token_name,
+            tokenSymbol: p.tokenSymbol || p.token_symbol,
+            cliffPeriod: p.cliffPeriod || p.cliff_period || p.token_cliff,
+            vestingPeriod: p.vestingPeriod || p.vesting_period || p.token_vesting,
+            expectedROI: p.expectedROI || p.expected_roi || p.projected_roi,
+            dividendYield: p.dividendYield || p.dividend_yield,
+            images: p.images || (p.logo_url ? [p.logo_url] : []),
+            category: p.category,
+            milestones: p.milestones,
+            activatedAt: p.activated_at,
+            raiseEndDate: p.raise_end_date,
+          }))
+          // Filter out completed projects with all milestones done
+          .filter((p: Project) => isVisibleToInvestors(p));
 
         setProjects(parsedProjects);
         setLastRefresh(Date.now());
         setCacheHit(false);
         
-        // Update local cache
         setLocalCache(chainId, parsedProjects);
         
-        console.log(`[ProjectsClient] Loaded ${parsedProjects.length} projects from database`);
+        console.log(`[ProjectsClient] Loaded ${parsedProjects.length} investor-visible projects`);
       }
 
       setError(null);
@@ -713,17 +801,17 @@ export default function ProjectsClient() {
       return;
     }
 
-    // Try local cache first for instant loading
     if (!forceRefresh) {
       const localCache = getLocalCache(chainId);
       if (isLocalCacheValid(localCache)) {
         console.log('[ProjectsClient] Using local cache');
-        setProjects(localCache!.projects);
+        // Re-filter cached projects in case milestone status changed
+        const filteredCache = localCache!.projects.filter(isVisibleToInvestors);
+        setProjects(filteredCache);
         setLastRefresh(localCache!.timestamp);
         setLoading(false);
         setCacheHit(true);
         
-        // Still fetch from API in background to update
         fetchFromAPI(false);
         return;
       }
@@ -732,12 +820,10 @@ export default function ProjectsClient() {
     await fetchFromAPI(true);
   }, [chainId, isDeployed, fetchFromAPI]);
 
-  // Load on mount and chain change
   useEffect(() => {
     loadProjects();
   }, [loadProjects]);
 
-  // Reset page on filter/search/sort change
   useEffect(() => {
     setCurrentPage(1);
   }, [filter, search, sortBy, chainId]);
@@ -754,22 +840,11 @@ export default function ProjectsClient() {
     await switchToChain(targetChainId);
   };
 
-  const archivedCount = projects.filter(isProjectArchived).length;
-
-  // Filter and sort
+  // Filter and sort - simplified for investor view
   const filteredProjects = useMemo(() => {
     let result = projects.filter((p) => {
-      const isArchived = isProjectArchived(p);
-      
-      // Status-based filters using string statuses
-      if (filter === 'active' && p.status !== 'active') return false;
-      if (filter === 'funded' && p.status !== 'funded') return false;
-      if (filter === 'ended') {
-        if (!['completed', 'cancelled', 'failed'].includes(p.status)) return false;
-        if (isArchived) return false;
-      }
-      if (filter === 'archived' && !isArchived) return false;
-      if (filter === 'all' && isArchived) return false;
+      // Status filter
+      if (filter !== 'all' && p.status !== filter) return false;
 
       // Search filter
       if (search) {
@@ -779,8 +854,7 @@ export default function ProjectsClient() {
           p.tokenSymbol?.toLowerCase().includes(s) ||
           p.tokenName?.toLowerCase().includes(s) ||
           p.metadata?.description?.toLowerCase().includes(s) ||
-          p.category?.toLowerCase().includes(s) ||
-          `project #${p.id}`.includes(s);
+          p.category?.toLowerCase().includes(s);
         if (!matches) return false;
       }
 
@@ -796,6 +870,14 @@ export default function ProjectsClient() {
     (currentPage - 1) * PROJECTS_PER_PAGE,
     currentPage * PROJECTS_PER_PAGE
   );
+
+  // Stats for filter badges
+  const statusCounts = useMemo(() => ({
+    all: projects.length,
+    active: projects.filter(p => p.status === 'active').length,
+    funded: projects.filter(p => p.status === 'funded').length,
+    in_progress: projects.filter(p => p.status === 'in_progress' || p.status === 'completed').length,
+  }), [projects]);
 
   const formatLastRefresh = () => {
     if (!lastRefresh) return '';
@@ -883,7 +965,9 @@ export default function ProjectsClient() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-white mb-2">Investment Opportunities</h1>
-            <p className="text-gray-400">Discover tokenized real-world assets on {chainName}</p>
+            <p className="text-gray-400">
+              {statusCounts.active} active raises • {statusCounts.funded} funded • {statusCounts.in_progress} in progress
+            </p>
           </div>
           <div className="flex items-center gap-3 mt-4 md:mt-0">
             <button
@@ -903,13 +987,13 @@ export default function ProjectsClient() {
               {lastRefresh && <span className="text-xs text-gray-400">{formatLastRefresh()}</span>}
             </button>
             <Link
-              href="/create"
+              href="/crowdfunding/apply"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
-              Create Project
+              Start a Raise
             </Link>
           </div>
         </div>
@@ -924,7 +1008,7 @@ export default function ProjectsClient() {
                 </svg>
                 <input
                   type="text"
-                  placeholder="Search projects..."
+                  placeholder="Search by name, symbol, or category..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -934,28 +1018,32 @@ export default function ProjectsClient() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-gray-500 text-sm mr-2">Filter:</span>
-              {(['all', 'active', 'funded', 'ended'] as const).map((f) => (
+              <span className="text-gray-500 text-sm mr-2">Show:</span>
+              {([
+                { key: 'all', label: 'All Projects', count: statusCounts.all },
+                { key: 'active', label: 'Open for Investment', count: statusCounts.active },
+                { key: 'funded', label: 'Fully Funded', count: statusCounts.funded },
+                { key: 'in_progress', label: 'In Progress', count: statusCounts.in_progress },
+              ] as const).map((f) => (
                 <button
-                  key={f}
-                  onClick={() => setFilter(f)}
+                  key={f.key}
+                  onClick={() => setFilter(f.key)}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
-                    filter === f ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-white'
+                    filter === f.key 
+                      ? 'bg-blue-600 text-white' 
+                      : 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-white'
                   }`}
                 >
-                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                  {f.label}
+                  {f.count > 0 && (
+                    <span className={`ml-2 px-1.5 py-0.5 rounded text-xs ${
+                      filter === f.key ? 'bg-blue-500' : 'bg-gray-600'
+                    }`}>
+                      {f.count}
+                    </span>
+                  )}
                 </button>
               ))}
-              {archivedCount > 0 && (
-                <button
-                  onClick={() => setFilter('archived')}
-                  className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
-                    filter === 'archived' ? 'bg-gray-600 text-white' : 'bg-gray-800 text-gray-500 hover:bg-gray-700'
-                  }`}
-                >
-                  📦 Archived ({archivedCount})
-                </button>
-              )}
             </div>
           </div>
         </div>
@@ -966,7 +1054,7 @@ export default function ProjectsClient() {
             {filteredProjects.length > PROJECTS_PER_PAGE ? (
               <>Showing {((currentPage - 1) * PROJECTS_PER_PAGE) + 1}-{Math.min(currentPage * PROJECTS_PER_PAGE, filteredProjects.length)} of {filteredProjects.length} projects</>
             ) : (
-              <>Showing {filteredProjects.length} projects on {chainName}</>
+              <>Found {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}</>
             )}
           </p>
           {totalPages > 1 && <p className="text-gray-500 text-sm">Page {currentPage} of {totalPages}</p>}
@@ -977,7 +1065,7 @@ export default function ProjectsClient() {
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto" />
-              <p className="mt-4 text-gray-400">Loading projects...</p>
+              <p className="mt-4 text-gray-400">Loading investment opportunities...</p>
             </div>
           </div>
         )}
@@ -997,15 +1085,20 @@ export default function ProjectsClient() {
         {/* Empty */}
         {!loading && !error && filteredProjects.length === 0 && (
           <div className="bg-gray-800 border border-gray-700 rounded-xl p-12 text-center">
-            <div className="text-5xl mb-4">📭</div>
+            <div className="text-5xl mb-4">🔍</div>
             <h2 className="text-xl font-bold text-white mb-2">No Projects Found</h2>
             <p className="text-gray-400 mb-6">
-              {projects.length === 0 ? 'Be the first to create a project!' : 'Try adjusting your filters.'}
+              {projects.length === 0 
+                ? 'No active investment opportunities right now. Check back soon!' 
+                : 'Try adjusting your filters or search terms.'}
             </p>
-            {projects.length === 0 && (
-              <Link href="/create" className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
-                Create First Project
-              </Link>
+            {filter !== 'all' && (
+              <button
+                onClick={() => setFilter('all')}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+              >
+                Show All Projects
+              </button>
             )}
           </div>
         )}

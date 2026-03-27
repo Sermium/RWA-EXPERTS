@@ -328,28 +328,40 @@ function InvestmentCard({ investment, currentChainId, onSwitchChain }: Investmen
   const isWrongChain = currentChainId && investmentChainId !== currentChainId;
   const chainConfig = getChainById(investmentChainId);
 
-  const formatCurrency = (value: number): string => {
+  const formatCurrency = (value: number | undefined | null): string => {
+    if (value === undefined || value === null || isNaN(value)) return '$0.00';
     return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
   };
+
+  const formatNumber = (value: number | undefined | null): string => {
+    if (value === undefined || value === null || isNaN(value)) return '0';
+    return value.toLocaleString();
+  };
+
+  // Safe access with defaults
+  const tokens = investment.tokens ?? 0;
+  const amount = investment.amount ?? 0;
+  const currentValue = investment.currentValue ?? 0;
+  const roi = investment.roi ?? 0;
 
   return (
     <tr className={`hover:bg-gray-700/30 transition-colors ${isWrongChain ? 'opacity-60' : ''}`}>
       <td className="px-6 py-4">
         <div className="flex items-center gap-2">
           <div>
-            <p className="font-medium text-white">{investment.projectName}</p>
+            <p className="font-medium text-white">{investment.projectName || 'Unknown Project'}</p>
             <div className="flex items-center gap-2 mt-1">
-              <p className="text-xs text-gray-400">{investment.tokenSymbol}</p>
+              <p className="text-xs text-gray-400">{investment.tokenSymbol || 'N/A'}</p>
               <ChainBadge chainId={investmentChainId} currentChainId={currentChainId} />
             </div>
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 text-gray-300">{investment.tokens.toLocaleString()}</td>
-      <td className="px-6 py-4 text-gray-300">{formatCurrency(investment.amount)}</td>
-      <td className="px-6 py-4 text-white font-medium">{formatCurrency(investment.currentValue)}</td>
-      <td className={`px-6 py-4 font-medium ${investment.roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-        {investment.roi >= 0 ? '+' : ''}{investment.roi.toFixed(2)}%
+      <td className="px-6 py-4 text-gray-300">{formatNumber(tokens)}</td>
+      <td className="px-6 py-4 text-gray-300">{formatCurrency(amount)}</td>
+      <td className="px-6 py-4 text-white font-medium">{formatCurrency(currentValue)}</td>
+      <td className={`px-6 py-4 font-medium ${roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+        {roi >= 0 ? '+' : ''}{roi.toFixed(2)}%
       </td>
       <td className="px-6 py-4">
         {isWrongChain ? (
@@ -362,7 +374,7 @@ function InvestmentCard({ investment, currentChainId, onSwitchChain }: Investmen
           </button>
         ) : (
           <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
-            {investment.status}
+            {investment.status || 'active'}
           </span>
         )}
       </td>

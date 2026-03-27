@@ -177,7 +177,7 @@ contract RWALaunchpadFactory is
         ));
 
         // Configure escrow
-        _configureEscrow(escrowVault, projectId, securityToken, _fundingGoal, _deadlineDays);
+        _configureEscrow(escrowVault, projectId, securityToken, _fundingGoal, _deadlineDays, _maxSupply);
 
         // Deploy and configure optional modules
         _deployModules(compliance, securityToken, platformOwner);
@@ -213,12 +213,18 @@ contract RWALaunchpadFactory is
         uint256 _projectId, 
         address _token, 
         uint256 _goal, 
-        uint256 _days
+        uint256 _days,
+        uint256 _maxSupply
     ) internal {
         uint256 deadline = block.timestamp + (_days * 1 days);
+        
+        // Use correct signature
         IRWAEscrowVault(_escrow).createProject(
-            _projectId, _token, address(0), defaultPriceFeed, 
-            _goal, deadline, platformFeeBps, Constants.DEFAULT_MAX_PRICE_AGE
+            _projectId, 
+            _token, 
+            _goal, 
+            deadline, 
+            _maxSupply
         );
         
         if (impl.kycVerifier != address(0)) {
