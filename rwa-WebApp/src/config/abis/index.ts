@@ -72,6 +72,61 @@ export const RWALaunchpadFactoryABI = [
 ] as const;
 
 // ============================================================================
+// Tokenization FACTORY ABI
+// ============================================================================
+export const RWATokenizationFactoryABI = [
+  {
+    "inputs": [{"internalType": "uint256", "name": "_id", "type": "uint256"}],
+    "name": "getDeployment",
+    "outputs": [{"components": [{"internalType": "uint256", "name": "deploymentId", "type": "uint256"},{"internalType": "address", "name": "owner", "type": "address"},{"internalType": "address", "name": "securityToken", "type": "address"},{"internalType": "address", "name": "projectNFT", "type": "address"},{"internalType": "address", "name": "tradeEscrow", "type": "address"},{"internalType": "address", "name": "dividendDistributor", "type": "address"},{"internalType": "enum RWATokenizationFactory.DeploymentType", "name": "deploymentType", "type": "uint8"},{"internalType": "uint256", "name": "deployedAt", "type": "uint256"},{"internalType": "bool", "name": "active", "type": "bool"},{"internalType": "string", "name": "metadataURI", "type": "string"},{"internalType": "uint8", "name": "minKYCLevel", "type": "uint8"}], "internalType": "struct RWATokenizationFactory.TokenDeployment", "name": "", "type": "tuple"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "string", "name": "_name", "type": "string"},{"internalType": "string", "name": "_symbol", "type": "string"},{"internalType": "uint256", "name": "_supply", "type": "uint256"},{"internalType": "string", "name": "_metadataURI", "type": "string"}],
+    "name": "deployToken",
+    "outputs": [{"internalType": "uint256", "name": "deploymentId", "type": "uint256"},{"internalType": "address", "name": "securityToken", "type": "address"}],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "string", "name": "_name", "type": "string"},{"internalType": "string", "name": "_symbol", "type": "string"},{"internalType": "uint256", "name": "_supply", "type": "uint256"},{"internalType": "string", "name": "_metadataURI", "type": "string"}],
+    "name": "deployNFTAndToken",
+    "outputs": [{"internalType": "uint256", "name": "deploymentId", "type": "uint256"},{"internalType": "address", "name": "securityToken", "type": "address"},{"internalType": "address", "name": "projectNFT", "type": "address"}],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "string", "name": "_name", "type": "string"},{"internalType": "string", "name": "_symbol", "type": "string"},{"internalType": "uint256", "name": "_supply", "type": "uint256"},{"internalType": "string", "name": "_metadataURI", "type": "string"}],
+    "name": "deployWithEscrow",
+    "outputs": [{"internalType": "uint256", "name": "deploymentId", "type": "uint256"},{"internalType": "address", "name": "securityToken", "type": "address"},{"internalType": "address", "name": "projectNFT", "type": "address"},{"internalType": "address", "name": "tradeEscrow", "type": "address"}],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deploymentCounter",
+    "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "address", "name": "_o", "type": "address"}],
+    "name": "getOwnerDeployments",
+    "outputs": [{"internalType": "uint256[]", "name": "", "type": "uint256[]"}],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{"internalType": "address", "name": "_d", "type": "address"}],
+    "name": "isDeployerApproved",
+    "outputs": [{"internalType": "bool", "name": "", "type": "bool"}],
+    "stateMutability": "view",
+    "type": "function"
+  }
+] as const
+
+// ============================================================================
 // KYC VERIFIER ABI
 // ============================================================================
 export const KYCVerifierABI = [
@@ -455,6 +510,7 @@ export const MilestoneState = { PENDING: 0, APPROVED: 1, RELEASED: 2, DISPUTED: 
 // TYPE EXPORTS
 // ============================================================================
 export type RWALaunchpadFactoryABIType = typeof RWALaunchpadFactoryABI;
+export type RWATokenizationFactoryABIType = typeof RWATokenizationFactoryABI ;
 export type KYCVerifierABIType = typeof KYCVerifierABI;
 export type RWAProjectNFTABIType = typeof RWAProjectNFTABI;
 export type RWASecurityTokenABIType = typeof RWASecurityTokenABI;
