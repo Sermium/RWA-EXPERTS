@@ -620,7 +620,8 @@ export default function ProjectsClient() {
 
   const fetchFromAPI = async (forceRefresh: boolean) => {
     try {
-      const url = `/api/crowdfunding/projects?chainId=${chainId}&status=active`;
+      // Changed from /api/projects/list to /api/crowdfunding/projects
+      const url = `/api/crowdfunding/projects?status=all${chainId ? `&chainId=${chainId}` : ''}`;
       const response = await fetch(url);
       
       if (!response.ok) {
@@ -631,22 +632,29 @@ export default function ProjectsClient() {
 
       if (data.success && data.projects) {
         // Convert string values to BigInt
-        const parsedProjects: Project[] = data.projects.map((p: APIProject) => ({
-          ...p,
-          fundingGoal: BigInt(p.fundingGoal),
-          totalRaised: BigInt(p.totalRaised),
-          deadline: BigInt(p.deadline),
-          createdAt: BigInt(p.createdAt),
+        const parsedProjects: Project[] = data.projects.map((p: any) => ({
+          id: p.id,
+          owner: p.owner,
+          fundingGoal: BigInt(p.fundingGoal || '0'),
+          totalRaised: BigInt(p.totalRaised || '0'),
+          deadline: BigInt(p.deadline || '0'),
+          createdAt: BigInt(p.createdAt || '0'),
+          status: p.status,
+          securityToken: p.securityToken || '',
+          escrowVault: p.escrowVault || '',
+          metadata: p.metadata,
+          tokenName: p.tokenName,
+          tokenSymbol: p.tokenSymbol,
         }));
 
         setProjects(parsedProjects);
         setLastRefresh(Date.now());
-        setCacheHit(data.cache?.hit || false);
+        setCacheHit(false);
         
         // Update local cache
         setLocalCache(chainId, parsedProjects);
         
-        console.log(`[ProjectsClient] Loaded ${parsedProjects.length} projects from API (cache: ${data.cache?.hit ? 'hit' : 'miss'})`);
+        console.log(`[ProjectsClient] Loaded ${parsedProjects.length} projects from database`);
       }
 
       setError(null);
