@@ -1,7 +1,7 @@
 // src/app/create/page.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useAccount } from 'wagmi'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
@@ -407,7 +407,7 @@ function CreatorBadge() {
 // MAIN COMPONENT
 // ============================================================================
 
-export default function CreateProjectPage() {
+function CreateProjectContent () {
   const { isConnected, address } = useAccount()
   const searchParams = useSearchParams()
   const editId = searchParams.get('edit')
@@ -864,5 +864,24 @@ export default function CreateProjectPage() {
         </KYCRequirementGate>
       </main>
     </div>
+  )
+}
+
+// ============================================================================
+// MAIN EXPORT WITH SUSPENSE
+// ============================================================================
+
+export default function CreateProjectPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+          <p className="text-gray-400">Loading...</p>
+        </div>
+      </div>
+    }>
+      <CreateProjectContent />
+    </Suspense>
   )
 }
