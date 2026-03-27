@@ -1,39 +1,62 @@
 import { ethers } from "hardhat";
 
 async function main() {
-  // Let's just try a real deploy and catch the exact error
-  const FACTORY = "0x90FF863603b9450F185E3641c6EF3df469886Bd3";
-  const factory = await ethers.getContractAt("RWALaunchpadFactory", FACTORY);
+  const PROJECT_NFT = "0x129287D01f98e32213519345F3bBCCcBA3fe3941";
+  const [deployer] = await ethers.getSigners();
+  
+  const nft = await ethers.getContractAt("RWAProjectNFT", PROJECT_NFT);
 
-  console.log("=== ATTEMPTING DEPLOY WITH GAS ESTIMATION ===");
+  console.log("=== NFT DETAILED CHECK ===");
+  
+  // Check implementation
+  const implSlot = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
+  const implAddress = await ethers.provider.getStorage(PROJECT_NFT, implSlot);
+  console.log("NFT Implementation:", "0x" + implAddress.slice(-40));
+
+  // Check if there's a max supply
+  console.log("\n=== CHECKING LIMITS ===");
+  const totalSupply = await nft.totalSupply();
+  console.log("Total supply:", totalSupply.toString());
   
   try {
-    const gasEstimate = await factory.deployProject.estimateGas(
-      "Test", "TST", "Other",
-      ethers.parseUnits("200000", 18),
-      ethers.parseUnits("200000", 6),
-      30n,
-      "ipfs://test",
-      { value: 0 }
-    );
-    console.log("Gas estimate:", gasEstimate.toString());
+    const maxSupply = await nft.maxSupply();
+    console.log("Max supply:", maxSupply.toString());
+  } catch {
+    console.log("No maxSupply function");
+  }
+
+  try {
+    const cap = await nft.cap();
+    console.log("Cap:", cap.toString());
+  } catch {
+    console.log("No cap function");
+  }
+
+  // Check last project
+  console.log("\n=== LAST PROJECT ===");
+  try {
+    const lastProject = await nft.getProject(totalSupply - 1n);
+    console.log("Project", (totalSupply - 1n).toString(), ":");
+    console.log("  Owner:", lastProject.owner);
+    console.log("  Name:", lastProject.name);
   } catch (e: any) {
-    console.log("Gas estimation failed");
-    console.log("Error:", e.message);
-    if (e.error) console.log("Inner error:", e.error);
-    if (e.reason) console.log("Reason:", e.reason);
-    if (e.data) console.log("Data:", e.data);
-    
-    // Try to decode the error
-    if (e.data && e.data !== "0x") {
-      try {
-        const iface = factory.interface;
-        const decoded = iface.parseError(e.data);
-        console.log("Decoded error:", decoded);
-      } catch {
-        console.log("Could not decode error");
-      }
-    }
+    console.log("Can't get last project:", e.message);
+  }
+
+  // Check if there's a factory restriction
+  console.log("\n=== CHECKING FACTORY SETTING ===");
+  try {
+    const factoryAddr = await nft.factory();
+    console.log("Factory:", factoryAddr);
+  } catch {
+    console.log("No factory() function");
+  }
+
+  try {
+    const launchpad = await nft.launchpad();
+    console.log("Launchpad:", launchpad);
+  } catch {
+    console.log("No launchpad() function");
   }
 }
 
