@@ -1,62 +1,51 @@
+// scripts/check-status.ts
 import { ethers } from "hardhat";
 
 async function main() {
   const PROJECT_NFT = "0x129287D01f98e32213519345F3bBCCcBA3fe3941";
-  const [deployer] = await ethers.getSigners();
-  
   const nft = await ethers.getContractAt("RWAProjectNFT", PROJECT_NFT);
 
-  console.log("=== NFT DETAILED CHECK ===");
-  
-  // Check implementation
-  const implSlot = "0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc";
-  const implAddress = await ethers.provider.getStorage(PROJECT_NFT, implSlot);
-  console.log("NFT Implementation:", "0x" + implAddress.slice(-40));
+  console.log("=== DEBUGGING isNameTaken ===\n");
 
-  // Check if there's a max supply
-  console.log("\n=== CHECKING LIMITS ===");
+  // Check total supply
   const totalSupply = await nft.totalSupply();
-  console.log("Total supply:", totalSupply.toString());
-  
-  try {
-    const maxSupply = await nft.maxSupply();
-    console.log("Max supply:", maxSupply.toString());
-  } catch {
-    console.log("No maxSupply function");
+  console.log("Total NFTs:", totalSupply.toString());
+
+  // List all project names
+  console.log("\n=== ALL PROJECT NAMES ===");
+  for (let i = 0; i < Math.min(Number(totalSupply), 10); i++) {
+    try {
+      const project = await nft.getProject(i);
+      console.log(`NFT #${i}: "${project.name}"`);
+      
+      // Check if this name is marked as taken
+      const isTaken = await nft.isNameTaken(project.name);
+      console.log(`  isNameTaken: ${isTaken}`);
+    } catch (e: any) {
+      console.log(`NFT #${i}: ERROR - ${e.message}`);
+    }
   }
 
-  try {
-    const cap = await nft.cap();
-    console.log("Cap:", cap.toString());
-  } catch {
-    console.log("No cap function");
-  }
+  // Test various name formats
+  console.log("\n=== NAME AVAILABILITY TESTS ===");
+  const testNames = [
+    "tgf",
+    "TGF",  // case sensitivity check
+    "Test",
+    "test",
+    "Brand New Project",
+    "",
+    " ",
+    "Project With Spaces",
+  ];
 
-  // Check last project
-  console.log("\n=== LAST PROJECT ===");
-  try {
-    const lastProject = await nft.getProject(totalSupply - 1n);
-    console.log("Project", (totalSupply - 1n).toString(), ":");
-    console.log("  Owner:", lastProject.owner);
-    console.log("  Name:", lastProject.name);
-  } catch (e: any) {
-    console.log("Can't get last project:", e.message);
-  }
-
-  // Check if there's a factory restriction
-  console.log("\n=== CHECKING FACTORY SETTING ===");
-  try {
-    const factoryAddr = await nft.factory();
-    console.log("Factory:", factoryAddr);
-  } catch {
-    console.log("No factory() function");
-  }
-
-  try {
-    const launchpad = await nft.launchpad();
-    console.log("Launchpad:", launchpad);
-  } catch {
-    console.log("No launchpad() function");
+  for (const name of testNames) {
+    try {
+      const isTaken = await nft.isNameTaken(name);
+      console.log(`"${name}": ${isTaken ? "TAKEN" : "AVAILABLE"}`);
+    } catch (e: any) {
+      console.log(`"${name}": ERROR`);
+    }
   }
 }
 

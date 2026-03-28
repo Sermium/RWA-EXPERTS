@@ -6,6 +6,13 @@ import { getDefaultChain, isValidChainId, getChainById, type SupportedChainId } 
 
 const SUBMISSION_FEE_USD = 500;
 
+// Tokenization pricing
+const TOKENIZATION_PRICING = {
+  base: 750,
+  escrow: 250,
+  dividend: 200,
+};
+
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error('STRIPE_SECRET_KEY not configured');
@@ -21,6 +28,11 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { type } = body;
 
+    // Handle tokenization fee payments
+    if (type === 'tokenization_fee') {
+      return handleTokenizationFee(stripe, body);
+    }
+
     // Handle submission fee payments
     if (type === 'submission_fee') {
       return handleSubmissionFee(stripe, body);
@@ -35,6 +47,89 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+}
+
+async function handleTokenizationFee(stripe: Stripe, body: Record<string, unknown>) {
+  const { 
+    walletAddress, 
+    email, 
+    includeEscrow, 
+    includeDividend,
+    assetName,
+    tokenName,
+    tokenSymbol,
+  } = body;
+
+  if (!walletAddress || !email) {
+    return NextResponse.json(
+      { error: 'Missing required fields: walletAddress, email' },
+      { status: 400 }
+    );
+  }
+
+  // Calculate total amount
+  const totalAmount = TOKENIZATION_PRICING.base + 
+    (includeEscrow ? TOKENIZATION_PRICING.escrow : 0) + 
+    (includeDividend ? TOKENIZATION_PRICING.dividend : 0);
+
+  const amountCents = Math.round(totalAmount * 100);
+
+  // Build description
+  const features = ['Token Creation'];
+  if (includeEscrow) features.push('Escrow Vault');
+  if (includeDividend) features.push('Dividend Engine');
+
+  // Get or create customer
+  let customerId: string | undefined;
+  if (typeof email === 'string') {
+    const customers = await stripe.customers.list({ email, limit: 1 });
+
+    if (customers.data.length > 0) {
+      customerId = customers.data[0].id;
+      await stripe.customers.update(customerId, {
+        metadata: { walletAddress: walletAddress as string },
+      });
+    } else {
+      const customer = await stripe.customers.create({
+        email,
+        metadata: { walletAddress: walletAddress as string },
+      });
+      customerId = customer.id;
+    }
+  }
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amountCents,
+    currency: 'usd',
+    customer: customerId,
+    metadata: {
+      type: 'tokenization_fee',
+      walletAddress: String(walletAddress),
+      includeEscrow: includeEscrow ? 'true' : 'false',
+      includeDividend: includeDividend ? 'true' : 'false',
+      assetName: String(assetName || ''),
+      tokenName: String(tokenName || ''),
+      tokenSymbol: String(tokenSymbol || ''),
+      baseAmount: String(TOKENIZATION_PRICING.base),
+      escrowAmount: includeEscrow ? String(TOKENIZATION_PRICING.escrow) : '0',
+      dividendAmount: includeDividend ? String(TOKENIZATION_PRICING.dividend) : '0',
+      totalAmount: String(totalAmount),
+    },
+    description: `RWA Tokenization: ${features.join(' + ')}${tokenName ? ` - ${tokenName}` : ''}`,
+    receipt_email: typeof email === 'string' ? email : undefined,
+    automatic_payment_methods: { enabled: true },
+  });
+
+  return NextResponse.json({
+    clientSecret: paymentIntent.client_secret,
+    paymentIntentId: paymentIntent.id,
+    amount: totalAmount,
+    breakdown: {
+      base: TOKENIZATION_PRICING.base,
+      escrow: includeEscrow ? TOKENIZATION_PRICING.escrow : 0,
+      dividend: includeDividend ? TOKENIZATION_PRICING.dividend : 0,
+    },
+  });
 }
 
 async function handleSubmissionFee(stripe: Stripe, body: Record<string, unknown>) {
@@ -120,7 +215,6 @@ async function handleInvestment(stripe: Stripe, body: Record<string, unknown>) {
 
   const amountCents = Math.round((amountUSD as number) * 100);
   
-  // Validate email type
   const validEmail = typeof investorEmail === 'string' ? investorEmail : undefined;
 
   let customerId: string | undefined;
@@ -154,7 +248,7 @@ async function handleInvestment(stripe: Stripe, body: Record<string, unknown>) {
       chainName: chainInfo.name,
     },
     description: `Investment in Project #${projectId} on ${chainInfo.name}`,
-    receipt_email: validEmail,  // Now correctly typed as string | undefined
+    receipt_email: validEmail,
     automatic_payment_methods: { enabled: true },
   });
 

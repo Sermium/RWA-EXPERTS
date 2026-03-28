@@ -1,15 +1,18 @@
 // src/components/create/StepProjectDetails.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { 
   Info, ChevronDown, ChevronUp, FileText, Building2, 
   Target, Shield, TrendingUp, Users, Clock, CheckCircle, CheckCircle2,
   AlertCircle, DollarSign, Percent, Calendar, Globe, Package, Lightbulb,
-  Briefcase, MapPin, Hash, Coins, Calculator, Factory, Palette, Gem, Car
+  Briefcase, MapPin, Hash, Coins, Calculator, Factory, Palette, Gem, Car,
+  Loader2
 } from 'lucide-react'
 import { ProjectData, REQUIRED_LEGAL_DOCUMENTS } from '@/app/create/page'
 import { FEE_CONFIG } from '@/config/deployments'
+import { usePublicClient } from 'wagmi'
+import { useChainConfig } from '@/hooks/useChainConfig'
 
 // ============================================================================
 // TYPES
@@ -29,6 +32,17 @@ interface StepProjectDetailsProps {
 const PLATFORM_TOKEN_FEE_PERCENT = FEE_CONFIG.PLATFORM_TOKEN_FEE_BPS / 100 // 1%
 const PLATFORM_RAISE_FEE_PERCENT = FEE_CONFIG.PLATFORM_USDT_FEE_BPS / 100 // 1.5%
 const INVESTOR_TOKEN_PERCENT = FEE_CONFIG.INVESTOR_TOKEN_BPS / 100 // 99%
+
+// ABI for name check
+const PROJECT_NFT_ABI = [
+  {
+    name: 'isNameTaken',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: '_name', type: 'string' }],
+    outputs: [{ type: 'bool' }],
+  },
+] as const
 
 const CATEGORIES = [
   { id: 'Real Estate', icon: Building2, description: 'Properties, land, developments' },
@@ -680,6 +694,101 @@ export default function StepProjectDetails({
 }: StepProjectDetailsProps) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isLoadingRate, setIsLoadingRate] = useState(false)
+  
+  // Name availability check state
+  const [isCheckingName, setIsCheckingName] = useState(false)
+  const [nameAvailable, setNameAvailable] = useState<boolean | null>(null)
+  const [nameCheckError, setNameCheckError] = useState<string | null>(null)
+  
+  const publicClient = usePublicClient()
+  const { contracts } = useChainConfig()
+
+  // Debounced name check
+  const checkNameAvailability = useCallback(async (name: string) => {
+    if (!name.trim() || !publicClient || !contracts?.RWAProjectNFT) {
+      setNameAvailable(null)
+      setNameCheckError(null)
+      return
+    }
+
+    setIsCheckingName(true)
+    setNameCheckError(null)
+
+    try {
+      // Try to call isNameTaken if it exists
+      const isTaken = await publicClient.readContract({
+        address: contracts.RWAProjectNFT as `0x${string}`,
+        abi: PROJECT_NFT_ABI,
+        functionName: 'isNameTaken',
+        args: [name.trim()],
+      })
+
+      setNameAvailable(!isTaken)
+      if (isTaken) {
+        setNameCheckError('This project name is already taken')
+      }
+    } catch (err: any) {
+      // If isNameTaken doesn't exist, try simulation approach
+      console.log('isNameTaken not available, trying simulation...')
+      try {
+        await publicClient.simulateContract({
+          address: contracts.RWAProjectNFT as `0x${string}`,
+          abi: [
+            {
+              name: 'createProject',
+              type: 'function',
+              stateMutability: 'nonpayable',
+              inputs: [
+                { name: '_owner', type: 'address' },
+                { name: '_name', type: 'string' },
+                { name: '_category', type: 'string' },
+                { name: '_fundingGoal', type: 'uint256' },
+                { name: '_uri', type: 'string' },
+              ],
+              outputs: [{ type: 'uint256' }],
+            },
+          ],
+          functionName: 'createProject',
+          args: [
+            '0x0000000000000000000000000000000000000001', // dummy address
+            name.trim(),
+            'Other',
+            BigInt(100000000000), // 100k in 6 decimals
+            'ipfs://test',
+          ],
+        })
+        // If simulation passes, name is available
+        setNameAvailable(true)
+      } catch (simErr: any) {
+        if (simErr.message?.includes('NameAlreadyExists') || 
+            simErr.message?.includes('name already exists') ||
+            simErr.message?.includes('execution reverted')) {
+          setNameAvailable(false)
+          setNameCheckError('This project name is already taken')
+        } else {
+          // Some other error - don't block the user
+          console.error('Name check error:', simErr)
+          setNameAvailable(null)
+        }
+      }
+    } finally {
+      setIsCheckingName(false)
+    }
+  }, [publicClient, contracts?.RWAProjectNFT])
+
+  // Debounce the name check
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (data.projectName.trim().length >= 3) {
+        checkNameAvailability(data.projectName)
+      } else {
+        setNameAvailable(null)
+        setNameCheckError(null)
+      }
+    }, 500) // Wait 500ms after user stops typing
+
+    return () => clearTimeout(timer)
+  }, [data.projectName, checkNameAvailability])
 
   // Fetch exchange rate when currency changes
   useEffect(() => {
@@ -754,6 +863,8 @@ export default function StepProjectDetails({
 
     if (!data.projectName.trim()) {
       newErrors.projectName = 'Project name is required'
+    } else if (nameAvailable === false) {
+      newErrors.projectName = 'This project name is already taken. Please choose a different name.'
     }
 
     if (!data.description.trim()) {
@@ -835,21 +946,59 @@ export default function StepProjectDetails({
               Basic Information
             </h3>
 
-            {/* Project Name */}
+            {/* Project Name with availability check */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-white">
                 Project Name <span className="text-red-400">*</span>
               </label>
-              <input
-                type="text"
-                value={data.projectName}
-                onChange={(e) => updateData({ projectName: e.target.value })}
-                placeholder="Enter your project name"
-                className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
-                  errors.projectName ? 'border-red-500' : 'border-gray-700'
-                }`}
-              />
-              {errors.projectName && (
+              <div className="relative">
+                <input
+                  type="text"
+                  name="projectName"
+                  value={data.projectName}
+                  onChange={(e) => updateData({ projectName: e.target.value })}
+                  placeholder="Enter your project name"
+                  className={`w-full px-4 py-3 pr-12 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
+                    errors.projectName || nameAvailable === false 
+                      ? 'border-red-500' 
+                      : nameAvailable === true 
+                        ? 'border-green-500' 
+                        : 'border-gray-700'
+                  }`}
+                />
+                {/* Status indicator */}
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  {isCheckingName && (
+                    <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+                  )}
+                  {!isCheckingName && nameAvailable === true && (
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                  )}
+                  {!isCheckingName && nameAvailable === false && (
+                    <AlertCircle className="w-5 h-5 text-red-500" />
+                  )}
+                </div>
+              </div>
+              {/* Status messages */}
+              {isCheckingName && (
+                <p className="text-xs text-gray-400 flex items-center gap-1">
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                  Checking availability...
+                </p>
+              )}
+              {!isCheckingName && nameAvailable === true && (
+                <p className="text-xs text-green-400 flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" />
+                  This name is available
+                </p>
+              )}
+              {!isCheckingName && nameCheckError && (
+                <p className="text-xs text-red-400 flex items-center gap-1">
+                  <AlertCircle className="w-3 h-3" />
+                  {nameCheckError}
+                </p>
+              )}
+              {errors.projectName && !nameCheckError && (
                 <p className="text-xs text-red-400">{errors.projectName}</p>
               )}
             </div>
@@ -862,7 +1011,7 @@ export default function StepProjectDetails({
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {CATEGORIES.map((cat) => (
                   <button
-                    key={cat.id}  // Add key prop
+                    key={cat.id}
                     type="button"
                     onClick={() => updateData({ category: cat.id })}
                     className={`p-4 rounded-xl border-2 transition-all text-left ${
@@ -877,7 +1026,7 @@ export default function StepProjectDetails({
                       }`}>
                         <cat.icon className={`w-5 h-5 ${
                           data.category === cat.id ? 'text-blue-400' : 'text-slate-400'
-                        }`} />  {/* ✅ Render as JSX element */}
+                        }`} />
                       </div>
                       <div>
                         <p className="font-medium text-white">{cat.id}</p>
@@ -930,9 +1079,7 @@ export default function StepProjectDetails({
                 value={data.website}
                 onChange={(e) => {
                   let value = e.target.value.trim();
-                  // Auto-add https:// if user types a domain without protocol
                   if (value && !value.startsWith('http://') && !value.startsWith('https://')) {
-                    // Only add if it looks like a domain (contains a dot)
                     if (value.includes('.')) {
                       value = `https://${value}`;
                     }
@@ -940,7 +1087,6 @@ export default function StepProjectDetails({
                   updateData({ website: value });
                 }}
                 onBlur={(e) => {
-                  // Also handle on blur for cases where user pastes or types quickly
                   let value = e.target.value.trim();
                   if (value && !value.startsWith('http://') && !value.startsWith('https://')) {
                     if (value.includes('.')) {
@@ -1090,7 +1236,6 @@ export default function StepProjectDetails({
                   onChange={(e) => {
                     const value = parseFloat(e.target.value) || 0
                     updateData({ investorSharePercentage: value })
-                    // Recalculate tokens
                     if (data.totalSupply > 0) {
                       handleSupplyChange(data.totalSupply)
                     }
@@ -1216,10 +1361,15 @@ export default function StepProjectDetails({
       <div className="flex justify-end pt-6 border-t border-gray-700">
         <button
           onClick={handleNext}
-          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
+          disabled={isCheckingName || nameAvailable === false}
+          className={`px-8 py-3 font-semibold rounded-lg transition-colors ${
+            isCheckingName || nameAvailable === false
+              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+              : 'bg-blue-600 hover:bg-blue-700 text-white'
+          }`}
           type="button"
         >
-          Continue to Milestones
+          {isCheckingName ? 'Checking name...' : 'Continue to Milestones'}
         </button>
       </div>
     </div>

@@ -2875,8 +2875,8 @@
       ]
     },
     "D:\\Frontend\\RWA-Experts\\rwa-evm\\contracts\\core\\RWAProjectNFT.sol": {
-      "lastModificationDate": 1771232491179,
-      "contentHash": "f4765871c2c911b91d4199880dd4110e",
+      "lastModificationDate": 1774645456558,
+      "contentHash": "83ad818554111f3b3c94b85f78f41d9b",
       "sourceName": "contracts/core/RWAProjectNFT.sol",
       "solcConfig": {
         "version": "0.8.20",

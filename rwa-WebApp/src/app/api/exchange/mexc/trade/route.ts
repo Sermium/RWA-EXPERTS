@@ -1,7 +1,7 @@
 // src/app/api/exchange/mexc/trade/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { executeMexcMarketOrder, calculatePlatformRevenue, getMexcTicker } from '@/lib/mexc';
-import { MEXC_CONFIG, type MexcPairSymbol } from '@/config/mexc';
+import { MEXC_CONFIG, type MexcPairSymbol } from '@/config/exchange';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 // Platform MEXC API credentials (store in env)

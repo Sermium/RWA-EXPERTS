@@ -1,11 +1,16 @@
+// src/hooks/useFeeRecipient.ts
 'use client';
 
 import { useState, useEffect } from 'react';
 import { useChainConfig } from './useChainConfig';
-import { EXCHANGE_CONFIG } from '@/config/exchange';
+import { getPlatformWallets } from '@/config/deployments';
 
 interface FeeRecipientData {
   feeRecipient: string;
+  tokenizationFeeRecipient: string;
+  crowdfundingFeeRecipient: string;
+  liquidityWallet: string;
+  treasuryWallet: string;
   isLoading: boolean;
   error: string | null;
 }
@@ -13,48 +18,85 @@ interface FeeRecipientData {
 export function useFeeRecipient(): FeeRecipientData {
   const { chainId } = useChainConfig();
   const [data, setData] = useState<FeeRecipientData>({
-    feeRecipient: EXCHANGE_CONFIG.PLATFORM_WALLET || '',
+    feeRecipient: '',
+    tokenizationFeeRecipient: '',
+    crowdfundingFeeRecipient: '',
+    liquidityWallet: '',
+    treasuryWallet: '',
     isLoading: true,
     error: null,
   });
 
   useEffect(() => {
-    const fetchFeeRecipient = async () => {
-      if (!chainId) {
-        setData(prev => ({ ...prev, isLoading: false }));
-        return;
-      }
-
+    const loadFeeRecipients = async () => {
       try {
-        const response = await fetch(`/api/admin/settings/fee?chainId=${chainId}`);
-        const result = await response.json();
+        // Get platform wallets from deployments config
+        const wallets = getPlatformWallets(chainId);
+        
+        console.log('=== FEE RECIPIENT DEBUG ===');
+        console.log('Chain ID:', chainId);
+        console.log('Fee Receiver:', wallets.feeReceiver);
+        console.log('Liquidity Wallet:', wallets.liquidityWallet);
+        console.log('Treasury Wallet:', wallets.treasuryWallet);
 
-        if (result.success && result.feeRecipient && result.feeRecipient !== '0x0000000000000000000000000000000000000000') {
-          setData({
-            feeRecipient: result.feeRecipient,
-            isLoading: false,
-            error: null,
-          });
-        } else {
-          // Fallback to platform wallet from config
-          setData({
-            feeRecipient: EXCHANGE_CONFIG.PLATFORM_WALLET || '',
-            isLoading: false,
-            error: null,
-          });
+        // Try to fetch chain-specific overrides from API
+        let apiOverrides: any = null;
+        try {
+          const response = await fetch(`/api/config/fee-recipient?chainId=${chainId}`);
+          if (response.ok) {
+            apiOverrides = await response.json();
+            console.log('API overrides:', apiOverrides);
+          }
+        } catch (err) {
+          console.log('No API overrides available');
         }
-      } catch (error) {
-        console.error('Error fetching fee recipient:', error);
-        // Fallback to platform wallet
+
+        const isValidAddress = (addr: string | null | undefined): boolean => {
+          return !!addr && 
+                 addr !== '0x0000000000000000000000000000000000000000' &&
+                 addr.startsWith('0x') &&
+                 addr.length === 42;
+        };
+
+        // Use API overrides if valid, otherwise use config values
+        const feeReceiver = isValidAddress(apiOverrides?.feeRecipient) 
+          ? apiOverrides.feeRecipient 
+          : wallets.feeReceiver;
+
         setData({
-          feeRecipient: EXCHANGE_CONFIG.PLATFORM_WALLET || '',
+          feeRecipient: feeReceiver,
+          tokenizationFeeRecipient: isValidAddress(apiOverrides?.tokenizationFeeRecipient) 
+            ? apiOverrides.tokenizationFeeRecipient 
+            : feeReceiver,
+          crowdfundingFeeRecipient: isValidAddress(apiOverrides?.crowdfundingFeeRecipient) 
+            ? apiOverrides.crowdfundingFeeRecipient 
+            : feeReceiver,
+          liquidityWallet: wallets.liquidityWallet,
+          treasuryWallet: wallets.treasuryWallet,
           isLoading: false,
-          error: 'Failed to fetch fee recipient',
+          error: null,
+        });
+
+      } catch (error) {
+        console.error('Error loading fee recipients:', error);
+        
+        // Even on error, try to use default wallets
+        const wallets = getPlatformWallets(chainId);
+        setData({
+          feeRecipient: wallets.feeReceiver,
+          tokenizationFeeRecipient: wallets.feeReceiver,
+          crowdfundingFeeRecipient: wallets.feeReceiver,
+          liquidityWallet: wallets.liquidityWallet,
+          treasuryWallet: wallets.treasuryWallet,
+          isLoading: false,
+          error: 'Failed to load overrides, using defaults',
         });
       }
     };
 
-    fetchFeeRecipient();
+    if (chainId) {
+      loadFeeRecipients();
+    }
   }, [chainId]);
 
   return data;

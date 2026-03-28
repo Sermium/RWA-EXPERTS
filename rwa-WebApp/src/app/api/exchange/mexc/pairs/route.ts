@@ -1,19 +1,19 @@
 // src/app/api/exchange/mexc/pairs/route.ts
 import { NextResponse } from 'next/server';
-import { MEXC_CONFIG } from '@/config/mexc';
+import { MEXC_CONFIG, PLATFORM_CONFIG } from '@/config/exchange';
 
 export async function GET() {
   const pairs = MEXC_CONFIG.SUPPORTED_PAIRS.map(pair => ({
     ...pair,
     config: MEXC_CONFIG.PAIR_CONFIG[pair.symbol],
-    markup: MEXC_CONFIG.MARKUP_PERCENT,
-    platformFee: MEXC_CONFIG.PLATFORM_FEE_PERCENT,
+    markup: PLATFORM_CONFIG.MARKUP_PERCENT,
+    platformFee: PLATFORM_CONFIG.PLATFORM_FEE_PERCENT,
   }));
   
   return NextResponse.json({ 
     pairs,
-    markup: MEXC_CONFIG.MARKUP_PERCENT,
-    platformFee: MEXC_CONFIG.PLATFORM_FEE_PERCENT,
-    totalFee: MEXC_CONFIG.MARKUP_PERCENT + MEXC_CONFIG.PLATFORM_FEE_PERCENT,
+    markup: PLATFORM_CONFIG.MARKUP_PERCENT,
+    platformFee: PLATFORM_CONFIG.PLATFORM_FEE_PERCENT,
+    totalFee: PLATFORM_CONFIG.MARKUP_PERCENT + PLATFORM_CONFIG.PLATFORM_FEE_PERCENT,
   });
 }

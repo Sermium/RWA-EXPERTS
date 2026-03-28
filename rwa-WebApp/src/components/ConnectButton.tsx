@@ -92,14 +92,14 @@ const ConnectModalContext = createContext<ConnectModalContextType | null>(null);
 
 export function useConnectModal() {
   const context = useContext(ConnectModalContext);
-  const [isOpen, setIsOpen] = useState(false);  // Local state
+  const [isOpen, setIsOpen] = useState(false);
   const { isPending } = useConnect();
   
   if (!context) {
     return {
-      openConnectModal: () => setIsOpen(true),  // Sets local state
+      openConnectModal: () => setIsOpen(true),
       closeConnectModal: () => setIsOpen(false),
-      isOpen,  // But nothing renders this!
+      isOpen,
       isConnecting: isPending,
     };
   }
@@ -127,6 +127,40 @@ export function ConnectModalProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Check if wallet provider is available
+function isProviderAvailable(connectorId: string): boolean {
+  if (typeof window === 'undefined') return false;
+  
+  const ethereum = (window as any).ethereum;
+  
+  if (!ethereum) return false;
+  
+  // Check for specific wallet providers
+  if (connectorId === 'metaMask' || connectorId === 'io.metamask') {
+    return ethereum.isMetaMask === true;
+  }
+  
+  if (connectorId === 'coinbaseWallet' || connectorId === 'coinbaseWalletSDK') {
+    return ethereum.isCoinbaseWallet === true || ethereum.providers?.some((p: any) => p.isCoinbaseWallet);
+  }
+  
+  if (connectorId === 'phantom' || connectorId === 'app.phantom') {
+    return ethereum.isPhantom === true || !!(window as any).phantom?.ethereum;
+  }
+  
+  // For injected, just check if ethereum exists
+  if (connectorId === 'injected') {
+    return true;
+  }
+  
+  // WalletConnect doesn't need a provider check
+  if (connectorId === 'walletConnect') {
+    return true;
+  }
+  
+  return true;
+}
+
 // Wallet Selection Modal
 function WalletModal({ onClose }: { onClose: () => void }) {
   const { connect, connectors, isPending, error } = useConnect();
@@ -142,6 +176,7 @@ function WalletModal({ onClose }: { onClose: () => void }) {
     }
   }, [isConnected, address, onClose]);
 
+  // Filter and deduplicate connectors, also check availability
   const availableConnectors = connectors
     .filter((connector, index, self) => {
       const isFirst = index === self.findIndex(c => c.id === connector.id);
@@ -167,7 +202,41 @@ function WalletModal({ onClose }: { onClose: () => void }) {
     setLocalError(null);
 
     try {
-      // Directly connect without checking provider.on
+      // Check if provider is available for injected wallets
+      const isInjected = connector.type === 'injected' || 
+                         connector.id === 'injected' || 
+                         connector.id === 'metaMask' ||
+                         connector.id === 'io.metamask';
+      
+      if (isInjected && typeof window !== 'undefined') {
+        const ethereum = (window as any).ethereum;
+        
+        if (!ethereum) {
+          setConnectingId(null);
+          setLocalError('No wallet detected. Please install MetaMask or another Web3 wallet.');
+          
+          // Open MetaMask install page after a short delay
+          setTimeout(() => {
+            if (confirm('Would you like to install MetaMask?')) {
+              window.open('https://metamask.io/download/', '_blank');
+            }
+          }, 100);
+          return;
+        }
+        
+        // Check for specific wallet
+        if ((connector.id === 'metaMask' || connector.id === 'io.metamask') && !ethereum.isMetaMask) {
+          // MetaMask not detected, but another wallet might be
+          const hasOtherWallet = ethereum.isCoinbaseWallet || ethereum.isPhantom;
+          if (hasOtherWallet) {
+            setConnectingId(null);
+            setLocalError('MetaMask not detected. Please use the detected wallet or install MetaMask.');
+            return;
+          }
+        }
+      }
+
+      // Proceed with connection
       connect(
         { connector },
         {
@@ -180,10 +249,20 @@ function WalletModal({ onClose }: { onClose: () => void }) {
             console.error('Connection failed:', err);
             setConnectingId(null);
             
-            // Handle common errors gracefully
-            if (err.message?.includes('already connected') || 
-                err.message?.includes('Connector already connected')) {
-              // Try to reconnect
+            const errorMessage = err.message || '';
+            const errorName = (err as any).name || '';
+            
+            // Handle ProviderNotFoundError (check message since it's not in type union)
+            if (errorName === 'ProviderNotFoundError' || 
+                errorMessage.includes('Provider not found') ||
+                errorMessage.includes('No provider was found')) {
+              setLocalError('Wallet not detected. Please install a Web3 wallet like MetaMask.');
+              return;
+            }
+            
+            // Handle already connected
+            if (errorMessage.includes('already connected') || 
+                errorMessage.includes('Connector already connected')) {
               try {
                 reconnect();
               } catch (e) {
@@ -193,28 +272,47 @@ function WalletModal({ onClose }: { onClose: () => void }) {
               return;
             }
             
-            if (err.message?.includes('User rejected') || 
-                err.message?.includes('user rejected')) {
+            // Handle user rejection
+            if (errorMessage.includes('User rejected') || 
+                errorMessage.includes('user rejected')) {
               setLocalError('Connection cancelled by user');
               return;
             }
 
-            if (err.message?.includes('provider.on is not a function')) {
-              // Fallback: try connecting anyway, the wallet might still work
-              setLocalError('Wallet connection issue. Please try again or use a different wallet.');
+            // Handle provider.on error
+            if (errorMessage.includes('provider.on is not a function')) {
+              setLocalError('Wallet connection issue. Please refresh the page and try again.');
+              return;
+            }
+
+            // Handle chain not configured
+            if (errorMessage.includes('Chain not configured')) {
+              setLocalError('Network not supported. Please switch to a supported network in your wallet.');
               return;
             }
             
-            setLocalError(err.message || 'Connection failed. Please try again.');
+            setLocalError(errorMessage || 'Connection failed. Please try again.');
           },
         }
       );
     } catch (err: any) {
       console.error('Connection error:', err);
       setConnectingId(null);
-      setLocalError(err.message || 'Connection failed');
+      
+      const errorMessage = err?.message || '';
+      const errorName = err?.name || '';
+      
+      if (errorName === 'ProviderNotFoundError' || 
+          errorMessage.includes('Provider not found')) {
+        setLocalError('No wallet detected. Please install MetaMask.');
+      } else {
+        setLocalError(errorMessage || 'Connection failed');
+      }
     }
   };
+
+  // Check if any wallet is available
+  const hasAnyWallet = typeof window !== 'undefined' && !!(window as any).ethereum;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -241,11 +339,37 @@ function WalletModal({ onClose }: { onClose: () => void }) {
             <p className="text-red-400 text-sm">{localError || error?.message}</p>
           </div>
         )}
+
+        {/* No wallet detected message */}
+        {!hasAnyWallet && (
+          <div className="mx-4 mt-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl">🦊</span>
+              <div>
+                <p className="text-amber-400 font-medium">No wallet detected</p>
+                <p className="text-sm text-gray-400 mt-1">
+                  Install a Web3 wallet to connect to the platform.
+                </p>
+                <a
+                  href="https://metamask.io/download/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black font-medium rounded-lg transition-colors text-sm"
+                >
+                  Install MetaMask
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
           {availableConnectors.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-400">No wallets detected.</p>
+              <p className="text-gray-400">No wallet connectors available.</p>
               <p className="text-gray-500 text-sm mt-2">
                 Please install MetaMask or another Web3 wallet.
               </p>
@@ -256,18 +380,33 @@ function WalletModal({ onClose }: { onClose: () => void }) {
               const icon = walletIcons[connector.id] || '💼';
               const name = walletNames[connector.id] || connector.name;
               
+              // Check if this specific connector is available
+              const isInjected = connector.type === 'injected' || connector.id === 'injected';
+              const isWalletConnect = connector.id === 'walletConnect';
+              const providerAvailable = isWalletConnect || (hasAnyWallet && isInjected) || isProviderAvailable(connector.id);
+              
               return (
                 <button
                   key={connector.id}
                   onClick={() => handleConnect(connector)}
                   disabled={isPending || isConnecting}
-                  className="w-full flex items-center gap-4 p-4 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl transition-all duration-200 group"
+                  className={`
+                    w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 group
+                    ${providerAvailable 
+                      ? 'bg-gray-800 hover:bg-gray-700' 
+                      : 'bg-gray-800/50 opacity-60'
+                    }
+                    disabled:opacity-50 disabled:cursor-not-allowed
+                  `}
                 >
                   <span className="text-3xl">{icon}</span>
                   <div className="flex-1 text-left">
                     <div className="text-white font-semibold group-hover:text-blue-400 transition-colors">
                       {name}
                     </div>
+                    {!providerAvailable && !isWalletConnect && (
+                      <div className="text-xs text-gray-500">Not installed</div>
+                    )}
                   </div>
                   {isConnecting ? (
                     <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />

@@ -212,4 +212,8 @@ contract RWAProjectNFT is Initializable, ERC721Upgradeable, ERC721URIStorageUpgr
 
     function pause() external onlyRole(DEFAULT_ADMIN_ROLE) { _pause(); }
     function unpause() external onlyRole(DEFAULT_ADMIN_ROLE) { _unpause(); }
+
+    function isNameTaken(string calldata _name) external view returns (bool) {
+    return _nameExists[_name];
+}
 }

@@ -77,6 +77,7 @@ export interface RWAProjectNFTInterface extends Interface {
       | "incrementTotalRaised"
       | "initialize"
       | "isApprovedForAll"
+      | "isNameTaken"
       | "linkEscrowVault"
       | "linkSecurityToken"
       | "name"
@@ -191,6 +192,7 @@ export interface RWAProjectNFTInterface extends Interface {
     functionFragment: "isApprovedForAll",
     values: [AddressLike, AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "isNameTaken", values: [string]): string;
   encodeFunctionData(
     functionFragment: "linkEscrowVault",
     values: [BigNumberish, AddressLike]
@@ -329,6 +331,10 @@ export interface RWAProjectNFTInterface extends Interface {
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "isApprovedForAll",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "isNameTaken",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -842,6 +848,8 @@ export interface RWAProjectNFT extends BaseContract {
     "view"
   >;
 
+  isNameTaken: TypedContractMethod<[_name: string], [boolean], "view">;
+
   linkEscrowVault: TypedContractMethod<
     [_tokenId: BigNumberish, _escrowVault: AddressLike],
     [void],
@@ -1075,6 +1083,9 @@ export interface RWAProjectNFT extends BaseContract {
     [boolean],
     "view"
   >;
+  getFunction(
+    nameOrSignature: "isNameTaken"
+  ): TypedContractMethod<[_name: string], [boolean], "view">;
   getFunction(
     nameOrSignature: "linkEscrowVault"
   ): TypedContractMethod<

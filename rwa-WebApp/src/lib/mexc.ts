@@ -1,6 +1,6 @@
 // src/lib/mexc.ts
 import crypto from 'crypto';
-import { MEXC_CONFIG, type MexcPairSymbol } from '@/config/mexc';
+import { MEXC_CONFIG, type MexcPairSymbol } from '@/config/exchange';
 
 const { baseUrl, MARKUP_MULTIPLIER, PLATFORM_FEE_MULTIPLIER } = MEXC_CONFIG;
 

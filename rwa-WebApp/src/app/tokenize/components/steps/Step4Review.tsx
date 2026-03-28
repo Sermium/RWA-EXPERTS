@@ -1,12 +1,15 @@
+// src/components/tokenization/Step4Review.tsx
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Edit2, FileText, CheckCircle, CreditCard, Loader2, Shield, PiggyBank, Coins } from 'lucide-react';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { Edit2, FileText, CheckCircle, CreditCard, Loader2, Shield, PiggyBank, Coins, Wallet, Building2, X } from 'lucide-react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useReadContract } from 'wagmi';
 import { parseUnits, formatUnits } from 'viem';
 import { FormData, DocumentFile, UploadedFile, ASSET_TYPES, USE_CASES, DOCUMENT_TYPES } from '../../types';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { useFeeRecipient } from '@/hooks/useFeeRecipient';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 interface Step4ReviewProps {
   formData: FormData;
@@ -21,7 +24,8 @@ interface PaymentOptions {
   escrow: boolean;
   dividend: boolean;
   totalAmount: number;
-  currency: 'USDC' | 'USDT';
+  currency: 'USDC' | 'USDT' | 'USD';
+  paymentMethod: 'crypto' | 'stripe';
 }
 
 // ERC20 ABI for transfer
@@ -50,6 +54,90 @@ const PRICING = {
   dividend: 200,
 };
 
+// Initialize Stripe
+const stripePromise = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  ? loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY)
+  : null;
+
+// Stripe Payment Form Component
+function StripePaymentForm({ 
+  onSuccess, 
+  onError, 
+  onCancel,
+  amount 
+}: { 
+  onSuccess: (paymentIntentId: string) => void;
+  onError: (error: string) => void;
+  onCancel: () => void;
+  amount: number;
+}) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!stripe || !elements) return;
+
+    setIsProcessing(true);
+
+    const { error, paymentIntent } = await stripe.confirmPayment({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/tokenize?payment_status=success`,
+      },
+      redirect: 'if_required',
+    });
+
+    if (error) {
+      onError(error.message || 'Payment failed');
+      setIsProcessing(false);
+    } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+      onSuccess(paymentIntent.id);
+    } else {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="p-4 bg-gray-800 rounded-xl border border-gray-700">
+        <PaymentElement />
+      </div>
+      
+      <div className="flex gap-3">
+        <button
+          type="button"
+          onClick={onCancel}
+          disabled={isProcessing}
+          className="flex-1 py-3 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+        >
+          <X className="w-4 h-4" />
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={!stripe || isProcessing}
+          className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+        >
+          {isProcessing ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              <CreditCard className="w-5 h-5" />
+              Pay ${amount} USD
+            </>
+          )}
+        </button>
+      </div>
+    </form>
+  );
+}
+
 export function Step4Review({ 
   formData, 
   documents, 
@@ -58,9 +146,12 @@ export function Step4Review({
   onEdit,
   onPaymentComplete 
 }: Step4ReviewProps) {
-  const { address } = useAccount();
+  const { address, isConnected } = useAccount();
   const { tokens } = useChainConfig();
   const { feeRecipient, isLoading: isLoadingRecipient } = useFeeRecipient();
+  
+  // Payment method state
+  const [paymentMethod, setPaymentMethod] = useState<'crypto' | 'stripe'>('crypto');
   
   // Payment options state
   const [includeEscrow, setIncludeEscrow] = useState(false);
@@ -68,6 +159,11 @@ export function Step4Review({
   const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'USDT'>('USDC');
   const [paymentStep, setPaymentStep] = useState<'idle' | 'paying' | 'confirming' | 'done'>('idle');
   const [paymentError, setPaymentError] = useState<string | null>(null);
+  const paymentCompletedRef = useRef(false);
+
+  // Stripe state
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [showStripeForm, setShowStripeForm] = useState(false);
 
   // Calculate total
   const totalAmount = PRICING.base + 
@@ -105,8 +201,8 @@ export function Step4Review({
     hash: txHash,
   });
 
-  // Handle payment
-  const handlePayment = async () => {
+  // Handle crypto payment
+  const handleCryptoPayment = async () => {
     if (!address || !tokenAddress || !feeRecipient) return;
     
     setPaymentStep('paying');
@@ -129,7 +225,53 @@ export function Step4Review({
     }
   };
 
-  // Watch transaction status
+  // Handle Stripe payment
+  const handleStripePayment = async () => {
+    setPaymentStep('paying');
+    setPaymentError(null);
+
+    try {
+      const response = await fetch('/api/payments/stripe/create-intent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          type: 'tokenization_fee',
+          walletAddress: address || '',
+          email: formData.email,
+          includeEscrow,
+          includeDividend,
+          assetName: formData.assetName,
+          tokenName: formData.tokenName,
+          tokenSymbol: formData.tokenSymbol,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to create payment');
+      }
+
+      const { clientSecret: secret } = await response.json();
+      setClientSecret(secret);
+      setShowStripeForm(true);
+      setPaymentStep('idle');
+    } catch (error: any) {
+      console.error('Stripe payment error:', error);
+      setPaymentError(error.message || 'Payment failed');
+      setPaymentStep('idle');
+    }
+  };
+
+  // Handle payment based on method
+  const handlePayment = () => {
+    if (paymentMethod === 'crypto') {
+      handleCryptoPayment();
+    } else {
+      handleStripePayment();
+    }
+  };
+
+  // Watch transaction status for crypto
   useEffect(() => {
     if (txHash && paymentStep === 'paying') {
       setPaymentStep('confirming');
@@ -137,23 +279,60 @@ export function Step4Review({
   }, [txHash, paymentStep]);
 
   useEffect(() => {
-    if (isConfirmed && txHash) {
+    if (isConfirmed && txHash && !paymentCompletedRef.current) {
+      paymentCompletedRef.current = true;
       setPaymentStep('done');
       onPaymentComplete(txHash, {
         escrow: includeEscrow,
         dividend: includeDividend,
         totalAmount,
         currency: selectedCurrency,
+        paymentMethod: 'crypto',
       });
     }
   }, [isConfirmed, txHash]);
 
   useEffect(() => {
     if (writeError) {
-      setPaymentError(writeError.message || 'Transaction failed');
+      const errorMessage = writeError.message || 'Transaction failed';
+      if (errorMessage.includes('user rejected')) {
+        setPaymentError('Transaction cancelled by user');
+      } else if (errorMessage.includes('insufficient')) {
+        setPaymentError('Insufficient balance');
+      } else {
+        setPaymentError(errorMessage);
+      }
       setPaymentStep('idle');
     }
   }, [writeError]);
+
+  // Handle Stripe success
+  const handleStripeSuccess = useCallback((paymentIntentId: string) => {
+    if (paymentCompletedRef.current) return;
+    paymentCompletedRef.current = true;
+    setPaymentStep('done');
+    setShowStripeForm(false);
+    onPaymentComplete(paymentIntentId, {
+      escrow: includeEscrow,
+      dividend: includeDividend,
+      totalAmount,
+      currency: 'USD',
+      paymentMethod: 'stripe',
+    });
+  }, [includeEscrow, includeDividend, totalAmount, onPaymentComplete]);
+
+  // Handle Stripe error
+  const handleStripeError = (error: string) => {
+    setPaymentError(error);
+    setPaymentStep('idle');
+  };
+
+  // Handle Stripe cancel
+  const handleStripeCancel = () => {
+    setShowStripeForm(false);
+    setClientSecret(null);
+    setPaymentStep('idle');
+  };
 
   const assetType = ASSET_TYPES.find(t => t.value === formData.assetType);
   const useCase = USE_CASES.find(u => u.value === formData.useCase);
@@ -263,7 +442,7 @@ export function Step4Review({
           <h3 className="text-lg font-medium text-white">Tokenization Package</h3>
         </div>
 
-        {/* Base Package */}
+        {/* Package Options */}
         <div className="space-y-3 mb-6">
           {/* Base - Always included */}
           <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700">
@@ -307,7 +486,7 @@ export function Step4Review({
                 type="checkbox"
                 checked={includeEscrow}
                 onChange={(e) => setIncludeEscrow(e.target.checked)}
-                disabled={paymentStep !== 'idle'}
+                disabled={paymentStep !== 'idle' || showStripeForm}
                 className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500"
               />
             </div>
@@ -338,12 +517,64 @@ export function Step4Review({
                 type="checkbox"
                 checked={includeDividend}
                 onChange={(e) => setIncludeDividend(e.target.checked)}
-                disabled={paymentStep !== 'idle'}
+                disabled={paymentStep !== 'idle' || showStripeForm}
                 className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-green-500 focus:ring-green-500"
               />
             </div>
           </label>
         </div>
+
+        {/* Payment Method Selection */}
+        {!showStripeForm && paymentStep !== 'done' && (
+          <div className="mb-6">
+            <p className="text-sm text-gray-400 mb-3">Payment Method</p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => setPaymentMethod('crypto')}
+                disabled={paymentStep !== 'idle'}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  paymentMethod === 'crypto'
+                    ? 'border-blue-500 bg-blue-500/10'
+                    : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    paymentMethod === 'crypto' ? 'bg-blue-500/20' : 'bg-gray-700'
+                  }`}>
+                    <Wallet className="w-5 h-5 text-blue-400" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-white font-medium">Crypto</p>
+                    <p className="text-gray-400 text-xs">USDC or USDT</p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setPaymentMethod('stripe')}
+                disabled={paymentStep !== 'idle' || !stripePromise}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  paymentMethod === 'stripe'
+                    ? 'border-purple-500 bg-purple-500/10'
+                    : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                } ${!stripePromise ? 'opacity-50 cursor-not-allowed' : ''}`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                    paymentMethod === 'stripe' ? 'bg-purple-500/20' : 'bg-gray-700'
+                  }`}>
+                    <Building2 className="w-5 h-5 text-purple-400" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-white font-medium">Card / Bank</p>
+                    <p className="text-gray-400 text-xs">Via Stripe</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Total & Currency Selection */}
         <div className="border-t border-gray-700 pt-4">
@@ -353,51 +584,63 @@ export function Step4Review({
               <p className="text-3xl font-bold text-white">${totalAmount.toLocaleString()}</p>
             </div>
             
-            {/* Currency Toggle */}
-            <div className="flex bg-gray-800 rounded-lg p-1">
-              <button
-                onClick={() => setSelectedCurrency('USDC')}
-                disabled={paymentStep !== 'idle'}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  selectedCurrency === 'USDC'
-                    ? 'bg-blue-500 text-white'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                USDC
-              </button>
-              <button
-                onClick={() => setSelectedCurrency('USDT')}
-                disabled={paymentStep !== 'idle'}
-                className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
-                  selectedCurrency === 'USDT'
-                    ? 'bg-green-500 text-white'
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                USDT
-              </button>
-            </div>
+            {/* Currency Toggle - Only for crypto */}
+            {paymentMethod === 'crypto' && !showStripeForm && paymentStep !== 'done' && (
+              <div className="flex bg-gray-800 rounded-lg p-1">
+                <button
+                  onClick={() => setSelectedCurrency('USDC')}
+                  disabled={paymentStep !== 'idle'}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    selectedCurrency === 'USDC'
+                      ? 'bg-blue-500 text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  USDC
+                </button>
+                <button
+                  onClick={() => setSelectedCurrency('USDT')}
+                  disabled={paymentStep !== 'idle'}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                    selectedCurrency === 'USDT'
+                      ? 'bg-green-500 text-white'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  USDT
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Balance Display */}
-          <div className="flex items-center justify-between mb-4 text-sm">
-            <span className="text-gray-400">Your {selectedCurrency} Balance:</span>
-            <span className={hasEnoughBalance ? 'text-green-400' : 'text-red-400'}>
-              ${userBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-              {!hasEnoughBalance && ' (Insufficient)'}
-            </span>
-          </div>
+          {/* Balance Display - Only for crypto */}
+          {paymentMethod === 'crypto' && !showStripeForm && paymentStep !== 'done' && (
+            <>
+              {!isConnected ? (
+                <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+                  <p className="text-amber-400 text-sm">Please connect your wallet to pay with crypto.</p>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between mb-4 text-sm">
+                  <span className="text-gray-400">Your {selectedCurrency} Balance:</span>
+                  <span className={hasEnoughBalance ? 'text-green-400' : 'text-red-400'}>
+                    ${userBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                    {!hasEnoughBalance && ' (Insufficient)'}
+                  </span>
+                </div>
+              )}
+            </>
+          )}
 
-          {/* Fee Recipient Loading/Error */}
-          {isLoadingRecipient && (
+          {/* Fee Recipient Loading/Error - Only for crypto */}
+          {paymentMethod === 'crypto' && !showStripeForm && isLoadingRecipient && (
             <div className="mb-4 p-3 bg-gray-800/50 rounded-lg flex items-center gap-2">
               <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
               <span className="text-gray-400 text-sm">Loading payment details...</span>
             </div>
           )}
 
-          {!isLoadingRecipient && !feeRecipient && (
+          {paymentMethod === 'crypto' && !showStripeForm && !isLoadingRecipient && !feeRecipient && (
             <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
               <p className="text-red-400 text-sm">Payment recipient not configured. Please contact support.</p>
             </div>
@@ -410,53 +653,87 @@ export function Step4Review({
             </div>
           )}
 
-          {/* Payment Button */}
-          {paymentStep === 'done' ? (
-            <div className="flex items-center justify-center gap-2 p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
-              <CheckCircle className="w-6 h-6 text-green-400" />
-              <div>
-                <p className="text-green-400 font-medium">Payment Complete!</p>
-                <p className="text-gray-400 text-xs">
-                  Tx: {txHash?.slice(0, 10)}...{txHash?.slice(-8)}
-                </p>
-              </div>
+          {/* Stripe Payment Form */}
+          {showStripeForm && clientSecret && stripePromise && (
+            <div className="mb-4">
+              <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <StripePaymentForm 
+                  onSuccess={handleStripeSuccess}
+                  onError={handleStripeError}
+                  onCancel={handleStripeCancel}
+                  amount={totalAmount}
+                />
+              </Elements>
             </div>
-          ) : (
-            <button
-              onClick={handlePayment}
-              disabled={!hasEnoughBalance || paymentStep !== 'idle' || isWritePending || isConfirming || isLoadingRecipient || !feeRecipient}
-              className={`w-full py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
-                hasEnoughBalance && feeRecipient
-                  ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
-                  : 'bg-gray-700 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              {isLoadingRecipient ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Loading...
-                </>
-              ) : isWritePending || paymentStep === 'paying' ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Confirm in Wallet...
-                </>
-              ) : isConfirming || paymentStep === 'confirming' ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  Confirming Transaction...
-                </>
+          )}
+
+          {/* Payment Button */}
+          {!showStripeForm && (
+            <>
+              {paymentStep === 'done' ? (
+                <div className="flex items-center justify-center gap-2 p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+                  <CheckCircle className="w-6 h-6 text-green-400" />
+                  <div>
+                    <p className="text-green-400 font-medium">Payment Complete!</p>
+                    {txHash && (
+                      <p className="text-gray-400 text-xs">
+                        Tx: {txHash.slice(0, 10)}...{txHash.slice(-8)}
+                      </p>
+                    )}
+                  </div>
+                </div>
               ) : (
-                <>
-                  <CreditCard className="w-5 h-5" />
-                  Pay ${totalAmount} {selectedCurrency}
-                </>
+                <button
+                  onClick={handlePayment}
+                  disabled={
+                    paymentStep !== 'idle' || 
+                    isWritePending || 
+                    isConfirming || 
+                    (paymentMethod === 'crypto' && (!hasEnoughBalance || isLoadingRecipient || !feeRecipient || !isConnected))
+                  }
+                  className={`w-full py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
+                    (paymentMethod === 'stripe') || 
+                    (paymentMethod === 'crypto' && hasEnoughBalance && feeRecipient && isConnected)
+                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
+                      : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  {isLoadingRecipient && paymentMethod === 'crypto' ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Loading...
+                    </>
+                  ) : isWritePending || paymentStep === 'paying' ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      {paymentMethod === 'crypto' ? 'Confirm in Wallet...' : 'Preparing Payment...'}
+                    </>
+                  ) : isConfirming || paymentStep === 'confirming' ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      Confirming Transaction...
+                    </>
+                  ) : paymentMethod === 'crypto' ? (
+                    <>
+                      <Wallet className="w-5 h-5" />
+                      Pay ${totalAmount} {selectedCurrency}
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="w-5 h-5" />
+                      Pay ${totalAmount} USD
+                    </>
+                  )}
+                </button>
               )}
-            </button>
+            </>
           )}
 
           <p className="text-gray-500 text-xs text-center mt-3">
-            Payment is processed on-chain. You&apos;ll need to approve the transaction in your wallet.
+            {paymentMethod === 'crypto' 
+              ? "Payment is processed on-chain. You'll need to approve the transaction in your wallet."
+              : "Secure payment powered by Stripe."
+            }
           </p>
         </div>
       </div>
