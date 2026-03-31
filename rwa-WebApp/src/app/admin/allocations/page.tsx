@@ -46,7 +46,7 @@ interface Stats {
 }
 
 export default function AdminAllocationsPage() {
-  const { isAdmin, isLoading: adminLoading } = useAdmin();
+  const { isAdmin, loading: adminLoading } = useAdmin();
   const router = useRouter();
 
   const [allocations, setAllocations] = useState<Allocation[]>([]);

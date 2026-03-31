@@ -76,7 +76,7 @@ export async function GET(request: NextRequest) {
         entry.bonus_tokens += tokens;
       }
       
-      const roundName = alloc.fundraising_rounds?.display_name || alloc.round_id;
+      const roundName = alloc.fundraising_rounds?.[0]?.display_name || alloc.round_id;
       if (roundName && !entry.rounds.includes(roundName)) {
         entry.rounds.push(roundName);
       }
