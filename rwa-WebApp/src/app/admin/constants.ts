@@ -1,4 +1,4 @@
-// src/app/admin/constants.ts
+﻿// src/app/admin/constants.ts
 
 export const OFFCHAIN_PAYMENT = '0x0000000000000000000000000000000000000001';
 
@@ -110,22 +110,7 @@ export const ASSET_TYPE_LABELS: Record<string, string> = {
   other: 'Other',
 };
 
-export type AdminTab = 
-  | 'overview' 
-  | 'crowdfunding'
-  | 'projects' 
-  | 'tokenization'
-  | 'trade'
-  | 'disputes'
-  | 'offchain' 
-  | 'kyc' 
-  | 'identity' 
-  | 'contracts' 
-  | 'factory' 
-  | 'users'
-  | 'settings'
-  | 'docs';
-
+export type AdminTab = 'overview' | 'crowdfunding' | 'fundraising' | 'allocations' | 'tokenization' | 'trade' | 'disputes' | 'offchain' | 'kyc' | 'contracts' | 'factory' | 'users' | 'settings' | 'blog' | 'docs';
 
 export interface Project {
   id: number;

@@ -1,4 +1,4 @@
-// src/components/Header.tsx
+﻿// src/components/Header.tsx
 'use client';
 
 import Link from 'next/link';
@@ -45,6 +45,24 @@ function KYCBadge() {
   } = useKYC();
   
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
 
   if (isLoading) {
     return (
@@ -93,10 +111,10 @@ function KYCBadge() {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
+        type="button"
         onClick={() => setShowDropdown(!showDropdown)}
-        onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
         className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all hover:opacity-80 ${getStatusStyle()}`}
       >
         <span className="text-sm">{getStatusIcon()}</span>
@@ -219,6 +237,7 @@ function KYCBadge() {
             <Link
               href="/kyc"
               className="block w-full px-4 py-2 text-center text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              onClick={() => setShowDropdown(false)}
             >
               {isApproved ? 'Manage KYC' : isPending ? 'View Status' : 'Start Verification'}
             </Link>
@@ -235,67 +254,55 @@ function getNextTier(current: KYCTier): KYCTier {
   return tiers[Math.min(currentIndex + 1, tiers.length - 1)];
 }
 
-// Dropdown Menu Component with proper hover handling
-function DropdownMenu({ 
-  label, 
-  items, 
-  isActive 
-}: { 
-  label: string; 
-  items: { href: string; label: string; description?: string }[];
-  isActive?: boolean;
-}) {
+// Dropdown Menu Component with proper hover and click handling
+function DropdownMenu({ label, items, isActive }: { label: string; items: { href: string; label: string; description?: string }[]; isActive?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseEnter = () => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = null;
-    }
-    setIsOpen(true);
-  };
+  // Close on click outside - only when open
+  useEffect(() => {
+    if (!isOpen) return;
 
-  const handleMouseLeave = () => {
-    timeoutRef.current = setTimeout(() => {
-      setIsOpen(false);
-    }, 150);
-  };
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    
+    // Add listener on next tick to avoid catching the opening click
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 10);
+
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isOpen]);
 
   return (
-    <div 
-      className="relative"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <button
-        className={`flex items-center gap-1 py-2 transition-colors ${
-          isActive ? 'text-white' : 'text-gray-300 hover:text-white'
-        }`}
-        onClick={() => setIsOpen(!isOpen)}
+    <div ref={containerRef} className="relative">
+      <button 
+        type="button" 
+        className={`flex items-center gap-1 py-2 transition-colors ${isActive ? 'text-white' : 'text-gray-300 hover:text-white'}`}
+        onClick={() => setIsOpen(prev => !prev)}
       >
         {label}
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
-
+      
       {isOpen && (
-        <div 
-          className="absolute top-full left-0 pt-2 z-50"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
+        <div className="absolute top-full left-0 pt-2 z-50">
           <div className="w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl overflow-hidden">
-            {items.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
+            {items.map(item => (
+              <Link 
+                key={item.href} 
+                href={item.href} 
                 className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
                 onClick={() => setIsOpen(false)}
               >
                 <div className="font-medium">{item.label}</div>
-                {item.description && (
-                  <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>
-                )}
+                {item.description && <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>}
               </Link>
             ))}
           </div>
@@ -317,11 +324,18 @@ function MobileDropdown({
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
+  const handleToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
   return (
     <div>
       <button
+        type="button"
         className="flex items-center justify-between w-full py-2 text-gray-300 hover:text-white transition-colors"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
       >
         {label}
         <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
@@ -351,75 +365,67 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [chainModalOpen, setChainModalOpen] = useState(false);
   
-  // Track previous connection state for redirect
   const wasConnectedRef = useRef(false);
   const hasRedirectedRef = useRef(false);
   
-  // Use the KYC context correctly
   const { tier, status, isVerified, isLoading } = useKYC();
-  
-  // Use the admin hook instead of hardcoded addresses
   const { isAdmin, isSuperAdmin } = useAdmin();
 
-  // Check if user has KYC and can access dashboard
   const hasKYC = status === 'Approved' && tier !== 'None';
   const isInvestor = canInvest(tier);
   const isOwner = canOwn(tier);
-  const isReferrer = canRefer(tier);
   const showDashboard = isConnected && hasKYC && isInvestor;
 
-  // =========================================================================
-  // REDIRECT TO DASHBOARD ON WALLET CONNECT
-  // =========================================================================
   useEffect(() => {
-    // Pages where we should NOT redirect (user is already in a workflow)
     const noRedirectPaths = [
       '/dashboard',
       '/admin',
       '/kyc',
       '/project/',
+      '/projects/',
       '/crowdfunding/',
       '/tokenize',
+      '/tokenization/',
       '/exchange',
+      '/raise',
+      '/governance',
+      '/about',
+      '/docs',
+      '/legal',
+      '/support',
+      '/contact',
+      '/careers',
     ];
     
     const shouldSkipRedirect = noRedirectPaths.some(path => pathname.startsWith(path));
-    
-    // Detect fresh connection (wasn't connected before, now is connected)
     const justConnected = !wasConnectedRef.current && isConnected && address;
     
     if (justConnected && !shouldSkipRedirect && !hasRedirectedRef.current) {
-      // Mark that we've redirected to prevent loops
       hasRedirectedRef.current = true;
-      
-      // Small delay to allow UI to update
       setTimeout(() => {
         router.push('/dashboard');
       }, 100);
     }
     
-    // Update the ref for next render
     wasConnectedRef.current = isConnected;
     
-    // Reset redirect flag when disconnected
     if (!isConnected) {
       hasRedirectedRef.current = false;
     }
   }, [isConnected, address, pathname, router]);
 
-  // Determine current section for active states
-  const isAboutSection = pathname.startsWith('/about') || pathname === '/contact';
+  const isAboutSection = pathname.startsWith('/about') || pathname === '/about/contact';
   const isLetsStartSection = pathname.startsWith('/tokenize') || pathname.startsWith('/crowdfunding') || pathname.startsWith('/trade');
-  const isPlatformSection = pathname === '/exchange' || pathname === '/projects' || pathname.startsWith('/project/') || pathname === '/create' || pathname === '/kyc';
+  const isPlatformSection = pathname === '/exchange' || pathname === '/projects' || pathname.startsWith('/project/') || pathname === '/create' || pathname === '/kyc' || pathname === '/raise';
   const isDocsSection = pathname.startsWith('/docs') || pathname.startsWith('/legal');
   const isDashboardSection = pathname.startsWith('/dashboard');
 
-  // Menu items
   const aboutItems = [
     { href: '/about/company', label: 'Company', description: 'Our mission and vision' },
     { href: '/about/team', label: 'Team', description: 'Meet our experts' },
     { href: '/about/rwa-tokenization', label: 'What is RWA Tokenization?', description: 'Learn about asset tokenization' },
-    { href: '/contact', label: 'Contact', description: 'Get in touch with us' },
+    { href: '/about/blog', label: 'Blog', description: 'News and insights' },
+    { href: '/about/contact', label: 'Contact', description: 'Get in touch with us' },
   ];
 
   const letsStartItems = [
@@ -429,13 +435,13 @@ export default function Header() {
   ];
 
   const platformItems = [
+    { href: '/raise', label: 'Invest in RWA Experts', description: 'Join our fundraising rounds' },
     { href: '/exchange', label: 'Exchange', description: 'Trade tokenized assets' },
     { href: '/projects', label: 'CrowdFunding', description: 'Browse all raising projects' },
-    { href: '/create', label: 'Create Raise', description: 'Launch your raise' },
+    { href: '/crowdfunding/create', label: 'Create Raise', description: 'Launch your raise' },
     { href: '/kyc', label: 'Identity (KYC)', description: 'Verify your identity' },
   ];
 
-  // Documentation menu items
   const docsItems = [
     { href: '/docs', label: 'Documentation', description: 'Platform guides & resources' },
     { href: '/docs/faq', label: 'FAQ', description: 'Frequently asked questions' },
@@ -446,7 +452,6 @@ export default function Header() {
     { href: '/docs/api-reference', label: 'API Reference', description: 'Developer documentation' },
   ];
 
-  // Legal menu items (can be shown in footer or as sub-section)
   const legalItems = [
     { href: '/legal/terms', label: 'Terms of Service', description: 'Platform terms' },
     { href: '/legal/privacy', label: 'Privacy Policy', description: 'Data protection' },
@@ -464,7 +469,6 @@ export default function Header() {
       <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
             <Link href="/" className="flex items-center gap-2">
               <Image 
                 src="/logoRWA.png" 
@@ -476,30 +480,12 @@ export default function Header() {
               <span className="text-xl font-bold text-white hidden sm:inline">RWA Experts</span>
             </Link>
 
-            {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-6">
-              <DropdownMenu 
-                label="About" 
-                items={aboutItems}
-                isActive={isAboutSection}
-              />
-              <DropdownMenu 
-                label="Let's Start" 
-                items={letsStartItems}
-                isActive={isLetsStartSection}
-              />
-              <DropdownMenu 
-                label="Platform" 
-                items={platformItems}
-                isActive={isPlatformSection}
-              />
-              <DropdownMenu 
-                label="Docs" 
-                items={docsItems}
-                isActive={isDocsSection}
-              />
+              <DropdownMenu label="About" items={aboutItems} isActive={isAboutSection} />
+              <DropdownMenu label="Let's Start" items={letsStartItems} isActive={isLetsStartSection} />
+              <DropdownMenu label="Platform" items={platformItems} isActive={isPlatformSection} />
+              <DropdownMenu label="Docs" items={docsItems} isActive={isDocsSection} />
               
-              {/* Dashboard link - visible for verified users (Bronze+) */}
               {showDashboard && (
                 <Link 
                   href="/dashboard" 
@@ -509,16 +495,12 @@ export default function Header() {
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   <span>Dashboard</span>
-                  {/* Show role indicator */}
                   {isOwner && (
-                    <span className="text-xs px-1.5 py-0.5 bg-purple-600/30 text-purple-400 rounded">
-                      Pro
-                    </span>
+                    <span className="text-xs px-1.5 py-0.5 bg-purple-600/30 text-purple-400 rounded">Pro</span>
                   )}
                 </Link>
               )}
               
-              {/* Admin link - only visible to admins (from database) */}
               {isAdmin && (
                 <Link 
                   href="/admin" 
@@ -527,67 +509,33 @@ export default function Header() {
                   }`}
                 >
                   Admin
-                  {isSuperAdmin && (
-                    <span className="text-yellow-400 text-xs">★</span>
-                  )}
+                  {isSuperAdmin && <span className="text-yellow-400 text-xs">★</span>}
                 </Link>
               )}
             </nav>
 
-            {/* Right Side: KYC Badge + Connect Button + Mobile Menu */}
             <div className="flex items-center gap-2 sm:gap-3">
-
-              {/* KYC Badge - only when connected */}
               {isConnected && <KYCBadge />}
-              
-              {/* Connect Button */}
               <ConnectButton />
-              
-              {/* Mobile Menu Button */}
               <button
+                type="button"
                 className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
-                {mobileMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
+                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>
             </div>
           </div>
 
-          {/* Mobile Navigation */}
           {mobileMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-800">
               <nav className="space-y-2">
-                <MobileDropdown 
-                  label="About" 
-                  items={aboutItems}
-                  onItemClick={() => setMobileMenuOpen(false)}
-                />
-                <MobileDropdown 
-                  label="Let's Start" 
-                  items={letsStartItems}
-                  onItemClick={() => setMobileMenuOpen(false)}
-                />
-                <MobileDropdown 
-                  label="Platform" 
-                  items={platformItems}
-                  onItemClick={() => setMobileMenuOpen(false)}
-                />
-                <MobileDropdown 
-                  label="Docs" 
-                  items={docsItems}
-                  onItemClick={() => setMobileMenuOpen(false)}
-                />
-                <MobileDropdown 
-                  label="Legal" 
-                  items={legalItems}
-                  onItemClick={() => setMobileMenuOpen(false)}
-                />
+                <MobileDropdown label="About" items={aboutItems} onItemClick={() => setMobileMenuOpen(false)} />
+                <MobileDropdown label="Let's Start" items={letsStartItems} onItemClick={() => setMobileMenuOpen(false)} />
+                <MobileDropdown label="Platform" items={platformItems} onItemClick={() => setMobileMenuOpen(false)} />
+                <MobileDropdown label="Docs" items={docsItems} onItemClick={() => setMobileMenuOpen(false)} />
+                <MobileDropdown label="Legal" items={legalItems} onItemClick={() => setMobileMenuOpen(false)} />
                 
-                {/* Dashboard link in mobile - visible for verified users */}
                 {showDashboard && (
                   <Link 
                     href="/dashboard" 
@@ -597,26 +545,20 @@ export default function Header() {
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                     {isOwner && (
-                      <span className="text-xs px-1.5 py-0.5 bg-purple-600/30 text-purple-400 rounded">
-                        Pro
-                      </span>
+                      <span className="text-xs px-1.5 py-0.5 bg-purple-600/30 text-purple-400 rounded">Pro</span>
                     )}
                   </Link>
                 )}
                 
-                {/* Network Selector in Mobile Menu */}
                 <button
-                  onClick={() => {
-                    setMobileMenuOpen(false);
-                    setChainModalOpen(true);
-                  }}
+                  type="button"
+                  onClick={() => { setMobileMenuOpen(false); setChainModalOpen(true); }}
                   className="flex items-center gap-2 w-full py-2 text-gray-300 hover:text-white transition-colors"
                 >
                   <span>🔗</span>
                   Switch Network
                 </button>
                 
-                {/* Admin link - only visible to admins */}
                 {isAdmin && (
                   <Link 
                     href="/admin" 
@@ -624,9 +566,7 @@ export default function Header() {
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Admin
-                    {isSuperAdmin && (
-                      <span className="text-yellow-400 text-xs">★ Super</span>
-                    )}
+                    {isSuperAdmin && <span className="text-yellow-400 text-xs">★ Super</span>}
                   </Link>
                 )}
               </nav>
@@ -635,11 +575,7 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Chain Selector Modal */}
-      <ChainSelectorModal 
-        isOpen={chainModalOpen} 
-        onClose={() => setChainModalOpen(false)} 
-      />
+      <ChainSelectorModal isOpen={chainModalOpen} onClose={() => setChainModalOpen(false)} />
     </>
   );
 }

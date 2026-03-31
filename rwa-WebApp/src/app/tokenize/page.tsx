@@ -1,20 +1,20 @@
-'use client';
+﻿'use client';
 
 import React, { useState } from 'react';
 import { useAccount, useChainId } from 'wagmi';  // ADD useChainId
 import { Loader2, ChevronLeft, ChevronRight, Send } from 'lucide-react';
 
 // Hooks
-import { useTokenizeForm } from './hooks/useTokenizeForm';
-import { useFileUpload } from './hooks/useFileUpload';
+import { useTokenizeForm } from '@/hooks/useTokenizeForm';
+import { useFileUpload } from '@/hooks/useFileUpload';
 
 // Components
-import { ProgressSteps } from './components/ProgressSteps';
-import { SuccessModal } from './components/SuccessModal';
-import { Step1AssetInfo } from './components/steps/Step1AssetInfo';
-import { Step2Tokenization } from './components/steps/Step2Tokenization';
-import { Step3DocsContact } from './components/steps/Step3DocsContact';
-import { Step4Review } from './components/steps/Step4Review';
+import { ProgressSteps } from '@/components/tokenization/ProgressSteps';
+import { SuccessModal } from '@/components/tokenization/SuccessModal';
+import { Step1AssetInfo } from '@/components/tokenization/steps/Step1AssetInfo';
+import { Step2Tokenization } from '@/components/tokenization/steps/Step2Tokenization';
+import { Step3DocsContact } from '@/components/tokenization/steps/Step3DocsContact';
+import { Step4Review } from '@/components/tokenization/steps/Step4Review';
 
 interface PaymentInfo {
   txHash: string;

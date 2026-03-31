@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount } from 'wagmi';
@@ -21,7 +21,7 @@ import {
   Coins,
   X,
 } from 'lucide-react';
-import { StepDeploy } from '../create/StepDeploy';
+import { StepDeploy } from './create/StepDeploy';
 
 // ============================================================================
 // TYPES
@@ -253,13 +253,13 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <div className="flex gap-2 flex-1">
             <Link
-              href={`/project/${application.id}`}
+              href={`/projects/${application.id}`}
               className="flex-1 text-center py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
             >
               View Project
             </Link>
             <Link
-              href={`/project/${application.id}?tab=investments`}
+              href={`/projects/${application.id}?tab=investments`}
               className="py-2.5 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
             >
               Manage
@@ -271,7 +271,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
       case 'deployed':
         return (
           <Link
-            href={`/project/${application.id}`}
+            href={`/projects/${application.id}`}
             className="flex-1 text-center py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
           >
             View Project
@@ -291,7 +291,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
       default:
         return (
           <Link
-            href={`/project/application/${application.id}`}
+            href={`/projects/${application.id}`}
             className="flex-1 text-center py-2.5 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
           >
             View Details

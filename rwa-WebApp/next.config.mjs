@@ -28,6 +28,14 @@ const nextConfig = {
         hostname: 'cloudflare-ipfs.com',
         pathname: '/ipfs/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.pexels.com',
+      },
     ],
   },
   async headers() {

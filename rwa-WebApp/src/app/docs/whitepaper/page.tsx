@@ -310,7 +310,7 @@ export default function WhitePaperPage() {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold text-cyan-400 border-b border-gray-700 pb-2">7. Roadmap</h2>
         
-        <h3 className="text-xl text-white mt-6 mb-3">Q2 2026 - Launch</h3>
+        <h3 className="text-xl text-white mt-6 mb-3">Q3 2026 - Launch</h3>
         <ul>
           <li>Security audit completion</li>
           <li>Mainnet deployment (Cronos)</li>
@@ -318,7 +318,7 @@ export default function WhitePaperPage() {
           <li>Bug bounty launch</li>
         </ul>
 
-        <h3 className="text-xl text-white mt-6 mb-3">Q3 2026 - Growth</h3>
+        <h3 className="text-xl text-white mt-6 mb-3">Q1 2027 - Growth</h3>
         <ul>
           <li>15 tokenized projects</li>
           <li>Multi-chain support (Polygon, Ethereum)</li>
@@ -326,7 +326,7 @@ export default function WhitePaperPage() {
           <li>Diaspora partnership program</li>
         </ul>
 
-        <h3 className="text-xl text-white mt-6 mb-3">Q4 2026 - Scale</h3>
+        <h3 className="text-xl text-white mt-6 mb-3">Q3 2027 - Scale</h3>
         <ul>
           <li>50 tokenized projects</li>
           <li>$25M tokenized value</li>
@@ -334,7 +334,7 @@ export default function WhitePaperPage() {
           <li>Break-even target</li>
         </ul>
 
-        <h3 className="text-xl text-white mt-6 mb-3">2027+ - Expansion</h3>
+        <h3 className="text-xl text-white mt-6 mb-3">2028+ - Expansion</h3>
         <ul>
           <li>200+ projects</li>
           <li>Series A funding</li>

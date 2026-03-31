@@ -1,0 +1,827 @@
+﻿
+=== src/app/about/company/page.tsx ===
+@/hooks/useChainConfig
+@/config/chains
+@/config/deployments
+@/config/contacts
+
+=== src/app/about/team/page.tsx ===
+@/config/contacts
+
+=== src/app/admin/components/AdminOverview.tsx ===
+../constants
+../helpers
+
+=== src/app/admin/components/ContractRow.tsx ===
+@/config/contracts
+
+=== src/app/admin/components/PlatformContracts.tsx ===
+@/hooks/useChainConfig
+@/config/contracts
+@/config/abis
+@/config/chains
+./ContractRow
+@/config/contacts
+
+=== src/app/admin/components/ProjectContractsModal.tsx ===
+@/hooks/useChainConfig
+@/config/abis
+
+=== src/app/admin/crowdfunding/page.tsx ===
+./CrowdfundingReviewPanel
+./FundingValidationPanel
+./MilestoneReviewPanel
+
+=== src/app/admin/docs/compliance/page.tsx ===
+@/config/contacts
+
+=== src/app/admin/docs/deployment/page.tsx ===
+@/config/contacts
+
+=== src/app/admin/docs/incident-response/page.tsx ===
+@/config/contacts
+
+=== src/app/admin/docs/integration/page.tsx ===
+@/config/contacts
+
+=== src/app/admin/docs/security/page.tsx ===
+@/config/contacts
+
+=== src/app/admin/kyc/components/Footer.tsx ===
+../utils
+
+=== src/app/admin/kyc/components/Modals.tsx ===
+../types
+../utils
+
+=== src/app/admin/kyc/components/PendingList.tsx ===
+../types
+../utils
+./StatusBadge
+
+=== src/app/admin/kyc/components/ResultMessage.tsx ===
+../types
+
+=== src/app/admin/kyc/components/SearchSection.tsx ===
+../utils
+../types
+./StatusBadge
+./SubmissionDetails
+
+=== src/app/admin/kyc/components/SettingsSection.tsx ===
+../types
+
+=== src/app/admin/kyc/components/StatsCards.tsx ===
+../utils
+../types
+
+=== src/app/admin/kyc/components/SubmissionDetails.tsx ===
+./StatusBadge
+./DocumentViewer
+
+=== src/app/admin/kyc/KYCManagement.tsx ===
+@/hooks/useChainConfig
+@/config/contracts
+
+=== src/app/admin/offchain/OffChainPayments.tsx ===
+@/config/abis
+../constants
+@/config/contracts
+../helpers
+
+=== src/app/admin/projects/ProjectManagement.tsx ===
+@/config/contracts
+@/config/abis
+../client
+../components
+
+=== src/app/admin/projects/ProjectsClient.tsx ===
+@/hooks/useChainConfig
+@/config/contracts
+@/config/abis
+@/components/admin/MilestoneAdmin
+../constants
+
+=== src/app/admin/settings/FactorySettings.tsx ===
+@/hooks/useChainConfig
+@/config/contracts
+@/config/abis
+@/config/chains
+
+=== src/app/admin/settings/PlatformSettings.tsx ===
+@/config/deployments
+@/lib/feesService
+@/config/chains
+@/lib/priceService
+
+=== src/app/admin/settings/SettingsClient.tsx ===
+@/hooks/useChainConfig
+
+=== src/app/admin/tokenization/TokenizationManagement.tsx ===
+@/hooks/useChainConfig
+@/config/chains
+../constants
+
+=== src/app/admin/trade/DisputeManagement.tsx ===
+@/hooks/useChainConfig
+@/config/abis
+@/config/deployments
+@/config/chains
+
+=== src/app/admin/trade/TradeManagement.tsx ===
+@/lib/trade/kyc-authorization
+
+=== src/app/admin/users/AdminUsersManagement.tsx ===
+@/hooks/useChainConfig
+@/hooks/useAdmin
+
+=== src/app/admin/users/UsersClient.tsx ===
+@/hooks/useAdmin
+
+=== src/app/admin/AdminClient.tsx ===
+@/hooks/useChainConfig
+@/config/abis
+./constants
+./helpers
+./components/AdminDocs
+./components
+./kyc/KYCManagement
+./offchain/OffChainPayments
+./settings/FactorySettings
+./settings/PlatformSettings
+./tokenization/TokenizationManagement
+./trade/TradeManagement
+./trade/DisputeManagement
+./users/AdminUsersManagement
+@/config/chains
+./crowdfunding/CrowdfundingReviewPanel
+
+=== src/app/admin/page.tsx ===
+./AdminClient
+
+=== src/app/api/admin/activity/route.ts ===
+@/lib/admin
+
+=== src/app/api/admin/check/route.ts ===
+@/lib/admin
+
+=== src/app/api/admin/demote/route.ts ===
+@/lib/admin
+
+=== src/app/api/admin/email/test/route.ts ===
+@/lib/notifications/email-service
+
+=== src/app/api/admin/kyc/applications/route.ts ===
+@/lib/admin
+@/lib/encryption
+
+=== src/app/api/admin/kyc/approve/route.ts ===
+@/lib/admin
+@/config/chains
+
+=== src/app/api/admin/kyc/reject/route.ts ===
+@/lib/admin
+
+=== src/app/api/admin/kyc/settings/fee/route.ts ===
+@/lib/supabase
+
+=== src/app/api/admin/kyc/settings/route.ts ===
+@/lib/admin
+
+=== src/app/api/admin/kyc/stats/route.ts ===
+@/lib/admin
+@/config/chains
+
+=== src/app/api/admin/kyc/submissions/route.ts ===
+@/lib/supabase
+
+=== src/app/api/admin/list/route.ts ===
+@/lib/admin
+
+=== src/app/api/admin/promote/route.ts ===
+@/lib/admin
+
+=== src/app/api/admin/role/route.ts ===
+@/lib/admin
+
+=== src/app/api/admin/settings/fee/recalculate/route.ts ===
+@/lib/supabase
+@/lib/feesService
+
+=== src/app/api/admin/settings/fee/stats/route.ts ===
+@/lib/supabase
+@/lib/feesService
+
+=== src/app/api/admin/settings/fee/route.ts ===
+@/lib/supabase
+
+=== src/app/api/admin/tokenization/stats/route.ts ===
+@/lib/supabase
+@/lib/admin
+
+=== src/app/api/admin/tokenizations/route.ts ===
+@/lib/supabase
+@/lib/admin
+
+=== src/app/api/admin/trade/deals/route.ts ===
+@/lib/supabase
+@/lib/admin
+
+=== src/app/api/admin/trade/disputes/stats/route.ts ===
+@/lib/supabase
+@/lib/admin
+
+=== src/app/api/admin/trade/disputes/route.ts ===
+@/lib/supabase
+
+=== src/app/api/admin/trade/stats/route.ts ===
+@/lib/supabase
+@/lib/admin
+
+=== src/app/api/config/fees/route.ts ===
+@/lib/supabase
+@/lib/feesService
+
+=== src/app/api/cron/deadlines/route.ts ===
+@/lib/notifications/deadline-reminders
+
+=== src/app/api/cron/digest/route.ts ===
+@/lib/notifications/daily-digest
+
+=== src/app/api/crowdfunding/admin/milestone-review/route.ts ===
+@/config/chains
+@/config/deployments
+@/config/abis
+
+=== src/app/api/crowdfunding/admin/pending-funding/route.ts ===
+@/config/chains
+@/config/deployments
+@/config/abis
+
+=== src/app/api/crowdfunding/admin/validate-funding/route.ts ===
+@/config/chains
+@/config/deployments
+@/config/abis
+
+=== src/app/api/crowdfunding/projects/route.ts ===
+@/lib/supabase
+
+=== src/app/api/debug/crowdfunding-projects/route.ts ===
+@/config/chains
+@/config/deployments
+@/config/abis
+
+=== src/app/api/exchange/balance/route.ts ===
+@/lib/exchange-service
+
+=== src/app/api/exchange/deposit/route.ts ===
+@/lib/exchange-service
+@/config/exchange
+
+=== src/app/api/exchange/history/route.ts ===
+@/lib/exchange-service
+
+=== src/app/api/exchange/mexc/pairs/route.ts ===
+@/config/exchange
+
+=== src/app/api/exchange/mexc/trade/route.ts ===
+@/lib/mexc
+@/config/exchange
+@/lib/supabase
+
+=== src/app/api/exchange/orderbook/route.ts ===
+@/lib/exchange-service
+
+=== src/app/api/exchange/orders/route.ts ===
+@/lib/exchange
+
+=== src/app/api/exchange/pairs/route.ts ===
+@/lib/exchange
+
+=== src/app/api/exchange/ticker/route.ts ===
+@/lib/exchange-service
+
+=== src/app/api/exchange/trade/route.ts ===
+@/lib/exchange-service
+@/config/exchange
+
+=== src/app/api/exchange/trades/route.ts ===
+@/lib/exchange
+
+=== src/app/api/exchange/withdraw/route.ts ===
+@/lib/exchange-service
+@/config/exchange
+
+=== src/app/api/kyc/confirm-payment/route.ts ===
+@/config/chains
+
+=== src/app/api/kyc/gdpr/export/route.ts ===
+@/lib/encryption
+
+=== src/app/api/kyc/generate-proof/route.ts ===
+@/config/deployments
+@/config/chains
+
+=== src/app/api/kyc/level/route.ts ===
+@/lib/supabase
+@/lib/trade/kyc-authorization
+
+=== src/app/api/kyc/pending-upgrades/route.ts ===
+@/lib/supabase
+
+=== src/app/api/kyc/proof/route.ts ===
+@/config/deployments
+@/config/chains
+
+=== src/app/api/kyc/submit/route.ts ===
+@/lib/encryption
+@/config/deployments
+@/config/chains
+
+=== src/app/api/kyc/upload/route.ts ===
+@/lib/googleDrive
+
+=== src/app/api/notifications/preferences/route.ts ===
+@/lib/supabase
+
+=== src/app/api/notifications/send/route.ts ===
+@/lib/supabase
+@/lib/notifications/email-templates
+
+=== src/app/api/notifications/route.ts ===
+@/lib/supabase
+
+=== src/app/api/payments/stripe/create-intent/route.ts ===
+@/config/deployments
+@/config/chains
+
+=== src/app/api/payments/stripe/webhook/route.ts ===
+@/config/chains
+@/config/deployments
+@/config/abis
+
+=== src/app/api/projects/list/route.ts ===
+@/config/chains
+@/config/deployments
+@/config/abis
+
+=== src/app/api/projects/refresh/route.ts ===
+@/config/chains
+
+=== src/app/api/tokenization/apply/route.ts ===
+@/lib/supabase
+
+=== src/app/api/trade/deals/documents/route.ts ===
+@/lib/supabase
+
+=== src/app/api/trade/deals/route.ts ===
+@/lib/supabase
+@/lib/notifications/send
+
+=== src/app/api/trade/messages/route.ts ===
+@/lib/supabase
+@/lib/notifications/send
+
+=== src/app/contact/page.tsx ===
+@/config/contacts
+
+=== src/app/crowdfunding/create/page.tsx ===
+@/contexts/KYCContext
+@/config/contacts
+@/components/crowdfunding/create/StepProjectDetails
+@/components/crowdfunding/create/StepMilestones
+@/types/project
+@/components/crowdfunding/create/StepMediaLegal
+@/components/crowdfunding/create/StepReview
+@/components/crowdfunding/create/StepPayment
+@/components/crowdfunding/create/StepSubmitted
+
+=== src/app/crowdfunding/payment/page.tsx ===
+@/config/deployments
+
+=== src/app/crowdfunding/submit/page.tsx ===
+@/config/deployments
+
+=== src/app/crowdfunding/CrowdfundingClient.tsx ===
+@/hooks/useChainConfig
+../../components/ConnectButton
+
+=== src/app/dashboard/DashboardClient.tsx ===
+@/hooks/useChainConfig
+@/contexts/KYCContext
+@/config/chains
+@/components/crowdfunding/DashboardCrowdfundingSummary
+@/config/abis
+
+=== src/app/docs/api-reference/page.tsx ===
+@/config/contacts
+
+=== src/app/docs/creator-guide/page.tsx ===
+@/config/contacts
+
+=== src/app/docs/faq/page.tsx ===
+@/config/contacts
+
+=== src/app/docs/investor-guide/page.tsx ===
+@/config/contacts
+
+=== src/app/docs/tokenomics/page.tsx ===
+@/config/contacts
+
+=== src/app/docs/whitepaper/page.tsx ===
+@/config/contacts
+
+=== src/app/docs/layout.tsx ===
+@/config/contacts
+
+=== src/app/docs/page.tsx ===
+@/config/contacts
+
+=== src/app/exchange/components/CryptoTab/CryptoOrderBook.tsx ===
+../../types
+../../constants
+../../utils
+
+=== src/app/exchange/components/CryptoTab/index.tsx ===
+./MarketList
+./CryptoOrderBook
+./QuickTradeForm
+../../types
+
+=== src/app/exchange/components/CryptoTab/MarketList.tsx ===
+../../types
+../../constants
+../../utils
+
+=== src/app/exchange/components/CryptoTab/QuickTradeForm.tsx ===
+../../types
+../../constants
+../../utils
+
+=== src/app/exchange/components/Modals/DepositModal.tsx ===
+../../types
+../../utils
+
+=== src/app/exchange/components/SecurityTab/index.tsx ===
+./TokenBanner
+./TokenList
+./SecurityOrderBook
+./SecurityTradeForm
+../../types
+
+=== src/app/exchange/components/SecurityTab/SecurityOrderBook.tsx ===
+../../types
+
+=== src/app/exchange/components/SecurityTab/SecurityTradeForm.tsx ===
+../../types
+
+=== src/app/exchange/components/SecurityTab/TokenBanner.tsx ===
+../../types
+../../utils
+
+=== src/app/exchange/components/SecurityTab/TokenList.tsx ===
+../../constants
+../../types
+
+=== src/app/exchange/constants.ts ===
+@/config/abis
+
+=== src/app/exchange/ExchangeClient.tsx ===
+@/config/deployments
+@/config/chains
+@/config/abis
+@/components/PriceChart
+
+=== src/app/exchange/utils.ts ===
+./constants
+
+=== src/app/kyc/link/page.tsx ===
+../WalletLinking
+
+=== src/app/kyc/privacy/page.tsx ===
+../GDPRDataManagement
+
+=== src/app/kyc/GDPRDataManagement.tsx ===
+@/contexts/KYCContext
+@/config/contacts
+
+=== src/app/kyc/KYCSubmissionForm.tsx ===
+@/contexts/KYCContext
+@/config/wagmi
+@/config/contracts
+@/lib/feesService
+@/lib/livenessCheck
+@/components/kyc/KYCComponents
+@/lib/documentValidation
+@/lib/priceService
+
+=== src/app/kyc/page.tsx ===
+./KYCSubmissionForm
+
+=== src/app/kyc/WalletLinking.tsx ===
+@/contexts/KYCContext
+
+=== src/app/legal/aml/page.tsx ===
+@/config/contacts
+
+=== src/app/legal/cookies/page.tsx ===
+@/config/contacts
+
+=== src/app/legal/kyc-aml/page.tsx ===
+@/config/contacts
+
+=== src/app/legal/privacy/page.tsx ===
+@/config/contacts
+
+=== src/app/legal/risk-disclosures/page.tsx ===
+@/config/contacts
+
+=== src/app/projects/create/page.tsx ===
+@/lib/currencyService
+
+=== src/app/projects/ProjectsClient.tsx ===
+@/hooks/useChainConfig
+@/config/chains
+
+=== src/app/support/page.tsx ===
+@/config/contacts
+
+=== src/app/tokenize/components/steps/Step1AssetInfo.tsx ===
+../../types
+
+=== src/app/tokenize/components/steps/Step2Tokenization.tsx ===
+../../types
+
+=== src/app/tokenize/components/steps/Step4Review.tsx ===
+../../types
+@/hooks/useChainConfig
+@/hooks/useFeeRecipient
+
+=== src/app/tokenize/hooks/useFileUpload.ts ===
+../types
+
+=== src/app/tokenize/hooks/useTokenizeForm.ts ===
+../types
+
+=== src/app/tokenize/page.tsx ===
+./hooks/useTokenizeForm
+./hooks/useFileUpload
+./components/ProgressSteps
+./components/SuccessModal
+./components/steps/Step1AssetInfo
+./components/steps/Step2Tokenization
+./components/steps/Step3DocsContact
+./components/steps/Step4Review
+
+=== src/app/trade/page.tsx ===
+@/lib/trade/constants
+
+=== src/app/layout.tsx ===
+@/components/Providers
+@/components/NetworkGuard
+@/components/FeesInitializer
+@/components/Header
+@/components/footer
+
+=== src/app/page.tsx ===
+@/hooks/useChainConfig
+
+=== src/components/admin/MilestoneAdmin.tsx ===
+@/config/abis
+@/hooks/useChainConfig
+
+=== src/components/crowdfunding/create/StepDeploy.tsx ===
+@/hooks/useChainConfig
+@/config/abis
+
+=== src/components/crowdfunding/create/StepMediaLegal.tsx ===
+@/app/crowdfunding/create/page
+
+=== src/components/crowdfunding/create/StepMilestones.tsx ===
+@/types/project
+@/types/currency
+
+=== src/components/crowdfunding/create/StepPayment.tsx ===
+@/app/crowdfunding/create/page
+@/config/chains
+@/config/deployments
+@/config/abis
+
+=== src/components/crowdfunding/create/StepProjectDetails.tsx ===
+@/app/crowdfunding/create/page
+@/config/deployments
+@/hooks/useChainConfig
+
+=== src/components/crowdfunding/create/StepReview.tsx ===
+@/types/project
+@/types/currency
+@/utils/ipfs
+@/config/deployments
+
+=== src/components/crowdfunding/create/StepSubmitted.tsx ===
+@/config/contacts
+
+=== src/components/crowdfunding/DashboardCrowdfundingSummary.tsx ===
+../create/StepDeploy
+
+=== src/components/crowdfunding/InvestorClaimPanel.tsx ===
+@/hooks/useChainConfig
+@/config/abis
+@/config/deployments
+
+=== src/components/crowdfunding/ProjectOwnerPanel.tsx ===
+@/hooks/useChainConfig
+@/config/abis
+
+=== src/components/kyc/AdminKYCDashboard.tsx ===
+@/hooks/useKYCAdmin
+@/config/contacts
+
+=== src/components/kyc/KYCForm.tsx ===
+@/lib/documentValidation
+@/lib/documentValidation
+
+=== src/components/kyc/KYCStatus.tsx ===
+@/contexts/KYCContext
+
+=== src/components/project/MilestoneManager.tsx ===
+@/config/abis
+@/hooks/useChainConfig
+
+=== src/components/trade/DocumentUploader.tsx ===
+@/lib/trade/constants
+
+=== src/components/ui/ChainBadge.tsx ===
+@/hooks/useChainConfig
+
+=== src/components/ui/ChainSelector.tsx ===
+@/hooks/useChainConfig
+@/config/contracts
+
+=== src/components/ui/ChainSelectorModal.tsx ===
+@/hooks/useChainConfig
+@/config/contracts
+
+=== src/components/ConnectButton.tsx ===
+@/hooks/useChainConfig
+@/config/contracts
+
+=== src/components/FeesInitializer.tsx ===
+@/lib/feesService
+
+=== src/components/footer.tsx ===
+@/config/contacts
+
+=== src/components/Header.tsx ===
+./ConnectButton
+@/contexts/KYCContext
+@/hooks/useAdmin
+./ui/ChainSelectorModal
+
+=== src/components/InvestmentForm.tsx ===
+@/contexts/KYCContext
+
+=== src/components/KYCGate.tsx ===
+@/contexts/KYCContext
+
+=== src/components/KYCStatusBadge.tsx ===
+@/contexts/KYCContext
+./WalletLinkingModal
+
+=== src/components/NetworkGuard.tsx ===
+@/hooks/useChainConfig
+
+=== src/components/NotificationBell.tsx ===
+@/lib/notifications/websocket
+
+=== src/components/Providers.tsx ===
+@/config/wagmi
+@/contexts/KYCContext
+
+=== src/components/RefundSection.tsx ===
+@/config/contracts
+
+=== src/components/WalletLinkingModal.tsx ===
+@/contexts/KYCContext
+
+=== src/config/chains.ts ===
+./deployments
+
+=== src/config/contracts.ts ===
+./chains
+./deployments
+
+=== src/config/deployments.ts ===
+./chains
+
+=== src/config/wagmi.ts ===
+@/config/chains
+@/config/deployments
+@/config/contacts
+
+=== src/hooks/useAdmin.ts ===
+./useChainConfig
+
+=== src/hooks/useCrowdfunding.ts ===
+@/hooks/useChainConfig
+@/config/deployments
+@/config/abis
+@/config/chains
+
+=== src/hooks/useCrowdfundingAdmin.ts ===
+@/hooks/useChainConfig
+@/config/deployments
+@/config/abis
+@/config/chains
+
+=== src/hooks/useFeeRecipient.ts ===
+./useChainConfig
+@/config/deployments
+
+=== src/hooks/useFees.ts ===
+@/lib/feesService
+
+=== src/hooks/useInvest.ts ===
+./useKYC
+@/config/wagmi
+@/config/contracts
+
+=== src/hooks/useKYC.ts ===
+@/config/contracts
+./useCrowdfunding
+
+=== src/hooks/useKYCAdmin.ts ===
+@/config/contacts
+
+=== src/hooks/useKYCForm.ts ===
+@/contexts/KYCContext
+@/hooks/useChainConfig
+@/config/contracts
+@/config/abis
+
+=== src/hooks/useKYCGatedAction.ts ===
+./useKYC
+
+=== src/hooks/useP2PTrade.ts ===
+./useKYC
+@/config/wagmi
+
+=== src/hooks/useTrade.ts ===
+./useKYC
+@/config/wagmi
+@/config/contracts
+
+=== src/lib/kyc/audit.ts ===
+@/lib/supabase
+./encryption
+
+=== src/lib/kyc/consent.ts ===
+@/config/contacts
+
+=== src/lib/kyc/proof.ts ===
+@/config/contacts
+
+=== src/lib/notifications/daily-digest.ts ===
+./email-templates
+@/lib/supabase
+
+=== src/lib/notifications/deadline-reminders.ts ===
+./email-templates
+@/lib/supabase
+
+=== src/lib/notifications/dispute-notifications.ts ===
+./email-templates
+@/lib/supabase
+
+=== src/lib/notifications/send.ts ===
+./websocket
+
+=== src/lib/admin.ts ===
+./supabase
+
+=== src/lib/exchange-service.ts ===
+./supabase
+@/config/exchange
+@/config/chains
+@/config/deployments
+@/config/tokens
+
+=== src/lib/exchange.ts ===
+./supabase
+@/types/exchange
+
+=== src/lib/mexc.ts ===
+@/config/exchange
+
+=== src/lib/priceService.ts ===
+@/config/chains
+
+=== src/providers/FeesProvider.tsx ===
+@/lib/feesService
+
+=== src/routes/admin.ts ===
+../middleware/auth
+../services/BlockchainService
+
+=== src/types/kyc.ts ===
+@/lib/documentValidation

@@ -1,137 +1,521 @@
-// src/app/page.tsx
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
-import { useAccount, useConnect } from 'wagmi';
-import { useChainConfig } from '@/hooks/useChainConfig';
-// REMOVE THIS: import { useConnectModal } from '../components/ConnectButton';
 import { 
-  Building2, 
-  Zap, 
-  Briefcase, 
-  TrendingUp, 
-  Coins, 
-  Package,
-  Clock,
-  DollarSign,
-  Droplets,
-  Globe,
-  Shield,
-  Scale,
-  ChevronRight,
-  Users,
-  FileCheck,
-  Repeat,
-  CheckCircle2,
-  ArrowRight,
-  Wallet,
-  AlertTriangle,
-  X,
+  ArrowRight, Shield, Globe, Zap, TrendingUp, Users, Lock, 
+  ChevronRight, Sparkles, BarChart3, Wallet, Building2, Coins,
+  CheckCircle, AlertTriangle, ExternalLink, RefreshCw, Copy, Check,
+  Droplets, Clock, DollarSign, Scale, FileCheck, Repeat, CheckCircle2
 } from 'lucide-react';
+import { 
+  useAccount, 
+  useConnect, 
+  useDisconnect, 
+  useBalance,
+  usePublicClient,
+  useWriteContract,
+  useChainId
+} from 'wagmi';
+import { formatUnits, parseUnits, type Address } from 'viem';
+import { injected, walletConnect, coinbaseWallet } from 'wagmi/connectors';
+import { DEPLOYMENTS } from '@/config/deployments';
+import { CHAINS, SupportedChainId } from '@/config/chains';
+import { TestTokenABI } from '@/config/abis';
 
-// Simple inline wallet modal
-function WalletModal({ onClose }: { onClose: () => void }) {
-  const { connect, connectors, isPending } = useConnect();
-  const { isConnected } = useAccount();
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
-  React.useEffect(() => {
-    if (isConnected) onClose();
-  }, [isConnected, onClose]);
+// Wallet Modal Component
+function WalletModal({ 
+  isOpen, 
+  onClose 
+}: { 
+  isOpen: boolean; 
+  onClose: () => void;
+}) {
+  const { connect } = useConnect();
 
-  const walletIcons: Record<string, string> = {
-    metaMask: '🦊',
-    'io.metamask': '🦊',
-    coinbaseWallet: '🔵',
-    coinbaseWalletSDK: '🔵',
-    walletConnect: '🔗',
-    injected: '💼',
+  if (!isOpen) return null;
+
+  const handleConnect = async (connector: any) => {
+    try {
+      connect({ connector });
+      onClose();
+    } catch (error) {
+      console.error('Connection error:', error);
+    }
   };
-
-  const walletNames: Record<string, string> = {
-    metaMask: 'MetaMask',
-    'io.metamask': 'MetaMask',
-    coinbaseWallet: 'Coinbase Wallet',
-    coinbaseWalletSDK: 'Coinbase Wallet',
-    walletConnect: 'WalletConnect',
-    injected: 'Browser Wallet',
-  };
-
-  const availableConnectors = connectors.filter((connector, index, self) => 
-    index === self.findIndex(c => c.id === connector.id)
-  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-gray-900 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-gray-700">
-          <h2 className="text-xl font-bold text-white">Connect Wallet</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors p-1">
-            <X className="w-6 h-6" />
+      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md mx-4 shadow-2xl">
+        <h3 className="text-xl font-bold text-white mb-4">Connect Wallet</h3>
+        <div className="space-y-3">
+          <button
+            onClick={() => handleConnect(injected())}
+            className="w-full flex items-center gap-3 p-4 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors"
+          >
+            <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <div className="text-white font-medium">MetaMask</div>
+              <div className="text-gray-400 text-sm">Connect using browser wallet</div>
+            </div>
+          </button>
+          <button
+            onClick={() => handleConnect(coinbaseWallet({ appName: 'Investa' }))}
+            className="w-full flex items-center gap-3 p-4 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors"
+          >
+            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <div className="text-white font-medium">Coinbase Wallet</div>
+              <div className="text-gray-400 text-sm">Connect using Coinbase</div>
+            </div>
+          </button>
+          <button
+            onClick={() => handleConnect(walletConnect({ 
+              projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '' 
+            }))}
+            className="w-full flex items-center gap-3 p-4 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors"
+          >
+            <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <div className="text-white font-medium">WalletConnect</div>
+              <div className="text-gray-400 text-sm">Scan with mobile wallet</div>
+            </div>
           </button>
         </div>
-        <div className="p-4 space-y-2">
-          {availableConnectors.length === 0 ? (
-            <div className="text-center py-8">
-              <p className="text-gray-400">No wallets detected.</p>
-              <p className="text-gray-500 text-sm mt-2">Please install MetaMask or another Web3 wallet.</p>
-            </div>
-          ) : (
-            availableConnectors.map((connector) => (
-              <button
-                key={connector.id}
-                onClick={() => connect({ connector })}
-                disabled={isPending}
-                className="w-full flex items-center gap-4 p-4 bg-gray-800 hover:bg-gray-700 disabled:opacity-50 rounded-xl transition-all"
-              >
-                <span className="text-3xl">{walletIcons[connector.id] || '💼'}</span>
-                <span className="text-white font-semibold flex-1 text-left">
-                  {walletNames[connector.id] || connector.name}
-                </span>
-                {isPending && (
-                  <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-                )}
-              </button>
-            ))
-          )}
-        </div>
-        <div className="p-4 border-t border-gray-700 bg-gray-800/50">
-          <p className="text-gray-400 text-sm text-center">
-            By connecting, you agree to the Terms of Service
-          </p>
-        </div>
+        <button
+          onClick={onClose}
+          className="mt-4 w-full py-2 text-gray-400 hover:text-white transition-colors"
+        >
+          Cancel
+        </button>
       </div>
     </div>
   );
 }
 
+// Testnet Faucet Component
+function TestnetFaucet() {
+  const { address, isConnected } = useAccount();
+  const chainId = useChainId();
+  const publicClient = usePublicClient();
+  const { writeContractAsync } = useWriteContract();
+  
+  const [showWalletModal, setShowWalletModal] = useState(false);
+  const [mintAmount, setMintAmount] = useState('1000');
+  const [mintingToken, setMintingToken] = useState<'USDC' | 'USDT' | null>(null);
+  const [mintSuccess, setMintSuccess] = useState<string | null>(null);
+  const [mintError, setMintError] = useState<string | null>(null);
+  const [copiedAddress, setCopiedAddress] = useState<string | null>(null);
+  
+  const [balances, setBalances] = useState({
+    usdc: '0',
+    usdt: '0'
+  });
+  const [isLoadingBalances, setIsLoadingBalances] = useState(false);
+
+  // Get native balance
+  const { data: nativeBalance, refetch: refetchNative } = useBalance({
+    address: address,
+  });
+
+  // Get chain info from CHAINS config
+  const chainInfo = chainId ? CHAINS[chainId as SupportedChainId] : null;
+  const chainName = chainInfo?.name || 'Unknown Network';
+  const faucetUrl = chainInfo?.faucetUrl || null;
+  const nativeCurrency = chainInfo?.nativeCurrency || 'ETH';
+
+  // Get deployment for current chain (for token addresses)
+  const deployment = chainId ? DEPLOYMENTS[chainId as SupportedChainId] : null;
+  
+  // Get token addresses from deployment
+  const usdcAddress = deployment?.tokens?.USDC && deployment.tokens.USDC !== ZERO_ADDRESS 
+    ? deployment.tokens.USDC as Address 
+    : null;
+  const usdtAddress = deployment?.tokens?.USDT && deployment.tokens.USDT !== ZERO_ADDRESS 
+    ? deployment.tokens.USDT as Address 
+    : null;
+
+  // Fetch token balances using TestTokenABI
+  const fetchBalances = useCallback(async () => {
+    if (!address || !publicClient) return;
+    
+    setIsLoadingBalances(true);
+    try {
+      const [usdcBal, usdtBal] = await Promise.all([
+        usdcAddress 
+          ? publicClient.readContract({
+              address: usdcAddress,
+              abi: TestTokenABI,
+              functionName: 'balanceOf',
+              args: [address]
+            }).catch(() => BigInt(0))
+          : Promise.resolve(BigInt(0)),
+        usdtAddress
+          ? publicClient.readContract({
+              address: usdtAddress,
+              abi: TestTokenABI,
+              functionName: 'balanceOf',
+              args: [address]
+            }).catch(() => BigInt(0))
+          : Promise.resolve(BigInt(0))
+      ]);
+
+      setBalances({
+        usdc: formatUnits(usdcBal as bigint, 6),
+        usdt: formatUnits(usdtBal as bigint, 6)
+      });
+    } catch (error) {
+      console.error('Error fetching balances:', error);
+    } finally {
+      setIsLoadingBalances(false);
+    }
+  }, [address, publicClient, usdcAddress, usdtAddress]);
+
+  useEffect(() => {
+    if (isConnected && address) {
+      fetchBalances();
+    }
+  }, [isConnected, address, chainId, fetchBalances]);
+
+  // Clear messages after delay
+  useEffect(() => {
+    if (mintSuccess) {
+      const timer = setTimeout(() => setMintSuccess(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [mintSuccess]);
+
+  useEffect(() => {
+    if (mintError) {
+      const timer = setTimeout(() => setMintError(null), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [mintError]);
+
+  // Handle mint - using capital "Mint" function name from TestTokenABI
+  const handleMint = async (token: 'USDC' | 'USDT') => {
+    if (!address) {
+      setShowWalletModal(true);
+      return;
+    }
+
+    const tokenAddress = token === 'USDC' ? usdcAddress : usdtAddress;
+    if (!tokenAddress) {
+      setMintError(`${token} contract not deployed on this network`);
+      return;
+    }
+
+    // Validate mint amount
+    const parsedAmount = parseFloat(mintAmount);
+    if (isNaN(parsedAmount) || parsedAmount <= 0) {
+      setMintError('Please enter a valid amount greater than 0');
+      return;
+    }
+    if (parsedAmount > 1000000) {
+      setMintError('Maximum mint amount is 1,000,000 tokens');
+      return;
+    }
+
+    setMintingToken(token);
+    setMintError(null);
+    setMintSuccess(null);
+
+    try {
+      const amount = parseUnits(mintAmount, 6); // USDC/USDT have 6 decimals
+      
+      // Call "Mint" function (capital M) with "receiver" and "Amount" parameters
+      // This matches the TestTokenABI: Mint(address receiver, uint256 Amount)
+      await writeContractAsync({
+        address: tokenAddress,
+        abi: TestTokenABI,
+        functionName: 'Mint',
+        args: [address, amount],
+      });
+
+      setMintSuccess(`Successfully minted ${Number(mintAmount).toLocaleString()} ${token}!`);
+      
+      // Refresh balances after a short delay to allow blockchain to update
+      setTimeout(() => {
+        fetchBalances();
+        refetchNative();
+      }, 2000);
+    } catch (error: any) {
+      console.error('Mint error:', error);
+      
+      // Parse different error types
+      if (error.message?.includes('User rejected') || error.message?.includes('user rejected')) {
+        setMintError('Transaction rejected by user');
+      } else if (error.message?.includes('execution reverted')) {
+        // Check for specific revert reasons
+        if (error.message?.includes('Ownable')) {
+          setMintError('Only contract owner can mint. This may not be a public testnet token.');
+        } else {
+          setMintError('Minting failed. The token may have minting restrictions or you may not have permission.');
+        }
+      } else if (error.message?.includes('insufficient funds')) {
+        setMintError(`Insufficient ${nativeCurrency} for gas. Get tokens from the faucet first.`);
+      } else if (error.message?.includes('network')) {
+        setMintError('Network error. Please check your connection and try again.');
+      } else {
+        setMintError(`Failed to mint ${token}: ${error.shortMessage || error.message || 'Unknown error'}`);
+      }
+    } finally {
+      setMintingToken(null);
+    }
+  };
+
+  // Copy address to clipboard
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopiedAddress(text);
+    setTimeout(() => setCopiedAddress(null), 2000);
+  };
+
+  // Format balance for display
+  const formatBalance = (balance: string) => {
+    const num = parseFloat(balance);
+    if (num === 0) return '0';
+    if (num < 0.01) return '< 0.01';
+    if (num >= 1000000) return `${(num / 1000000).toFixed(2)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(2)}K`;
+    return num.toLocaleString(undefined, { maximumFractionDigits: 2 });
+  };
+
+  // Don't show if no stablecoins deployed
+  if (!usdcAddress && !usdtAddress) {
+    return (
+      <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-2xl p-6 mb-8">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="text-yellow-400 font-semibold mb-1">No Stablecoins on {chainName}</h3>
+            <p className="text-yellow-200/80 text-sm">
+              USDC/USDT contracts are not deployed on this network. 
+              Switch to Avalanche Fuji, Polygon Amoy, or BNB Testnet to mint test tokens.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="bg-gradient-to-r from-purple-500/10 via-blue-500/10 to-cyan-500/10 border border-purple-500/30 rounded-2xl p-6 mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-purple-500/20 rounded-lg">
+            <Droplets className="w-6 h-6 text-purple-400" />
+          </div>
+          <div>
+            <h3 className="text-white font-bold text-lg">Testnet Faucet</h3>
+            <p className="text-gray-400 text-sm">Mint test USDC & USDT on {chainName}</p>
+          </div>
+        </div>
+
+        {/* Native Token Faucet Link */}
+        {faucetUrl && (
+          <div className="mb-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <Coins className="w-4 h-4 text-blue-400" />
+                <span className="text-blue-200 text-sm">Need {nativeCurrency} for gas?</span>
+              </div>
+              <a 
+                href={faucetUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors"
+              >
+                Get from Faucet <ExternalLink className="w-3 h-3" />
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* Balances */}
+        {isConnected && (
+          <div className="grid grid-cols-3 gap-3 mb-4">
+            <div className="bg-gray-800/50 rounded-lg p-3">
+              <div className="text-gray-400 text-xs mb-1">{nativeCurrency}</div>
+              <div className="text-white font-mono text-sm">
+                {nativeBalance ? parseFloat(nativeBalance.formatted).toFixed(4) : '0'}
+              </div>
+            </div>
+            {usdcAddress && (
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-gray-400 text-xs mb-1">USDC</div>
+                <div className="text-white font-mono text-sm">
+                  {isLoadingBalances ? '...' : formatBalance(balances.usdc)}
+                </div>
+              </div>
+            )}
+            {usdtAddress && (
+              <div className="bg-gray-800/50 rounded-lg p-3">
+                <div className="text-gray-400 text-xs mb-1">USDT</div>
+                <div className="text-white font-mono text-sm">
+                  {isLoadingBalances ? '...' : formatBalance(balances.usdt)}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Mint Controls */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+          <div className="flex-1">
+            <label className="text-gray-400 text-xs mb-1 block">Amount to Mint</label>
+            <input
+              type="number"
+              value={mintAmount}
+              onChange={(e) => setMintAmount(e.target.value)}
+              placeholder="1000"
+              min="1"
+              max="1000000"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-purple-500 transition-colors"
+            />
+          </div>
+          <div className="flex gap-2 items-end">
+            {usdcAddress && (
+              <button
+                onClick={() => handleMint('USDC')}
+                disabled={mintingToken !== null}
+                className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+              >
+                {mintingToken === 'USDC' ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Coins className="w-4 h-4" />
+                )}
+                Mint USDC
+              </button>
+            )}
+            {usdtAddress && (
+              <button
+                onClick={() => handleMint('USDT')}
+                disabled={mintingToken !== null}
+                className="px-4 py-2.5 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+              >
+                {mintingToken === 'USDT' ? (
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Coins className="w-4 h-4" />
+                )}
+                Mint USDT
+              </button>
+            )}
+            <button
+              onClick={() => { fetchBalances(); refetchNative(); }}
+              disabled={isLoadingBalances || !isConnected}
+              className="p-2.5 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:cursor-not-allowed text-white rounded-lg transition-colors"
+              title="Refresh balances"
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoadingBalances ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Success/Error Messages */}
+        {mintSuccess && (
+          <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center gap-2">
+            <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0" />
+            <span className="text-green-200 text-sm">{mintSuccess}</span>
+          </div>
+        )}
+        {mintError && (
+          <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            <span className="text-red-200 text-sm">{mintError}</span>
+          </div>
+        )}
+
+        {/* Token Addresses for Import */}
+        <div className="text-xs text-gray-400">
+          <div className="font-medium mb-2">Add tokens to wallet:</div>
+          <div className="space-y-1">
+            {usdcAddress && (
+              <div className="flex items-center gap-2 font-mono bg-gray-800/50 rounded px-2 py-1.5">
+                <span className="text-blue-400 font-semibold">USDC:</span>
+                <span className="text-gray-300 truncate flex-1 text-xs">{usdcAddress}</span>
+                <button 
+                  onClick={() => copyToClipboard(usdcAddress)}
+                  className="text-gray-400 hover:text-white transition-colors p-1"
+                  title="Copy address"
+                >
+                  {copiedAddress === usdcAddress ? (
+                    <Check className="w-3.5 h-3.5 text-green-400" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
+            )}
+            {usdtAddress && (
+              <div className="flex items-center gap-2 font-mono bg-gray-800/50 rounded px-2 py-1.5">
+                <span className="text-green-400 font-semibold">USDT:</span>
+                <span className="text-gray-300 truncate flex-1 text-xs">{usdtAddress}</span>
+                <button 
+                  onClick={() => copyToClipboard(usdtAddress)}
+                  className="text-gray-400 hover:text-white transition-colors p-1"
+                  title="Copy address"
+                >
+                  {copiedAddress === usdtAddress ? (
+                    <Check className="w-3.5 h-3.5 text-green-400" />
+                  ) : (
+                    <Copy className="w-3.5 h-3.5" />
+                  )}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Connect Wallet Prompt */}
+        {!isConnected && (
+          <div className="mt-4 pt-4 border-t border-gray-700">
+            <button
+              onClick={() => setShowWalletModal(true)}
+              className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-lg transition-all flex items-center justify-center gap-2"
+            >
+              <Wallet className="w-5 h-5" />
+              Connect Wallet to Mint
+            </button>
+          </div>
+        )}
+      </div>
+
+      <WalletModal 
+        isOpen={showWalletModal} 
+        onClose={() => setShowWalletModal(false)} 
+      />
+    </>
+  );
+}
+
+export { TestnetFaucet };
+
 export default function LandingPage() {
   const { isConnected } = useAccount();
   const [showWalletModal, setShowWalletModal] = useState(false);
+  const chainId = useChainId();
   
-  // Multichain config
-  const {
-    chainName,
-    isTestnet,
-    isDeployed,
-    nativeCurrency,
-    explorerUrl,
-  } = useChainConfig();
-
-  // Get faucet URL based on chain
-  const getFaucetUrl = (): string | null => {
-    const faucets: Record<string, string> = {
-      'Avalanche Fuji': 'https://faucet.avax.network/',
-      'Polygon Amoy': 'https://faucet.polygon.technology/',
-      'Sepolia': 'https://sepoliafaucet.com/',
-      'Base Sepolia': 'https://www.coinbase.com/faucets/base-ethereum-goerli-faucet',
-      'Arbitrum Sepolia': 'https://faucet.quicknode.com/arbitrum/sepolia',
-    };
-    return chainName ? faucets[chainName] || null : null;
-  };
-
-  const faucetUrl = getFaucetUrl();
+  // Get chain info from CHAINS config
+  const chainInfo = chainId ? CHAINS[chainId as SupportedChainId] : null;
+  const chainName = chainInfo?.name || null;
+  const isTestnet = chainInfo?.testnet ?? false;
+  const nativeCurrency = chainInfo?.nativeCurrency || 'ETH';
+  
+  // Check if deployment exists
+  const deployment = chainId ? DEPLOYMENTS[chainId as SupportedChainId] : null;
+  const isDeployed = !!deployment;
 
   const marketStats = [
     { value: "$33B+", label: "Tokenized RWA Market" },
@@ -188,7 +572,21 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gray-900">
       {/* Wallet Modal */}
-      {showWalletModal && <WalletModal onClose={() => setShowWalletModal(false)} />}
+      {showWalletModal && (
+        <WalletModal 
+          isOpen={showWalletModal} 
+          onClose={() => setShowWalletModal(false)} 
+        />
+      )}
+
+      {/* Testnet Faucet Section - Show at top if on testnet */}
+      {isTestnet && (
+        <section className="px-4 sm:px-6 lg:px-8 pt-8">
+          <div className="max-w-4xl mx-auto">
+            <TestnetFaucet />
+          </div>
+        </section>
+      )}
 
       {/* Hero Section */}
       <section className="relative pt-16 pb-20 px-4 sm:px-6 lg:px-8">
@@ -251,7 +649,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Rest of the page stays the same... */}
       {/* What is RWA Tokenization - Simplified */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
@@ -521,7 +918,7 @@ export default function LandingPage() {
               Not sure what you need? Let's discuss your project and find the right solution.
             </p>
             <Link
-              href="/contact"
+              href="/about/contact"
               className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition"
             >
               Let's Talk <ArrowRight className="ml-2 w-5 h-5" />
@@ -675,56 +1072,37 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Network Notice - Dynamic based on chain */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Testnet Notice */}
-        {isTestnet && faucetUrl && (
-          <div className="bg-yellow-900/50 border border-yellow-600 rounded-lg p-4 mb-4">
-            <div className="flex items-center">
-              <AlertTriangle className="w-5 h-5 text-yellow-400 mr-2 flex-shrink-0" />
-              <span className="text-yellow-400 font-semibold mr-2">Testnet Mode:</span>
-              <span className="text-yellow-200">
-                You're connected to {chainName}. Get test {nativeCurrency} from the{' '}
-                <a
-                  href={faucetUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-yellow-100"
-                >
-                  {chainName?.includes('Avalanche') ? 'Avalanche' : chainName?.includes('Polygon') ? 'Polygon' : 'Network'} Faucet
-                </a>
-              </span>
+      {/* Network Notice - Bottom of page for non-testnet */}
+      {!isTestnet && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Not Deployed Notice */}
+          {!isDeployed && chainName && (
+            <div className="bg-orange-900/50 border border-orange-600 rounded-lg p-4 mb-4">
+              <div className="flex items-center">
+                <AlertTriangle className="w-5 h-5 text-orange-400 mr-2 flex-shrink-0" />
+                <span className="text-orange-400 font-semibold mr-2">Coming Soon:</span>
+                <span className="text-orange-200">
+                  Platform contracts are not yet deployed on {chainName}. 
+                  Please switch to a supported network to access all features.
+                </span>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Not Deployed Notice */}
-        {!isDeployed && chainName && (
-          <div className="bg-orange-900/50 border border-orange-600 rounded-lg p-4 mb-4">
-            <div className="flex items-center">
-              <AlertTriangle className="w-5 h-5 text-orange-400 mr-2 flex-shrink-0" />
-              <span className="text-orange-400 font-semibold mr-2">Coming Soon:</span>
-              <span className="text-orange-200">
-                Platform contracts are not yet deployed on {chainName}. 
-                Please switch to a supported network to access all features.
-              </span>
+          {/* Mainnet Notice */}
+          {isDeployed && chainName && (
+            <div className="bg-green-900/50 border border-green-600 rounded-lg p-4">
+              <div className="flex items-center">
+                <CheckCircle2 className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
+                <span className="text-green-400 font-semibold mr-2">Live on {chainName}:</span>
+                <span className="text-green-200">
+                  You're connected to the production network. Real transactions will use real {nativeCurrency}.
+                </span>
+              </div>
             </div>
-          </div>
-        )}
-
-        {/* Mainnet Notice */}
-        {!isTestnet && isDeployed && (
-          <div className="bg-green-900/50 border border-green-600 rounded-lg p-4">
-            <div className="flex items-center">
-              <CheckCircle2 className="w-5 h-5 text-green-400 mr-2 flex-shrink-0" />
-              <span className="text-green-400 font-semibold mr-2">Live on {chainName}:</span>
-              <span className="text-green-200">
-                You're connected to the production network. Real transactions will use real {nativeCurrency}.
-              </span>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

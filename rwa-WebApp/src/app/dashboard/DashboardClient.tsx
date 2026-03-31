@@ -1,4 +1,4 @@
-// src/app/dashboard/DashboardClient.tsx
+﻿// src/app/dashboard/DashboardClient.tsx
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
@@ -14,7 +14,8 @@ import {
   CheckCircle, XCircle, Loader2, PieChart, ArrowUpRight,
   ArrowDownRight, Coins, Users, BarChart3, Award, Banknote,
   Settings, Copy, Check, Link as LinkIcon, Share2, Clock,
-  ExternalLink, ChevronDown, RefreshCw, Eye, AlertTriangle
+  ExternalLink, ChevronDown, RefreshCw, Eye, AlertTriangle, 
+  Calendar, ChevronUp, ArrowRight, Gift
 } from 'lucide-react';
 import { RWAProjectNFTABI } from '@/config/abis';
 
@@ -283,7 +284,7 @@ const ProjectCard = ({
 
       <div className="flex gap-2">
         <Link
-          href={`/project/${project.id}`}
+          href={`/tokenization/${project.id}`}
           className="flex-1 text-center py-2 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
         >
           View Project
@@ -301,7 +302,7 @@ const ProjectCard = ({
         
         {isDeployed && !project.isListed && !needsChainSwitch && (
           <Link
-            href={`/project/${project.id}?tab=settings`}
+            href={`/tokenization/${project.id}?tab=settings`}
             className="py-2 px-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-medium transition-colors"
           >
             List
@@ -382,6 +383,355 @@ function InvestmentCard({ investment, currentChainId, onSwitchChain }: Investmen
   );
 }
 
+function TokenAllocationsSection({ address }: { address: string }) {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(null);
+  const [showVesting, setShowVesting] = useState(false);
+
+  useEffect(() => {
+    if (address) {
+      fetch(`/api/user/allocations?wallet=${address}`)
+        .then(res => res.json())
+        .then(setData)
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [address]);
+
+  if (loading) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-slate-700 rounded w-1/3"></div>
+          <div className="h-20 bg-slate-700 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data || !data.summary || data.summary.totalTokens === 0) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+        <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <Coins className="w-5 h-5 text-purple-400" />
+          Token Allocations
+        </h3>
+        <div className="text-center py-8 text-slate-400">
+          <Coins className="w-12 h-12 mx-auto mb-3 text-slate-600" />
+          <p>No token allocations yet</p>
+          <Link href="/raise" className="text-purple-400 hover:text-purple-300 mt-2 inline-block">
+            Invest now →
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const { summary, vestingMonths, vestingSchedule, allocations } = data;
+  const TGE_PRICE = 0.01;
+  const valueAtTGE = summary.totalTokens * TGE_PRICE;
+
+  return (
+    <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <Coins className="w-5 h-5 text-purple-400" />
+        Token Allocations
+      </h3>
+
+      {/* Summary Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Total Tokens</div>
+          <div className="text-xl font-bold text-purple-400">
+            {summary.totalTokens.toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">RWA</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Purchased</div>
+          <div className="text-xl font-bold text-blue-400">
+            {summary.purchasedTokens.toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">RWA</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Bonus Tokens</div>
+          <div className="text-xl font-bold text-green-400">
+            {summary.bonusTokens.toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">From referrals</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3">
+          <div className="text-xs text-slate-500">Value at TGE</div>
+          <div className="text-xl font-bold text-emerald-400">
+            ${valueAtTGE.toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">@ $0.01/token</div>
+        </div>
+      </div>
+
+      {/* Status Breakdown */}
+      <div className="flex flex-wrap gap-2 mb-4">
+        {summary.confirmedTokens > 0 && (
+          <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-1">
+            <CheckCircle className="w-4 h-4" />
+            {summary.confirmedTokens.toLocaleString()} Confirmed
+          </span>
+        )}
+        {summary.pendingTokens > 0 && (
+          <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm flex items-center gap-1">
+            <Clock className="w-4 h-4" />
+            {summary.pendingTokens.toLocaleString()} Pending
+          </span>
+        )}
+        {summary.distributedTokens > 0 && (
+          <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm flex items-center gap-1">
+            <ArrowRight className="w-4 h-4" />
+            {summary.distributedTokens.toLocaleString()} Distributed
+          </span>
+        )}
+      </div>
+
+      {/* Vesting Info */}
+      {vestingMonths > 0 && (
+        <div className="border-t border-slate-700 pt-4 mt-4">
+          <button
+            onClick={() => setShowVesting(!showVesting)}
+            className="flex items-center justify-between w-full text-left"
+          >
+            <span className="font-medium flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-slate-400" />
+              Vesting Schedule ({vestingMonths} months, no cliff)
+            </span>
+            {showVesting ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </button>
+          
+          {showVesting && vestingSchedule && (
+            <div className="mt-4 space-y-2">
+              <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
+                  style={{ width: '0%' }} // Update based on actual vesting progress
+                />
+              </div>
+              <div className="grid grid-cols-4 gap-2 text-xs text-slate-400 mt-4">
+                <div>Month 1: {(summary.confirmedTokens / vestingMonths).toLocaleString()} RWA</div>
+                <div>Month {Math.floor(vestingMonths/4)}: {((summary.confirmedTokens / vestingMonths) * Math.floor(vestingMonths/4)).toLocaleString()} RWA</div>
+                <div>Month {Math.floor(vestingMonths/2)}: {((summary.confirmedTokens / vestingMonths) * Math.floor(vestingMonths/2)).toLocaleString()} RWA</div>
+                <div>Month {vestingMonths}: {summary.confirmedTokens.toLocaleString()} RWA (100%)</div>
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                Linear vesting: ~{(summary.confirmedTokens / vestingMonths).toLocaleString()} tokens unlock each month starting at TGE.
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Recent Allocations */}
+      {allocations && allocations.length > 0 && (
+        <div className="border-t border-slate-700 pt-4 mt-4">
+          <h4 className="font-medium mb-3">Recent Allocations</h4>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {allocations.slice(0, 10).map((alloc: any) => (
+              <div key={alloc.id} className="flex items-center justify-between p-2 bg-slate-900/50 rounded-lg text-sm">
+                <div className="flex items-center gap-2">
+                  <span className={`px-2 py-0.5 rounded text-xs ${
+                    alloc.type === 'purchase' ? 'bg-blue-500/20 text-blue-400' :
+                    alloc.type === 'referral_bonus' ? 'bg-green-500/20 text-green-400' :
+                    'bg-purple-500/20 text-purple-400'
+                  }`}>
+                    {alloc.type === 'purchase' ? 'Purchase' : alloc.type === 'referral_bonus' ? 'Referral' : 'Bonus'}
+                  </span>
+                  <span className="text-slate-400">{alloc.fundraising_rounds?.display_name}</span>
+                </div>
+                <div className="text-right">
+                  <div className="font-medium">{parseFloat(alloc.tokens_amount).toLocaleString()} RWA</div>
+                  <div className="text-xs text-slate-500">${parseFloat(alloc.tokens_usd_value).toLocaleString()}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Referral Stats Component
+function ReferralStatsSection({ address }: { address: string }) {
+  const [loading, setLoading] = useState(true);
+  const [data, setData] = useState<any>(null);
+  const [copiedCode, setCopiedCode] = useState(false);
+  const [copiedLink, setCopiedLink] = useState(false);
+
+  useEffect(() => {
+    if (address) {
+      fetch(`/api/user/referral-stats?wallet=${address}`)
+        .then(res => res.json())
+        .then(setData)
+        .catch(console.error)
+        .finally(() => setLoading(false));
+    }
+  }, [address]);
+
+  const copyCode = () => {
+    if (data?.code) {
+      navigator.clipboard.writeText(data.code);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    }
+  };
+
+  const copyLink = () => {
+    if (data?.code) {
+      navigator.clipboard.writeText(`${window.location.origin}/raise?ref=${data.code}`);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 bg-slate-700 rounded w-1/3"></div>
+          <div className="h-20 bg-slate-700 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!data?.hasCode) {
+    return null; // Don't show if user doesn't have a referral code
+  }
+
+  const { code, stats, referrals, isActive } = data;
+
+  return (
+    <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+      <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+        <Gift className="w-5 h-5 text-purple-400" />
+        Referral Program
+        {!isActive && <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">Inactive</span>}
+      </h3>
+
+      {/* Referral Code & Link */}
+      <div className="grid md:grid-cols-2 gap-3 mb-6">
+        <div>
+          <label className="text-xs text-slate-500 mb-1 block">Your Referral Code</label>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 px-3 py-2 bg-slate-900 rounded-lg font-mono text-lg font-bold text-purple-400 tracking-wider">
+              {code}
+            </div>
+            <button
+              onClick={copyCode}
+              className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition-colors"
+            >
+              {copiedCode ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+        <div>
+          <label className="text-xs text-slate-500 mb-1 block">Referral Link</label>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 px-3 py-2 bg-slate-900 rounded-lg text-sm text-slate-400 truncate">
+              {typeof window !== 'undefined' ? `${window.location.origin}/raise?ref=${code}` : ''}
+            </div>
+            <button
+              onClick={copyLink}
+              className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition-colors"
+            >
+              {copiedLink ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Cards */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+          <div className="text-2xl font-bold text-purple-400">{stats?.totalReferrals || 0}</div>
+          <div className="text-xs text-slate-500">Referrals</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+          <div className="text-2xl font-bold text-green-400">
+            ${(stats?.totalInvestmentAmount || 0).toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">Total Invested</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+          <div className="text-2xl font-bold text-blue-400">
+            {(stats?.totalBonusTokens || 0).toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">Bonus Tokens</div>
+        </div>
+        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+          <div className="text-2xl font-bold text-emerald-400">
+            ${((stats?.totalBonusTokens || 0) * 0.01).toLocaleString()}
+          </div>
+          <div className="text-xs text-slate-500">Value at TGE</div>
+        </div>
+      </div>
+
+      {/* Pending/Confirmed breakdown */}
+      {(stats?.pendingBonusTokens > 0 || stats?.confirmedBonusTokens > 0) && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {stats.confirmedBonusTokens > 0 && (
+            <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-1">
+              <CheckCircle className="w-4 h-4" />
+              {stats.confirmedBonusTokens.toLocaleString()} Confirmed
+            </span>
+          )}
+          {stats.pendingBonusTokens > 0 && (
+            <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              {stats.pendingBonusTokens.toLocaleString()} Pending
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Referrals List */}
+      {referrals && referrals.length > 0 && (
+        <div className="border-t border-slate-700 pt-4 mt-4">
+          <h4 className="font-medium mb-3">Your Referrals ({referrals.length})</h4>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {referrals.map((ref: any, idx: number) => (
+              <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/50 rounded-lg">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <Users className="w-4 h-4 text-purple-400" />
+                  </div>
+                  <div>
+                    <div className="font-mono text-sm">
+                      {ref.wallet_address.slice(0, 6)}...{ref.wallet_address.slice(-4)}
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {ref.investments?.length || 0} investment(s) • Joined {new Date(ref.first_investment).toLocaleDateString()}
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="font-medium text-green-400">+{(ref.total_tokens * 0.05).toLocaleString()} RWA</div>
+                  <div className="text-xs text-slate-500">5% of {ref.total_tokens.toLocaleString()}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* No referrals yet */}
+      {(!referrals || referrals.length === 0) && (
+        <div className="text-center py-4 text-slate-400">
+          <p>No referrals yet. Share your code to start earning!</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ============================================================================
 // MAIN COMPONENT
 // ============================================================================
@@ -424,6 +774,14 @@ export default function DashboardClient() {
   
   // Referral state
   const [copiedReferral, setCopiedReferral] = useState(false);
+  const [copiedReferralCode, setCopiedReferralCode] = useState(false);
+  const [referralCode, setReferralCode] = useState<string | null>(null);
+  const [referralStats, setReferralStats] = useState<{
+    totalReferrals: number;
+    totalInvestmentAmount: number;
+    totalBonusTokens: number;
+  } | null>(null);
+  const [isLoadingReferral, setIsLoadingReferral] = useState(false);
   
   // Data states
   const [investments, setInvestments] = useState<Investment[]>([]);
@@ -451,6 +809,9 @@ export default function DashboardClient() {
   const [portfolioHistory, setPortfolioHistory] = useState<PortfolioHistory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [ownerSubTab, setOwnerSubTab] = useState<'crowdfunding' | 'tokenization'>('crowdfunding');
+  const hasKYC = isVerified && tier !== 'None';
+  const [tokenAllocations, setTokenAllocations] = useState<any>(null);
+  const [isLoadingAllocations, setIsLoadingAllocations] = useState(false);
 
   // Read user's on-chain projects
   const { data: onChainProjectIds } = useReadContract({
@@ -481,6 +842,59 @@ export default function DashboardClient() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+    const fetchReferralCode = async () => {
+      if (!address || !hasKYC) return;
+      
+      const eligibleTiers = ['Gold', 'Diamond'];
+      if (!tier || !eligibleTiers.includes(tier)) return;
+      
+      setIsLoadingReferral(true);
+      try {
+        const response = await fetch(`/api/referrals/code?wallet=${address}`);
+        
+        if (response.ok) {
+          const data = await response.json();
+          setReferralCode(data.code);
+          setReferralStats({
+            totalReferrals: data.total_referrals || 0,
+            totalInvestmentAmount: data.total_investment_amount || 0,
+            totalBonusTokens: data.total_bonus_tokens || 0
+          });
+        } else if (response.status === 404) {
+          // Create new code - ensure proper headers and body
+          const createResponse = await fetch('/api/referrals/code', {
+            method: 'POST',
+            headers: { 
+              'Content-Type': 'application/json',
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ wallet: address })
+          });
+          
+          if (createResponse.ok) {
+            const data = await createResponse.json();
+            setReferralCode(data.code);
+            setReferralStats({
+              totalReferrals: 0,
+              totalInvestmentAmount: 0,
+              totalBonusTokens: 0
+            });
+          } else {
+            const errorData = await createResponse.json();
+            console.error('Failed to create referral code:', errorData);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching referral code:', error);
+      } finally {
+        setIsLoadingReferral(false);
+      }
+    };
+
+    fetchReferralCode();
+  }, [address, hasKYC, tier]);
 
   // Fetch linked wallets
   const fetchLinkedWallets = useCallback(async () => {
@@ -631,7 +1045,7 @@ export default function DashboardClient() {
   };
 
   // KYC status checks
-  const hasKYC = isVerified && tier !== 'None';
+  
   const isPrimaryWallet = linkedWallets.some(
     (w) => w.address.toLowerCase() === address?.toLowerCase() && w.isPrimary
   );
@@ -730,6 +1144,27 @@ export default function DashboardClient() {
 
     fetchOwnerData();
   }, [address, onChainProjectIds]);
+
+  useEffect(() => {
+    const fetchAllocations = async () => {
+      if (!address) return;
+      
+      setIsLoadingAllocations(true);
+      try {
+        const res = await fetch(`/api/user/allocations?wallet=${address}`);
+        if (res.ok) {
+          const data = await res.json();
+          setTokenAllocations(data);
+        }
+      } catch (error) {
+        console.error('Error fetching allocations:', error);
+      } finally {
+        setIsLoadingAllocations(false);
+      }
+    };
+
+    fetchAllocations();
+  }, [address]);
 
   // KYC tier config
   const getKYCConfig = () => {
@@ -999,6 +1434,137 @@ export default function DashboardClient() {
           </div>
         )}
 
+        {/* Token Allocations (RWA Platform Investment) */}
+        {tokenAllocations && tokenAllocations.summary && tokenAllocations.summary.totalTokens > 0 && (
+          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <Coins className="w-5 h-5 text-purple-400" />
+                RWA Token Allocations
+              </h3>
+              <Link href="/raise" className="text-sm text-purple-400 hover:text-purple-300 flex items-center gap-1">
+                Invest More <ChevronRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Summary Cards */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className="bg-gray-700/50 rounded-lg p-4">
+                <div className="text-xs text-gray-500 mb-1">Total Tokens</div>
+                <div className="text-xl font-bold text-purple-400">
+                  {tokenAllocations.summary.totalTokens.toLocaleString()}
+                </div>
+                <div className="text-xs text-gray-500">RWA</div>
+              </div>
+              <div className="bg-gray-700/50 rounded-lg p-4">
+                <div className="text-xs text-gray-500 mb-1">Purchased</div>
+                <div className="text-xl font-bold text-blue-400">
+                  {tokenAllocations.summary.purchasedTokens.toLocaleString()}
+                </div>
+                <div className="text-xs text-gray-500">RWA</div>
+              </div>
+              <div className="bg-gray-700/50 rounded-lg p-4">
+                <div className="text-xs text-gray-500 mb-1">Referral Bonus</div>
+                <div className="text-xl font-bold text-green-400">
+                  {tokenAllocations.summary.bonusTokens.toLocaleString()}
+                </div>
+                <div className="text-xs text-gray-500">RWA</div>
+              </div>
+              <div className="bg-gray-700/50 rounded-lg p-4">
+                <div className="text-xs text-gray-500 mb-1">Value at TGE</div>
+                <div className="text-xl font-bold text-emerald-400">
+                  ${(tokenAllocations.summary.totalTokens * 0.01).toLocaleString()}
+                </div>
+                <div className="text-xs text-gray-500">@ $0.01/token</div>
+              </div>
+            </div>
+
+            {/* Status Tags */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              {tokenAllocations.summary.confirmedTokens > 0 && (
+                <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4" />
+                  {tokenAllocations.summary.confirmedTokens.toLocaleString()} Confirmed
+                </span>
+              )}
+              {tokenAllocations.summary.pendingTokens > 0 && (
+                <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  {tokenAllocations.summary.pendingTokens.toLocaleString()} Pending
+                </span>
+              )}
+              {tokenAllocations.summary.distributedTokens > 0 && (
+                <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm flex items-center gap-1">
+                  <ArrowUpRight className="w-4 h-4" />
+                  {tokenAllocations.summary.distributedTokens.toLocaleString()} Distributed
+                </span>
+              )}
+            </div>
+
+            {/* Vesting Info */}
+            {tokenAllocations.vestingMonths > 0 && (
+              <div className="p-4 bg-gray-700/30 rounded-lg border border-gray-600">
+                <div className="flex items-center gap-2 mb-2">
+                  <Clock className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm font-medium text-white">
+                    Vesting: {tokenAllocations.vestingMonths} months (no cliff)
+                  </span>
+                </div>
+                <p className="text-xs text-gray-400">
+                  Linear vesting: ~{Math.round(tokenAllocations.summary.confirmedTokens / tokenAllocations.vestingMonths).toLocaleString()} tokens unlock each month starting at TGE.
+                </p>
+              </div>
+            )}
+
+            {/* Recent Allocations */}
+            {tokenAllocations.allocations && tokenAllocations.allocations.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-gray-700">
+                <h4 className="font-medium text-white mb-3">Recent Allocations</h4>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {tokenAllocations.allocations.slice(0, 5).map((alloc: any) => (
+                    <div key={alloc.id} className="flex items-center justify-between p-3 bg-gray-700/30 rounded-lg text-sm">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-0.5 rounded text-xs ${
+                          alloc.type === 'purchase' ? 'bg-blue-500/20 text-blue-400' :
+                          alloc.type === 'referral_bonus' ? 'bg-green-500/20 text-green-400' :
+                          'bg-purple-500/20 text-purple-400'
+                        }`}>
+                          {alloc.type === 'purchase' ? 'Purchase' : alloc.type === 'referral_bonus' ? 'Referral' : 'Bonus'}
+                        </span>
+                        <span className="text-gray-400">{alloc.fundraising_rounds?.display_name || 'Unknown Round'}</span>
+                      </div>
+                      <div className="text-right">
+                        <div className="font-medium text-white">{parseFloat(alloc.tokens_amount).toLocaleString()} RWA</div>
+                        <div className="text-xs text-gray-500">${parseFloat(alloc.tokens_usd_value || 0).toLocaleString()}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* No allocations - CTA to invest */}
+        {(!tokenAllocations || !tokenAllocations.summary || tokenAllocations.summary.totalTokens === 0) && !isLoadingAllocations && (
+          <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-xl border border-purple-500/30 p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-purple-500/20 rounded-xl">
+                  <Coins className="w-8 h-8 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">Invest in RWA Platform</h3>
+                  <p className="text-gray-400 text-sm">Get RWA tokens at the best pre-sale price with up to 3.75x ROI at TGE</p>
+                </div>
+              </div>
+              <Link href="/raise" className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2">
+                Invest Now <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* OWNER TAB */}
         {activeTab === 'owner' && (
           <div className="space-y-6">
@@ -1235,7 +1801,7 @@ export default function DashboardClient() {
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
                         wallet.isPrimary ? "bg-amber-500/20" : "bg-gray-600"
                       }`}>
-                        {wallet.isPrimary ? "👑" : "👛"}
+                        {wallet.isPrimary ? "ðŸ‘‘" : "ðŸ‘›"}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
@@ -1339,30 +1905,111 @@ export default function DashboardClient() {
                   <Share2 className="w-5 h-5 text-green-400" />
                   Referral Program
                 </h3>
+                {referralStats && referralStats.totalReferrals > 0 && (
+                  <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+                    {referralStats.totalReferrals} referral{referralStats.totalReferrals !== 1 ? 's' : ''}
+                  </span>
+                )}
               </div>
               
               {hasKYC ? (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-4 bg-gray-700/50 rounded-lg">
-                    <div className="flex-1">
-                      <p className="text-sm text-gray-400 mb-1">Your Referral Link</p>
-                      <p className="text-sm font-mono text-white truncate">
-                        {typeof window !== 'undefined' ? `${window.location.origin}?ref=${address?.slice(0, 8)}` : ''}
+                ['Gold', 'Diamond'].includes(tier) ? (
+                  <div className="space-y-4">
+                    {/* Referral Stats */}
+                    {referralStats && referralStats.totalReferrals > 0 && (
+                      <div className="grid grid-cols-3 gap-3 mb-4">
+                        <div className="bg-gray-700/50 rounded-lg p-3 text-center">
+                          <p className="text-2xl font-bold text-white">{referralStats.totalReferrals}</p>
+                          <p className="text-xs text-gray-400">Referrals</p>
+                        </div>
+                        <div className="bg-gray-700/50 rounded-lg p-3 text-center">
+                          <p className="text-2xl font-bold text-white">{formatCurrency(referralStats.totalInvestmentAmount)}</p>
+                          <p className="text-xs text-gray-400">Invested</p>
+                        </div>
+                        <div className="bg-gray-700/50 rounded-lg p-3 text-center">
+                          <p className="text-2xl font-bold text-green-400">{referralStats.totalBonusTokens.toLocaleString()}</p>
+                          <p className="text-xs text-gray-400">Bonus Tokens</p>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Referral Link */}
+                    <div className="p-4 bg-gray-700/50 rounded-lg">
+                      <p className="text-sm text-gray-400 mb-2">Your Referral Link</p>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1 p-3 bg-gray-900 rounded-lg">
+                          <p className="text-sm font-mono text-white truncate">
+                            {typeof window !== 'undefined' ? `${window.location.origin}/raise?ref=${referralCode || address?.slice(0, 8)}` : ''}
+                          </p>
+                        </div>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(`${window.location.origin}/raise?ref=${referralCode || address?.slice(0, 8)}`);
+                            setCopiedReferral(true);
+                            setTimeout(() => setCopiedReferral(false), 2000);
+                          }}
+                          className="px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm transition-colors flex items-center gap-2"
+                        >
+                          {copiedReferral ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                          {copiedReferral ? 'Copied!' : 'Copy'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Referral Code */}
+                    <div className="p-4 bg-gray-700/50 rounded-lg">
+                      <p className="text-sm text-gray-400 mb-2">Your Referral Code</p>
+                      {isLoadingReferral ? (
+                        <div className="flex items-center justify-center py-3">
+                          <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                        </div>
+                      ) : referralCode ? (
+                        <div className="flex items-center gap-3">
+                          <div className="flex-1 p-3 bg-gray-900 rounded-lg text-center">
+                            <p className="text-2xl font-mono font-bold text-white tracking-widest">{referralCode}</p>
+                          </div>
+                          <button
+                            onClick={() => {
+                              navigator.clipboard.writeText(referralCode);
+                              setCopiedReferralCode(true);
+                              setTimeout(() => setCopiedReferralCode(false), 2000);
+                            }}
+                            className="px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors flex items-center gap-2"
+                          >
+                            {copiedReferralCode ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                            {copiedReferralCode ? 'Copied!' : 'Copy'}
+                          </button>
+                        </div>
+                      ) : (
+                        <p className="text-gray-500 text-center py-3">Unable to load referral code</p>
+                      )}
+                    </div>
+
+                    {/* Info */}
+                    <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+                      <p className="text-sm text-blue-400 flex items-start gap-2">
+                        <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                        <span>
+                          Share your referral link or code with friends. When they invest using your referral, 
+                          you&apos;ll receive 5% of their purchased tokens as a bonus.
+                        </span>
                       </p>
                     </div>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(`${window.location.origin}?ref=${address?.slice(0, 8)}`);
-                        setCopiedReferral(true);
-                        setTimeout(() => setCopiedReferral(false), 2000);
-                      }}
-                      className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm transition-colors flex items-center gap-2"
-                    >
-                      {copiedReferral ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                      {copiedReferral ? 'Copied!' : 'Copy'}
-                    </button>
+
+                    {/* View Details Link */}
                   </div>
-                </div>
+                ) : (
+                  <div className="text-center py-6">
+                    <Award className="w-12 h-12 text-gray-600 mx-auto mb-3" />
+                    <p className="text-white font-medium mb-2">Upgrade to Gold or Diamond</p>
+                    <p className="text-gray-400 text-sm mb-4">
+                      Referral program is available for Gold and Diamond tier members
+                    </p>
+                    <Link href="/kyc" className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors">
+                      Upgrade KYC Tier <ChevronRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                )
               ) : (
                 <div className="text-center py-6">
                   <Share2 className="w-12 h-12 text-gray-600 mx-auto mb-3" />

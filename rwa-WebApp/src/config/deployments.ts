@@ -241,8 +241,9 @@ export const DEPLOYMENTS: Record<SupportedChainId, DeploymentData> = {
       },
     },
     tokens: {
-      USDC: "0x81C7eb2f9FC7a11beC348Ba8846faC9A6FCC4786",
-      USDT: "0x224e403397F3aec9a0D2875445dC32dB00ea31C3",
+      USDC: "0x224e403397F3aec9a0D2875445dC32dB00ea31C3",
+      USDT: "0x81C7eb2f9FC7a11beC348Ba8846faC9A6FCC4786",
+      
     },
     platformWallets: DEFAULT_PLATFORM_WALLETS,
     deployedAt: "2026-03-24",
