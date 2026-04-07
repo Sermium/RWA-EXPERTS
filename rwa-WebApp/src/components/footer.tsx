@@ -90,13 +90,14 @@ export default function Footer() {
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-4">
               <Image 
-                src="/logoRWA.png" 
-                alt="RWA Experts" 
+                src="/logo.png" 
+                alt="Qwilon" 
                 width={60}
                 height={60}
                 className="object-contain"
               />
-              <span className="text-2xl font-bold text-white">RWA Experts</span>
+              <span className="text-4xl font-bold hidden sm:inline bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">Qwilon</span>
+
             </Link>
             <p className="text-gray-400 text-sm mb-6 max-w-sm">
               Democratizing access to real-world asset investments through blockchain technology. 
@@ -260,7 +261,7 @@ export default function Footer() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             {/* Copyright */}
             <div className="text-gray-500 text-sm text-center md:text-left">
-              © {currentYear} RWA Experts (V: 0.6). All rights reserved.
+              © {currentYear} Qwilon (V: 0.7). All rights reserved.
             </div>
 
             {/* Quick Legal Links */}

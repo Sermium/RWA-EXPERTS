@@ -737,7 +737,7 @@ export default function LandingPage() {
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
               Whether you're an entrepreneur, established business, or investor, 
-              RWA Experts provides comprehensive support for your tokenization journey.
+              Qwilon provides comprehensive support for your tokenization journey.
             </p>
           </div>
 
@@ -892,7 +892,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold text-white mb-3">Full Service Package</h3>
               <p className="text-gray-400 text-sm mb-4">
-                Need comprehensive support? RWA Experts offers end-to-end solutions 
+                Need comprehensive support? Qwilon offers end-to-end solutions 
                 combining all services to take your project from idea to launch.
               </p>
               <ul className="space-y-2 text-sm text-gray-500">
@@ -998,7 +998,7 @@ export default function LandingPage() {
                   Crowdfunding
                 </h3>
                 <p className="text-gray-400 text-sm">
-                  Launch or invest in tokenized projects. RWA Experts connects issuers with global investors.
+                  Launch or invest in tokenized projects. Qwilon connects issuers with global investors.
                 </p>
               </div>
             </Link>

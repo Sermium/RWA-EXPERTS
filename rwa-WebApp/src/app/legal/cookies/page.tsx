@@ -34,7 +34,7 @@ export default function CookiePolicyPage() {
         <div className="prose prose-invert prose-gray max-w-none">
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8">
             <p className="text-gray-300 text-sm">
-              This Cookie Policy explains how RWA Experts uses cookies and similar tracking technologies 
+              This Cookie Policy explains how Qwilon uses cookies and similar tracking technologies 
               when you visit our platform.
             </p>
           </div>

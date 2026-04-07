@@ -435,7 +435,7 @@ export default function Header() {
   ];
 
   const platformItems = [
-    { href: '/raise', label: 'Invest in RWA Experts', description: 'Join our fundraising rounds' },
+    { href: '/raise', label: 'Invest in Qwilon', description: 'Join our fundraising rounds' },
     { href: '/exchange', label: 'Exchange', description: 'Trade tokenized assets' },
     { href: '/projects', label: 'CrowdFunding', description: 'Browse all raising projects' },
     { href: '/crowdfunding/create', label: 'Create Raise', description: 'Launch your raise' },
@@ -471,13 +471,13 @@ export default function Header() {
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2">
               <Image 
-                src="/logoRWA.png" 
-                alt="RWA Experts" 
+                src="/logo.png" 
+                alt="Qwilon" 
                 width={50}
                 height={50}
                 className="object-contain"
               />
-              <span className="text-xl font-bold text-white hidden sm:inline">RWA Experts</span>
+              <span className="text-4xl font-bold hidden sm:inline bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">Qwilon</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-6">

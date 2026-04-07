@@ -271,7 +271,7 @@ export default function HomeScreen() {
             <View style={styles.noWalletIcon}>
               <Ionicons name="wallet-outline" size={64} color="#6366f1" />
             </View>
-            <Text style={styles.noWalletTitle}>Welcome to RWA Experts</Text>
+            <Text style={styles.noWalletTitle}>Welcome to Qwilon</Text>
             <Text style={styles.noWalletSubtitle}>
               Create or import a wallet to start investing in tokenized real-world assets
             </Text>

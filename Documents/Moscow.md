@@ -1,4 +1,4 @@
-RWA Experts - MoSCoW Framework
+Qwilon - MoSCoW Framework
 Overview
 The MoSCoW framework prioritizes features into four categories: Must Have, Should Have, Could Have, and Won't Have (this phase). This helps guide development priorities and resource allocation.
 

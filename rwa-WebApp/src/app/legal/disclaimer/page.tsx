@@ -48,7 +48,7 @@ export default function DisclaimerPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">1. General Risk Warning</h2>
             <p className="text-gray-400 mb-4">
-              Before using RWA Experts platform, you should carefully consider the following risks 
+              Before using Qwilon platform, you should carefully consider the following risks 
               associated with tokenized asset investments:
             </p>
             <ul className="list-disc list-inside text-gray-400 space-y-2 ml-4">
@@ -236,7 +236,7 @@ export default function DisclaimerPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">9. Acknowledgment</h2>
             <p className="text-gray-400">
-              By using the RWA Experts platform, you acknowledge that you have read, understood, 
+              By using the Qwilon platform, you acknowledge that you have read, understood, 
               and accepted the risks described in this disclaimer. You confirm that you are making 
               investment decisions based on your own judgment and at your own risk.
             </p>

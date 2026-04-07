@@ -34,7 +34,7 @@ export default function TermsOfServicePage() {
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8">
             <p className="text-gray-300 text-sm">
               Please read these Terms of Service ("Terms", "Terms of Service") carefully before using 
-              the RWA Experts platform (the "Service") operated by RWA Experts Ltd ("us", "we", or "our").
+              the Qwilon platform (the "Service") operated by Qwilon Ltd ("us", "we", or "our").
             </p>
           </div>
 
@@ -54,7 +54,7 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">2. Description of Service</h2>
             <p className="text-gray-400 mb-4">
-              RWA Experts provides a blockchain-based platform for:
+              Qwilon provides a blockchain-based platform for:
             </p>
             <ul className="list-disc list-inside text-gray-400 space-y-2 ml-4">
               <li>Tokenization of real-world assets</li>
@@ -153,7 +153,7 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">8. Intellectual Property</h2>
             <p className="text-gray-400">
-              The Service and its original content, features, and functionality are owned by RWA Experts 
+              The Service and its original content, features, and functionality are owned by Qwilon 
               and are protected by international copyright, trademark, patent, trade secret, and other 
               intellectual property laws. You may not copy, modify, distribute, or create derivative 
               works without our express written permission.
@@ -163,7 +163,7 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">9. Limitation of Liability</h2>
             <p className="text-gray-400 mb-4">
-              To the maximum extent permitted by law, RWA Experts shall not be liable for any indirect, 
+              To the maximum extent permitted by law, Qwilon shall not be liable for any indirect, 
               incidental, special, consequential, or punitive damages, including but not limited to:
             </p>
             <ul className="list-disc list-inside text-gray-400 space-y-2 ml-4">
@@ -178,7 +178,7 @@ export default function TermsOfServicePage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">10. Indemnification</h2>
             <p className="text-gray-400">
-              You agree to indemnify, defend, and hold harmless RWA Experts and its officers, directors, 
+              You agree to indemnify, defend, and hold harmless Qwilon and its officers, directors, 
               employees, agents, and affiliates from and against any claims, liabilities, damages, losses, 
               and expenses arising out of or related to your use of the Service, violation of these Terms, 
               or violation of any rights of a third party.
@@ -196,7 +196,7 @@ export default function TermsOfServicePage() {
               <li>Binding arbitration in accordance with applicable arbitration rules</li>
             </ol>
             <p className="text-gray-400 mt-4">
-              You agree to waive any right to participate in class action lawsuits against RWA Experts.
+              You agree to waive any right to participate in class action lawsuits against Qwilon.
             </p>
           </section>
 
@@ -204,7 +204,7 @@ export default function TermsOfServicePage() {
             <h2 className="text-xl font-semibold text-white mb-4">12. Governing Law</h2>
             <p className="text-gray-400">
               These Terms shall be governed by and construed in accordance with the laws of the jurisdiction 
-              in which RWA Experts is incorporated, without regard to conflict of law principles.
+              in which Qwilon is incorporated, without regard to conflict of law principles.
             </p>
           </section>
 

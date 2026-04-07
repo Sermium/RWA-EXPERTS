@@ -55,7 +55,7 @@ CREATE TABLE blog_posts (
   content TEXT NOT NULL,
   category VARCHAR(100),
   cover_image_url TEXT,
-  author_name VARCHAR(255) DEFAULT 'RWA Experts Team',
+  author_name VARCHAR(255) DEFAULT 'Qwilon Team',
   author_avatar_url TEXT,
   read_time VARCHAR(50),
   status VARCHAR(20) DEFAULT 'draft' CHECK (status IN ('draft', 'published', 'archived')),

@@ -167,7 +167,7 @@ export default function AppLockScreen() {
             style={styles.logo}
             resizeMode="contain"
           />
-          <Text style={styles.appName}>RWA Experts</Text>
+          <Text style={styles.appName}>Qwilon</Text>
         </View>
 
         {/* Title */}

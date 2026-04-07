@@ -34,7 +34,7 @@ export default function AMLPolicyPage() {
         <div className="prose prose-invert prose-gray max-w-none">
           <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8">
             <p className="text-gray-300 text-sm">
-              RWA Experts is committed to preventing money laundering, terrorist financing, and other 
+              Qwilon is committed to preventing money laundering, terrorist financing, and other 
               financial crimes. This policy outlines our procedures and controls to ensure compliance 
               with applicable anti-money laundering (AML) regulations.
             </p>
@@ -43,7 +43,7 @@ export default function AMLPolicyPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">1. Policy Statement</h2>
             <p className="text-gray-400 mb-4">
-              RWA Experts maintains a comprehensive Anti-Money Laundering (AML) and Counter-Terrorist 
+              Qwilon maintains a comprehensive Anti-Money Laundering (AML) and Counter-Terrorist 
               Financing (CTF) program designed to:
             </p>
             <ul className="list-disc list-inside text-gray-400 space-y-2 ml-4">
@@ -231,7 +231,7 @@ export default function AMLPolicyPage() {
           <section className="mb-8">
             <h2 className="text-xl font-semibold text-white mb-4">10. Cooperation with Authorities</h2>
             <p className="text-gray-400">
-              RWA Experts cooperates fully with law enforcement and regulatory authorities in the 
+              Qwilon cooperates fully with law enforcement and regulatory authorities in the 
               investigation of suspected money laundering, terrorist financing, or other financial 
               crimes. We respond promptly to lawful requests for information while protecting 
               customer privacy to the extent permitted by law.

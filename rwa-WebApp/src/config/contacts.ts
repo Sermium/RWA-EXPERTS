@@ -1,7 +1,7 @@
 export const COMPANY = {
-  name: `RWA Launchpad`,
-  //legalName: `RWA Experts Ltd`,
-  domain: `rwalaunchpad.com`,
+  name: `Qwilon`,
+  //legalName: `Qwilon Ltd`,
+  domain: `qwilon.com`,
   founded: 2024,
 };
 
@@ -33,12 +33,12 @@ export const CONTACT = {
 };
 
 export const SOCIAL = {
-  twitter: `https://twitter.com/rwalaunchpad`,
-  discord: `https://discord.gg/rwalaunchpad`,
-  telegram: `https://t.me/rwalaunchpad`,
-  linkedin: `https://linkedin.com/company/rwalaunchpad`,
-  github: `https://github.com/rwalaunchpad`,
-  //medium: `https://medium.com/@rwalaunchpad`,
+  twitter: `https://twitter.com/qwilon`,
+  discord: `https://discord.gg/qwilon`,
+  telegram: `https://t.me/qwilon`,
+  linkedin: `https://linkedin.com/company/qwilon`,
+  github: `https://github.com/qwilon`,
+  //medium: `https://medium.com/@qwilon`,
 };
 
 export const LINKS = {
