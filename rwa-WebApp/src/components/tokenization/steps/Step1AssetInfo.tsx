@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   MapPin, Loader2, Building2, Home, Landmark, Palette, TrendingUp, Package, HelpCircle,
   Info, ChevronDown, FileText, Shield, Users, CheckCircle2, AlertCircle, Lightbulb, 
-  Scale, Target, Globe, Clock, Car, Gem
+  Scale, Target, Globe, Clock, Truck, Gem, FileCode
 } from 'lucide-react';
 import { FormData, FormErrors, ASSET_TYPES, CURRENCIES } from '@/types/tokenization';
 
@@ -38,8 +38,9 @@ const ASSET_ICONS: Record<string, React.ReactNode> = {
   business_equity: <Building2 className="w-5 h-5" />,
   revenue_based: <TrendingUp className="w-5 h-5" />,
   commodities: <Gem className="w-5 h-5" />,
-  vehicles_equipment: <Car className="w-5 h-5" />,
-  other: <HelpCircle className="w-5 h-5" />,
+  vehicles_equipment: <Truck className="w-5 h-5" />,
+  intellectual_property: <FileCode className="w-5 h-5" />,
+  other: <Package className="w-5 h-5" />,
 };
 
 // Required documents based on asset type
@@ -104,6 +105,15 @@ const REQUIRED_TOKENIZATION_DOCUMENTS: Record<string, { id: string; name: string
     { id: 'maintenance_history', name: 'Maintenance History', description: 'Service records and history', required: true },
     { id: 'insurance_docs', name: 'Insurance Documentation', description: 'Current insurance coverage', required: false },
   ],
+  intellectual_property: [
+    { id: 'ip_registration', name: 'IP Registration Certificate', description: 'Patent, trademark, or copyright registration', required: true },
+    { id: 'ownership_proof', name: 'Ownership Documentation', description: 'Proof of IP ownership or assignment', required: true },
+    { id: 'valuation_report', name: 'IP Valuation Report', description: 'Professional intellectual property valuation', required: true },
+    { id: 'licensing_agreements', name: 'Licensing Agreements', description: 'Existing licenses and royalty agreements', required: true },
+    { id: 'revenue_history', name: 'Revenue History', description: 'Historical licensing or royalty income', required: false },
+    { id: 'legal_opinion', name: 'Legal Opinion', description: 'Legal review of IP rights and enforceability', required: false },
+    { id: 'infringement_history', name: 'Infringement History', description: 'Past infringement cases if any', required: false },
+  ],
   default: [
     { id: 'ownership_proof', name: 'Proof of Ownership', description: 'Documentation proving asset ownership', required: true },
     { id: 'valuation_report', name: 'Valuation Report', description: 'Professional asset valuation', required: true },
@@ -131,6 +141,7 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
       revenue_based: 'Revenue Based',
       commodities: 'Commodities',
       vehicles_equipment: 'Vehicles & Equipment',
+      intellectual_property: 'Intellectual Property',
       other: 'Other',
     };
     return labels[type] || 'Not selected';
@@ -474,12 +485,12 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
           </p>
         </div>
 
-        {/* Asset Type Selection */}
+        {/* Asset Type Selection - 3x3 grid */}
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-3">
             Asset Type <span className="text-red-400">*</span>
           </label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             {ASSET_TYPES.map((type) => (
               <button
                 key={type.value}
@@ -494,7 +505,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                 `}
               >
                 <span className={formData.assetType === type.value ? 'text-blue-400' : 'text-gray-400'}>
-                  {ASSET_ICONS[type.value] || <HelpCircle className="w-5 h-5" />}
+                  {ASSET_ICONS[type.value] || <Package className="w-5 h-5" />}
                 </span>
                 <span className="text-sm font-medium">{type.label}</span>
               </button>
