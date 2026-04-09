@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   MapPin, Loader2, Building2, Home, Landmark, Palette, TrendingUp, Package, HelpCircle,
   Info, ChevronDown, FileText, Shield, Users, CheckCircle2, AlertCircle, Lightbulb, 
-  Scale, Target, Globe, Clock, Car, Factory, Gem
+  Scale, Target, Globe, Clock, Car, Gem
 } from 'lucide-react';
 import { FormData, FormErrors, ASSET_TYPES, CURRENCIES } from '@/types/tokenization';
 
@@ -464,9 +464,9 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
   };
 
   return (
-    <div className="grid lg:grid-cols-[1fr_380px] gap-8">
-      {/* Main Form */}
-      <div className="space-y-6">
+    <div className="grid lg:grid-cols-3 gap-6">
+      {/* Main Form - 2/3 width */}
+      <div className="lg:col-span-2 space-y-6">
         <div>
           <h2 className="text-xl font-semibold text-white mb-2">Asset Information</h2>
           <p className="text-gray-400 text-sm">
@@ -479,7 +479,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
           <label className="block text-sm font-medium text-gray-300 mb-3">
             Asset Type <span className="text-red-400">*</span>
           </label>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {ASSET_TYPES.map((type) => (
               <button
                 key={type.value}
@@ -622,20 +622,12 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                 type="text"
                 value={formData.estimatedValue}
                 onChange={(e) => {
-                  // Remove non-numeric characters except decimal point
                   const rawValue = e.target.value.replace(/[^0-9.]/g, '');
-                  
-                  // Split by decimal point
                   const parts = rawValue.split('.');
-                  
-                  // Format the integer part with commas
                   const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-                  
-                  // Reconstruct with decimal part (limit to 2 decimal places)
                   const formattedValue = parts.length > 1 
                     ? `${integerPart}.${parts[1].slice(0, 2)}`
                     : integerPart;
-                  
                   updateFormData('estimatedValue', formattedValue);
                 }}
                 placeholder="0.00"
@@ -694,7 +686,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
         </div>
       </div>
 
-      {/* Guidelines Panel (Right Side) */}
+      {/* Guidelines Panel - 1/3 width */}
       <div className="lg:sticky lg:top-24 h-fit">
         <ProjectGuidelines assetType={formData.assetType} />
       </div>
