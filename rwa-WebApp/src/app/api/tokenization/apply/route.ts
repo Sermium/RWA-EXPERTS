@@ -1,21 +1,17 @@
+// src/app/api/tokenization/apply/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 // Asset type mapping
 const assetTypeMap: Record<string, string> = {
-  company_equity: 'company_equity',
   real_estate: 'real_estate',
-  commodity: 'commodity',
-  product_inventory: 'product_inventory',
-  intellectual_property: 'intellectual_property',
-  revenue_stream: 'revenue_stream',
-  equipment: 'equipment',
+  infrastructure: 'infrastructure',
+  art_collectibles: 'art_collectibles',
+  business_equity: 'business_equity',
+  revenue_based: 'revenue_based',
+  commodities: 'commodities',
   vehicles: 'vehicles',
-  agricultural: 'agricultural',
-  energy: 'energy',
-  art: 'art',
-  collectibles: 'collectibles',
-  securities: 'securities',
+  intellectual_property: 'intellectual_property',
   other: 'other',
 };
 
@@ -59,14 +55,14 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const supabase = getSupabaseAdmin();
 
-    // Get chain ID from body or header - NO DEFAULT, use what the user sends
+    // Get chain ID from body or header
     const chainId = body.chainId || (chainIdHeader ? parseInt(chainIdHeader) : null);
     
     if (!chainId) {
       return NextResponse.json({ error: 'Chain ID is required' }, { status: 400 });
     }
 
-    // Parse estimated value
+    // Parse estimated value (remove commas and convert)
     let estimatedValue = 0;
     if (body.estimatedValue) {
       const cleanValue = body.estimatedValue.toString().replace(/[^0-9.]/g, '');
@@ -74,10 +70,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Parse total supply
-    let totalSupply = null;
+    let tokenSupply = null;
     if (body.totalSupply) {
       const cleanSupply = body.totalSupply.toString().replace(/[^0-9]/g, '');
-      totalSupply = parseInt(cleanSupply) || null;
+      tokenSupply = parseInt(cleanSupply) || null;
     }
 
     // Parse price per token
@@ -98,52 +94,54 @@ export async function POST(request: NextRequest) {
     // Prepare documents object
     const documentsData = {
       files: body.documents || [],
-      website: body.website,
-      useCase: body.useCase,
-      tokenName: body.tokenName,
-      tokenSymbol: body.tokenSymbol,
-      additionalInfo: body.additionalInfo || body.additionalNotes,
-      originalAssetType: body.assetType,
-      chainId: chainId, // Keep for reference
+      additionalNotes: body.additionalNotes,
     };
 
     const { data: application, error: appError } = await supabase
       .from('tokenization_applications')
       .insert({
+        // User & Chain
         user_address: walletAddress.toLowerCase(),
+        chain_id: chainId,
+        
+        // Step 1: Asset Info
         asset_name: body.assetName || 'Unnamed Asset',
         asset_type: assetTypeMap[body.assetType] || 'other',
         asset_description: body.assetDescription || '',
-        asset_location: body.location || null,
-        asset_country: body.country || 'Not Specified',
+        asset_location: body.assetLocation || null,
+        asset_country: body.assetLocation || null, // Using location as country
         estimated_value: estimatedValue,
         currency: body.currency || 'USD',
-        valuation_source: body.valuationSource || null,
-        token_supply: totalSupply,
-        token_price_estimate: pricePerToken,
-        fundraising_goal: body.fundraisingGoal || null,
-        needs_escrow: body.needsEscrow || false,
-        needs_dividends: body.needsDividends || false,
-        ownership_proof_type: body.ownershipProofType || null,
-        legal_entity_name: body.companyName || body.legalEntityName || null,
-        legal_entity_type: body.legalEntityType || null,
-        legal_jurisdiction: body.legalJurisdiction || null,
-        contact_name: body.contactName || '',
-        contact_email: body.email || body.contactEmail || '',
-        contact_phone: body.phone || body.contactPhone || null,
-        contact_telegram: body.telegram || null,
         website: body.website || null,
-        use_case: body.useCase || null,
+        
+        // Step 2: Tokenization Details
         token_name: body.tokenName || null,
         token_symbol: body.tokenSymbol || null,
+        token_supply: tokenSupply,  // FIXED: was desired_token_supply
+        token_price_estimate: pricePerToken,
+        use_case: body.useCase || null,
         
-        // Logo and Banner fields
+        // Step 3: Contact Info
+        contact_name: body.contactName || '',
+        contact_email: body.email || '',
+        contact_phone: body.phone || null,
+        
+        // Optional Company Info
+        legal_entity_name: body.companyName || null,
+        legal_entity_type: body.legalEntityType || null,
+        legal_jurisdiction: body.legalJurisdiction || null,
+        
+        // Options
+        needs_escrow: body.includeEscrow || false,
+        needs_dividends: body.includeDividend || false,
+        
+        // Logo and Banner
         logo_url: body.logo?.url || null,
         logo_ipfs: body.logo?.ipfsHash || null,
         banner_url: body.banner?.url || null,
         banner_ipfs: body.banner?.ipfsHash || null,
         
-        // Fee fields - payment already made
+        // Fee fields
         fee_amount: feeAmount,
         fee_currency: body.feeCurrency || 'USDC',
         fee_tx_hash: body.feeTxHash,
@@ -151,17 +149,13 @@ export async function POST(request: NextRequest) {
         
         // Payment fields
         payment_tx_hash: body.feeTxHash,
-        payment_token: body.paymentToken || 'USDC',
+        payment_token: body.feeCurrency || 'USDC',
         payment_confirmed_at: new Date().toISOString(),
         
         // Status
         status: 'pending',
-        token_type: body.tokenType || 'nft_and_token',
         
-        // Chain ID - IMPORTANT: Save the actual chain!
-        chain_id: chainId,
-        
-        // Documents and metadata as JSONB
+        // Documents as JSONB
         documents: documentsData,
       })
       .select()

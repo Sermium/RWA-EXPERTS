@@ -1,7 +1,10 @@
 ﻿'use client';
 
-import React, { RefObject } from 'react';
-import { Upload, X, FileText, CheckCircle, AlertCircle, Loader2, User, Mail, Phone, MessageSquare, Info } from 'lucide-react';
+import React, { RefObject, useState } from 'react';
+import { 
+  Upload, X, FileText, CheckCircle, AlertCircle, Loader2, 
+  User, Mail, Phone, MessageSquare, Info, Building2, ChevronDown, MapPin, Briefcase 
+} from 'lucide-react';
 import { 
   FormData, 
   FormErrors, 
@@ -25,6 +28,43 @@ interface Step3DocsContactProps {
   removeDocument: (index: number) => void;
 }
 
+// Legal entity types
+const LEGAL_ENTITY_TYPES = [
+  { value: '', label: 'Select entity type' },
+  { value: 'corporation', label: 'Corporation (Inc., Corp.)' },
+  { value: 'llc', label: 'Limited Liability Company (LLC)' },
+  { value: 'partnership', label: 'Partnership (LP, LLP)' },
+  { value: 'sole_proprietorship', label: 'Sole Proprietorship' },
+  { value: 'trust', label: 'Trust' },
+  { value: 'foundation', label: 'Foundation' },
+  { value: 'cooperative', label: 'Cooperative' },
+  { value: 'individual', label: 'Individual (No Entity)' },
+  { value: 'other', label: 'Other' },
+];
+
+// Common jurisdictions
+const JURISDICTIONS = [
+  { value: '', label: 'Select jurisdiction' },
+  { value: 'us_delaware', label: 'United States - Delaware' },
+  { value: 'us_wyoming', label: 'United States - Wyoming' },
+  { value: 'us_nevada', label: 'United States - Nevada' },
+  { value: 'us_other', label: 'United States - Other' },
+  { value: 'uk', label: 'United Kingdom' },
+  { value: 'switzerland', label: 'Switzerland' },
+  { value: 'singapore', label: 'Singapore' },
+  { value: 'uae', label: 'United Arab Emirates' },
+  { value: 'cayman', label: 'Cayman Islands' },
+  { value: 'bvi', label: 'British Virgin Islands' },
+  { value: 'luxembourg', label: 'Luxembourg' },
+  { value: 'netherlands', label: 'Netherlands' },
+  { value: 'germany', label: 'Germany' },
+  { value: 'france', label: 'France' },
+  { value: 'hong_kong', label: 'Hong Kong' },
+  { value: 'australia', label: 'Australia' },
+  { value: 'canada', label: 'Canada' },
+  { value: 'other', label: 'Other' },
+];
+
 export function Step3DocsContact({
   formData,
   errors,
@@ -37,6 +77,9 @@ export function Step3DocsContact({
   handleDocumentUpload,
   removeDocument,
 }: Step3DocsContactProps) {
+  const [showCompanyInfo, setShowCompanyInfo] = useState(
+    !!(formData.companyName || formData.legalEntityType || formData.legalJurisdiction)
+  );
   
   // Get asset-specific document requirements
   const assetType = formData.assetType;
@@ -72,7 +115,7 @@ export function Step3DocsContact({
                 Document requirements for {assetLabel}
               </p>
               <p className="text-gray-400 text-sm mt-1">
-                {totalRequired} required document{totalRequired !== 1 ? 's' : ''} â€¢ {optionalDocs.length} optional
+                {totalRequired} required document{totalRequired !== 1 ? 's' : ''} • {optionalDocs.length} optional
               </p>
             </div>
           </div>
@@ -203,7 +246,7 @@ export function Step3DocsContact({
                 {optionalDocs.map((type) => (
                   <option key={type.value} value={type.value}>
                     {type.label}
-                    {documents.some(d => d.type === type.value) ? ' âœ“' : ''}
+                    {documents.some(d => d.type === type.value) ? ' ✓' : ''}
                   </option>
                 ))}
               </select>
@@ -261,7 +304,7 @@ export function Step3DocsContact({
       {/* Divider */}
       <div className="border-t border-gray-700" />
 
-      {/* Contact Section - unchanged */}
+      {/* Contact Section */}
       <div>
         <h2 className="text-xl font-semibold text-white mb-2">Contact Information</h2>
         <p className="text-gray-400 text-sm mb-6">
@@ -347,6 +390,119 @@ export function Step3DocsContact({
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Divider */}
+      <div className="border-t border-gray-700" />
+
+      {/* Company Information Section (Collapsible) */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setShowCompanyInfo(!showCompanyInfo)}
+          className="w-full flex items-center justify-between p-4 bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-750 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-purple-400" />
+            </div>
+            <div className="text-left">
+              <h3 className="text-white font-medium">Company Information</h3>
+              <p className="text-gray-400 text-sm">Optional - Add if asset is held by a legal entity</p>
+            </div>
+          </div>
+          <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${showCompanyInfo ? 'rotate-180' : ''}`} />
+        </button>
+
+        {showCompanyInfo && (
+          <div className="mt-4 p-6 bg-gray-800/50 border border-gray-700 rounded-xl space-y-4">
+            <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg mb-4">
+              <p className="text-purple-300 text-sm">
+                If your asset is owned by a company, trust, or other legal entity, please provide the details below. 
+                This helps with compliance and legal structuring.
+              </p>
+            </div>
+
+            {/* Company Name */}
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Company / Entity Name
+              </label>
+              <div className="relative">
+                <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={formData.companyName}
+                  onChange={(e) => updateFormData('companyName', e.target.value)}
+                  placeholder="Acme Holdings LLC"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+            </div>
+
+            {/* Entity Type and Jurisdiction - Side by Side */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Legal Entity Type */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Entity Type
+                </label>
+                <div className="relative">
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <select
+                    value={formData.legalEntityType}
+                    onChange={(e) => updateFormData('legalEntityType', e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
+                  >
+                    {LEGAL_ENTITY_TYPES.map((type) => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Jurisdiction */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Jurisdiction
+                </label>
+                <div className="relative">
+                  <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <select
+                    value={formData.legalJurisdiction}
+                    onChange={(e) => updateFormData('legalJurisdiction', e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 appearance-none"
+                  >
+                    {JURISDICTIONS.map((j) => (
+                      <option key={j.value} value={j.value}>
+                        {j.label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
+            </div>
+
+            {/* Clear Company Info Button */}
+            {(formData.companyName || formData.legalEntityType || formData.legalJurisdiction) && (
+              <button
+                type="button"
+                onClick={() => {
+                  updateFormData('companyName', '');
+                  updateFormData('legalEntityType', '');
+                  updateFormData('legalJurisdiction', '');
+                }}
+                className="text-sm text-gray-400 hover:text-gray-300 underline"
+              >
+                Clear company information
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
