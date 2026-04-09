@@ -180,7 +180,7 @@ export default function TokenizePage() {
 
   return (
     <div className="min-h-screen bg-gray-900 py-8 px-4">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Tokenize Your Asset</h1>
           <p className="text-gray-400">
