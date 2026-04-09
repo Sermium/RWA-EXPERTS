@@ -251,7 +251,7 @@ export default function CrowdfundingClient() {
                     View Projects <ArrowRight className="ml-2 w-5 h-5" />
                   </Link>
                   <Link
-                    href="/create"
+                    href="/crowdfunding/create"
                     className="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-8 rounded-lg text-lg"
                   >
                     Create Project
@@ -344,7 +344,7 @@ export default function CrowdfundingClient() {
                   ))}
                 </ul>
                 <Link
-                  href="/create"
+                  href="/crowdfunding/create"
                   className="mt-6 inline-flex items-center text-blue-400 hover:text-blue-300"
                 >
                   Launch Your Project <ArrowRight className="ml-2 w-4 h-4" />
