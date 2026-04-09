@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
         estimated_value: estimatedValue,
         currency: body.currency || 'USD',
         valuation_source: body.valuationSource || null,
-        desired_token_supply: totalSupply,
+        token_supply: totalSupply,
         token_price_estimate: pricePerToken,
         fundraising_goal: body.fundraisingGoal || null,
         needs_escrow: body.needsEscrow || false,

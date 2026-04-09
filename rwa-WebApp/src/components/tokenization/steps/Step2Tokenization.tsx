@@ -356,7 +356,7 @@ export function Step2Tokenization({
             {Math.abs(totalValuation - estimatedValue) < 1 && (
               <div className="mt-3 p-2 bg-green-500/10 border border-green-500/30 rounded-lg">
                 <p className="text-green-400 text-xs flex items-center gap-1">
-                  âœ“ Token valuation matches asset value
+                  Token valuation matches asset value
                 </p>
               </div>
             )}
