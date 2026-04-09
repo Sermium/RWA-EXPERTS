@@ -479,7 +479,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
           <label className="block text-sm font-medium text-gray-300 mb-3">
             Asset Type <span className="text-red-400">*</span>
           </label>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {ASSET_TYPES.map((type) => (
               <button
                 key={type.value}
