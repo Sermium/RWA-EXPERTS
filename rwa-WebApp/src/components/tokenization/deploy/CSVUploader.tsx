@@ -4,19 +4,20 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { isAddress } from 'viem';
 
-interface Allocation {
+interface CSVUploaderProps {
+  totalSupply: number;
+  allocations: Allocation[];
+  onAllocationsChange: (allocations: Allocation[]) => void;
+}
+
+export interface Allocation {
   address: string;
   amount: number;
   percentage: number;
   isValid: boolean;
   error?: string;
 }
-
-interface CSVUploaderProps {
-  totalSupply: number;
-  allocations: Allocation[];
-  onAllocationsChange: (allocations: Allocation[]) => void;
-}
+export type TokenAllocation = Allocation;
 
 export default function CSVUploader({
   totalSupply,

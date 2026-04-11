@@ -6,7 +6,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt, usePublicCl
 import { parseUnits, decodeEventLog, type Hash, type Address, encodeFunctionData } from 'viem';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { RWATokenizationFactoryABI, RWASecurityTokenABI } from '@/config/abis';
-import { CSVUploader, type TokenAllocation } from './CSVUploader';
+import CSVUploader, { type TokenAllocation } from './CSVUploader';
 import {
   Loader2, CheckCircle2, XCircle, AlertCircle, ArrowLeft, ArrowRight,
   Upload, FileText, Rocket, Coins, Users, ExternalLink, Download,
