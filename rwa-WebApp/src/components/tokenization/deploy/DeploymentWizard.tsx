@@ -153,61 +153,80 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
   };
 
   const mintTokens = async (tokenAddress: Address) => {
+    if (allocations.length === 0 && totalSupply <= 0) {
+      await saveDeploymentToDatabase();
+      return;
+    }
+
     setStep('minting');
 
-    // Build allocation list - include remaining tokens to deployer
-    const validAllocations = allocations.filter(a => a.isValid && a.amount > 0);
-    
-    // Add remaining tokens to deployer if any
-    const allMints = [...validAllocations];
-    if (remainingTokens > 0 && address) {
-      allMints.push({
-        address: address,
-        amount: remainingTokens,
-        percentage: (remainingTokens / totalSupply) * 100,
-        isValid: true,
-      });
-    }
-
-    // If no allocations at all, mint everything to deployer
-    if (allMints.length === 0 && address) {
-      allMints.push({
-        address: address,
-        amount: totalSupply,
-        percentage: 100,
-        isValid: true,
-      });
-    }
-
-    const totalBatches = Math.ceil(allMints.length / BATCH_SIZE);
-    setMintProgress({ current: 0, total: allMints.length });
-
     try {
+      const validAllocations = allocations.filter(a => a.isValid && a.amount > 0);
+
+      // Use BigInt for ALL calculations to avoid floating-point errors
+      const maxSupplyWei = parseUnits(totalSupply.toString(), 18);
+      
+      // Build mint arrays with BigInt amounts directly
+      const mintAddresses: Address[] = [];
+      const mintAmounts: bigint[] = [];
+      let totalAllocatedWei = BigInt(0);
+
+      for (const alloc of validAllocations) {
+        const amountWei = parseUnits(alloc.amount.toString(), 18);
+        mintAddresses.push(alloc.address as Address);
+        mintAmounts.push(amountWei);
+        totalAllocatedWei += amountWei;
+      }
+
+      // Calculate remaining using BigInt (exact, no floating-point error)
+      const remainingWei = maxSupplyWei - totalAllocatedWei;
+
+      // Add remaining to deployer if any
+      if (remainingWei > 0n && address) {
+        mintAddresses.push(address as Address);
+        mintAmounts.push(remainingWei);
+      }
+
+      // Verify total doesn't exceed max supply
+      const totalToMint = mintAmounts.reduce((sum, amt) => sum + amt, BigInt(0));
+      if (totalToMint > maxSupplyWei) {
+        throw new Error(`Total mint amount (${totalToMint}) exceeds max supply (${maxSupplyWei})`);
+      }
+
+      console.log('=== MINT DEBUG ===');
+      console.log('Max supply (wei):', maxSupplyWei.toString());
+      console.log('Total allocated (wei):', totalAllocatedWei.toString());
+      console.log('Remaining (wei):', remainingWei.toString());
+      console.log('Total to mint (wei):', totalToMint.toString());
+      console.log('Recipients:', mintAddresses.length);
+
+      // Batch mint
+      const totalBatches = Math.ceil(mintAddresses.length / BATCH_SIZE);
+      setMintProgress({ current: 0, total: mintAddresses.length });
+
       for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
         const start = batchIndex * BATCH_SIZE;
-        const batch = allMints.slice(start, start + BATCH_SIZE);
+        const end = Math.min(start + BATCH_SIZE, mintAddresses.length);
+        
+        const batchAddresses = mintAddresses.slice(start, end);
+        const batchAmounts = mintAmounts.slice(start, end);
 
-        const addresses = batch.map(a => a.address as Address);
-        const amounts = batch.map(a => parseUnits(a.amount.toString(), 18));
-
-        console.log(`Minting batch ${batchIndex + 1}/${totalBatches}: ${batch.length} recipients`);
+        console.log(`Batch ${batchIndex + 1}/${totalBatches}:`, batchAddresses.length, 'recipients');
 
         const hash = await writeContractAsync({
           address: tokenAddress,
           abi: RWASecurityTokenABI,
           functionName: 'batchMint',
-          args: [addresses, amounts],
-          gas: BigInt(150_000 * batch.length + 100_000),
+          args: [batchAddresses, batchAmounts],
+          gas: BigInt(150_000 * batchAddresses.length + 100_000),
         });
 
-        await publicClient?.waitForTransactionReceipt({ hash });
         setMintTxHash(hash);
-        setMintProgress({ current: Math.min(start + batch.length, allMints.length), total: allMints.length });
+        await publicClient?.waitForTransactionReceipt({ hash });
+        setMintProgress({ current: end, total: mintAddresses.length });
       }
 
-      // All done - save to database
       await saveDeploymentToDatabase();
-
     } catch (err: any) {
       console.error('Mint error:', err);
       setError(err.message || 'Failed to mint tokens');
