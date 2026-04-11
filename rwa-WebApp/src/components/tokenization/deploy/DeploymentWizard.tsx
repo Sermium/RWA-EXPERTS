@@ -236,20 +236,24 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
   };
 
   const saveDeploymentToDatabase = async () => {
-    if (!deployedContracts) return;
+    if (!deployedContracts) {
+      console.error('No deployed contracts to save');
+      return;
+    }
 
     try {
       const response = await fetch(`/api/tokenization/${application.id}/deploy`, {
         method: 'POST',
-        headers: {
+        headers: { 
           'Content-Type': 'application/json',
           'x-wallet-address': address || '',
         },
         body: JSON.stringify({
           token_address: deployedContracts.tokenAddress,
-          nft_address: deployedContracts.nftAddress,
-          escrow_address: deployedContracts.escrowAddress,
-          dividend_distributor_address: deployedContracts.dividendAddress,
+          nft_address: deployedContracts.nftAddress || null,
+          nft_token_id: deployedContracts.deploymentId.toString(),
+          escrow_address: deployedContracts.escrowAddress || null,
+          dividend_distributor_address: deployedContracts.dividendAddress || null,
           deployment_tx_hash: deployTxHash,
           distribution_tx_hash: mintTxHash,
           metadata_uri: metadataUri,
@@ -263,14 +267,19 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
       });
 
       if (!response.ok) {
-        console.error('Failed to save deployment to database');
+        const errorData = await response.json();
+        console.error('Deploy API error:', errorData);
+        throw new Error(errorData.error || 'Failed to save deployment');
       }
-    } catch (err) {
-      console.error('Save error:', err);
-    }
 
-    setStep('success');
-    onSuccess?.(deployedContracts);
+      const result = await response.json();
+      console.log('Deployment saved:', result);
+      console.log('Token listed on exchange:', result.listed);
+      
+    } catch (err) {
+      console.error('Database save error:', err);
+      throw err;
+    }
   };
 
   const handleDeploy = async () => {
