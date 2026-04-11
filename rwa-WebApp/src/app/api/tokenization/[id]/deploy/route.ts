@@ -67,7 +67,7 @@ export async function POST(
 
     // Build update object with only valid fields
     const updateData: Record<string, any> = {
-      status: 'deployed',
+      status: 'completed',
       token_address,
       deployment_tx_hash,
       deployed_at: new Date().toISOString(),
