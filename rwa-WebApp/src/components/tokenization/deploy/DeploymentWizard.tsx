@@ -159,6 +159,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
     mintHash: Hash | undefined,
     uri: string
   ) => {
+    alert('saveDeploymentToDatabase called!');
     const payload = {
       token_address: contracts.tokenAddress,
       nft_address: contracts.nftAddress || null,
