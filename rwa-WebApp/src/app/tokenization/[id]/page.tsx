@@ -43,6 +43,8 @@ import {
   Edit,
   RotateCcw,
   AlertTriangle,
+  Rocket,
+  X,
 } from 'lucide-react';
 
 // ============================================================================
@@ -108,7 +110,9 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }>
   under_review: { label: 'Under Review', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: Eye },
   approved: { label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle2 },
   rejected: { label: 'Rejected', color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle },
+  deployed: { label: 'Deployed', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle2 },
   completed: { label: 'Deployed', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle2 },
+  active: { label: 'Active', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle2 },
   cancelled: { label: 'Cancelled', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', icon: XCircle },
 };
 
@@ -117,11 +121,16 @@ const ASSET_TYPE_LABELS: Record<string, string> = {
   commercial_property: 'Commercial Property',
   residential_property: 'Residential Property',
   art: 'Art & Collectibles',
+  art_collectibles: 'Art & Collectibles',
   commodities: 'Commodities',
   securities: 'Securities',
   infrastructure: 'Infrastructure',
   private_equity: 'Private Equity',
+  business_equity: 'Business Equity',
   debt: 'Debt Instruments',
+  revenue_based: 'Revenue Based',
+  vehicles_equipment: 'Vehicles & Equipment',
+  intellectual_property: 'Intellectual Property',
   other: 'Other',
 };
 
@@ -333,8 +342,6 @@ interface RejectionBannerProps {
 }
 
 function RejectionBanner({ rejectionReason, rejectedAt, projectId, isOwner }: RejectionBannerProps) {
-  const router = useRouter();
-
   return (
     <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mb-6">
       <div className="flex items-start gap-4">
@@ -375,11 +382,134 @@ function RejectionBanner({ rejectionReason, rejectedAt, projectId, isOwner }: Re
 }
 
 // ============================================================================
+// APPROVED BANNER WITH DEPLOY BUTTON
+// ============================================================================
+
+interface ApprovedBannerProps {
+  project: TokenizationProject;
+  isOwner: boolean;
+  onDeploy: () => void;
+}
+
+function ApprovedBanner({ project, isOwner, onDeploy }: ApprovedBannerProps) {
+  return (
+    <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 mb-6">
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+          <CheckCircle2 className="w-6 h-6 text-green-400" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-green-400 mb-2">Application Approved!</h3>
+          <p className="text-slate-400 text-sm mb-4">
+            Your tokenization application has been approved. You can now deploy your security token to the blockchain.
+          </p>
+          
+          <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
+            <h4 className="text-white font-medium mb-2">Deployment will create:</h4>
+            <ul className="space-y-2 text-sm text-slate-300">
+              <li className="flex items-center gap-2">
+                <Coins className="w-4 h-4 text-purple-400" />
+                ERC-3643 Security Token ({project.token_name} - {project.token_symbol})
+              </li>
+              <li className="flex items-center gap-2">
+                <FileText className="w-4 h-4 text-blue-400" />
+                Project NFT with metadata & legal documents
+              </li>
+              {project.needs_escrow && (
+                <li className="flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-green-400" />
+                  Trade Escrow Contract
+                </li>
+              )}
+              {project.needs_dividends && (
+                <li className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-yellow-400" />
+                  Dividend Distributor Contract
+                </li>
+              )}
+            </ul>
+          </div>
+
+          {isOwner ? (
+            <button
+              onClick={onDeploy}
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg font-medium transition shadow-lg shadow-green-500/25"
+            >
+              <Rocket className="w-5 h-5" />
+              Deploy Token
+            </button>
+          ) : (
+            <p className="text-slate-400 text-sm italic">
+              Only the project owner can deploy the token.
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
+// DEPLOYMENT MODAL
+// ============================================================================
+
+interface DeploymentModalProps {
+  project: TokenizationProject;
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void;
+}
+
+function DeploymentModal({ project, isOpen, onClose, onSuccess }: DeploymentModalProps) {
+  if (!isOpen) return null;
+
+  // Dynamically import the DeploymentWizard to avoid SSR issues
+  const [DeploymentWizard, setDeploymentWizard] = useState<any>(null);
+
+  useEffect(() => {
+    import('@/components/tokenization/deploy/DeploymentWizard').then((mod) => {
+      setDeploymentWizard(() => mod.DeploymentWizard);
+    });
+  }, []);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className="relative bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        {DeploymentWizard ? (
+          <DeploymentWizard
+            application={project}
+            onBack={onClose}
+            onClose={onClose}
+            onSuccess={() => {
+              onSuccess();
+              onClose();
+            }}
+          />
+        ) : (
+          <div className="p-8 text-center">
+            <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-4" />
+            <p className="text-slate-400">Loading deployment wizard...</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // MAIN PAGE COMPONENT
 // ============================================================================
 
 export default function TokenizationProjectPage() {
   const params = useParams();
+  const router = useRouter();
   const projectId = params?.id as string;
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -393,6 +523,7 @@ export default function TokenizationProjectPage() {
   const [activeTab, setActiveTab] = useState<'overview' | 'holders' | 'documents' | 'settings'>('overview');
   const [copied, setCopied] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [showDeployModal, setShowDeployModal] = useState(false);
 
   // Fetch project from database (public endpoint)
   const fetchProject = useCallback(async () => {
@@ -499,6 +630,12 @@ export default function TokenizationProjectPage() {
     setRefreshing(false);
   };
 
+  // Handle successful deployment
+  const handleDeploymentSuccess = () => {
+    // Refresh project data
+    handleRefresh();
+  };
+
   // Copy to clipboard
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -522,8 +659,10 @@ export default function TokenizationProjectPage() {
   // Check if user is owner
   const isOwner = project?.user_address?.toLowerCase() === address?.toLowerCase();
 
-  // Check if project is rejected
+  // Check statuses
   const isRejected = project?.status === 'rejected';
+  const isApproved = project?.status === 'approved';
+  const isDeployed = ['deployed', 'completed', 'active'].includes(project?.status || '') && project?.token_address;
 
   // Loading state
   if (loading) {
@@ -559,7 +698,6 @@ export default function TokenizationProjectPage() {
 
   const statusConfig = STATUS_CONFIG[project.status] || STATUS_CONFIG.pending;
   const StatusIcon = statusConfig.icon;
-  const isDeployed = project.status === 'completed' && project.token_address;
 
   return (
     <div className="min-h-screen bg-slate-900">
@@ -696,13 +834,22 @@ export default function TokenizationProjectPage() {
           )}
         </div>
 
-        {/* Rejection Banner - Show when project is rejected */}
+        {/* Rejection Banner */}
         {isRejected && (
           <RejectionBanner
             rejectionReason={project.rejection_reason}
             rejectedAt={project.rejected_at}
             projectId={project.id}
             isOwner={isOwner}
+          />
+        )}
+
+        {/* Approved Banner with Deploy Button */}
+        {isApproved && (
+          <ApprovedBanner
+            project={project}
+            isOwner={isOwner}
+            onDeploy={() => setShowDeployModal(true)}
           />
         )}
 
@@ -977,6 +1124,26 @@ export default function TokenizationProjectPage() {
               <h2 className="text-lg font-semibold text-white mb-6">Project Settings</h2>
               
               <div className="space-y-6">
+                {/* Deploy Option for Approved Projects */}
+                {isApproved && (
+                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+                    <h3 className="text-white font-medium mb-2 flex items-center gap-2">
+                      <Rocket className="w-5 h-5 text-green-400" />
+                      Ready to Deploy
+                    </h3>
+                    <p className="text-slate-400 text-sm mb-4">
+                      Your application has been approved. Deploy your token to make it live on the blockchain.
+                    </p>
+                    <button
+                      onClick={() => setShowDeployModal(true)}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition"
+                    >
+                      <Rocket className="w-4 h-4" />
+                      Deploy Token
+                    </button>
+                  </div>
+                )}
+
                 {/* Resubmit Option for Rejected Projects */}
                 {isRejected && (
                   <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
@@ -1018,6 +1185,8 @@ export default function TokenizationProjectPage() {
                   <p className="text-slate-400 text-sm">
                     {isRejected 
                       ? 'Edit your application to fix any issues and resubmit for review.'
+                      : isApproved
+                      ? 'Deploy your token to make it live. You can distribute tokens during deployment.'
                       : 'Contact support to update project information or documents.'}
                   </p>
                 </div>
@@ -1026,6 +1195,14 @@ export default function TokenizationProjectPage() {
           )}
         </div>
       </div>
+
+      {/* Deployment Modal */}
+      <DeploymentModal
+        project={project}
+        isOpen={showDeployModal}
+        onClose={() => setShowDeployModal(false)}
+        onSuccess={handleDeploymentSuccess}
+      />
     </div>
   );
 }
