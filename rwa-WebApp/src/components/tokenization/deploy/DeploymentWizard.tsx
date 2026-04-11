@@ -227,10 +227,11 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
       }
 
       await saveDeploymentToDatabase();
-    } catch (err: any) {
-      console.error('Mint error:', err);
-      setError(err.message || 'Failed to mint tokens');
-      setStep('error');
+      setStep('success');
+    } catch (dbErr: any) {
+      console.error('Failed to save deployment:', dbErr);
+      setError(dbErr.message || 'Failed to mint tokens');
+      setStep('success');
     }
   };
 
