@@ -258,6 +258,7 @@ export const RWASecurityTokenABI = [
   { inputs: [], name: "pause", outputs: [], stateMutability: "nonpayable", type: "function" },
   { inputs: [], name: "unpause", outputs: [], stateMutability: "nonpayable", type: "function" },
   { inputs: [], name: "paused", outputs: [{ type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ internalType: "address[]", name: "_toList", type: "address[]" }, { internalType: "uint256[]", name: "_amounts", type: "uint256[]" }], name: "batchMint", outputs: [], stateMutability: "nonpayable", type: "function"},
   { anonymous: false, inputs: [{ indexed: true, name: "from", type: "address" }, { indexed: true, name: "to", type: "address" }, { indexed: false, name: "value", type: "uint256" }], name: "Transfer", type: "event" },
   { anonymous: false, inputs: [{ indexed: true, name: "owner", type: "address" }, { indexed: true, name: "spender", type: "address" }, { indexed: false, name: "value", type: "uint256" }], name: "Approval", type: "event" },
   { anonymous: false, inputs: [{ indexed: true, name: "account", type: "address" }, { indexed: false, name: "isFrozen", type: "bool" }], name: "AddressFrozen", type: "event" },

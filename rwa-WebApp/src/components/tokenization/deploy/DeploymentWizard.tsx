@@ -3,14 +3,13 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from 'wagmi';
-import { parseUnits, decodeEventLog, type Hash, type Address, encodeFunctionData } from 'viem';
+import { parseUnits, type Hash, type Address } from 'viem';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { RWATokenizationFactoryABI, RWASecurityTokenABI } from '@/config/abis';
 import CSVUploader, { type TokenAllocation } from './CSVUploader';
 import {
   Loader2, CheckCircle2, XCircle, AlertCircle, ArrowLeft, ArrowRight,
-  Upload, FileText, Rocket, Coins, Users, ExternalLink, Download,
-  Shield, Building2, Lock, TrendingUp
+  Rocket, Lock, TrendingUp, Users, ExternalLink
 } from 'lucide-react';
 
 type DeployStep = 'distribution' | 'review' | 'deploying' | 'minting' | 'success' | 'error';
@@ -47,6 +46,8 @@ interface DeploymentWizardProps {
   onSuccess?: (contracts: DeployedContracts) => void;
 }
 
+const BATCH_SIZE = 50;
+
 export function DeploymentWizard({ application, onBack, onClose, onSuccess }: DeploymentWizardProps) {
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
@@ -62,7 +63,6 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
     switchToChain,
     isSwitching,
     deployedChains,
-    getTxUrl
   } = useChainConfig();
 
   const [step, setStep] = useState<DeployStep>('distribution');
@@ -74,171 +74,14 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
   const [metadataUri, setMetadataUri] = useState<string>('');
   const [mintProgress, setMintProgress] = useState({ current: 0, total: 0 });
 
-  const { data: deployReceipt } = useWaitForTransactionReceipt({ hash: deployTxHash });
-  const { data: mintReceipt } = useWaitForTransactionReceipt({ hash: mintTxHash });
-
   const isOwner = address?.toLowerCase() === application.user_address?.toLowerCase();
   const totalSupply = application.token_supply || 1000000;
   const totalAllocated = allocations.reduce((sum, a) => sum + a.amount, 0);
+  const remainingTokens = totalSupply - totalAllocated;
   const allAllocationsValid = allocations.every(a => a.isValid) && totalAllocated <= totalSupply;
 
-  // Parse deployment events
-  useEffect(() => {
-    if (deployReceipt && step === 'deploying') {
-      parseDeploymentEvents(deployReceipt);
-    }
-  }, [deployReceipt, step]);
-
-  // Handle mint completion
-  useEffect(() => {
-    if (mintReceipt && step === 'minting') {
-      saveDeploymentToDatabase();
-    }
-  }, [mintReceipt, step]);
-
-  const parseDeploymentEvents = async (receipt: typeof deployReceipt) => {
-    if (!receipt || !contracts) return;
-
-    try {
-      let deployed: DeployedContracts | null = null;
-
-      for (const log of receipt.logs) {
-        try {
-          // Look for TokenDeployed or similar event from factory
-          if (log.address.toLowerCase() === contracts.RWATokenizationFactory?.toLowerCase()) {
-            // Parse event - adjust based on actual event signature
-            const topics = log.topics;
-            if (topics.length >= 2) {
-              // deploymentId is usually indexed
-              const topic = log.topics[1];
-              if (!topic) {
-                throw new Error('Deployment event missing topic data');
-              }
-              const deploymentId = BigInt(topic);
-              
-              // Get deployment details from contract
-              const deployment = await publicClient?.readContract({
-                address: contracts.RWATokenizationFactory as Address,
-                abi: RWATokenizationFactoryABI,
-                functionName: 'getDeployment',
-                args: [deploymentId],
-              });
-
-              if (deployment) {
-                const d = deployment as any;
-                deployed = {
-                  deploymentId,
-                  tokenAddress: d.securityToken,
-                  nftAddress: d.projectNFT !== '0x0000000000000000000000000000000000000000' ? d.projectNFT : undefined,
-                  escrowAddress: d.tradeEscrow !== '0x0000000000000000000000000000000000000000' ? d.tradeEscrow : undefined,
-                  dividendAddress: d.dividendDistributor !== '0x0000000000000000000000000000000000000000' ? d.dividendDistributor : undefined,
-                };
-              }
-            }
-          }
-        } catch {}
-      }
-
-      if (deployed) {
-        setDeployedContracts(deployed);
-        
-        // If we have allocations, proceed to mint
-        if (allocations.length > 0) {
-          await distributeTokens (deployed.tokenAddress);
-        } else {
-          // No distribution needed, save directly
-          await saveDeploymentToDatabase(deployed);
-        }
-      } else {
-        setError('Deployment succeeded but failed to parse contract addresses');
-        setStep('error');
-      }
-    } catch (err) {
-      console.error('Parse error:', err);
-      setError('Failed to parse deployment events');
-      setStep('error');
-    }
-  };
-
-  const distributeTokens = async (tokenAddress: Address) => {
-    if (allocations.length === 0) return;
-
-    setStep('minting');
-    setMintProgress({ current: 0, total: allocations.length });
-
-    try {
-      const validAllocations = allocations.filter(a => a.isValid && a.amount > 0);
-      
-      for (let i = 0; i < validAllocations.length; i++) {
-        const alloc = validAllocations[i];
-        setMintProgress({ current: i + 1, total: validAllocations.length });
-
-        // TRANSFER not mint - tokens are already minted to deployer
-        const hash = await writeContractAsync({
-          address: tokenAddress,
-          abi: RWASecurityTokenABI,
-          functionName: 'transfer',  // Changed from 'mint'
-          args: [
-            alloc.address as Address,
-            parseUnits(alloc.amount.toString(), 18)
-          ],
-          gas: BigInt(100_000),  // Transfer needs less gas
-        });
-
-        await publicClient?.waitForTransactionReceipt({ hash });
-      }
-
-      // No need to mint remaining - deployer already has all tokens
-      await saveDeploymentToDatabase();
-      
-    } catch (err: any) {
-      console.error('Distribution error:', err);
-      setError(err.message || 'Failed to distribute tokens');
-      setStep('error');
-    }
-  };
-
-  const saveDeploymentToDatabase = async (deployed?: DeployedContracts) => {
-    const finalContracts = deployed || deployedContracts;
-    if (!finalContracts) return;
-
-    try {
-      const response = await fetch(`/api/tokenization/${application.id}/deploy`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-wallet-address': address || '',
-        },
-        body: JSON.stringify({
-          token_address: finalContracts.tokenAddress,
-          nft_address: finalContracts.nftAddress,
-          escrow_address: finalContracts.escrowAddress,
-          dividend_distributor_address: finalContracts.dividendAddress,
-          deployment_tx_hash: deployTxHash,
-          distribution_tx_hash: mintTxHash,
-          metadata_uri: metadataUri,
-          chain_id: currentChainId,
-          token_distribution: allocations.map(a => ({
-            address: a.address,
-            amount: a.amount,
-            percentage: a.percentage,
-          })),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to save deployment');
-      }
-
-      setStep('success');
-      onSuccess?.(finalContracts);
-    } catch (err: any) {
-      console.error('Save error:', err);
-      // Don't fail the whole flow if DB save fails
-      setStep('success');
-      onSuccess?.(finalContracts);
-    }
-  };
+  const getTxUrl = (hash: string) => `${explorerUrl}/tx/${hash}`;
+  const getAddressUrl = (addr: string) => `${explorerUrl}/address/${addr}`;
 
   const uploadMetadata = async (): Promise<string> => {
     const metadata = {
@@ -273,6 +116,143 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
     return url;
   };
 
+  const parseDeploymentEvents = async (receipt: any): Promise<DeployedContracts | null> => {
+    if (!receipt || !contracts) return null;
+
+    try {
+      for (const log of receipt.logs) {
+        if (log.address.toLowerCase() === contracts.RWATokenizationFactory?.toLowerCase()) {
+          const topics = log.topics;
+          if (topics && topics.length >= 2 && topics[1]) {
+            const deploymentId = BigInt(topics[1]);
+            
+            const deployment = await publicClient?.readContract({
+              address: contracts.RWATokenizationFactory as Address,
+              abi: RWATokenizationFactoryABI,
+              functionName: 'getDeployment',
+              args: [deploymentId],
+            });
+
+            if (deployment) {
+              const d = deployment as any;
+              return {
+                deploymentId,
+                tokenAddress: d.securityToken,
+                nftAddress: d.projectNFT !== '0x0000000000000000000000000000000000000000' ? d.projectNFT : undefined,
+                escrowAddress: d.tradeEscrow !== '0x0000000000000000000000000000000000000000' ? d.tradeEscrow : undefined,
+                dividendAddress: d.dividendDistributor !== '0x0000000000000000000000000000000000000000' ? d.dividendDistributor : undefined,
+              };
+            }
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Parse error:', err);
+    }
+    return null;
+  };
+
+  const mintTokens = async (tokenAddress: Address) => {
+    setStep('minting');
+
+    // Build allocation list - include remaining tokens to deployer
+    const validAllocations = allocations.filter(a => a.isValid && a.amount > 0);
+    
+    // Add remaining tokens to deployer if any
+    const allMints = [...validAllocations];
+    if (remainingTokens > 0 && address) {
+      allMints.push({
+        address: address,
+        amount: remainingTokens,
+        percentage: (remainingTokens / totalSupply) * 100,
+        isValid: true,
+      });
+    }
+
+    // If no allocations at all, mint everything to deployer
+    if (allMints.length === 0 && address) {
+      allMints.push({
+        address: address,
+        amount: totalSupply,
+        percentage: 100,
+        isValid: true,
+      });
+    }
+
+    const totalBatches = Math.ceil(allMints.length / BATCH_SIZE);
+    setMintProgress({ current: 0, total: allMints.length });
+
+    try {
+      for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
+        const start = batchIndex * BATCH_SIZE;
+        const batch = allMints.slice(start, start + BATCH_SIZE);
+
+        const addresses = batch.map(a => a.address as Address);
+        const amounts = batch.map(a => parseUnits(a.amount.toString(), 18));
+
+        console.log(`Minting batch ${batchIndex + 1}/${totalBatches}: ${batch.length} recipients`);
+
+        const hash = await writeContractAsync({
+          address: tokenAddress,
+          abi: RWASecurityTokenABI,
+          functionName: 'batchMint',
+          args: [addresses, amounts],
+          gas: BigInt(150_000 * batch.length + 100_000),
+        });
+
+        await publicClient?.waitForTransactionReceipt({ hash });
+        setMintTxHash(hash);
+        setMintProgress({ current: Math.min(start + batch.length, allMints.length), total: allMints.length });
+      }
+
+      // All done - save to database
+      await saveDeploymentToDatabase();
+
+    } catch (err: any) {
+      console.error('Mint error:', err);
+      setError(err.message || 'Failed to mint tokens');
+      setStep('error');
+    }
+  };
+
+  const saveDeploymentToDatabase = async () => {
+    if (!deployedContracts) return;
+
+    try {
+      const response = await fetch(`/api/tokenization/${application.id}/deploy`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-wallet-address': address || '',
+        },
+        body: JSON.stringify({
+          token_address: deployedContracts.tokenAddress,
+          nft_address: deployedContracts.nftAddress,
+          escrow_address: deployedContracts.escrowAddress,
+          dividend_distributor_address: deployedContracts.dividendAddress,
+          deployment_tx_hash: deployTxHash,
+          distribution_tx_hash: mintTxHash,
+          metadata_uri: metadataUri,
+          chain_id: currentChainId,
+          token_distribution: allocations.map(a => ({
+            address: a.address,
+            amount: a.amount,
+            percentage: a.percentage,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        console.error('Failed to save deployment to database');
+      }
+    } catch (err) {
+      console.error('Save error:', err);
+    }
+
+    setStep('success');
+    onSuccess?.(deployedContracts);
+  };
+
   const handleDeploy = async () => {
     if (!isConnected || !address || !contracts?.RWATokenizationFactory) {
       setError('Please connect your wallet');
@@ -293,14 +273,9 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
       setMetadataUri(uri);
 
       // Determine which deploy function to use
-      let functionName: string;
-      if (application.needs_escrow) {
-        functionName = 'deployWithEscrow';
-      } else {
-        functionName = 'deployNFTAndToken';
-      }
+      const functionName = application.needs_escrow ? 'deployWithEscrow' : 'deployNFTAndToken';
 
-      // Deploy contracts
+      // Deploy contracts (no mint - just creates the token)
       const hash = await writeContractAsync({
         address: contracts.RWATokenizationFactory as Address,
         abi: RWATokenizationFactoryABI,
@@ -311,10 +286,26 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
           parseUnits(totalSupply.toString(), 18),
           uri,
         ],
-        gas: BigInt(10_000_000),
+        gas: BigInt(5_000_000),
       });
 
       setDeployTxHash(hash);
+
+      // Wait for deployment confirmation
+      const receipt = await publicClient?.waitForTransactionReceipt({ hash });
+      
+      // Parse deployment events to get contract addresses
+      const deployed = await parseDeploymentEvents(receipt);
+      
+      if (!deployed) {
+        throw new Error('Failed to parse deployment - contract addresses not found');
+      }
+
+      setDeployedContracts(deployed);
+
+      // Now mint tokens using batchMint
+      await mintTokens(deployed.tokenAddress);
+
     } catch (err: any) {
       console.error('Deploy error:', err);
       if (err.message?.includes('user rejected')) {
@@ -326,7 +317,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
     }
   };
 
-  // Render different states
+  // Render different steps
   const renderContent = () => {
     switch (step) {
       case 'distribution':
@@ -335,8 +326,8 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
             <div>
               <h3 className="text-lg font-semibold text-white mb-2">Token Distribution</h3>
               <p className="text-slate-400 text-sm">
-                Upload a CSV file to specify how tokens should be distributed after deployment.
-                Leave empty to receive all tokens to your wallet.
+                Specify how tokens should be distributed. Add recipients manually or upload a CSV.
+                Unallocated tokens will be minted to your wallet.
               </p>
             </div>
 
@@ -347,6 +338,22 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                   {totalSupply.toLocaleString()} {application.token_symbol}
                 </span>
               </div>
+              {allocations.length > 0 && (
+                <>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-slate-400">Allocated</span>
+                    <span className="text-white">
+                      {totalAllocated.toLocaleString()} ({((totalAllocated / totalSupply) * 100).toFixed(1)}%)
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">To your wallet</span>
+                    <span className="text-blue-400">
+                      {remainingTokens.toLocaleString()} ({((remainingTokens / totalSupply) * 100).toFixed(1)}%)
+                    </span>
+                  </div>
+                </>
+              )}
             </div>
 
             <CSVUploader
@@ -438,37 +445,32 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
             </div>
 
             {/* Distribution summary */}
-            {allocations.length > 0 && (
-              <div className="bg-slate-700/50 rounded-xl p-5">
-                <h4 className="font-medium text-white mb-3 flex items-center gap-2">
-                  <Users className="w-4 h-4 text-blue-400" />
-                  Token Distribution
-                </h4>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Recipients</span>
-                    <span className="text-white">{allocations.length}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Tokens to distribute</span>
-                    <span className="text-white">{totalAllocated.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-slate-400">Remaining to owner</span>
-                    <span className="text-white">{(totalSupply - totalAllocated).toLocaleString()}</span>
-                  </div>
+            <div className="bg-slate-700/50 rounded-xl p-5">
+              <h4 className="font-medium text-white mb-3 flex items-center gap-2">
+                <Users className="w-4 h-4 text-blue-400" />
+                Token Distribution
+              </h4>
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">Recipients from list</span>
+                  <span className="text-white">{allocations.length}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">Tokens to recipients</span>
+                  <span className="text-white">{totalAllocated.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-400">Tokens to your wallet</span>
+                  <span className="text-blue-400">{remainingTokens.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-sm pt-2 border-t border-slate-600">
+                  <span className="text-slate-400">Total mint transactions</span>
+                  <span className="text-white">
+                    {Math.ceil((allocations.length + (remainingTokens > 0 ? 1 : 0)) / BATCH_SIZE)} batch(es)
+                  </span>
                 </div>
               </div>
-            )}
-
-            {allocations.length === 0 && (
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
-                <p className="text-blue-400 text-sm flex items-start gap-2">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                  All {totalSupply.toLocaleString()} tokens will be minted to your wallet ({address?.slice(0, 6)}...{address?.slice(-4)})
-                </p>
-              </div>
-            )}
+            </div>
 
             <div className="flex gap-4 pt-4">
               <button
@@ -514,7 +516,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
         return (
           <div className="text-center py-8">
             <Loader2 className="w-16 h-16 text-purple-500 animate-spin mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">Distributing Tokens</h3>
+            <h3 className="text-xl font-semibold text-white mb-2">Minting Tokens</h3>
             <p className="text-slate-400 mb-4">
               Minting tokens to {mintProgress.total} recipients...
             </p>
@@ -530,6 +532,16 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                 />
               </div>
             </div>
+            {mintTxHash && (
+              <a
+                href={getTxUrl(mintTxHash)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:text-blue-300 text-sm font-mono inline-flex items-center gap-1 mt-4"
+              >
+                View latest transaction <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
           </div>
         );
 
@@ -541,7 +553,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
             </div>
             <h3 className="text-xl font-semibold text-green-400 mb-2">Deployment Successful!</h3>
             <p className="text-slate-400 mb-6">
-              Your token has been deployed and is now live on {chainName}.
+              Your token has been deployed and tokens have been minted.
             </p>
 
             {deployedContracts && (
@@ -551,7 +563,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                   <div className="flex justify-between items-center">
                     <span className="text-slate-400">Security Token</span>
                     <a
-                      href={`${explorerUrl}/address/${deployedContracts.tokenAddress}`}
+                      href={getAddressUrl(deployedContracts.tokenAddress)}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-400 hover:text-blue-300 font-mono text-xs"
@@ -563,7 +575,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                     <div className="flex justify-between items-center">
                       <span className="text-slate-400">Project NFT</span>
                       <a
-                        href={`${explorerUrl}/address/${deployedContracts.nftAddress}`}
+                        href={getAddressUrl(deployedContracts.nftAddress)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-400 hover:text-blue-300 font-mono text-xs"
@@ -576,7 +588,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                     <div className="flex justify-between items-center">
                       <span className="text-slate-400">Trade Escrow</span>
                       <a
-                        href={`${explorerUrl}/address/${deployedContracts.escrowAddress}`}
+                        href={getAddressUrl(deployedContracts.escrowAddress)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-400 hover:text-blue-300 font-mono text-xs"
@@ -636,7 +648,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
     }
   };
 
-  // Check prerequisites
+  // Prerequisites checks
   if (!isConnected) {
     return (
       <div className="p-8 text-center">

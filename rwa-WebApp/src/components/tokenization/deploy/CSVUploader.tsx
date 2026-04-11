@@ -391,7 +391,8 @@ export default function CSVUploader({
                   <code className="block bg-slate-900 p-3 rounded text-xs text-green-400 font-mono">
                     address,amount<br />
                     0x742d...1abc,400000<br />
-                    0x8ba1...7890,250000
+                    0x8ba1...7890,250000.354<br />
+                    0x1234...5678,125000.5
                   </code>
                 </div>
 
