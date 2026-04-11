@@ -405,7 +405,7 @@ export const DEPLOYMENTS: Record<SupportedChainId, DeploymentData> = {
       CountryRestrictModule: "0xf4f252ef2383CaCb54Fc75A48b7FD2D5dc66E577",
       AccreditedInvestorModule: "0x2dd0b32EeF71d963f84da652c15742A416393fe8",
       Implementations: {
-        SecurityToken: "0x198E1fa20f0538A587C3D3C50Cd0CF7CC67A9052",
+        SecurityToken: "0x4cfBE62F4f86b373880C475F5e0e90806D6A0aE8",
         EscrowVault: "0x8A962582446686b62D1F9d86dfe6D8c107f11357",
         Compliance: "0x73B699A1e7AF652027194d35A7DB3eD0AD6DF399",
         ProjectNFT: "0xc1E2682b9bDBB6341e346Bc4Dff9ccBB8fE0Bb09",
@@ -416,7 +416,7 @@ export const DEPLOYMENTS: Record<SupportedChainId, DeploymentData> = {
         MaxBalanceModule: "0x01B4286FdcBf99dFA42a06f90FB1058A397F7c2c",
         LockupModule: "0x540Cf149653495998a9e9474244c3612FB5f7e8a",
         RWATradeEscrow: "0x2b5C3b768D44457330646B205B6fC35666Da5d34",
-        TokenizationFactory: "0xe58397be03574377F1A6cb1389a7B53d492d91BD",
+        TokenizationFactory: "0xDbCb34c31DB54D93b4A1D214f9bc0363b035c6f7",
         PlatformFeeManager: ZERO,
         DisputeManager: ZERO,
       },
