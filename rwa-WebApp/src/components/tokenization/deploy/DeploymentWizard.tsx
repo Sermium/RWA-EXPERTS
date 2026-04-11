@@ -152,12 +152,61 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
     return null;
   };
 
-  const mintTokens = async (tokenAddress: Address) => {
-    if (allocations.length === 0 && totalSupply <= 0) {
-      await saveDeploymentToDatabase();
-      return;
-    }
+  // Pass contracts and txHash as parameters to avoid stale state issues
+  const saveDeploymentToDatabase = async (
+    contracts: DeployedContracts,
+    deployHash: Hash | undefined,
+    mintHash: Hash | undefined,
+    uri: string
+  ) => {
+    const payload = {
+      token_address: contracts.tokenAddress,
+      nft_address: contracts.nftAddress || null,
+      nft_token_id: Number(contracts.deploymentId),
+      escrow_address: contracts.escrowAddress || null,
+      deployment_tx_hash: deployHash,
+      metadata_uri: uri,
+      chain_id: currentChainId,
+    };
 
+    console.log('=== SAVING DEPLOYMENT ===');
+    console.log('Application ID:', application.id);
+    console.log('Payload:', JSON.stringify(payload, null, 2));
+
+    try {
+      const response = await fetch(`/api/tokenization/${application.id}/deploy`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-wallet-address': address || '',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      console.log('Response status:', response.status);
+      const result = await response.json();
+      console.log('Response body:', result);
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to save deployment');
+      }
+
+      console.log('Deployment saved successfully!');
+      console.log('Token listed on exchange:', result.listed);
+      
+    } catch (err) {
+      console.error('Database save error:', err);
+      throw err;
+    }
+  };
+
+  // Accept contracts as parameter to ensure we have the data
+  const mintTokens = async (
+    tokenAddress: Address, 
+    contracts: DeployedContracts,
+    deployHash: Hash | undefined,
+    uri: string
+  ) => {
     setStep('minting');
 
     try {
@@ -204,6 +253,8 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
       const totalBatches = Math.ceil(mintAddresses.length / BATCH_SIZE);
       setMintProgress({ current: 0, total: mintAddresses.length });
 
+      let lastMintHash: Hash | undefined;
+
       for (let batchIndex = 0; batchIndex < totalBatches; batchIndex++) {
         const start = batchIndex * BATCH_SIZE;
         const end = Math.min(start + BATCH_SIZE, mintAddresses.length);
@@ -221,64 +272,25 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
           gas: BigInt(150_000 * batchAddresses.length + 100_000),
         });
 
+        lastMintHash = hash;
         setMintTxHash(hash);
         await publicClient?.waitForTransactionReceipt({ hash });
         setMintProgress({ current: end, total: mintAddresses.length });
       }
 
-      await saveDeploymentToDatabase();
-      setStep('success');
-    } catch (dbErr: any) {
-      console.error('Failed to save deployment:', dbErr);
-      setError(dbErr.message || 'Failed to mint tokens');
-      setStep('success');
-    }
-  };
-
-  const saveDeploymentToDatabase = async () => {
-    if (!deployedContracts) {
-      console.error('No deployed contracts to save');
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/tokenization/${application.id}/deploy`, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-wallet-address': address || '',
-        },
-        body: JSON.stringify({
-          token_address: deployedContracts.tokenAddress,
-          nft_address: deployedContracts.nftAddress || null,
-          nft_token_id: deployedContracts.deploymentId.toString(),
-          escrow_address: deployedContracts.escrowAddress || null,
-          dividend_distributor_address: deployedContracts.dividendAddress || null,
-          deployment_tx_hash: deployTxHash,
-          distribution_tx_hash: mintTxHash,
-          metadata_uri: metadataUri,
-          chain_id: currentChainId,
-          token_distribution: allocations.map(a => ({
-            address: a.address,
-            amount: a.amount,
-            percentage: a.percentage,
-          })),
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Deploy API error:', errorData);
-        throw new Error(errorData.error || 'Failed to save deployment');
-      }
-
-      const result = await response.json();
-      console.log('Deployment saved:', result);
-      console.log('Token listed on exchange:', result.listed);
+      // Save to database with all the data passed as parameters
+      await saveDeploymentToDatabase(contracts, deployHash, lastMintHash, uri);
       
-    } catch (err) {
-      console.error('Database save error:', err);
-      throw err;
+      // Call onSuccess callback if provided
+      if (onSuccess) {
+        onSuccess(contracts);
+      }
+      
+      setStep('success');
+    } catch (err: any) {
+      console.error('Mint/save error:', err);
+      setError(err.message || 'Failed to mint tokens');
+      setStep('error');
     }
   };
 
@@ -332,8 +344,8 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
 
       setDeployedContracts(deployed);
 
-      // Now mint tokens using batchMint
-      await mintTokens(deployed.tokenAddress);
+      // Now mint tokens - pass all required data as parameters
+      await mintTokens(deployed.tokenAddress, deployed, hash, uri);
 
     } catch (err: any) {
       console.error('Deploy error:', err);
