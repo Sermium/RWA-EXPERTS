@@ -5,6 +5,7 @@ import { useMemo, useCallback } from 'react';
 import { useAccount, useChainId } from 'wagmi';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { useConnectModal } from '../../components/ConnectButton';
+import { CHAINS, SupportedChainId } from '@/config/chains';
 import Link from 'next/link';
 import {
   Wallet,
@@ -33,13 +34,16 @@ export default function CrowdfundingClient() {
     contracts,
     explorerUrl,
     nativeCurrency,
-    faucetUrl,
     isDeployed,
     isTestnet,
     switchToChain,
     isSwitching,
     deployedChains,
   } = useChainConfig();
+
+  // Get faucetUrl separately
+  const chainInfo = chainId ? CHAINS[chainId as SupportedChainId] : null;
+  const faucetUrl = chainInfo?.faucetUrl || null;
 
   // Check if on wrong chain
   const isWrongChain = useMemo(() => {
@@ -50,7 +54,8 @@ export default function CrowdfundingClient() {
   // Network switch handler
   const handleSwitchNetwork = useCallback(async (targetChainId?: number) => {
     try {
-      await switchToChain(targetChainId);
+      if (!targetChainId) {throw new Error('Target chain ID is required');}
+      await switchToChain(targetChainId as SupportedChainId);
     } catch (error) {
       console.error('Failed to switch network:', error);
     }
@@ -492,7 +497,7 @@ export default function CrowdfundingClient() {
                 <AlertTriangle className="w-5 h-5 text-yellow-500" />
                 <span className="text-yellow-500 font-semibold">Testnet Mode:</span>
                 <span className="text-yellow-200">
-                  You're currently on {chainName}. Get test {nativeCurrency?.symbol || 'tokens'} from the{' '}
+                  You're currently on {chainName}. Get test {nativeCurrency || 'tokens'} from the{' '}
                   <a
                     href={faucetUrl}
                     target="_blank"
@@ -518,7 +523,7 @@ export default function CrowdfundingClient() {
                 </div>
                 {nativeCurrency && (
                   <span className="text-gray-500 text-sm">
-                    Gas: {nativeCurrency.symbol}
+                    Gas: {nativeCurrency}
                   </span>
                 )}
               </div>

@@ -21,7 +21,7 @@ interface PaymentInfo {
   escrow: boolean;
   dividend: boolean;
   totalAmount: number;
-  currency: 'USDC' | 'USDT';
+  currency: "USD" | "USDC" | "USDT";
 }
 
 export default function TokenizePage() {
@@ -80,7 +80,7 @@ export default function TokenizePage() {
   });
 
   // Handle payment completion
-  const handlePaymentComplete = (txHash: string, options: { escrow: boolean; dividend: boolean; totalAmount: number; currency: 'USDC' | 'USDT' }) => {
+  const handlePaymentComplete = (txHash: string, options: { escrow: boolean; dividend: boolean; totalAmount: number; currency: "USD" | "USDC" | "USDT" }) => {
     setPaymentInfo({
       txHash,
       ...options,
