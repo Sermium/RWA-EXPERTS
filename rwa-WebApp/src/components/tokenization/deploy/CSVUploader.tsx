@@ -317,6 +317,7 @@ export default function CSVUploader({
                 onKeyPress={handleKeyPress}
                 placeholder="10000"
                 min="0"
+                step="any"
                 max={remainingTokens}
                 className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-blue-500"
               />
