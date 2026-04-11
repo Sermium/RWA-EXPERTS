@@ -31,6 +31,16 @@ export default function CSVUploader({
   const [manualError, setManualError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const formatTokenAmount = (amount: number): string => {
+    if (Number.isInteger(amount)) {
+      return amount.toLocaleString();
+    }
+    return amount.toLocaleString(undefined, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 6,
+    });
+  };
+
   const totalAllocated = allocations.reduce((sum, a) => sum + a.amount, 0);
   const remainingTokens = totalSupply - totalAllocated;
   const allocationPercentage = totalSupply > 0 ? (totalAllocated / totalSupply) * 100 : 0;
@@ -339,7 +349,7 @@ export default function CSVUploader({
           )}
 
           <p className="mt-3 text-xs text-slate-500">
-            Remaining tokens: <span className="text-slate-300">{remainingTokens.toLocaleString()}</span>
+            Remaining tokens: <span className="text-slate-300">{formatTokenAmount(remainingTokens)}</span>
             {remainingTokens > 0 && allocations.length > 0 && (
               <span className="text-slate-500"> • Unallocated tokens will be minted to your wallet</span>
             )}
@@ -531,7 +541,7 @@ export default function CSVUploader({
             <div className="flex items-center justify-between mb-2">
               <span className="text-sm text-slate-400">Allocated</span>
               <span className="text-sm text-white font-medium">
-                {totalAllocated.toLocaleString()} / {totalSupply.toLocaleString()} tokens
+                {formatTokenAmount(totalAllocated)} / {formatTokenAmount(totalSupply)} tokens
               </span>
             </div>
 
@@ -547,13 +557,13 @@ export default function CSVUploader({
 
             {allocationPercentage > 100 && (
               <p className="text-xs text-red-400 mt-2">
-                Over-allocated by {(totalAllocated - totalSupply).toLocaleString()} tokens
+                Over-allocated by {formatTokenAmount(totalAllocated - totalSupply)} tokens
               </p>
             )}
 
             {remainingTokens > 0 && (
               <p className="text-xs text-slate-500 mt-2">
-                {remainingTokens.toLocaleString()} tokens ({(100 - allocationPercentage).toFixed(2)}%) will be minted to your wallet
+                {formatTokenAmount(remainingTokens)} tokens ({(100 - allocationPercentage).toFixed(2)}%) will be minted to your wallet
               </p>
             )}
           </div>
