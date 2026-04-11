@@ -426,8 +426,8 @@ export const DEPLOYMENTS: Record<SupportedChainId, DeploymentData> = {
       USDT: "0xe57d2BA10a92eb04eD1B56Cb2dE9D67799782835",
     },
     platformWallets: DEFAULT_PLATFORM_WALLETS,
-    deployedAt: "2026-02-21",
-    version: "2.0.0",
+    deployedAt: "2026-04-11",  // UPDATED
+    version: "2.1.0",  // UPDATED
   },
 
   // ========================================
