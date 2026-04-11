@@ -144,7 +144,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
         
         // If we have allocations, proceed to mint
         if (allocations.length > 0) {
-          await mintTokens(deployed.tokenAddress);
+          await distributeTokens (deployed.tokenAddress);
         } else {
           // No distribution needed, save directly
           await saveDeploymentToDatabase(deployed);
@@ -160,57 +160,40 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
     }
   };
 
-  const mintTokens = async (tokenAddress: Address) => {
+  const distributeTokens = async (tokenAddress: Address) => {
     if (allocations.length === 0) return;
 
     setStep('minting');
     setMintProgress({ current: 0, total: allocations.length });
 
     try {
-      // Batch mint - mint to each address
-      // For efficiency, we could use a batch mint function if available
-      // Otherwise, mint to deployer first, then transfer
-      
       const validAllocations = allocations.filter(a => a.isValid && a.amount > 0);
       
       for (let i = 0; i < validAllocations.length; i++) {
         const alloc = validAllocations[i];
         setMintProgress({ current: i + 1, total: validAllocations.length });
 
+        // TRANSFER not mint - tokens are already minted to deployer
         const hash = await writeContractAsync({
           address: tokenAddress,
           abi: RWASecurityTokenABI,
-          functionName: 'mint',
+          functionName: 'transfer',  // Changed from 'mint'
           args: [
             alloc.address as Address,
             parseUnits(alloc.amount.toString(), 18)
           ],
+          gas: BigInt(100_000),  // Transfer needs less gas
         });
 
-        // Wait for each mint to confirm
         await publicClient?.waitForTransactionReceipt({ hash });
       }
 
-      // Mint remaining to deployer if any
-      const remaining = totalSupply - totalAllocated;
-      if (remaining > 0 && address) {
-        const hash = await writeContractAsync({
-          address: tokenAddress,
-          abi: RWASecurityTokenABI,
-          functionName: 'mint',
-          args: [
-            address as Address,
-            parseUnits(remaining.toString(), 18)
-          ],
-        });
-        setMintTxHash(hash);
-      } else {
-        // No remaining tokens, proceed to save
-        await saveDeploymentToDatabase();
-      }
+      // No need to mint remaining - deployer already has all tokens
+      await saveDeploymentToDatabase();
+      
     } catch (err: any) {
-      console.error('Mint error:', err);
-      setError(err.message || 'Failed to mint tokens');
+      console.error('Distribution error:', err);
+      setError(err.message || 'Failed to distribute tokens');
       setStep('error');
     }
   };
@@ -328,6 +311,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
           parseUnits(totalSupply.toString(), 18),
           uri,
         ],
+        gas: BigInt(10_000_000),
       });
 
       setDeployTxHash(hash);
