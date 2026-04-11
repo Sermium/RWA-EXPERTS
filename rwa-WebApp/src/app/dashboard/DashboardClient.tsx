@@ -181,6 +181,7 @@ const ProjectCard = ({
   currentChainId: number | undefined;
 }) => {
   const isDeployed = project.status === 'deployed';
+  const isRejected = project.status === 'rejected';
   const needsChainSwitch = project.chainId && currentChainId !== project.chainId;
   const chainInfo = project.chainId ? getChainById(project.chainId) : null;
 
@@ -215,7 +216,11 @@ const ProjectCard = ({
   };
 
   return (
-    <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-gray-600/50 transition-all">
+    <div className={`bg-gray-800/50 rounded-xl p-5 border transition-all ${
+      isRejected 
+        ? 'border-red-500/30 hover:border-red-500/50' 
+        : 'border-gray-700/50 hover:border-gray-600/50'
+    }`}>
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
           <h3 className="font-semibold text-white truncate">{project.name}</h3>
@@ -256,6 +261,19 @@ const ProjectCard = ({
         )}
       </div>
 
+      {/* Rejection Reason Banner */}
+      {isRejected && project.rejectionReason && (
+        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+          <div className="flex items-start gap-2">
+            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            <div>
+              <p className="text-xs font-medium text-red-400 mb-1">Rejection Reason:</p>
+              <p className="text-xs text-gray-300 line-clamp-2">{project.rejectionReason}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {project.tokenAddress && (
         <div className="mb-4 p-2 bg-gray-900/50 rounded-lg">
           <p className="text-xs text-gray-500 mb-1">Token Address</p>
@@ -283,30 +301,50 @@ const ProjectCard = ({
       )}
 
       <div className="flex gap-2">
-        <Link
-          href={`/tokenization/${project.id}`}
-          className="flex-1 text-center py-2 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
-        >
-          View Project
-        </Link>
-        
-        {needsChainSwitch && chainInfo && (
-          <button
-            onClick={() => onSwitchChain(project.chainId!)}
-            className="py-2 px-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
-          >
-            <RefreshCw className="w-4 h-4" />
-            Switch
-          </button>
-        )}
-        
-        {isDeployed && !project.isListed && !needsChainSwitch && (
-          <Link
-            href={`/tokenization/${project.id}?tab=settings`}
-            className="py-2 px-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-medium transition-colors"
-          >
-            List
-          </Link>
+        {isRejected ? (
+          <>
+            <Link
+              href={`/tokenization/${project.id}`}
+              className="flex-1 text-center py-2 px-3 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm font-medium transition-colors"
+            >
+              View Details
+            </Link>
+            <Link
+              href={`/tokenize/edit/${project.id}`}
+              className="flex-1 text-center py-2 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+            >
+              <RefreshCw className="w-4 h-4" />
+              Edit & Resubmit
+            </Link>
+          </>
+        ) : (
+          <>
+            <Link
+              href={`/tokenization/${project.id}`}
+              className="flex-1 text-center py-2 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+            >
+              View Project
+            </Link>
+            
+            {needsChainSwitch && chainInfo && (
+              <button
+                onClick={() => onSwitchChain(project.chainId!)}
+                className="py-2 px-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Switch
+              </button>
+            )}
+            
+            {isDeployed && !project.isListed && !needsChainSwitch && (
+              <Link
+                href={`/tokenization/${project.id}?tab=settings`}
+                className="py-2 px-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-medium transition-colors"
+              >
+                List
+              </Link>
+            )}
+          </>
         )}
       </div>
     </div>

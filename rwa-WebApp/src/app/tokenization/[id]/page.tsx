@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAccount, usePublicClient } from 'wagmi';
 import { formatUnits, type Address } from 'viem';
@@ -41,6 +41,8 @@ import {
   Unlock,
   Eye,
   Edit,
+  RotateCcw,
+  AlertTriangle,
 } from 'lucide-react';
 
 // ============================================================================
@@ -77,6 +79,8 @@ interface TokenizationProject {
   chain_id: number;
   logo_url: string | null;
   banner_url: string | null;
+  rejection_reason: string | null;
+  rejected_at: string | null;
 }
 
 interface TokenHolder {
@@ -318,6 +322,59 @@ function DocumentCard({ name, url, type, size }: { name: string; url: string; ty
 }
 
 // ============================================================================
+// REJECTION BANNER COMPONENT
+// ============================================================================
+
+interface RejectionBannerProps {
+  rejectionReason: string | null;
+  rejectedAt: string | null;
+  projectId: string;
+  isOwner: boolean;
+}
+
+function RejectionBanner({ rejectionReason, rejectedAt, projectId, isOwner }: RejectionBannerProps) {
+  const router = useRouter();
+
+  return (
+    <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mb-6">
+      <div className="flex items-start gap-4">
+        <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
+          <AlertTriangle className="w-6 h-6 text-red-400" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-red-400 mb-2">Application Rejected</h3>
+          {rejectedAt && (
+            <p className="text-slate-400 text-sm mb-3">
+              Rejected on {formatDate(rejectedAt)}
+            </p>
+          )}
+          {rejectionReason && (
+            <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
+              <p className="text-slate-400 text-sm font-medium mb-1">Reason:</p>
+              <p className="text-white">{rejectionReason}</p>
+            </div>
+          )}
+          {isOwner && (
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={`/tokenize/edit/${projectId}`}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition"
+              >
+                <Edit className="w-4 h-4" />
+                Edit & Resubmit Application
+              </Link>
+              <p className="text-slate-400 text-sm self-center">
+                Your original payment is still valid – no additional fee required.
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ============================================================================
 // MAIN PAGE COMPONENT
 // ============================================================================
 
@@ -465,6 +522,9 @@ export default function TokenizationProjectPage() {
   // Check if user is owner
   const isOwner = project?.user_address?.toLowerCase() === address?.toLowerCase();
 
+  // Check if project is rejected
+  const isRejected = project?.status === 'rejected';
+
   // Loading state
   if (loading) {
     return (
@@ -547,7 +607,7 @@ export default function TokenizationProjectPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10 pb-12">
         {/* Project Header Card */}
-        <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 mb-8">
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 mb-6">
           <div className="flex flex-col md:flex-row md:items-start gap-6">
             {/* Logo */}
             <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
@@ -635,6 +695,16 @@ export default function TokenizationProjectPage() {
             </div>
           )}
         </div>
+
+        {/* Rejection Banner - Show when project is rejected */}
+        {isRejected && (
+          <RejectionBanner
+            rejectionReason={project.rejection_reason}
+            rejectedAt={project.rejected_at}
+            projectId={project.id}
+            isOwner={isOwner}
+          />
+        )}
 
         {/* Tabs */}
         <div className="flex gap-1 mb-6 bg-slate-800 rounded-lg p-1 overflow-x-auto">
@@ -907,6 +977,26 @@ export default function TokenizationProjectPage() {
               <h2 className="text-lg font-semibold text-white mb-6">Project Settings</h2>
               
               <div className="space-y-6">
+                {/* Resubmit Option for Rejected Projects */}
+                {isRejected && (
+                  <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                    <h3 className="text-white font-medium mb-2 flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-red-400" />
+                      Application Rejected
+                    </h3>
+                    <p className="text-slate-400 text-sm mb-4">
+                      {project.rejection_reason || 'Your application was rejected. You can edit and resubmit it.'}
+                    </p>
+                    <Link
+                      href={`/tokenize/edit/${project.id}`}
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition"
+                    >
+                      <Edit className="w-4 h-4" />
+                      Edit & Resubmit
+                    </Link>
+                  </div>
+                )}
+
                 {isDeployed && (
                   <div className="p-4 bg-slate-700/50 rounded-lg">
                     <h3 className="text-white font-medium mb-4">Token Controls</h3>
@@ -926,7 +1016,9 @@ export default function TokenizationProjectPage() {
                 <div className="p-4 bg-slate-700/50 rounded-lg">
                   <h3 className="text-white font-medium mb-4">Project Information</h3>
                   <p className="text-slate-400 text-sm">
-                    Contact support to update project information or documents.
+                    {isRejected 
+                      ? 'Edit your application to fix any issues and resubmit for review.'
+                      : 'Contact support to update project information or documents.'}
                   </p>
                 </div>
               </div>
