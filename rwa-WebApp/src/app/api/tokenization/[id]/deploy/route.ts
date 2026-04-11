@@ -15,22 +15,24 @@ export async function POST(
     const { id: applicationId } = await params;
     const walletAddress = request.headers.get('x-wallet-address');
     
+    console.log('[Deploy] Starting deployment save for:', applicationId);
+    console.log('[Deploy] Wallet address:', walletAddress);
+
     if (!walletAddress) {
       return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
     }
 
     const body = await request.json();
+    console.log('[Deploy] Request body:', JSON.stringify(body, null, 2));
+
     const {
       token_address,
       nft_address,
       nft_token_id,
       escrow_address,
-      dividend_distributor_address,
       deployment_tx_hash,
-      distribution_tx_hash,
       metadata_uri,
       chain_id,
-      token_distribution,
     } = body;
 
     // Get existing application
@@ -40,51 +42,71 @@ export async function POST(
       .eq('id', applicationId)
       .single();
 
-    if (fetchError || !existing) {
+    if (fetchError) {
+      console.error('[Deploy] Fetch error:', fetchError);
+      return NextResponse.json({ error: 'Application not found', details: fetchError.message }, { status: 404 });
+    }
+
+    if (!existing) {
       return NextResponse.json({ error: 'Application not found' }, { status: 404 });
     }
 
+    console.log('[Deploy] Found application:', existing.id, 'status:', existing.status);
+
     // Verify ownership
     if (existing.user_address.toLowerCase() !== walletAddress.toLowerCase()) {
+      console.error('[Deploy] Unauthorized - owner:', existing.user_address, 'caller:', walletAddress);
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
     // Verify status is approved
     if (existing.status !== 'approved') {
-      return NextResponse.json({ error: 'Only approved applications can be deployed' }, { status: 400 });
+      console.error('[Deploy] Invalid status:', existing.status);
+      return NextResponse.json({ error: `Cannot deploy: status is ${existing.status}, expected approved` }, { status: 400 });
     }
+
+    // Build update object with only valid fields
+    const updateData: Record<string, any> = {
+      status: 'deployed',
+      token_address,
+      deployment_tx_hash,
+      deployed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+
+    // Only add optional fields if they have values
+    if (nft_address) updateData.nft_address = nft_address;
+    if (nft_token_id !== null && nft_token_id !== undefined) updateData.nft_token_id = nft_token_id;
+    if (escrow_address) updateData.escrow_address = escrow_address;
+    if (metadata_uri) updateData.metadata_uri = metadata_uri;
+    if (chain_id) updateData.chain_id = chain_id;
+
+    console.log('[Deploy] Update data:', JSON.stringify(updateData, null, 2));
 
     // Update application with deployment data
     const { data, error } = await supabase
       .from('tokenization_applications')
-      .update({
-        status: 'deployed',
-        token_address,
-        nft_address,
-        nft_token_id,
-        escrow_address,
-        dividend_distributor_address,
-        deployment_tx_hash,
-        distribution_tx_hash,
-        metadata_uri,
-        chain_id,
-        deployed_at: new Date().toISOString(),
-        token_distribution: token_distribution || null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updateData)
       .eq('id', applicationId)
       .select()
       .single();
 
     if (error) {
-      console.error('[Deploy] Error updating application:', error);
-      return NextResponse.json({ error: 'Failed to save deployment' }, { status: 500 });
+      console.error('[Deploy] Supabase update error:', error);
+      return NextResponse.json({ 
+        error: 'Failed to save deployment', 
+        details: error.message,
+        code: error.code 
+      }, { status: 500 });
     }
 
+    console.log('[Deploy] Update successful:', data.id);
+
     // Auto-list on exchange if token was deployed
+    let listed = false;
     if (token_address) {
       try {
-        await supabase.from('exchange_listings').insert({
+        const { error: listingError } = await supabase.from('exchange_listings').insert({
           token_address,
           token_name: existing.token_name,
           token_symbol: existing.token_symbol,
@@ -100,20 +122,29 @@ export async function POST(
           },
           created_at: new Date().toISOString(),
         });
+        
+        if (listingError) {
+          console.error('[Deploy] Listing error:', listingError);
+        } else {
+          listed = true;
+          console.log('[Deploy] Token listed on exchange');
+        }
       } catch (listingError) {
         console.error('[Deploy] Failed to auto-list token:', listingError);
-        // Don't fail the deployment if listing fails
       }
     }
 
     return NextResponse.json({ 
       success: true, 
       application: data,
-      listed: !!token_address,
+      listed,
     });
 
-  } catch (err) {
-    console.error('[Deploy] Error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch (err: any) {
+    console.error('[Deploy] Unhandled error:', err);
+    return NextResponse.json({ 
+      error: 'Internal server error', 
+      details: err.message 
+    }, { status: 500 });
   }
 }
