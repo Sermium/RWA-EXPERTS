@@ -110,16 +110,10 @@ export async function POST(
           token_address,
           token_name: existing.token_name,
           token_symbol: existing.token_symbol,
-          token_decimals: 18,
           owner_address: walletAddress,
           chain_id,
-          listing_type: 'security_token',
           status: 'active',
-          metadata: {
-            asset_type: existing.asset_type,
-            asset_name: existing.asset_name,
-            application_id: applicationId,
-          },
+          project_id: applicationId,
           created_at: new Date().toISOString(),
         });
         
@@ -127,7 +121,6 @@ export async function POST(
           console.error('[Deploy] Listing error:', listingError);
         } else {
           listed = true;
-          console.log('[Deploy] Token listed on exchange');
         }
       } catch (listingError) {
         console.error('[Deploy] Failed to auto-list token:', listingError);
