@@ -290,7 +290,7 @@ function HolderRow({ holder, rank, explorerUrl, tokenSymbol, decimals }: {
         <div>
           <AddressDisplay address={holder.address} explorerUrl={explorerUrl} />
           {holder.isContract && (
-            <span className="text-xs text-purple-400 mt-1">Contract</span>
+            <span className="text-xs text-purple-400 mt-1 block">Contract</span>
           )}
         </div>
       </div>
@@ -461,26 +461,25 @@ interface DeploymentModalProps {
 }
 
 function DeploymentModal({ project, isOpen, onClose, onSuccess }: DeploymentModalProps) {
-  if (!isOpen) return null;
-
-  // Dynamically import the DeploymentWizard to avoid SSR issues
   const [DeploymentWizard, setDeploymentWizard] = useState<any>(null);
 
   useEffect(() => {
-    import('@/components/tokenization/deploy/DeploymentWizard').then((mod) => {
-      setDeploymentWizard(() => mod.DeploymentWizard);
-    });
-  }, []);
+    if (isOpen) {
+      import('@/components/tokenization/deploy/DeploymentWizard').then((mod) => {
+        setDeploymentWizard(() => mod.DeploymentWizard);
+      });
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onClose}
       />
       
-      {/* Modal */}
       <div className="relative bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {DeploymentWizard ? (
           <DeploymentWizard
@@ -519,13 +518,14 @@ export default function TokenizationProjectPage() {
   const [tokenMetrics, setTokenMetrics] = useState<TokenMetrics | null>(null);
   const [holders, setHolders] = useState<TokenHolder[]>([]);
   const [loading, setLoading] = useState(true);
+  const [holdersLoading, setHoldersLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'holders' | 'documents' | 'settings'>('overview');
   const [copied, setCopied] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [showDeployModal, setShowDeployModal] = useState(false);
 
-  // Fetch project from database (public endpoint)
+  // Fetch project from database
   const fetchProject = useCallback(async () => {
     try {
       const response = await fetch(`/api/tokenization/public/${projectId}`);
@@ -545,8 +545,48 @@ export default function TokenizationProjectPage() {
     }
   }, [projectId]);
 
-  // Fetch on-chain token data
-  const fetchTokenData = useCallback(async (tokenAddress: string) => {
+  // Fetch token holders via API
+  const fetchHolders = useCallback(async (tokenAddress: string, chainId: number, totalSupply: bigint, decimals: number) => {
+    setHoldersLoading(true);
+    try {
+      const response = await fetch(
+        `/api/token/${tokenAddress}/holders?chainId=${chainId}`
+      );
+      
+      if (!response.ok) {
+        console.error('Failed to fetch holders:', await response.text());
+        return;
+      }
+      
+      const data = await response.json();
+      
+      if (data.holders && Array.isArray(data.holders)) {
+        const holderList: TokenHolder[] = data.holders.map((h: any) => {
+          // Parse the balance - it comes as a formatted string like "1,234.5678"
+          const balanceStr = h.balance.replace(/,/g, '');
+          const balanceNum = parseFloat(balanceStr);
+          // Convert back to wei for internal use
+          const balanceWei = BigInt(Math.floor(balanceNum * Math.pow(10, decimals)));
+          
+          return {
+            address: h.address,
+            balance: balanceWei,
+            percentage: parseFloat(h.percentage),
+            isContract: h.isOwner || false, // Using isOwner as a proxy, or add isContract to API
+          };
+        });
+        
+        setHolders(holderList);
+      }
+    } catch (err) {
+      console.error('Failed to fetch holders:', err);
+    } finally {
+      setHoldersLoading(false);
+    }
+  }, []);
+
+  // Update fetchTokenData to pass decimals
+  const fetchTokenData = useCallback(async (tokenAddress: string, chainId: number) => {
     if (!publicClient || !tokenAddress) return;
 
     try {
@@ -573,66 +613,58 @@ export default function TokenizationProjectPage() {
         }).catch(() => '0x0000000000000000000000000000000000000000'),
       ]);
 
+      const supply = totalSupply as bigint;
+      const tokenDecimals = decimals as number;
+
       setTokenMetrics({
-        totalSupply: totalSupply as bigint,
-        circulatingSupply: totalSupply as bigint,
-        holdersCount: holders.length,
+        totalSupply: supply,
+        circulatingSupply: supply,
+        holdersCount: 0,
         isPaused: isPaused as boolean,
-        decimals: decimals as number,
+        decimals: tokenDecimals,
         owner: owner as string,
       });
 
-      // Fetch owner balance as primary holder
-      if (owner && owner !== '0x0000000000000000000000000000000000000000') {
-        const ownerBalance = await publicClient.readContract({
-          address: tokenAddress as Address,
-          abi: TOKEN_ABI,
-          functionName: 'balanceOf',
-          args: [owner as Address],
-        });
+      // Fetch holders via API
+      await fetchHolders(tokenAddress, chainId, supply, tokenDecimals);
 
-        const total = totalSupply as bigint;
-        const balance = ownerBalance as bigint;
-        const percentage = total > 0n ? Number((balance * 10000n) / total) / 100 : 0;
-
-        setHolders([{
-          address: owner as string,
-          balance,
-          percentage,
-          isContract: false,
-        }]);
-      }
     } catch (err) {
       console.error('[TokenizationPage] Failed to fetch token data:', err);
     }
-  }, [publicClient, holders.length]);
+  }, [publicClient, fetchHolders]);
 
   // Initial load
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       const proj = await fetchProject();
-      if (proj?.token_address) {
-        await fetchTokenData(proj.token_address);
+      if (proj?.token_address && proj?.chain_id) {
+        await fetchTokenData(proj.token_address, proj.chain_id);
       }
       setLoading(false);
     };
     load();
   }, [fetchProject, fetchTokenData]);
 
+  // Update holders count when holders change
+  useEffect(() => {
+    if (tokenMetrics && holders.length !== tokenMetrics.holdersCount) {
+      setTokenMetrics(prev => prev ? { ...prev, holdersCount: holders.length } : null);
+    }
+  }, [holders.length, tokenMetrics]);
+
   // Refresh data
   const handleRefresh = async () => {
     setRefreshing(true);
     const proj = await fetchProject();
-    if (proj?.token_address) {
-      await fetchTokenData(proj.token_address);
+    if (proj?.token_address && proj?.chain_id) {
+      await fetchTokenData(proj.token_address, proj.chain_id);
     }
     setRefreshing(false);
   };
 
   // Handle successful deployment
   const handleDeploymentSuccess = () => {
-    // Refresh project data
     handleRefresh();
   };
 
@@ -1066,10 +1098,25 @@ export default function TokenizationProjectPage() {
             <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-semibold text-white">Token Holders</h2>
-                <span className="text-slate-400">{holders.length} holder{holders.length !== 1 ? 's' : ''}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-slate-400">{holders.length} holder{holders.length !== 1 ? 's' : ''}</span>
+                  <button
+                    onClick={handleRefresh}
+                    disabled={refreshing || holdersLoading}
+                    className="p-2 hover:bg-slate-700 rounded-lg transition"
+                    title="Refresh holders"
+                  >
+                    <RefreshCw className={`w-4 h-4 text-slate-400 ${(refreshing || holdersLoading) ? 'animate-spin' : ''}`} />
+                  </button>
+                </div>
               </div>
               
-              {holders.length > 0 ? (
+              {holdersLoading ? (
+                <div className="text-center py-12">
+                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-3" />
+                  <p className="text-slate-400">Loading holders...</p>
+                </div>
+              ) : holders.length > 0 ? (
                 <div className="space-y-3">
                   {holders.map((holder, index) => (
                     <HolderRow
@@ -1085,8 +1132,8 @@ export default function TokenizationProjectPage() {
               ) : (
                 <div className="text-center py-12">
                   <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400">No holders data available</p>
-                  <p className="text-slate-500 text-sm mt-1">Holder data requires an indexer integration</p>
+                  <p className="text-slate-400">No holders found</p>
+                  <p className="text-slate-500 text-sm mt-1">Tokens may not have been distributed yet</p>
                 </div>
               )}
             </div>

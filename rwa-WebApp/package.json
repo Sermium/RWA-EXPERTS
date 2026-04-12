@@ -24,6 +24,7 @@
     "@tensorflow-models/blazeface": "^0.1.0",
     "@tensorflow/tfjs": "^4.22.0",
     "@vladmandic/face-api": "^1.7.15",
+    "alchemy-sdk": "^3.6.5",
     "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",
     "ethers": "^6.16.0",
