@@ -123,10 +123,10 @@ export default function FAQPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            Frequently Asked <span className="text-purple-400">Questions</span>
+          <h1 className="text-4xl md:text-5xl font-bold text-ink mb-4">
+            Frequently Asked <span className="text-gold-400">Questions</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-ink-muted text-lg max-w-2xl mx-auto">
             Find answers to common questions about {COMPANY.name}, tokenization, and investing.
           </p>
         </div>
@@ -139,10 +139,10 @@ export default function FAQPage() {
               placeholder="Search questions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors pl-12"
+              className="w-full px-6 py-4 bg-surface border border-border rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-purple-500 transition-colors pl-12"
             />
             <svg 
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-faint"
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24"
@@ -160,8 +160,8 @@ export default function FAQPage() {
               onClick={() => setActiveCategory(category)}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                 activeCategory === category
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  ? 'bg-gold-600 text-ink'
+                  : 'bg-surface text-ink-muted hover:bg-surface-overlay'
               }`}
             >
               {category}
@@ -173,32 +173,32 @@ export default function FAQPage() {
         <div className="space-y-4">
           {filteredFAQ.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-400">No questions found matching your search.</p>
+              <p className="text-ink-muted">No questions found matching your search.</p>
             </div>
           ) : (
             filteredFAQ.map((item, index) => (
               <div
                 key={index}
-                className="bg-gray-800/50 rounded-xl border border-gray-700/50 overflow-hidden"
+                className="bg-surface/50 rounded-xl border border-border/50 overflow-hidden"
               >
                 <button
                   onClick={() => toggleItem(index)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-700/30 transition-colors"
+                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-surface-overlay/30 transition-colors"
                 >
                   <div className="flex items-center gap-3 pr-4">
-                    <span className="text-xs font-medium text-purple-400 bg-purple-400/10 px-2 py-1 rounded">
+                    <span className="text-xs font-medium text-gold-400 bg-gold-400/10 px-2 py-1 rounded">
                       {item.category}
                     </span>
-                    <span className="text-white font-medium">{item.question}</span>
+                    <span className="text-ink font-medium">{item.question}</span>
                   </div>
                   <ChevronDownIcon 
-                    className={`w-5 h-5 text-gray-400 transition-transform flex-shrink-0 ${
+                    className={`w-5 h-5 text-ink-muted transition-transform flex-shrink-0 ${
                       openItems.has(index) ? 'rotate-180' : ''
                     }`}
                   />
                 </button>
                 {openItems.has(index) && (
-                  <div className="px-6 pb-4 text-gray-300 border-t border-gray-700/50 pt-4">
+                  <div className="px-6 pb-4 text-ink-muted border-t border-border/50 pt-4">
                     {item.answer}
                   </div>
                 )}
@@ -208,14 +208,14 @@ export default function FAQPage() {
         </div>
 
         {/* Contact CTA */}
-        <div className="mt-16 text-center bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-2xl p-8 border border-purple-500/20">
-          <h2 className="text-2xl font-bold text-white mb-4">Still have questions?</h2>
-          <p className="text-gray-400 mb-6">
+        <div className="mt-16 text-center bg-gradient-to-r from-gold-900/30 to-gold-light-900/30 rounded-2xl p-8 border border-gold-500/20">
+          <h2 className="text-2xl font-bold text-ink mb-4">Still have questions?</h2>
+          <p className="text-ink-muted mb-6">
             Can&apos;t find what you&apos;re looking for? Our support team is here to help.
           </p>
           <a
             href="/support"
-            className="inline-flex items-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-gold-600 hover:bg-gold-700 text-ink font-medium rounded-lg transition-colors"
           >
             Contact Support
           </a>

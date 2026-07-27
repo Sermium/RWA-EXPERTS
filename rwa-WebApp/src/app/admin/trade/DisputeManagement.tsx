@@ -34,6 +34,14 @@ import {
   Undo2,
   Ban,
   ExternalLink,
+  Package,
+  ShieldAlert,
+  FileWarning,
+  Target,
+  Banknote,
+  DoorOpen,
+  HelpCircle,
+  type LucideIcon,
 } from 'lucide-react';
 
 // =============================================================================
@@ -84,49 +92,49 @@ interface Dispute {
 // CONSTANTS
 // =============================================================================
 
-const DISPUTE_TYPES: Record<string, { label: string; icon: string }> = {
+const DISPUTE_TYPES: Record<string, { label: string; icon: LucideIcon }> = {
   // Trade disputes
-  quality_issue: { label: 'Quality Issue', icon: '⚠️' },
-  quantity_discrepancy: { label: 'Quantity Discrepancy', icon: '📦' },
-  late_delivery: { label: 'Late Delivery', icon: '⏰' },
-  documentation_issue: { label: 'Documentation Issue', icon: '📄' },
-  payment_dispute: { label: 'Payment Dispute', icon: '💰' },
-  fraud_suspected: { label: 'Fraud Suspected', icon: '🚨' },
-  contract_breach: { label: 'Contract Breach', icon: '📝' },
+  quality_issue: { label: 'Quality Issue', icon: AlertTriangle },
+  quantity_discrepancy: { label: 'Quantity Discrepancy', icon: Package },
+  late_delivery: { label: 'Late Delivery', icon: Clock },
+  documentation_issue: { label: 'Documentation Issue', icon: FileText },
+  payment_dispute: { label: 'Payment Dispute', icon: DollarSign },
+  fraud_suspected: { label: 'Fraud Suspected', icon: ShieldAlert },
+  contract_breach: { label: 'Contract Breach', icon: FileWarning },
   // Crowdfunding disputes
-  milestone_dispute: { label: 'Milestone Dispute', icon: '🎯' },
-  fund_misuse: { label: 'Fund Misuse', icon: '💸' },
-  project_abandonment: { label: 'Project Abandonment', icon: '🚪' },
-  false_claims: { label: 'False Claims', icon: '❌' },
-  investor_complaint: { label: 'Investor Complaint', icon: '👥' },
-  other: { label: 'Other', icon: '❓' },
+  milestone_dispute: { label: 'Milestone Dispute', icon: Target },
+  fund_misuse: { label: 'Fund Misuse', icon: Banknote },
+  project_abandonment: { label: 'Project Abandonment', icon: DoorOpen },
+  false_claims: { label: 'False Claims', icon: XCircle },
+  investor_complaint: { label: 'Investor Complaint', icon: Users },
+  other: { label: 'Other', icon: HelpCircle },
 };
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   // Off-chain statuses
-  submitted: { label: 'Submitted', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-  under_review: { label: 'Under Review', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
-  evidence_requested: { label: 'Evidence Requested', color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
-  mediation: { label: 'In Mediation', color: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
-  arbitration: { label: 'In Arbitration', color: 'bg-red-500/10 text-red-400 border-red-500/20' },
-  resolved_buyer: { label: 'Resolved - Buyer', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
-  resolved_seller: { label: 'Resolved - Seller', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
-  resolved_split: { label: 'Resolved - Split', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
-  resolved_refund: { label: 'Resolved - Refund', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
-  resolved_dismissed: { label: 'Dismissed', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' },
-  withdrawn: { label: 'Withdrawn', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' },
+  submitted: { label: 'Submitted', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
+  under_review: { label: 'Under Review', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
+  evidence_requested: { label: 'Evidence Requested', color: 'bg-warning/10 text-warning border-warning/20' },
+  mediation: { label: 'In Mediation', color: 'bg-warning/10 text-warning border-warning/20' },
+  arbitration: { label: 'In Arbitration', color: 'bg-danger/10 text-danger border-danger/20' },
+  resolved_buyer: { label: 'Resolved - Buyer', color: 'bg-success/10 text-success border-success/20' },
+  resolved_seller: { label: 'Resolved - Seller', color: 'bg-success/10 text-success border-success/20' },
+  resolved_split: { label: 'Resolved - Split', color: 'bg-success/10 text-success border-success/20' },
+  resolved_refund: { label: 'Resolved - Refund', color: 'bg-success/10 text-success border-success/20' },
+  resolved_dismissed: { label: 'Dismissed', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
+  withdrawn: { label: 'Withdrawn', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
   // On-chain statuses (from DisputeManager contract)
-  '0': { label: 'None', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' },
-  '1': { label: 'Open', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
-  '2': { label: 'Under Review', color: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
-  '3': { label: 'Resolved - Dismissed', color: 'bg-gray-500/10 text-gray-400 border-gray-500/20' },
-  '4': { label: 'Resolved - Refund', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
-  '5': { label: 'Resolved - Partial', color: 'bg-green-500/10 text-green-400 border-green-500/20' },
+  '0': { label: 'None', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
+  '1': { label: 'Open', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
+  '2': { label: 'Under Review', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
+  '3': { label: 'Resolved - Dismissed', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
+  '4': { label: 'Resolved - Refund', color: 'bg-success/10 text-success border-success/20' },
+  '5': { label: 'Resolved - Partial', color: 'bg-success/10 text-success border-success/20' },
 };
 
 const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   trade: { label: 'Trade', icon: <Ship className="h-4 w-4" />, color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
-  crowdfunding: { label: 'Crowdfunding', icon: <Coins className="h-4 w-4" />, color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
+  crowdfunding: { label: 'Crowdfunding', icon: <Coins className="h-4 w-4" />, color: 'bg-gold-500/20 text-gold-400 border-gold-500/30' },
 };
 
 // =============================================================================
@@ -136,60 +144,60 @@ const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; colo
 function StatsGrid({ stats }: { stats: DisputeStats }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
+      <div className="bg-surface border border-border rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Total</span>
-          <AlertTriangle className="h-5 w-5 text-gray-400" />
+          <span className="text-sm text-ink-muted">Total</span>
+          <AlertTriangle className="h-5 w-5 text-ink-muted" />
         </div>
-        <p className="text-2xl font-bold text-white">{stats.total}</p>
+        <p className="text-2xl font-bold text-ink">{stats.total}</p>
       </div>
 
-      <div className="bg-gray-800 border border-cyan-500/30 rounded-xl p-4">
+      <div className="bg-surface border border-cyan-500/30 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Trade</span>
+          <span className="text-sm text-ink-muted">Trade</span>
           <Ship className="h-5 w-5 text-cyan-400" />
         </div>
         <p className="text-2xl font-bold text-cyan-400">{stats.tradeDisputes}</p>
       </div>
 
-      <div className="bg-gray-800 border border-purple-500/30 rounded-xl p-4">
+      <div className="bg-surface border border-gold-500/30 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Crowdfunding</span>
-          <Coins className="h-5 w-5 text-purple-400" />
+          <span className="text-sm text-ink-muted">Crowdfunding</span>
+          <Coins className="h-5 w-5 text-gold-400" />
         </div>
-        <p className="text-2xl font-bold text-purple-400">{stats.crowdfundingDisputes}</p>
+        <p className="text-2xl font-bold text-gold-400">{stats.crowdfundingDisputes}</p>
       </div>
 
-      <div className="bg-gray-800 border border-blue-500/30 rounded-xl p-4">
+      <div className="bg-surface border border-gold-500/30 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Pending</span>
-          <Clock className="h-5 w-5 text-blue-400" />
+          <span className="text-sm text-ink-muted">Pending</span>
+          <Clock className="h-5 w-5 text-gold-400" />
         </div>
-        <p className="text-2xl font-bold text-blue-400">{stats.pending}</p>
+        <p className="text-2xl font-bold text-gold-400">{stats.pending}</p>
       </div>
 
-      <div className="bg-gray-800 border border-orange-500/30 rounded-xl p-4">
+      <div className="bg-surface border border-warning/30 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Mediation</span>
-          <Users className="h-5 w-5 text-orange-400" />
+          <span className="text-sm text-ink-muted">Mediation</span>
+          <Users className="h-5 w-5 text-warning" />
         </div>
-        <p className="text-2xl font-bold text-orange-400">{stats.inMediation}</p>
+        <p className="text-2xl font-bold text-warning">{stats.inMediation}</p>
       </div>
 
-      <div className="bg-gray-800 border border-green-500/30 rounded-xl p-4">
+      <div className="bg-surface border border-success/30 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Resolved</span>
-          <CheckCircle2 className="h-5 w-5 text-green-400" />
+          <span className="text-sm text-ink-muted">Resolved</span>
+          <CheckCircle2 className="h-5 w-5 text-success" />
         </div>
-        <p className="text-2xl font-bold text-green-400">{stats.resolved}</p>
+        <p className="text-2xl font-bold text-success">{stats.resolved}</p>
       </div>
 
-      <div className="bg-gray-800 border border-yellow-500/30 rounded-xl p-4">
+      <div className="bg-surface border border-warning/30 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Value at Risk</span>
-          <DollarSign className="h-5 w-5 text-yellow-400" />
+          <span className="text-sm text-ink-muted">Value at Risk</span>
+          <DollarSign className="h-5 w-5 text-warning" />
         </div>
-        <p className="text-2xl font-bold text-yellow-400">
+        <p className="text-2xl font-bold text-warning">
           ${(stats.totalValue / 1_000).toFixed(0)}K
         </p>
       </div>
@@ -218,17 +226,17 @@ function DisputeRow({
   const canResolve = !isResolved && (dispute.status === 'arbitration' || dispute.status === '1' || dispute.status === '2');
 
   return (
-    <tr className="border-b border-gray-800 hover:bg-gray-800/30">
+    <tr className="border-b border-border hover:bg-surface/30">
       <td className="py-4 px-4">
         <div className="flex items-center gap-2">
           {isUrgent && !isResolved && (
-            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            <span className="w-2 h-2 bg-danger rounded-full animate-pulse" />
           )}
           <div>
-            <p className="text-white font-medium">
+            <p className="text-ink font-medium">
               #{dispute.onChainId ?? dispute.id.slice(0, 8)}
             </p>
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-ink-muted">
               {dispute.source === 'crowdfunding' 
                 ? `Project #${dispute.projectId}` 
                 : dispute.dealReference
@@ -247,8 +255,8 @@ function DisputeRow({
 
       <td className="py-4 px-4">
         <div className="flex items-center gap-2">
-          <span>{typeInfo.icon}</span>
-          <span className="text-white text-sm">{typeInfo.label}</span>
+          <typeInfo.icon className="w-4 h-4 text-ink-muted" />
+          <span className="text-ink text-sm">{typeInfo.label}</span>
         </div>
       </td>
 
@@ -256,20 +264,20 @@ function DisputeRow({
         <div>
           {dispute.source === 'crowdfunding' ? (
             <>
-              <p className="text-white text-sm">{dispute.projectName || `Project #${dispute.projectId}`}</p>
-              <p className="text-xs text-gray-400">{dispute.totalInvestors} investors</p>
+              <p className="text-ink text-sm">{dispute.projectName || `Project #${dispute.projectId}`}</p>
+              <p className="text-xs text-ink-muted">{dispute.totalInvestors} investors</p>
             </>
           ) : (
             <>
-              <p className="text-white text-sm">{dispute.initiatorCompany}</p>
-              <p className="text-xs text-gray-400">vs {dispute.respondentCompany}</p>
+              <p className="text-ink text-sm">{dispute.initiatorCompany}</p>
+              <p className="text-xs text-ink-muted">vs {dispute.respondentCompany}</p>
             </>
           )}
         </div>
       </td>
 
       <td className="py-4 px-4">
-        <p className="text-white font-medium">
+        <p className="text-ink font-medium">
           ${dispute.claimedAmount.toLocaleString()}
         </p>
       </td>
@@ -284,7 +292,7 @@ function DisputeRow({
         <div className="flex items-center gap-2">
           <button
             onClick={onView}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-ink-muted hover:text-ink transition-colors"
             title="View Details"
           >
             <Eye className="h-4 w-4" />
@@ -293,14 +301,14 @@ function DisputeRow({
             <>
               <button
                 onClick={onDismiss}
-                className="p-2 text-gray-400 hover:text-yellow-400 transition-colors"
+                className="p-2 text-ink-muted hover:text-warning transition-colors"
                 title="Dismiss Dispute"
               >
                 <Ban className="h-4 w-4" />
               </button>
               <button
                 onClick={onResolve}
-                className="p-2 text-gray-400 hover:text-green-400 transition-colors"
+                className="p-2 text-ink-muted hover:text-success transition-colors"
                 title="Resolve Dispute"
               >
                 <Gavel className="h-4 w-4" />
@@ -340,14 +348,14 @@ function DisputeDetailModal({
   const isResolved = dispute.status.startsWith('resolved') || dispute.status === '3' || dispute.status === '4' || dispute.status === '5';
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
-        <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+    <div className="fixed inset-0 bg-surface-sunken/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-surface rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="text-2xl">{typeInfo.icon}</div>
+            <typeInfo.icon className="w-6 h-6 text-ink-muted" />
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-xl font-bold text-ink">
                   Dispute #{dispute.onChainId ?? dispute.id.slice(0, 8)}
                 </h2>
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${sourceConfig.color}`}>
@@ -355,7 +363,7 @@ function DisputeDetailModal({
                   {sourceConfig.label}
                 </span>
               </div>
-              <p className="text-gray-400">
+              <p className="text-ink-muted">
                 {dispute.source === 'crowdfunding'
                   ? `Project #${dispute.projectId} - ${dispute.projectName}`
                   : `${dispute.dealReference} - ${typeInfo.label}`
@@ -365,20 +373,20 @@ function DisputeDetailModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-ink-muted hover:text-ink transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
         </div>
 
         {/* Section Tabs */}
-        <div className="flex border-b border-gray-700">
+        <div className="flex border-b border-border">
           <button
             onClick={() => setActiveSection('details')}
             className={`px-6 py-3 text-sm font-medium transition-colors ${
               activeSection === 'details'
-                ? 'text-blue-400 border-b-2 border-blue-400'
-                : 'text-gray-400 hover:text-white'
+                ? 'text-gold-400 border-b-2 border-gold-400'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
             Details
@@ -388,8 +396,8 @@ function DisputeDetailModal({
               onClick={() => setActiveSection('resolve')}
               className={`px-6 py-3 text-sm font-medium transition-colors ${
                 activeSection === 'resolve'
-                  ? 'text-blue-400 border-b-2 border-blue-400'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'text-gold-400 border-b-2 border-gold-400'
+                  : 'text-ink-muted hover:text-ink'
               }`}
             >
               Resolve
@@ -410,7 +418,7 @@ function DisputeDetailModal({
                   <select
                     value={dispute.status}
                     onChange={(e) => onUpdateStatus(e.target.value)}
-                    className="px-3 py-1 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm"
+                    className="px-3 py-1 bg-surface-sunken border border-border rounded-lg text-ink text-sm"
                   >
                     <option value="submitted">Submitted</option>
                     <option value="under_review">Under Review</option>
@@ -425,28 +433,28 @@ function DisputeDetailModal({
               <div className="grid md:grid-cols-2 gap-4">
                 {dispute.source === 'crowdfunding' ? (
                   <>
-                    <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                      <p className="text-sm text-gray-400 mb-2">Project Owner</p>
-                      <p className="text-white font-medium">{dispute.projectName}</p>
-                      <p className="text-xs text-gray-500 font-mono mt-1">{dispute.projectOwner}</p>
+                    <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                      <p className="text-sm text-ink-muted mb-2">Project Owner</p>
+                      <p className="text-ink font-medium">{dispute.projectName}</p>
+                      <p className="text-xs text-ink-faint font-mono mt-1">{dispute.projectOwner}</p>
                     </div>
-                    <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                      <p className="text-sm text-gray-400 mb-2">Dispute Initiator</p>
-                      <p className="text-white font-medium">Investor</p>
-                      <p className="text-xs text-gray-500 font-mono mt-1">{dispute.initiator}</p>
+                    <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                      <p className="text-sm text-ink-muted mb-2">Dispute Initiator</p>
+                      <p className="text-ink font-medium">Investor</p>
+                      <p className="text-xs text-ink-faint font-mono mt-1">{dispute.initiator}</p>
                     </div>
                   </>
                 ) : (
                   <>
-                    <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                      <p className="text-sm text-gray-400 mb-2">Initiator (Claimant)</p>
-                      <p className="text-white font-medium">{dispute.initiatorCompany}</p>
-                      <p className="text-xs text-gray-500 font-mono mt-1">{dispute.initiator}</p>
+                    <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                      <p className="text-sm text-ink-muted mb-2">Initiator (Claimant)</p>
+                      <p className="text-ink font-medium">{dispute.initiatorCompany}</p>
+                      <p className="text-xs text-ink-faint font-mono mt-1">{dispute.initiator}</p>
                     </div>
-                    <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                      <p className="text-sm text-gray-400 mb-2">Respondent</p>
-                      <p className="text-white font-medium">{dispute.respondentCompany}</p>
-                      <p className="text-xs text-gray-500 font-mono mt-1">{dispute.respondent}</p>
+                    <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                      <p className="text-sm text-ink-muted mb-2">Respondent</p>
+                      <p className="text-ink font-medium">{dispute.respondentCompany}</p>
+                      <p className="text-xs text-ink-faint font-mono mt-1">{dispute.respondent}</p>
                     </div>
                   </>
                 )}
@@ -455,19 +463,19 @@ function DisputeDetailModal({
               {/* Crowdfunding specific info */}
               {dispute.source === 'crowdfunding' && (
                 <div className="grid md:grid-cols-3 gap-4">
-                  <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                    <p className="text-sm text-gray-400 mb-2">Total Investors</p>
-                    <p className="text-2xl font-bold text-white">{dispute.totalInvestors || 0}</p>
+                  <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                    <p className="text-sm text-ink-muted mb-2">Total Investors</p>
+                    <p className="text-2xl font-bold text-ink">{dispute.totalInvestors || 0}</p>
                   </div>
-                  <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                    <p className="text-sm text-gray-400 mb-2">Total Raised</p>
-                    <p className="text-2xl font-bold text-green-400">
+                  <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                    <p className="text-sm text-ink-muted mb-2">Total Raised</p>
+                    <p className="text-2xl font-bold text-success">
                       ${dispute.totalRaised ? Number(formatUnits(dispute.totalRaised, 6)).toLocaleString() : 0}
                     </p>
                   </div>
-                  <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                    <p className="text-sm text-gray-400 mb-2">Refundable</p>
-                    <p className={`text-2xl font-bold ${dispute.refundable ? 'text-green-400' : 'text-red-400'}`}>
+                  <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                    <p className="text-sm text-ink-muted mb-2">Refundable</p>
+                    <p className={`text-2xl font-bold ${dispute.refundable ? 'text-success' : 'text-danger'}`}>
                       {dispute.refundable ? 'Yes' : 'No'}
                     </p>
                   </div>
@@ -475,41 +483,41 @@ function DisputeDetailModal({
               )}
 
               {/* Claimed Amount */}
-              <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                <p className="text-sm text-gray-400 mb-2">
+              <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                <p className="text-sm text-ink-muted mb-2">
                   {dispute.source === 'crowdfunding' ? 'Amount at Risk' : 'Claimed Amount'}
                 </p>
-                <p className="text-3xl font-bold text-white">
+                <p className="text-3xl font-bold text-ink">
                   ${dispute.claimedAmount.toLocaleString()}
                 </p>
               </div>
 
               {/* Description / Reason */}
-              <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                <p className="text-sm text-gray-400 mb-2">
+              <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                <p className="text-sm text-ink-muted mb-2">
                   {dispute.source === 'crowdfunding' ? 'Dispute Reason' : 'Description'}
                 </p>
-                <p className="text-gray-300 whitespace-pre-wrap">
+                <p className="text-ink-muted whitespace-pre-wrap">
                   {dispute.reason || dispute.description}
                 </p>
               </div>
 
               {/* Timeline */}
-              <div className="bg-gray-900/50 rounded-xl p-4 border border-gray-700/50">
-                <p className="text-sm text-gray-400 mb-3">Timeline</p>
+              <div className="bg-surface-sunken/50 rounded-xl p-4 border border-border/50">
+                <p className="text-sm text-ink-muted mb-3">Timeline</p>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Filed</span>
-                    <span className="text-white">{new Date(dispute.createdAt).toLocaleString()}</span>
+                    <span className="text-ink-muted">Filed</span>
+                    <span className="text-ink">{new Date(dispute.createdAt).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Last Updated</span>
-                    <span className="text-white">{new Date(dispute.updatedAt).toLocaleString()}</span>
+                    <span className="text-ink-muted">Last Updated</span>
+                    <span className="text-ink">{new Date(dispute.updatedAt).toLocaleString()}</span>
                   </div>
                   {dispute.deadline && (
                     <div className="flex justify-between">
-                      <span className="text-gray-400">Deadline</span>
-                      <span className="text-white">{new Date(dispute.deadline).toLocaleDateString()}</span>
+                      <span className="text-ink-muted">Deadline</span>
+                      <span className="text-ink">{new Date(dispute.deadline).toLocaleDateString()}</span>
                     </div>
                   )}
                 </div>
@@ -521,7 +529,7 @@ function DisputeDetailModal({
                   href={`${explorerUrl}/address/${dispute.projectOwner}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm"
+                  className="flex items-center gap-2 text-gold-400 hover:text-gold-300 text-sm"
                 >
                   <ExternalLink className="h-4 w-4" />
                   View on Explorer
@@ -533,9 +541,9 @@ function DisputeDetailModal({
           {/* Resolve Section */}
           {activeSection === 'resolve' && (
             <div className="space-y-6">
-              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
-                <p className="text-yellow-400 text-sm font-medium">⚠️ Final Resolution</p>
-                <p className="text-gray-400 text-sm mt-1">
+              <div className="bg-warning/10 border border-warning/20 rounded-xl p-4">
+                <p className="text-warning text-sm font-medium">⚠️ Final Resolution</p>
+                <p className="text-ink-muted text-sm mt-1">
                   This action is irreversible. Choose the resolution carefully.
                 </p>
               </div>
@@ -543,41 +551,41 @@ function DisputeDetailModal({
               {/* Resolution Options */}
               {dispute.source === 'crowdfunding' && (
                 <div className="space-y-4">
-                  <p className="text-sm font-medium text-gray-300">Resolution Type</p>
+                  <p className="text-sm font-medium text-ink-muted">Resolution Type</p>
 
-                  <label className="flex items-start gap-3 p-4 bg-gray-900/50 rounded-xl border border-gray-700 cursor-pointer hover:border-gray-600 transition-colors">
+                  <label className="flex items-start gap-3 p-4 bg-surface-sunken/50 rounded-xl border border-border cursor-pointer hover:border-border-strong transition-colors">
                     <input
                       type="radio"
                       name="resolution"
                       checked={!refundInvestors}
                       onChange={() => setRefundInvestors(false)}
-                      className="mt-1 text-blue-500 focus:ring-blue-500"
+                      className="mt-1 text-gold-500 focus:ring-gold-500"
                     />
                     <div>
-                      <p className="text-white font-medium flex items-center gap-2">
-                        <Ban className="h-4 w-4 text-gray-400" />
+                      <p className="text-ink font-medium flex items-center gap-2">
+                        <Ban className="h-4 w-4 text-ink-muted" />
                         Dismiss Dispute
                       </p>
-                      <p className="text-gray-400 text-sm mt-1">
+                      <p className="text-ink-muted text-sm mt-1">
                         Dismiss the dispute as unjustified. Project continues normally.
                       </p>
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-3 p-4 bg-gray-900/50 rounded-xl border border-gray-700 cursor-pointer hover:border-gray-600 transition-colors">
+                  <label className="flex items-start gap-3 p-4 bg-surface-sunken/50 rounded-xl border border-border cursor-pointer hover:border-border-strong transition-colors">
                     <input
                       type="radio"
                       name="resolution"
                       checked={refundInvestors}
                       onChange={() => setRefundInvestors(true)}
-                      className="mt-1 text-blue-500 focus:ring-blue-500"
+                      className="mt-1 text-gold-500 focus:ring-gold-500"
                     />
                     <div>
-                      <p className="text-white font-medium flex items-center gap-2">
-                        <Undo2 className="h-4 w-4 text-green-400" />
+                      <p className="text-ink font-medium flex items-center gap-2">
+                        <Undo2 className="h-4 w-4 text-success" />
                         Refund All Investors
                       </p>
-                      <p className="text-gray-400 text-sm mt-1">
+                      <p className="text-ink-muted text-sm mt-1">
                         Cancel the project and enable refunds for all {dispute.totalInvestors} investors.
                         Total refund: ${dispute.totalRaised ? Number(formatUnits(dispute.totalRaised, 6)).toLocaleString() : 0}
                       </p>
@@ -588,7 +596,7 @@ function DisputeDetailModal({
 
               {/* Reasoning */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-muted mb-2">
                   Resolution Reasoning *
                 </label>
                 <textarea
@@ -596,7 +604,7 @@ function DisputeDetailModal({
                   onChange={(e) => setReasoning(e.target.value)}
                   rows={4}
                   placeholder="Provide detailed reasoning for this decision..."
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 outline-none resize-none"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 outline-none resize-none"
                 />
               </div>
 
@@ -605,7 +613,7 @@ function DisputeDetailModal({
                 <button
                   onClick={onDismiss}
                   disabled={isProcessing || !reasoning.trim()}
-                  className="flex-1 py-3 bg-gray-700 text-white font-medium rounded-xl hover:bg-gray-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-surface-raised text-ink font-medium rounded-xl hover:bg-surface-overlay transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isProcessing ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -619,7 +627,7 @@ function DisputeDetailModal({
                 <button
                   onClick={() => onResolve(refundInvestors, reasoning)}
                   disabled={isProcessing || !reasoning.trim()}
-                  className="flex-1 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-500 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-green-600 text-ink font-medium rounded-xl hover:bg-success transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isProcessing ? (
                     <Loader2 className="h-5 w-5 animate-spin" />
@@ -635,10 +643,10 @@ function DisputeDetailModal({
           )}
         </div>
 
-        <div className="p-6 border-t border-gray-700 flex justify-end">
+        <div className="p-6 border-t border-border flex justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            className="px-4 py-2 bg-surface-raised text-ink rounded-lg hover:bg-surface-overlay transition-colors"
           >
             Close
           </button>
@@ -936,7 +944,7 @@ export default function DisputeManagement({ onRefresh }: DisputeManagementProps)
 
       {/* Result Message */}
       {result && (
-        <div className={`p-4 rounded-xl ${result.success ? 'bg-green-500/10 border border-green-500/20 text-green-400' : 'bg-red-500/10 border border-red-500/20 text-red-400'}`}>
+        <div className={`p-4 rounded-xl ${result.success ? 'bg-success/10 border border-success/20 text-success' : 'bg-danger/10 border border-danger/20 text-danger'}`}>
           {result.message}
         </div>
       )}
@@ -945,20 +953,20 @@ export default function DisputeManagement({ onRefresh }: DisputeManagementProps)
       <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
         <div className="flex flex-1 gap-4 flex-wrap">
           <div className="relative flex-1 min-w-[200px] max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-muted" />
             <input
               type="text"
               placeholder="Search disputes..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-blue-500 outline-none"
+              className="w-full pl-10 pr-4 py-2 bg-surface border border-border rounded-lg text-ink placeholder-ink-faint focus:border-gold-500 outline-none"
             />
           </div>
 
           <select
             value={sourceFilter}
             onChange={(e) => setSourceFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+            className="px-4 py-2 bg-surface border border-border rounded-lg text-ink"
           >
             <option value="all">All Sources</option>
             <option value="trade">Trade</option>
@@ -968,7 +976,7 @@ export default function DisputeManagement({ onRefresh }: DisputeManagementProps)
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white"
+            className="px-4 py-2 bg-surface border border-border rounded-lg text-ink"
           >
             <option value="all">All Status</option>
             <option value="submitted">Submitted</option>
@@ -985,41 +993,41 @@ export default function DisputeManagement({ onRefresh }: DisputeManagementProps)
             onRefresh?.();
           }}
           disabled={isLoading}
-          className="p-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors border border-gray-700"
+          className="p-2 bg-surface text-ink rounded-lg hover:bg-surface-raised transition-colors border border-border"
         >
           <RefreshCw className={`h-5 w-5 ${isLoading ? 'animate-spin' : ''}`} />
         </button>
       </div>
 
       {/* Table */}
-      <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
+      <div className="bg-surface border border-border rounded-xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="bg-gray-900/50 border-b border-gray-700">
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Dispute</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Source</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Type</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Parties</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Amount</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Status</th>
-                <th className="text-left py-3 px-4 text-sm font-medium text-gray-400">Actions</th>
+              <tr className="bg-surface-sunken/50 border-b border-border">
+                <th className="text-left py-3 px-4 text-sm font-medium text-ink-muted">Dispute</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-ink-muted">Source</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-ink-muted">Type</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-ink-muted">Parties</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-ink-muted">Amount</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-ink-muted">Status</th>
+                <th className="text-left py-3 px-4 text-sm font-medium text-ink-muted">Actions</th>
               </tr>
             </thead>
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-gray-400">
-                    <Loader2 className="h-8 w-8 text-blue-500 animate-spin mx-auto mb-2" />
+                  <td colSpan={7} className="py-12 text-center text-ink-muted">
+                    <Loader2 className="h-8 w-8 text-gold-500 animate-spin mx-auto mb-2" />
                     Loading disputes...
                   </td>
                 </tr>
               ) : disputes.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-gray-400">
-                    <Scale className="h-12 w-12 text-gray-600 mx-auto mb-3" />
+                  <td colSpan={7} className="py-12 text-center text-ink-muted">
+                    <Scale className="h-12 w-12 text-ink-faint mx-auto mb-3" />
                     <p>No disputes found</p>
-                    <p className="text-sm text-gray-500 mt-1">All clear!</p>
+                    <p className="text-sm text-ink-faint mt-1">All clear!</p>
                   </td>
                 </tr>
               ) : (
@@ -1040,25 +1048,25 @@ export default function DisputeManagement({ onRefresh }: DisputeManagementProps)
 
         {/* Pagination */}
         {disputes.length > 0 && (
-          <div className="p-4 border-t border-gray-700 flex items-center justify-between">
-            <p className="text-sm text-gray-400">
+          <div className="p-4 border-t border-border flex items-center justify-between">
+            <p className="text-sm text-ink-muted">
               Showing {disputes.length} of {stats.total} disputes
             </p>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 bg-gray-700 text-white rounded-lg disabled:opacity-50 hover:bg-gray-600 transition-colors"
+                className="p-2 bg-surface-raised text-ink rounded-lg disabled:opacity-50 hover:bg-surface-overlay transition-colors"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
-              <span className="text-white px-3">
+              <span className="text-ink px-3">
                 Page {page} of {totalPages}
               </span>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="p-2 bg-gray-700 text-white rounded-lg disabled:opacity-50 hover:bg-gray-600 transition-colors"
+                className="p-2 bg-surface-raised text-ink rounded-lg disabled:opacity-50 hover:bg-surface-overlay transition-colors"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>

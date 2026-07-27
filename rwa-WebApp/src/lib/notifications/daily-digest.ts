@@ -226,7 +226,7 @@ async function sendDigestEmail(user: UserDigestData, data: DigestStats) {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 
   await sendEmail({
-    subject: `📊 Your Daily RWA Platform Summary - ${new Date().toLocaleDateString()}`,
+    subject: `Your Daily RWA Platform Summary - ${new Date().toLocaleDateString()}`,
     html: `
       <!DOCTYPE html>
       <html>
@@ -259,7 +259,7 @@ async function sendDigestEmail(user: UserDigestData, data: DigestStats) {
       <body>
         <div class="container">
           <div class="header">
-            <h1>📊 Daily Summary</h1>
+            <h1>Daily Summary</h1>
             <p>${new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
           <div class="content">
@@ -288,7 +288,7 @@ async function sendDigestEmail(user: UserDigestData, data: DigestStats) {
             
             <!-- Alerts -->
             ${data.alerts.length > 0 ? `
-              <div class="section-title">⚠️ Alerts</div>
+              <div class="section-title">Alerts</div>
               ${data.alerts.map(alert => `
                 <div class="alert alert-${alert.type}">
                   ${alert.message}
@@ -298,7 +298,7 @@ async function sendDigestEmail(user: UserDigestData, data: DigestStats) {
             
             <!-- Active Deals -->
             ${data.dealsSummary.length > 0 ? `
-              <div class="section-title">📋 Your Active Deals</div>
+              <div class="section-title">Your Active Deals</div>
               ${data.dealsSummary.slice(0, 5).map(deal => `
                 <div class="deal-card">
                   <div class="deal-header">
@@ -310,14 +310,14 @@ async function sendDigestEmail(user: UserDigestData, data: DigestStats) {
                     <strong>Role:</strong> ${deal.role.charAt(0).toUpperCase() + deal.role.slice(1)} · 
                     <strong>Value:</strong> $${deal.amount.toLocaleString()}
                   </p>
-                  ${deal.nextAction ? `<p class="deal-action">⚡ Action needed: ${deal.nextAction}</p>` : ''}
+                  ${deal.nextAction ? `<p class="deal-action">Action needed: ${deal.nextAction}</p>` : ''}
                 </div>
               `).join('')}
             ` : ''}
             
             <!-- Recent Activity -->
             ${data.recentActivity.length > 0 ? `
-              <div class="section-title">🕐 Recent Activity (Last 24h)</div>
+              <div class="section-title">Recent Activity (Last 24h)</div>
               ${data.recentActivity.slice(0, 5).map(activity => `
                 <div class="activity-item">
                   <p style="margin: 0;">${activity.description}</p>

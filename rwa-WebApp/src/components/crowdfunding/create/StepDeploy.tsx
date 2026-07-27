@@ -409,7 +409,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
           </span>
         )}
         {chainName && (
-          <span className="px-2.5 py-1 bg-blue-500/20 text-blue-400 text-xs font-medium rounded-full">
+          <span className="px-2.5 py-1 bg-gold-500/20 text-gold-400 text-xs font-medium rounded-full">
             {chainName}
           </span>
         )}
@@ -435,8 +435,8 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
       <div className="p-8">
         <ModalHeader title="Activate Fundraise" />
         <div className="text-center py-6">
-          <div className="w-16 h-16 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-gold-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
@@ -445,7 +445,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
           <button 
             onClick={handleConnect} 
             disabled={status === 'connecting'} 
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="px-8 py-3 bg-gold-600 text-white rounded-lg font-medium hover:bg-gold-700 disabled:opacity-50 transition-colors"
           >
             {status === 'connecting' ? 'Connecting...' : 'Connect Wallet'}
           </button>
@@ -539,7 +539,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
         </div>
 
         {/* Timeline */}
-        <div className="bg-gradient-to-r from-green-900/20 to-blue-900/20 rounded-xl p-5 mb-6 border border-green-500/20">
+        <div className="bg-gradient-to-r from-green-900/20 to-gold-light-900/20 rounded-xl p-5 mb-6 border border-green-500/20">
           <h4 className="text-sm font-medium text-gray-300 mb-4">Fundraise Timeline</h4>
           <div className="grid grid-cols-2 gap-6">
             <div>
@@ -548,7 +548,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Ends</p>
-              <p className="text-lg font-semibold text-blue-400">{formatShortDate(activationData.raiseEndDate)}</p>
+              <p className="text-lg font-semibold text-gold-400">{formatShortDate(activationData.raiseEndDate)}</p>
             </div>
           </div>
           <div className="mt-4 pt-4 border-t border-slate-700/50 text-sm text-gray-400">
@@ -579,7 +579,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                   href={`${explorerUrl}/address/${deployedContracts.securityToken}`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-blue-400 hover:text-blue-300 font-mono text-xs"
+                  className="text-gold-400 hover:text-gold-300 font-mono text-xs"
                 >
                   {deployedContracts.securityToken.slice(0, 10)}...{deployedContracts.securityToken.slice(-6)}
                 </a>
@@ -590,7 +590,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                   href={`${explorerUrl}/address/${deployedContracts.escrowVault}`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-blue-400 hover:text-blue-300 font-mono text-xs"
+                  className="text-gold-400 hover:text-gold-300 font-mono text-xs"
                 >
                   {deployedContracts.escrowVault.slice(0, 10)}...{deployedContracts.escrowVault.slice(-6)}
                 </a>
@@ -601,7 +601,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                   href={`${explorerUrl}/address/${deployedContracts.compliance}`} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-blue-400 hover:text-blue-300 font-mono text-xs"
+                  className="text-gold-400 hover:text-gold-300 font-mono text-xs"
                 >
                   {deployedContracts.compliance.slice(0, 10)}...{deployedContracts.compliance.slice(-6)}
                 </a>
@@ -609,7 +609,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
               {deployedContracts.nftTokenId !== undefined && (
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-400">NFT Token ID</span>
-                  <span className="text-purple-400 font-medium">#{deployedContracts.nftTokenId.toString()}</span>
+                  <span className="text-gold-400 font-medium">#{deployedContracts.nftTokenId.toString()}</span>
                 </div>
               )}
               {txHash && (
@@ -619,7 +619,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                     href={getTxUrl(txHash)} 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="text-blue-400 hover:text-blue-300 font-mono text-xs"
+                    className="text-gold-400 hover:text-gold-300 font-mono text-xs"
                   >
                     {txHash.slice(0, 10)}...{txHash.slice(-6)}
                   </a>
@@ -633,7 +633,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
         <div className="flex gap-4">
           <button 
             onClick={() => window.location.href = `/projects/${application.id}`} 
-            className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+            className="flex-1 px-6 py-3 bg-gold-600 text-white rounded-lg font-medium hover:bg-gold-700 transition-colors"
           >
             View Project
           </button>
@@ -664,7 +664,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
           <div className="flex gap-4 justify-center">
             <button 
               onClick={() => { setStatus('idle'); setError(''); }} 
-              className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              className="px-8 py-3 bg-gold-600 text-white rounded-lg font-medium hover:bg-gold-700 transition-colors"
             >
               Try Again
             </button>
@@ -713,7 +713,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                 onClick={() => setSelectedDeadlineDays(d)} 
                 className={`py-3 text-sm rounded-lg font-medium transition-all ${
                   selectedDeadlineDays === d 
-                    ? 'bg-blue-600 text-white ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-800' 
+                    ? 'bg-gold-600 text-white ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-800' 
                     : 'bg-slate-700 text-gray-400 hover:bg-slate-600 hover:text-gray-300'
                 }`}
               >
@@ -728,7 +728,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
       {status === 'idle' && (
         <div className="bg-slate-700/40 rounded-xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-4">
-            <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <span className="text-sm font-medium text-white">Timeline Preview</span>
@@ -740,7 +740,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-1">Ends</p>
-              <p className="text-lg font-semibold text-blue-400">{formatShortDate(previewEndDate)}</p>
+              <p className="text-lg font-semibold text-gold-400">{formatShortDate(previewEndDate)}</p>
             </div>
           </div>
           {creationFee > BigInt(0) && (
@@ -768,7 +768,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                 <div key={key[0]} className="flex items-center gap-4">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                     stepStatus === 'complete' ? 'bg-green-500' : 
-                    stepStatus === 'active' ? 'bg-blue-500' : 'bg-slate-600'
+                    stepStatus === 'active' ? 'bg-gold-500' : 'bg-slate-600'
                   }`}>
                     {stepStatus === 'complete' && (
                       <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -781,7 +781,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                   </div>
                   <span className={`text-sm ${
                     stepStatus === 'complete' ? 'text-green-400' : 
-                    stepStatus === 'active' ? 'text-blue-400 font-medium' : 'text-gray-500'
+                    stepStatus === 'active' ? 'text-gold-400 font-medium' : 'text-gray-500'
                   }`}>
                     {label}
                   </span>
@@ -798,7 +798,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                 href={getTxUrl(txHash)} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-blue-400 hover:text-blue-300 text-sm font-mono break-all"
+                className="text-gold-400 hover:text-gold-300 text-sm font-mono break-all"
               >
                 {txHash}
               </a>

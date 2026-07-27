@@ -13,27 +13,27 @@ interface ResultMessageProps {
 export function ResultMessage({ result, explorerUrl, onClose }: ResultMessageProps) {
   const config = {
     success: {
-      bg: 'bg-green-500/20',
-      border: 'border-green-500/30',
-      text: 'text-green-400',
+      bg: 'bg-success/20',
+      border: 'border-success/30',
+      text: 'text-success',
       icon: CheckCircle
     },
     error: {
-      bg: 'bg-red-500/20',
-      border: 'border-red-500/30',
-      text: 'text-red-400',
+      bg: 'bg-danger/20',
+      border: 'border-danger/30',
+      text: 'text-danger',
       icon: XCircle
     },
     info: {
-      bg: 'bg-blue-500/20',
-      border: 'border-blue-500/30',
-      text: 'text-blue-400',
+      bg: 'bg-gold-500/20',
+      border: 'border-gold-500/30',
+      text: 'text-gold-400',
       icon: Info
     },
     warning: {
-      bg: 'bg-yellow-500/20',
-      border: 'border-yellow-500/30',
-      text: 'text-yellow-400',
+      bg: 'bg-warning/20',
+      border: 'border-warning/30',
+      text: 'text-warning',
       icon: AlertTriangle
     }
   }[result.type];
@@ -52,7 +52,7 @@ export function ResultMessage({ result, explorerUrl, onClose }: ResultMessagePro
                 href={`${explorerUrl}/tx/${result.txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 mt-2"
+                className="inline-flex items-center gap-1 text-sm text-gold-400 hover:text-gold-300 mt-2"
               >
                 View Transaction
                 <ExternalLink className="w-3 h-3" />
@@ -62,7 +62,7 @@ export function ResultMessage({ result, explorerUrl, onClose }: ResultMessagePro
         </div>
         <button
           onClick={onClose}
-          className="text-gray-400 hover:text-white transition-colors"
+          className="text-ink-muted hover:text-ink transition-colors"
         >
           <X className="w-4 h-4" />
         </button>

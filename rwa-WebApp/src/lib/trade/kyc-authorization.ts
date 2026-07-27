@@ -162,9 +162,9 @@ export const KYC_LEVEL_INFO: Record<KYCLevel, {
 }> = {
   none: {
     label: 'Not Verified',
-    color: 'text-gray-400',
-    bgColor: 'bg-gray-500/10',
-    borderColor: 'border-gray-500/20',
+    color: 'text-ink-muted',
+    bgColor: 'bg-surface-raised',
+    borderColor: 'border-border',
     icon: '🔒',
     description: 'Complete KYC verification to start trading',
     requirements: [],

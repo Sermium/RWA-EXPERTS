@@ -96,7 +96,7 @@ function PaymentForm({
       />
       
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+        <div className="flex items-center gap-2 p-3 bg-danger/10 border border-danger/30 rounded-lg text-danger text-sm">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           {error}
         </div>
@@ -105,7 +105,7 @@ function PaymentForm({
       <button
         type="submit"
         disabled={!stripe || isProcessing}
-        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed rounded-lg text-white font-medium"
+        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gold-800 disabled:cursor-not-allowed rounded-lg text-ink font-medium"
       >
         {isProcessing ? (
           <>
@@ -203,8 +203,8 @@ function PaymentPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-gray-400">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <div className="flex items-center gap-3 text-ink-muted">
           <RefreshCw className="w-6 h-6 animate-spin" />
           Loading payment details...
         </div>
@@ -214,11 +214,11 @@ function PaymentPageContent() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <p className="text-red-400 mb-4">{error}</p>
-          <Link href="/dashboard" className="text-blue-400 hover:underline">
+          <AlertCircle className="w-12 h-12 text-danger mx-auto mb-4" />
+          <p className="text-danger mb-4">{error}</p>
+          <Link href="/dashboard" className="text-gold-400 hover:underline">
             Return to Dashboard
           </Link>
         </div>
@@ -228,12 +228,12 @@ function PaymentPageContent() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Payment Successful!</h2>
-          <p className="text-gray-400">Your application has been submitted for review.</p>
-          <p className="text-gray-500 text-sm mt-2">Redirecting...</p>
+          <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Payment Successful!</h2>
+          <p className="text-ink-muted">Your application has been submitted for review.</p>
+          <p className="text-ink-faint text-sm mt-2">Redirecting...</p>
         </div>
       </div>
     );
@@ -244,32 +244,32 @@ function PaymentPageContent() {
   const deploymentFee = SUBMISSION_FEE - reviewFee;   // 20% for deployment
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-surface-sunken py-8 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Link
             href={`/crowdfunding/submit`}
-            className="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white"
+            className="p-2 hover:bg-surface rounded-lg text-ink-muted hover:text-ink"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-white">Complete Payment</h1>
-            <p className="text-gray-400">Pay the submission fee to submit your project</p>
+            <h1 className="text-2xl font-bold text-ink">Complete Payment</h1>
+            <p className="text-ink-muted">Pay the submission fee to submit your project</p>
           </div>
         </div>
 
         {/* Application Summary */}
         {application && (
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-6">
+          <div className="bg-surface/50 border border-border rounded-xl p-6 mb-6">
             <div className="flex items-start gap-4">
-              <div className="p-3 bg-blue-500/20 rounded-lg">
-                <FileText className="w-6 h-6 text-blue-400" />
+              <div className="p-3 bg-gold-500/20 rounded-lg">
+                <FileText className="w-6 h-6 text-gold-400" />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white">{application.name}</h3>
-                <p className="text-gray-400 text-sm">
+                <h3 className="text-lg font-semibold text-ink">{application.name}</h3>
+                <p className="text-ink-muted text-sm">
                   Funding Goal: ${application.fundingGoal.toLocaleString()}
                 </p>
               </div>
@@ -278,26 +278,26 @@ function PaymentPageContent() {
         )}
 
         {/* Fee Breakdown */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Fee Breakdown</h3>
+        <div className="bg-surface/50 border border-border rounded-xl p-6 mb-6">
+          <h3 className="text-lg font-semibold text-ink mb-4">Fee Breakdown</h3>
           
           <div className="space-y-3">
-            <div className="flex justify-between text-gray-400">
+            <div className="flex justify-between text-ink-muted">
               <span>Application Review Fee</span>
               <span>${reviewFee.toFixed(2)}</span>
             </div>
-            <div className="flex justify-between text-gray-400">
+            <div className="flex justify-between text-ink-muted">
               <span>Smart Contract Deployment</span>
               <span>${deploymentFee.toFixed(2)}</span>
             </div>
-            <div className="border-t border-gray-700 pt-3 flex justify-between">
-              <span className="text-white font-medium">Total</span>
-              <span className="text-white font-bold text-xl">${SUBMISSION_FEE.toFixed(2)}</span>
+            <div className="border-t border-border pt-3 flex justify-between">
+              <span className="text-ink font-medium">Total</span>
+              <span className="text-ink font-bold text-xl">${SUBMISSION_FEE.toFixed(2)}</span>
             </div>
           </div>
 
-          <div className="mt-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
-            <div className="flex items-center gap-2 text-green-400 text-sm">
+          <div className="mt-4 p-3 bg-success/10 border border-success/30 rounded-lg">
+            <div className="flex items-center gap-2 text-success text-sm">
               <Shield className="w-4 h-4" />
               <span>Free resubmission if rejected</span>
             </div>
@@ -305,16 +305,16 @@ function PaymentPageContent() {
         </div>
 
         {/* Payment Method Selection */}
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Payment Method</h3>
+        <div className="bg-surface/50 border border-border rounded-xl p-6 mb-6">
+          <h3 className="text-lg font-semibold text-ink mb-4">Payment Method</h3>
           
           <div className="flex gap-3 mb-6">
             <button
               onClick={() => setPaymentMethod('card')}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border transition-colors ${
                 paymentMethod === 'card'
-                  ? 'bg-blue-600 border-blue-500 text-white'
-                  : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600'
+                  ? 'bg-gold-600 border-gold-500 text-ink'
+                  : 'bg-surface-sunken border-border text-ink-muted hover:border-border-strong'
               }`}
             >
               <CreditCard className="w-5 h-5" />
@@ -324,8 +324,8 @@ function PaymentPageContent() {
               onClick={() => setPaymentMethod('crypto')}
               className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg border transition-colors ${
                 paymentMethod === 'crypto'
-                  ? 'bg-blue-600 border-blue-500 text-white'
-                  : 'bg-gray-900 border-gray-700 text-gray-400 hover:border-gray-600'
+                  ? 'bg-gold-600 border-gold-500 text-ink'
+                  : 'bg-surface-sunken border-border text-ink-muted hover:border-border-strong'
               }`}
             >
               <Wallet className="w-5 h-5" />
@@ -366,7 +366,7 @@ function PaymentPageContent() {
         </div>
 
         {/* Security Notice */}
-        <div className="text-center text-gray-500 text-sm">
+        <div className="text-center text-ink-faint text-sm">
           <p>Payments are processed securely. Your information is encrypted.</p>
         </div>
       </div>
@@ -456,20 +456,20 @@ function CryptoPayment({
 
   return (
     <div className="space-y-4">
-      <div className="p-4 bg-gray-900 rounded-lg">
-        <p className="text-gray-400 text-sm mb-2">Payment Amount</p>
-        <p className="text-2xl font-bold text-white">{SUBMISSION_FEE} USDC</p>
+      <div className="p-4 bg-surface-sunken rounded-lg">
+        <p className="text-ink-muted text-sm mb-2">Payment Amount</p>
+        <p className="text-2xl font-bold text-ink">{SUBMISSION_FEE} USDC</p>
       </div>
 
       {paymentAddress && (
-        <div className="p-4 bg-gray-900 rounded-lg">
-          <p className="text-gray-400 text-sm mb-2">Send to Address</p>
-          <p className="text-white font-mono text-sm break-all">{paymentAddress}</p>
+        <div className="p-4 bg-surface-sunken rounded-lg">
+          <p className="text-ink-muted text-sm mb-2">Send to Address</p>
+          <p className="text-ink font-mono text-sm break-all">{paymentAddress}</p>
         </div>
       )}
 
       {error && (
-        <div className="flex items-center gap-2 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
+        <div className="flex items-center gap-2 p-3 bg-danger/10 border border-danger/30 rounded-lg text-danger text-sm">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           {error}
         </div>
@@ -479,7 +479,7 @@ function CryptoPayment({
         <button
           onClick={handlePayment}
           disabled={isProcessing || !paymentAddress}
-          className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed rounded-lg text-white font-medium"
+          className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gold-800 disabled:cursor-not-allowed rounded-lg text-ink font-medium"
         >
           <Wallet className="w-5 h-5" />
           Pay with Wallet
@@ -487,7 +487,7 @@ function CryptoPayment({
         <button
           onClick={verifyPayment}
           disabled={isProcessing}
-          className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed rounded-lg text-white font-medium"
+          className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed rounded-lg text-ink font-medium"
         >
           {isProcessing ? (
             <RefreshCw className="w-5 h-5 animate-spin" />
@@ -504,8 +504,8 @@ function CryptoPayment({
 export default function PaymentPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <RefreshCw className="w-8 h-8 text-blue-400 animate-spin" />
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <RefreshCw className="w-8 h-8 text-gold-400 animate-spin" />
       </div>
     }>
       <PaymentPageContent />

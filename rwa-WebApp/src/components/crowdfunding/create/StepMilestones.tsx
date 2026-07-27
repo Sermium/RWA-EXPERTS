@@ -280,17 +280,17 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-xl p-6 border border-purple-500/20">
+      <div className="bg-gradient-to-r from-gold-500/10 to-gold-light-500/10 rounded-xl p-6 border border-gold-500/20">
         <div className="flex items-start justify-between">
           <div>
             <h3 className="text-xl font-semibold text-white mb-2">Project Milestones</h3>
             <p className="text-gray-400">
-              Define the milestones for your <span className="text-blue-400 font-medium">{data.category || 'project'}</span>. 
+              Define the milestones for your <span className="text-gold-400 font-medium">{data.category || 'project'}</span>. 
               Funds will be released progressively as each milestone is approved by investors.
             </p>
           </div>
           {data.category && (
-            <span className="px-3 py-1 bg-blue-500/20 text-blue-400 text-sm rounded-full">
+            <span className="px-3 py-1 bg-gold-500/20 text-gold-400 text-sm rounded-full">
               {data.category}
             </span>
           )}
@@ -397,7 +397,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
         <div className="flex items-end gap-2">
           <button
             onClick={addMilestone}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg transition-colors flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -448,7 +448,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
               <div
                 key={milestone.id}
                 className={`bg-gray-800 rounded-xl border transition-all ${
-                  isExpanded ? 'border-blue-500' : 'border-gray-700'
+                  isExpanded ? 'border-gold-500' : 'border-gray-700'
                 }`}
               >
                 {/* Milestone Header */}
@@ -457,8 +457,8 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                   onClick={() => setExpandedMilestone(isExpanded ? null : milestone.id)}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                      <span className="text-blue-400 font-bold">{index + 1}</span>
+                    <div className="w-10 h-10 bg-gold-500/20 rounded-full flex items-center justify-center">
+                      <span className="text-gold-400 font-bold">{index + 1}</span>
                     </div>
                     <div>
                       <h4 className="font-semibold text-white">{milestone.title || 'Untitled Milestone'}</h4>
@@ -562,7 +562,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                       {data.localCurrency !== 'USD' && (
                         <div>
                           <label className="block text-sm text-gray-400 mb-1">Amount ({data.localCurrency})</label>
-                          <div className="bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-blue-400 font-medium">
+                          <div className="bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-gold-400 font-medium">
                             {formatCurrencyAmount(amounts.local, data.localCurrency)}
                           </div>
                         </div>
@@ -639,9 +639,9 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
           <div className="h-8 bg-gray-700 rounded-lg overflow-hidden flex">
             {data.milestones.map((milestone, index) => {
               const colors = [
-                'bg-blue-500',
+                'bg-gold-500',
                 'bg-green-500',
-                'bg-purple-500',
+                'bg-gold-500',
                 'bg-amber-500',
                 'bg-pink-500',
                 'bg-cyan-500',
@@ -669,9 +669,9 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
           <div className="flex flex-wrap gap-3 mt-3">
             {data.milestones.map((milestone, index) => {
               const colors = [
-                'bg-blue-500',
+                'bg-gold-500',
                 'bg-green-500',
-                'bg-purple-500',
+                'bg-gold-500',
                 'bg-amber-500',
                 'bg-pink-500',
                 'bg-cyan-500',
@@ -721,7 +721,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
           disabled={!isValid}
           className={`px-8 py-3 rounded-lg font-semibold transition-all ${
             isValid
-              ? 'bg-blue-600 hover:bg-blue-700 text-white'
+              ? 'bg-gold-600 hover:bg-gold-700 text-white'
               : 'bg-gray-700 text-gray-400 cursor-not-allowed'
           }`}
         >

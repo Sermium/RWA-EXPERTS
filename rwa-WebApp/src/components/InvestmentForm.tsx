@@ -57,18 +57,18 @@ export default function InvestmentForm({
   };
 
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-      <h3 className="text-lg font-semibold text-white mb-4">Invest in Project</h3>
+    <div className="bg-surface rounded-xl p-6 border border-border">
+      <h3 className="text-lg font-semibold text-ink mb-4">Invest in Project</h3>
 
       {/* KYC Tier Info */}
       <div className={`mb-4 p-3 rounded-lg ${tierInfo.bgColor} border ${tierInfo.borderColor}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span>{tierInfo.icon}</span>
+            <tierInfo.icon className={`w-4 h-4 ${tierInfo.color}`} />
             <span className={`text-sm font-medium ${tierInfo.color}`}>{tierInfo.label} Tier</span>
           </div>
           <div className="text-right">
-            <div className="text-xs text-gray-400">Remaining Limit</div>
+            <div className="text-xs text-ink-muted">Remaining Limit</div>
             <div className={`text-sm font-medium ${tierInfo.color}`}>
               {formatLimit(kycData.remainingLimit)}
             </div>
@@ -79,23 +79,23 @@ export default function InvestmentForm({
       {/* Investment Form */}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Investment Amount (USDC)
           </label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">$</span>
             <input
               type="number"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              className="w-full pl-8 pr-4 py-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-8 pr-4 py-3 bg-surface-sunken border border-border-strong rounded-lg text-ink focus:ring-2 focus:ring-gold-500 focus:border-transparent"
               placeholder="0.00"
               min={minInvestment}
               max={effectiveMax}
               step="0.01"
             />
           </div>
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-ink-faint mt-1">
             <span>Min: ${minInvestment.toLocaleString()}</span>
             <span>Max: ${effectiveMax.toLocaleString()}</span>
           </div>
@@ -111,8 +111,8 @@ export default function InvestmentForm({
               disabled={preset > effectiveMax}
               className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
                 preset > effectiveMax
-                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-700 hover:bg-gray-600 text-white'
+                  ? 'bg-surface-overlay text-ink-faint cursor-not-allowed'
+                  : 'bg-surface-overlay hover:bg-border-strong text-ink'
               }`}
             >
               ${preset >= 1000 ? `${preset / 1000}K` : preset}
@@ -122,14 +122,14 @@ export default function InvestmentForm({
 
         {/* Error Message */}
         {error && (
-          <div className="mb-4 p-3 bg-red-900/30 border border-red-600 rounded-lg text-red-400 text-sm">
+          <div className="mb-4 p-3 bg-danger-muted border border-danger/40 rounded-lg text-danger text-sm">
             {error}
           </div>
         )}
 
         {/* Investment Check Warning */}
         {!investCheck.allowed && numericAmount > 0 && (
-          <div className="mb-4 p-3 bg-yellow-900/30 border border-yellow-600 rounded-lg text-yellow-400 text-sm">
+          <div className="mb-4 p-3 bg-warning-muted border border-warning/40 rounded-lg text-warning text-sm">
             {investCheck.reason}
           </div>
         )}
@@ -140,13 +140,13 @@ export default function InvestmentForm({
           disabled={!investCheck.allowed || isSubmitting || numericAmount <= 0}
           className={`w-full py-4 rounded-lg font-semibold transition-all ${
             !investCheck.allowed || isSubmitting || numericAmount <= 0
-              ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-              : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white'
+              ? 'bg-surface-overlay text-ink-muted cursor-not-allowed'
+              : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-ink'
           }`}
         >
           {isSubmitting ? (
             <span className="flex items-center justify-center gap-2">
-              <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="w-5 h-5 border-2 border-ink border-t-transparent rounded-full animate-spin" />
               Processing...
             </span>
           ) : (

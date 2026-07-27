@@ -128,8 +128,8 @@ NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=xxx`}
           </div>
           
           <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-            <p className="text-sm text-yellow-400">
-              ⚠️ Never commit secrets to version control. Use Vercel Environment Variables or .env.local
+            <p className="text-sm text-yellow-400 flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" /> Never commit secrets to version control. Use Vercel Environment Variables or .env.local
             </p>
           </div>
         </div>
@@ -147,7 +147,7 @@ NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=xxx`}
             </h3>
             <div className="space-y-3 text-sm">
               <div className="flex items-center gap-3">
-                <span className="px-2 py-1 bg-blue-500/20 text-blue-400 rounded text-xs font-mono">develop</span>
+                <span className="px-2 py-1 bg-gold-500/20 text-gold-400 rounded text-xs font-mono">develop</span>
                 <span className="text-gray-400">→ Development/staging</span>
               </div>
               <div className="flex items-center gap-3">
@@ -242,9 +242,10 @@ NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=xxx`}
           </div>
           
           <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <p className="text-sm text-red-400">
-              <strong>⚠️ CRITICAL:</strong> Mainnet deployments require multi-sig approval and 48-hour timelock. 
-              Always test on testnet first. Contract upgrades need security team review.
+            <p className="text-sm text-red-400 flex items-start gap-1.5">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
+              <span><strong>CRITICAL:</strong> Mainnet deployments require multi-sig approval and 48-hour timelock.
+              Always test on testnet first. Contract upgrades need security team review.</span>
             </p>
           </div>
         </div>
@@ -468,8 +469,8 @@ NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=xxx`}
               <li>Test application functionality</li>
             </ol>
             <div className="mt-3 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-              <p className="text-sm text-yellow-400">
-                ⚠️ Database rollbacks may cause data loss. Always consult CTO before proceeding.
+              <p className="text-sm text-yellow-400 flex items-center gap-1.5">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0" /> Database rollbacks may cause data loss. Always consult CTO before proceeding.
               </p>
             </div>
           </div>

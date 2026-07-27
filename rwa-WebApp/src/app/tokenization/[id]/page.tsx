@@ -107,7 +107,7 @@ interface TokenMetrics {
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
   pending: { label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Clock },
-  under_review: { label: 'Under Review', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: Eye },
+  under_review: { label: 'Under Review', color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', icon: Eye },
   approved: { label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle2 },
   rejected: { label: 'Rejected', color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle },
   deployed: { label: 'Deployed', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle2 },
@@ -213,9 +213,9 @@ interface StatCardProps {
 
 function StatCard({ label, value, subValue, icon: Icon, color = 'blue' }: StatCardProps) {
   const colorClasses: Record<string, string> = {
-    blue: 'bg-blue-500/20 text-blue-400',
+    blue: 'bg-gold-500/20 text-gold-400',
     green: 'bg-green-500/20 text-green-400',
-    purple: 'bg-purple-500/20 text-purple-400',
+    purple: 'bg-gold-500/20 text-gold-400',
     yellow: 'bg-yellow-500/20 text-yellow-400',
     cyan: 'bg-cyan-500/20 text-cyan-400',
   };
@@ -290,7 +290,7 @@ function HolderRow({ holder, rank, explorerUrl, tokenSymbol, decimals }: {
         <div>
           <AddressDisplay address={holder.address} explorerUrl={explorerUrl} />
           {holder.isContract && (
-            <span className="text-xs text-purple-400 mt-1 block">Contract</span>
+            <span className="text-xs text-gold-400 mt-1 block">Contract</span>
           )}
         </div>
       </div>
@@ -312,8 +312,8 @@ function DocumentCard({ name, url, type, size }: { name: string; url: string; ty
       rel="noopener noreferrer"
       className="flex items-center gap-3 p-4 bg-slate-700/50 rounded-lg hover:bg-slate-700 transition group"
     >
-      <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-        <FileText className="w-5 h-5 text-blue-400" />
+      <div className="w-10 h-10 rounded-lg bg-gold-500/20 flex items-center justify-center">
+        <FileText className="w-5 h-5 text-gold-400" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-white font-medium truncate">{name}</p>
@@ -365,7 +365,7 @@ function RejectionBanner({ rejectionReason, rejectedAt, projectId, isOwner }: Re
             <div className="flex flex-wrap gap-3">
               <Link
                 href={`/tokenize/edit/${projectId}`}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-medium transition"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold-600 hover:bg-gold-500 text-white rounded-lg font-medium transition"
               >
                 <Edit className="w-4 h-4" />
                 Edit & Resubmit Application
@@ -408,11 +408,11 @@ function ApprovedBanner({ project, isOwner, onDeploy }: ApprovedBannerProps) {
             <h4 className="text-white font-medium mb-2">Deployment will create:</h4>
             <ul className="space-y-2 text-sm text-slate-300">
               <li className="flex items-center gap-2">
-                <Coins className="w-4 h-4 text-purple-400" />
+                <Coins className="w-4 h-4 text-gold-400" />
                 ERC-3643 Security Token ({project.token_name} - {project.token_symbol})
               </li>
               <li className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-blue-400" />
+                <FileText className="w-4 h-4 text-gold-400" />
                 Project NFT with metadata & legal documents
               </li>
               {project.needs_escrow && (
@@ -493,7 +493,7 @@ function DeploymentModal({ project, isOpen, onClose, onSuccess }: DeploymentModa
           />
         ) : (
           <div className="p-8 text-center">
-            <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-4" />
+            <Loader2 className="w-8 h-8 text-gold-500 animate-spin mx-auto mb-4" />
             <p className="text-slate-400">Loading deployment wizard...</p>
           </div>
         )}
@@ -701,7 +701,7 @@ export default function TokenizationProjectPage() {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-gold-500 animate-spin mx-auto mb-4" />
           <p className="text-slate-400">Loading project...</p>
         </div>
       </div>
@@ -718,7 +718,7 @@ export default function TokenizationProjectPage() {
           <p className="text-slate-400 mb-6">{error || 'This project does not exist or has been removed.'}</p>
           <Link
             href="/tokenization"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Projects
@@ -734,7 +734,7 @@ export default function TokenizationProjectPage() {
   return (
     <div className="min-h-screen bg-slate-900">
       {/* Header Banner */}
-      <div className="relative h-48 md:h-64 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700">
+      <div className="relative h-48 md:h-64 bg-gradient-to-br from-gold-600 via-purple-600 to-indigo-700">
         {project.banner_url && (
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-30"
@@ -780,7 +780,7 @@ export default function TokenizationProjectPage() {
         <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 mb-6">
           <div className="flex flex-col md:flex-row md:items-start gap-6">
             {/* Logo */}
-            <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+            <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-gold-500 to-gold-light-600 flex items-center justify-center flex-shrink-0">
               {project.logo_url ? (
                 <img src={project.logo_url} alt={project.asset_name} className="w-full h-full rounded-xl object-cover" />
               ) : (
@@ -899,7 +899,7 @@ export default function TokenizationProjectPage() {
               disabled={(tab as any).disabled}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-gold-600 text-white'
                   : (tab as any).disabled
                   ? 'text-slate-600 cursor-not-allowed'
                   : 'text-slate-400 hover:text-white hover:bg-slate-700'
@@ -1034,7 +1034,7 @@ export default function TokenizationProjectPage() {
                                 href={`${explorerUrl}/tx/${project.deployment_tx_hash}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-400 hover:text-blue-300 font-mono text-sm flex items-center gap-2"
+                                className="text-gold-400 hover:text-gold-300 font-mono text-sm flex items-center gap-2"
                               >
                                 {truncateAddress(project.deployment_tx_hash)}
                                 <ExternalLink className="w-4 h-4" />
@@ -1067,7 +1067,7 @@ export default function TokenizationProjectPage() {
                           href={project.website.startsWith('http') ? project.website : `https://${project.website}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition"
+                          className="flex items-center gap-2 text-gold-400 hover:text-gold-300 transition"
                         >
                           <Globe className="w-4 h-4" />
                           {project.website}
@@ -1113,7 +1113,7 @@ export default function TokenizationProjectPage() {
               
               {holdersLoading ? (
                 <div className="text-center py-12">
-                  <Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-3" />
+                  <Loader2 className="w-8 h-8 text-gold-500 animate-spin mx-auto mb-3" />
                   <p className="text-slate-400">Loading holders...</p>
                 </div>
               ) : holders.length > 0 ? (
@@ -1203,7 +1203,7 @@ export default function TokenizationProjectPage() {
                     </p>
                     <Link
                       href={`/tokenize/edit/${project.id}`}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition"
                     >
                       <Edit className="w-4 h-4" />
                       Edit & Resubmit
@@ -1219,7 +1219,7 @@ export default function TokenizationProjectPage() {
                         {tokenMetrics?.isPaused ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                         {tokenMetrics?.isPaused ? 'Unpause Token' : 'Pause Token'}
                       </button>
-                      <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition">
+                      <button className="flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition">
                         <Edit className="w-4 h-4" />
                         Update Metadata
                       </button>

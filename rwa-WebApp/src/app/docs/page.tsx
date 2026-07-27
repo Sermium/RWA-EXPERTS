@@ -60,8 +60,8 @@ export default function DocsPage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-12">
-        <h1 className="text-4xl font-bold text-white mb-4">Documentation</h1>
-        <p className="text-xl text-gray-400">
+        <h1 className="text-4xl font-bold text-ink mb-4">Documentation</h1>
+        <p className="text-xl text-ink-muted">
           Everything you need to know about tokenizing and investing in real-world assets.
         </p>
       </div>
@@ -74,18 +74,18 @@ export default function DocsPage() {
             <Link
               key={section.title}
               href={section.href}
-              className="group bg-gray-800 border border-gray-700 rounded-xl p-6 hover:border-cyan-500/50 transition-colors"
+              className="group bg-surface border border-border rounded-xl p-6 hover:border-cyan-500/50 transition-colors"
             >
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-cyan-500/10 rounded-lg">
                   <Icon className="w-6 h-6 text-cyan-400" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-white group-hover:text-cyan-400 transition-colors flex items-center gap-2">
+                  <h2 className="text-xl font-semibold text-ink group-hover:text-cyan-400 transition-colors flex items-center gap-2">
                     {section.title}
                     <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                   </h2>
-                  <p className="text-gray-400 mt-2">{section.description}</p>
+                  <p className="text-ink-muted mt-2">{section.description}</p>
                 </div>
               </div>
             </Link>
@@ -94,17 +94,17 @@ export default function DocsPage() {
       </div>
 
       {/* Legal documents */}
-      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
+      <div className="bg-surface/50 border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
           <Shield className="w-6 h-6 text-cyan-400" />
-          <h2 className="text-xl font-semibold text-white">Legal Documents</h2>
+          <h2 className="text-xl font-semibold text-ink">Legal Documents</h2>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {legalDocs.map((doc) => (
             <Link
               key={doc.title}
               href={doc.href}
-              className="text-gray-300 hover:text-cyan-400 transition-colors"
+              className="text-ink-muted hover:text-cyan-400 transition-colors"
             >
               {doc.title} →
             </Link>

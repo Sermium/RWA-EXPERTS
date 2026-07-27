@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function PrivacyPage() {
   return (
-    <div className="min-h-screen bg-gray-900"><main className="py-8">
+    <div className="min-h-screen bg-surface-sunken"><main className="py-8">
         <GDPRDataManagement />
       </main>
     </div>

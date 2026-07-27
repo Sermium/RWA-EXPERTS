@@ -18,8 +18,8 @@ export default function ComplianceFrameworkPage() {
     <div className="max-w-8xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-purple-500/20 rounded-lg">
-            <Scale className="w-6 h-6 text-purple-400" />
+          <div className="p-2 bg-gold-500/20 rounded-lg">
+            <Scale className="w-6 h-6 text-gold-400" />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-white">Compliance Framework</h1>
@@ -39,21 +39,21 @@ export default function ComplianceFrameworkPage() {
           </h3>
           <ul className="space-y-3 text-sm text-gray-300">
             <li className="flex items-start gap-3">
-              <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
               <div>
                 <strong className="text-white">FATF Recommendations</strong>
                 <p className="text-gray-400">Anti-money laundering and counter-terrorist financing standards</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
               <div>
                 <strong className="text-white">GDPR (EU)</strong>
                 <p className="text-gray-400">Data protection and privacy for EU residents</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle className="w-4 h-4 text-green-400 flex-shrink-0 mt-0.5" />
+              <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
               <div>
                 <strong className="text-white">Securities Regulations</strong>
                 <p className="text-gray-400">Compliance with applicable securities laws per jurisdiction</p>
@@ -120,10 +120,10 @@ export default function ComplianceFrameworkPage() {
                 </h3>
                 <span className={`text-xs px-2 py-1 rounded ${
                   item.status === 'Compliant' 
-                    ? 'bg-green-500/20 text-green-400' 
+                    ? 'bg-success/10 text-success' 
                     : item.status === 'Partial (Accredited only)'
-                    ? 'bg-yellow-500/20 text-yellow-400'
-                    : 'bg-blue-500/20 text-blue-400'
+                    ? 'bg-warning/10 text-warning'
+                    : 'bg-gold-500/20 text-gold-400'
                 }`}>
                   {item.status}
                 </span>
@@ -155,8 +155,8 @@ export default function ComplianceFrameworkPage() {
       <section className="mb-10">
         <h2 className="text-2xl font-semibold text-cyan-400 mb-4">3. Restricted Jurisdictions</h2>
         
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-6">
-          <h3 className="font-semibold text-red-400 mb-4 flex items-center gap-2">
+        <div className="bg-danger/10 border border-danger/30 rounded-lg p-6">
+          <h3 className="font-semibold text-danger mb-4 flex items-center gap-2">
             <XCircle className="w-5 h-5" />
             Prohibited Jurisdictions
           </h3>
@@ -165,20 +165,20 @@ export default function ComplianceFrameworkPage() {
           </p>
           <div className="flex flex-wrap gap-2">
             {['North Korea', 'Iran', 'Cuba', 'Syria', 'Crimea', 'Russia (partial)', 'Belarus'].map((country, i) => (
-              <span key={i} className="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm">
+              <span key={i} className="px-3 py-1 bg-danger/10 text-danger rounded-full text-sm">
                 {country}
               </span>
             ))}
           </div>
           
           <div className="mt-6 pt-4 border-t border-red-500/30">
-            <h4 className="font-medium text-yellow-400 mb-2">Enhanced Due Diligence Required</h4>
+            <h4 className="font-medium text-warning mb-2">Enhanced Due Diligence Required</h4>
             <p className="text-sm text-gray-400 mb-2">
               Users from these jurisdictions require additional verification:
             </p>
             <div className="flex flex-wrap gap-2">
               {['Pakistan', 'Myanmar', 'Yemen', 'Haiti', 'South Sudan'].map((country, i) => (
-                <span key={i} className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm">
+                <span key={i} className="px-3 py-1 bg-warning/10 text-warning rounded-full text-sm">
                   {country}
                 </span>
               ))}
@@ -247,7 +247,7 @@ export default function ComplianceFrameworkPage() {
           
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <h4 className="text-sm font-medium text-red-400 mb-2">Transaction Patterns</h4>
+              <h4 className="text-sm font-medium text-danger mb-2">Transaction Patterns</h4>
               <ul className="text-sm text-gray-300 space-y-1">
                 <li>• Multiple transactions just below thresholds</li>
                 <li>• Rapid succession of transactions</li>
@@ -256,7 +256,7 @@ export default function ComplianceFrameworkPage() {
               </ul>
             </div>
             <div>
-              <h4 className="text-sm font-medium text-red-400 mb-2">User Behavior</h4>
+              <h4 className="text-sm font-medium text-danger mb-2">User Behavior</h4>
               <ul className="text-sm text-gray-300 space-y-1">
                 <li>• Multiple accounts from same IP</li>
                 <li>• VPN/Proxy usage patterns</li>
@@ -266,8 +266,8 @@ export default function ComplianceFrameworkPage() {
             </div>
           </div>
           
-          <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-            <p className="text-sm text-yellow-400">
+          <div className="mt-4 p-3 bg-warning/10 border border-warning/30 rounded-lg">
+            <p className="text-sm text-warning">
               <strong>Action Required:</strong> All flagged transactions must be reviewed within 24 hours. 
               Suspicious Activity Reports (SARs) must be filed per local regulations.
             </p>
@@ -328,15 +328,15 @@ export default function ComplianceFrameworkPage() {
             <h3 className="font-semibold text-white mb-3">Internal Audits</h3>
             <ul className="text-sm text-gray-300 space-y-2">
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-400" />
+                <CheckCircle className="w-4 h-4 text-success" />
                 Quarterly compliance review
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-400" />
+                <CheckCircle className="w-4 h-4 text-success" />
                 Monthly transaction sampling
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-400" />
+                <CheckCircle className="w-4 h-4 text-success" />
                 Annual KYC file review
               </li>
             </ul>
@@ -346,15 +346,15 @@ export default function ComplianceFrameworkPage() {
             <h3 className="font-semibold text-white mb-3">External Audits</h3>
             <ul className="text-sm text-gray-300 space-y-2">
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-400" />
+                <CheckCircle className="w-4 h-4 text-success" />
                 Annual financial audit
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-400" />
+                <CheckCircle className="w-4 h-4 text-success" />
                 Bi-annual AML program audit
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-green-400" />
+                <CheckCircle className="w-4 h-4 text-success" />
                 Smart contract audits (per deployment)
               </li>
             </ul>
@@ -363,8 +363,8 @@ export default function ComplianceFrameworkPage() {
       </section>
 
       {/* Contact */}
-      <section className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-purple-400 mb-4 flex items-center gap-2">
+      <section className="bg-gold-500/10 border border-gold-500/30 rounded-xl p-6">
+        <h2 className="text-xl font-semibold text-gold-400 mb-4 flex items-center gap-2">
           <Scale className="w-5 h-5" />
           Compliance Contacts
         </h2>

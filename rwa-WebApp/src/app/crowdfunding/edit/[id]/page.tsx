@@ -121,10 +121,10 @@ export default function EditApplicationPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-4">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
-          <p className="text-white">Please connect your wallet</p>
+          <p className="text-ink">Please connect your wallet</p>
         </div>
       </div>
     );
@@ -132,19 +132,19 @@ export default function EditApplicationPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
       </div>
     );
   }
 
   if (error && !application) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <XCircle className="w-12 h-12 text-red-400 mx-auto mb-4" />
-          <p className="text-white mb-4">{error}</p>
-          <Link href="/dashboard?tab=owner" className="text-blue-400 hover:text-blue-300">
+          <XCircle className="w-12 h-12 text-danger mx-auto mb-4" />
+          <p className="text-ink mb-4">{error}</p>
+          <Link href="/dashboard?tab=owner" className="text-gold-400 hover:text-gold-300">
             Back to Dashboard
           </Link>
         </div>
@@ -154,44 +154,44 @@ export default function EditApplicationPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <CheckCircle className="w-16 h-16 text-green-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Resubmitted Successfully!</h2>
-          <p className="text-gray-400 mb-4">
+          <CheckCircle className="w-16 h-16 text-success mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Resubmitted Successfully!</h2>
+          <p className="text-ink-muted mb-4">
             Your application has been resubmitted for review. No additional fee was charged.
           </p>
-          <p className="text-sm text-gray-500">Redirecting to dashboard...</p>
+          <p className="text-sm text-ink-faint">Redirecting to dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-surface-sunken py-8 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/dashboard?tab=owner"
-            className="text-gray-400 hover:text-white flex items-center gap-2 mb-4"
+            className="text-ink-muted hover:text-ink flex items-center gap-2 mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
 
-          <h1 className="text-3xl font-bold text-white mb-2">Edit & Resubmit Application</h1>
-          <p className="text-gray-400">Correct the issues and resubmit for review</p>
+          <h1 className="text-3xl font-bold text-ink mb-2">Edit & Resubmit Application</h1>
+          <p className="text-ink-muted">Correct the issues and resubmit for review</p>
         </div>
 
         {/* No Fee Banner */}
-        <div className="mb-6 p-4 bg-green-500/10 border border-green-500/30 rounded-xl flex items-center gap-3">
-          <div className="p-2 bg-green-500/20 rounded-lg">
-            <DollarSign className="w-5 h-5 text-green-400" />
+        <div className="mb-6 p-4 bg-success/10 border border-success/30 rounded-xl flex items-center gap-3">
+          <div className="p-2 bg-success/15 rounded-lg">
+            <DollarSign className="w-5 h-5 text-success" />
           </div>
           <div>
-            <p className="text-green-400 font-medium">No Additional Fee Required</p>
-            <p className="text-sm text-green-400/70">
+            <p className="text-success font-medium">No Additional Fee Required</p>
+            <p className="text-sm text-success/70">
               Your original ${application?.feeAmount || 500} submission fee covers this resubmission.
               (Submission #{(application?.submissionCount || 0) + 1})
             </p>
@@ -200,12 +200,12 @@ export default function EditApplicationPage() {
 
         {/* Rejection Reason */}
         {application?.rejectionReason && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+          <div className="mb-6 p-4 bg-danger/10 border border-danger/30 rounded-xl">
             <div className="flex items-start gap-3">
-              <XCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <XCircle className="w-5 h-5 text-danger flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-red-400 font-medium mb-1">Rejection Reason:</p>
-                <p className="text-red-300">{application.rejectionReason}</p>
+                <p className="text-danger font-medium mb-1">Rejection Reason:</p>
+                <p className="text-danger">{application.rejectionReason}</p>
               </div>
             </div>
           </div>
@@ -213,54 +213,54 @@ export default function EditApplicationPage() {
 
         {/* Error */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400" />
-            <p className="text-red-400">{error}</p>
+          <div className="mb-6 p-4 bg-danger/10 border border-danger/30 rounded-xl flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-danger" />
+            <p className="text-danger">{error}</p>
           </div>
         )}
 
         {/* Form */}
-        <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6 space-y-6">
+        <div className="bg-surface rounded-2xl border border-border p-6 space-y-6">
           {/* Project Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Project Name *</label>
+            <label className="block text-sm font-medium text-ink-muted mb-2">Project Name *</label>
             <input
               type="text"
               value={formData.name || ''}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
+            <label className="block text-sm font-medium text-ink-muted mb-2">Description *</label>
             <textarea
               value={formData.description || ''}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={4}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500 resize-none"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500 resize-none"
             />
           </div>
 
           {/* Token Details */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Token Name *</label>
+              <label className="block text-sm font-medium text-ink-muted mb-2">Token Name *</label>
               <input
                 type="text"
                 value={formData.tokenName || ''}
                 onChange={(e) => setFormData({ ...formData, tokenName: e.target.value })}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Token Symbol *</label>
+              <label className="block text-sm font-medium text-ink-muted mb-2">Token Symbol *</label>
               <input
                 type="text"
                 value={formData.tokenSymbol || ''}
                 onChange={(e) => setFormData({ ...formData, tokenSymbol: e.target.value.toUpperCase() })}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
               />
             </div>
           </div>
@@ -268,22 +268,22 @@ export default function EditApplicationPage() {
           {/* Funding Details */}
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Funding Goal (USD) *</label>
+              <label className="block text-sm font-medium text-ink-muted mb-2">Funding Goal (USD) *</label>
               <input
                 type="number"
                 value={formData.fundingGoal || ''}
                 onChange={(e) => setFormData({ ...formData, fundingGoal: Number(e.target.value) })}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Token Price (USD) *</label>
+              <label className="block text-sm font-medium text-ink-muted mb-2">Token Price (USD) *</label>
               <input
                 type="number"
                 step="0.01"
                 value={formData.tokenPrice || ''}
                 onChange={(e) => setFormData({ ...formData, tokenPrice: Number(e.target.value) })}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
               />
             </div>
           </div>
@@ -291,43 +291,43 @@ export default function EditApplicationPage() {
           {/* ROI Details */}
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Investor Share (%)</label>
+              <label className="block text-sm font-medium text-ink-muted mb-2">Investor Share (%)</label>
               <input
                 type="number"
                 value={formData.investorSharePercent || ''}
                 onChange={(e) => setFormData({ ...formData, investorSharePercent: Number(e.target.value) })}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Projected ROI (%)</label>
+              <label className="block text-sm font-medium text-ink-muted mb-2">Projected ROI (%)</label>
               <input
                 type="number"
                 value={formData.projectedROI || ''}
                 onChange={(e) => setFormData({ ...formData, projectedROI: Number(e.target.value) })}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">ROI Timeline (months)</label>
+              <label className="block text-sm font-medium text-ink-muted mb-2">ROI Timeline (months)</label>
               <input
                 type="number"
                 value={formData.roiTimelineMonths || ''}
                 onChange={(e) => setFormData({ ...formData, roiTimelineMonths: Number(e.target.value) })}
-                className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
               />
             </div>
           </div>
 
           {/* Website */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">Website</label>
+            <label className="block text-sm font-medium text-ink-muted mb-2">Website</label>
             <input
               type="url"
               value={formData.website || ''}
               onChange={(e) => setFormData({ ...formData, website: e.target.value })}
               placeholder="https://"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
             />
           </div>
         </div>
@@ -336,14 +336,14 @@ export default function EditApplicationPage() {
         <div className="mt-6 flex gap-4">
           <Link
             href="/dashboard?tab=owner"
-            className="flex-1 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors text-center"
+            className="flex-1 py-4 bg-surface-overlay hover:bg-border-strong text-ink font-semibold rounded-xl transition-colors text-center"
           >
             Cancel
           </Link>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-1 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="flex-1 py-4 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>

@@ -144,16 +144,16 @@ interface NetworkBadgeProps {
 function NetworkBadge({ chainName, isTestnet, isConnected = true }: NetworkBadgeProps) {
   return (
     <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium ${
-      isConnected 
-        ? isTestnet 
-          ? 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-400'
-          : 'bg-green-500/20 border border-green-500/30 text-green-400'
-        : 'bg-red-500/20 border border-red-500/30 text-red-400'
+      isConnected
+        ? isTestnet
+          ? 'bg-warning-muted border border-warning/30 text-warning'
+          : 'bg-success-muted border border-success/30 text-success'
+        : 'bg-danger-muted border border-danger/30 text-danger'
     }`}>
       {isConnected ? <Wifi className="w-4 h-4" /> : <WifiOff className="w-4 h-4" />}
       <span>{chainName}</span>
       {isTestnet && isConnected && (
-        <span className="px-1.5 py-0.5 text-xs bg-yellow-500/30 rounded text-yellow-300">Testnet</span>
+        <span className="px-1.5 py-0.5 text-xs bg-warning/20 rounded text-warning">Testnet</span>
       )}
     </div>
   );
@@ -175,19 +175,19 @@ function NetworkSwitcher({ currentChainId, deployedChains, isSwitching, onSwitch
     <div className="relative">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="flex items-center gap-2 px-3 py-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-lg text-sm text-gray-300 transition-colors"
+        className="flex items-center gap-2 px-3 py-2 bg-surface hover:bg-surface-overlay border border-border rounded-lg text-sm text-ink-muted transition-colors duration-200"
       >
         <ArrowRightLeft className="w-4 h-4" />
         <span>Switch Network</span>
         {isSwitching && <Loader2 className="w-3 h-3 animate-spin" />}
       </button>
-      
+
       {isExpanded && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsExpanded(false)} />
-          <div className="absolute right-0 top-full mt-2 w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 overflow-hidden">
+          <div className="absolute right-0 top-full mt-2 w-56 bg-surface border border-border rounded-lg shadow-panel z-50 overflow-hidden">
             <div className="p-2">
-              <p className="text-xs text-gray-400 px-2 py-1 mb-1">Select Network</p>
+              <p className="text-xs text-ink-faint px-2 py-1 mb-1">Select Network</p>
               {deployedChains.map((chain) => (
                 <button
                   key={chain.id}
@@ -196,17 +196,17 @@ function NetworkSwitcher({ currentChainId, deployedChains, isSwitching, onSwitch
                     setIsExpanded(false);
                   }}
                   disabled={chain.id === currentChainId || isSwitching}
-                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors duration-200 ${
                     chain.id === currentChainId
-                      ? 'bg-blue-600/20 text-blue-400 cursor-default'
-                      : 'text-gray-300 hover:bg-gray-700/50 hover:text-white'
+                      ? 'bg-gold/15 text-gold cursor-default'
+                      : 'text-ink-muted hover:bg-surface-overlay hover:text-ink'
                   } disabled:opacity-50`}
                 >
                   <span className="flex items-center gap-2">
-                    {chain.id === currentChainId && <div className="w-2 h-2 rounded-full bg-blue-400" />}
+                    {chain.id === currentChainId && <div className="w-2 h-2 rounded-full bg-gold" />}
                     {chain.name}
                   </span>
-                  {chain.isTestnet && <span className="text-xs text-yellow-400 opacity-70">Test</span>}
+                  {chain.isTestnet && <span className="text-xs text-warning opacity-70">Test</span>}
                 </button>
               ))}
             </div>
@@ -222,17 +222,16 @@ interface QuickStatCardProps {
   value: string | number;
   onClick: () => void;
   color: string;
-  hoverBorder: string;
 }
 
-function QuickStatCard({ label, value, onClick, color, hoverBorder }: QuickStatCardProps) {
+function QuickStatCard({ label, value, onClick, color }: QuickStatCardProps) {
   return (
-    <button 
-      onClick={onClick} 
-      className={`bg-gray-800 border border-gray-700 rounded-lg p-4 text-left ${hoverBorder} transition-all hover:shadow-lg`}
+    <button
+      onClick={onClick}
+      className="bg-surface border border-border rounded-lg p-4 text-left hover:border-gold/40 transition-colors duration-200"
     >
-      <p className="text-gray-400 text-sm">{label}</p>
-      <p className={`text-2xl font-bold ${color}`}>{value}</p>
+      <p className="text-ink-muted text-sm">{label}</p>
+      <p className={`text-2xl font-display font-medium ${color}`}>{value}</p>
     </button>
   );
 }
@@ -297,17 +296,17 @@ function AdminTabMenu({ tabs, activeTab, setActiveTab, crowdfundingPending = 0 }
               <button
                 ref={(el) => { buttonRefs.current[tab.label] = el; }}
                 onClick={() => handleMenuOpen(tab.label)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 relative ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors duration-200 flex items-center gap-1.5 relative ${
                   isChildActive(tab) || openMenu === tab.label
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700'
+                    ? 'bg-gold text-surface-sunken'
+                    : 'bg-surface text-ink-muted hover:bg-surface-overlay hover:text-ink border border-border'
                 }`}
               >
                 {tab.icon}
                 <span className="hidden sm:inline">{tab.label}</span>
-                <ChevronDown className={`w-3 h-3 transition-transform ${openMenu === tab.label ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${openMenu === tab.label ? 'rotate-180' : ''}`} />
                 {getGroupPendingCount(tab) > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-danger text-ink text-xs rounded-full flex items-center justify-center">
                     {getGroupPendingCount(tab)}
                   </span>
                 )}
@@ -315,10 +314,10 @@ function AdminTabMenu({ tabs, activeTab, setActiveTab, crowdfundingPending = 0 }
             ) : (
               <button
                 onClick={() => setActiveTab(tab.id)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-colors duration-200 flex items-center gap-1.5 ${
                   activeTab === tab.id
-                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/25'
-                    : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white border border-gray-700'
+                    ? 'bg-gold text-surface-sunken'
+                    : 'bg-surface text-ink-muted hover:bg-surface-overlay hover:text-ink border border-border'
                 }`}
               >
                 {tab.icon}
@@ -332,7 +331,7 @@ function AdminTabMenu({ tabs, activeTab, setActiveTab, crowdfundingPending = 0 }
       {/* Fixed position dropdown portal */}
       {openMenu && (
         <div
-          className="fixed w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-2xl overflow-hidden"
+          className="fixed w-48 bg-surface border border-border rounded-lg shadow-panel overflow-hidden"
           style={{ top: menuPosition.top, left: menuPosition.left, zIndex: 99999 }}
         >
           {tabs.find(t => t.label === openMenu)?.children?.map(child => (
@@ -342,16 +341,16 @@ function AdminTabMenu({ tabs, activeTab, setActiveTab, crowdfundingPending = 0 }
                 setActiveTab(child.id);
                 setOpenMenu(null);
               }}
-              className={`w-full px-4 py-2.5 text-sm text-left flex items-center gap-2 transition-colors ${
+              className={`w-full px-4 py-2.5 text-sm text-left flex items-center gap-2 transition-colors duration-150 ${
                 activeTab === child.id
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  ? 'bg-gold/15 text-gold'
+                  : 'text-ink-muted hover:bg-surface-overlay hover:text-ink'
               }`}
             >
               {child.icon}
               {child.label}
               {child.id === 'crowdfunding' && crowdfundingPending > 0 && (
-                <span className="ml-auto px-1.5 py-0.5 bg-red-500 text-white text-xs rounded-full">
+                <span className="ml-auto px-1.5 py-0.5 bg-danger text-ink text-xs rounded-full">
                   {crowdfundingPending}
                 </span>
               )}
@@ -718,12 +717,12 @@ export default function AdminClient() {
   // Not connected
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="container mx-auto px-4 py-8">
-          <div className="max-w-md mx-auto bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-            <Wallet className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-4">Connect Wallet</h2>
-            <p className="text-gray-400">Please connect your wallet to access the admin panel.</p>
+          <div className="max-w-md mx-auto bg-surface border border-border rounded-xl p-8 text-center">
+            <Wallet className="w-16 h-16 text-ink-faint mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-ink mb-4">Connect Wallet</h2>
+            <p className="text-ink-muted">Please connect your wallet to access the admin panel.</p>
           </div>
         </div>
       </div>
@@ -733,12 +732,12 @@ export default function AdminClient() {
   // Checking admin
   if (checkingAdmin) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="container mx-auto px-4 py-8">
-          <div className="max-w-md mx-auto bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-            <Loader2 className="w-12 h-12 text-blue-500 mx-auto mb-4 animate-spin" />
-            <h2 className="text-xl font-bold text-white mb-2">Verifying Access</h2>
-            <p className="text-gray-400">Checking admin permissions on {chainName}...</p>
+          <div className="max-w-md mx-auto bg-surface border border-border rounded-xl p-8 text-center">
+            <Loader2 className="w-12 h-12 text-gold-500 mx-auto mb-4 animate-spin" />
+            <h2 className="text-xl font-bold text-ink mb-2">Verifying Access</h2>
+            <p className="text-ink-muted">Checking admin permissions on {chainName}...</p>
           </div>
         </div>
       </div>
@@ -748,26 +747,26 @@ export default function AdminClient() {
   // Not admin
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="container mx-auto px-4 py-8">
-          <div className="max-w-md mx-auto bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
+          <div className="max-w-md mx-auto bg-surface border border-border rounded-xl p-8 text-center">
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-red-400" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-4">Access Denied</h2>
-            <p className="text-gray-400 mb-4">You don&apos;t have permission to access the admin panel on {chainName}.</p>
-            <p className="text-gray-500 text-sm font-mono mb-4">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
+            <h2 className="text-2xl font-bold text-ink mb-4">Access Denied</h2>
+            <p className="text-ink-muted mb-4">You don&apos;t have permission to access the admin panel on {chainName}.</p>
+            <p className="text-ink-faint text-sm font-mono mb-4">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
             
             {deployedChains.length > 1 && (
-              <div className="mt-6 pt-6 border-t border-gray-700">
-                <p className="text-sm text-gray-400 mb-3">Try a different network:</p>
+              <div className="mt-6 pt-6 border-t border-border">
+                <p className="text-sm text-ink-muted mb-3">Try a different network:</p>
                 <div className="flex flex-wrap justify-center gap-2">
                   {deployedChains.filter(chain => chain.id !== chainId).map(chain => (
                     <button
                       key={chain.id}
                       onClick={() => switchToChain(chain.id)}
                       disabled={isSwitching}
-                      className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors disabled:opacity-50"
+                      className="px-3 py-2 bg-surface-overlay hover:bg-border-strong text-ink text-sm rounded-lg transition-colors disabled:opacity-50"
                     >
                       {chain.name}
                     </button>
@@ -785,20 +784,20 @@ export default function AdminClient() {
   const renderAllocationsTab = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <div className="text-gray-400 text-sm">Total Tokens</div>
-          <div className="text-2xl font-bold text-white">{allocationStats.totalTokens.toLocaleString()}</div>
+        <div className="bg-surface rounded-lg p-4 border border-border">
+          <div className="text-ink-muted text-sm">Total Tokens</div>
+          <div className="text-2xl font-bold text-ink">{allocationStats.totalTokens.toLocaleString()}</div>
         </div>
-        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <div className="text-gray-400 text-sm">Total Value</div>
+        <div className="bg-surface rounded-lg p-4 border border-border">
+          <div className="text-ink-muted text-sm">Total Value</div>
           <div className="text-2xl font-bold text-green-400">${allocationStats.totalValue.toLocaleString()}</div>
         </div>
-        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <div className="text-gray-400 text-sm">Confirmed</div>
-          <div className="text-2xl font-bold text-blue-400">{allocationStats.byStatus.confirmed.toLocaleString()}</div>
+        <div className="bg-surface rounded-lg p-4 border border-border">
+          <div className="text-ink-muted text-sm">Confirmed</div>
+          <div className="text-2xl font-bold text-gold-400">{allocationStats.byStatus.confirmed.toLocaleString()}</div>
         </div>
-        <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-          <div className="text-gray-400 text-sm">Pending</div>
+        <div className="bg-surface rounded-lg p-4 border border-border">
+          <div className="text-ink-muted text-sm">Pending</div>
           <div className="text-2xl font-bold text-yellow-400">{allocationStats.byStatus.pending.toLocaleString()}</div>
         </div>
       </div>
@@ -808,7 +807,7 @@ export default function AdminClient() {
           <select
             value={allocationFilters.status}
             onChange={(e) => setAllocationFilters(f => ({ ...f, status: e.target.value }))}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+            className="bg-surface border border-border rounded-lg px-3 py-2 text-sm text-ink"
           >
             <option value="">All Status</option>
             <option value="pending">Pending</option>
@@ -818,26 +817,26 @@ export default function AdminClient() {
           <select
             value={allocationFilters.type}
             onChange={(e) => setAllocationFilters(f => ({ ...f, type: e.target.value }))}
-            className="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+            className="bg-surface border border-border rounded-lg px-3 py-2 text-sm text-ink"
           >
             <option value="">All Types</option>
             <option value="purchase">Purchase</option>
             <option value="referral_bonus">Referral Bonus</option>
           </select>
-          <button onClick={fetchAllocations} className="px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm flex items-center gap-2 text-white">
+          <button onClick={fetchAllocations} className="px-3 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg text-sm flex items-center gap-2 text-ink">
             <RefreshCw className="w-4 h-4" />
           </button>
         </div>
         
         <div className="flex gap-2">
-          <button onClick={handleExportCSV} className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm flex items-center gap-2 text-white">
+          <button onClick={handleExportCSV} className="px-4 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg text-sm flex items-center gap-2 text-ink">
             <Download className="w-4 h-4" /> Export CSV
           </button>
           {selectedAllocations.length > 0 && (
             <button
               onClick={handleMarkDistributed}
               disabled={isDistributing}
-              className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm flex items-center gap-2 text-white disabled:opacity-50"
+              className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm flex items-center gap-2 text-ink disabled:opacity-50"
             >
               {isDistributing ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
               Mark {selectedAllocations.length} Distributed
@@ -846,28 +845,28 @@ export default function AdminClient() {
         </div>
       </div>
 
-      <div className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700">
+      <div className="bg-surface rounded-lg overflow-hidden border border-border">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-900">
+            <thead className="bg-surface-sunken">
               <tr>
                 <th className="px-4 py-3 text-left">
                   <input
                     type="checkbox"
                     checked={selectedAllocations.length === allocations.length && allocations.length > 0}
                     onChange={(e) => setSelectedAllocations(e.target.checked ? allocations.map(a => a.id) : [])}
-                    className="rounded border-gray-600 bg-gray-700"
+                    className="rounded border-border-strong bg-surface-overlay"
                   />
                 </th>
-                <th className="px-4 py-3 text-left text-sm text-gray-400 font-medium">Wallet</th>
-                <th className="px-4 py-3 text-left text-sm text-gray-400 font-medium">Round</th>
-                <th className="px-4 py-3 text-left text-sm text-gray-400 font-medium">Type</th>
-                <th className="px-4 py-3 text-right text-sm text-gray-400 font-medium">Tokens</th>
-                <th className="px-4 py-3 text-right text-sm text-gray-400 font-medium">Value</th>
-                <th className="px-4 py-3 text-center text-sm text-gray-400 font-medium">Status</th>
+                <th className="px-4 py-3 text-left text-sm text-ink-muted font-medium">Wallet</th>
+                <th className="px-4 py-3 text-left text-sm text-ink-muted font-medium">Round</th>
+                <th className="px-4 py-3 text-left text-sm text-ink-muted font-medium">Type</th>
+                <th className="px-4 py-3 text-right text-sm text-ink-muted font-medium">Tokens</th>
+                <th className="px-4 py-3 text-right text-sm text-ink-muted font-medium">Value</th>
+                <th className="px-4 py-3 text-center text-sm text-ink-muted font-medium">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700">
+            <tbody className="divide-y divide-border">
               {allocations.map((alloc) => (
                 <tr key={alloc.id} className="hover:bg-gray-750">
                   <td className="px-4 py-3">
@@ -878,28 +877,28 @@ export default function AdminClient() {
                         ? [...selectedAllocations, alloc.id] 
                         : selectedAllocations.filter(id => id !== alloc.id)
                       )}
-                      className="rounded border-gray-600 bg-gray-700"
+                      className="rounded border-border-strong bg-surface-overlay"
                     />
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-mono text-sm text-white">
+                    <span className="font-mono text-sm text-ink">
                       {alloc.wallet_address?.slice(0, 6)}...{alloc.wallet_address?.slice(-4)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-300">{alloc.fundraising_rounds?.display_name || '-'}</td>
+                  <td className="px-4 py-3 text-sm text-ink-muted">{alloc.fundraising_rounds?.display_name || '-'}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-1 rounded text-xs ${
-                      alloc.allocation_type === 'purchase' ? 'bg-blue-500/20 text-blue-400' : 'bg-purple-500/20 text-purple-400'
+                      alloc.allocation_type === 'purchase' ? 'bg-gold-500/20 text-gold-400' : 'bg-gold-500/20 text-gold-400'
                     }`}>
                       {alloc.allocation_type}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-right font-mono text-white">{parseFloat(alloc.token_amount).toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right font-mono text-ink">{parseFloat(alloc.token_amount).toLocaleString()}</td>
                   <td className="px-4 py-3 text-right text-green-400">${parseFloat(alloc.usd_value || 0).toLocaleString()}</td>
                   <td className="px-4 py-3 text-center">
                     <span className={`px-2 py-1 rounded text-xs ${
                       alloc.status === 'distributed' ? 'bg-green-500/20 text-green-400' :
-                      alloc.status === 'confirmed' ? 'bg-blue-500/20 text-blue-400' :
+                      alloc.status === 'confirmed' ? 'bg-gold-500/20 text-gold-400' :
                       'bg-yellow-500/20 text-yellow-400'
                     }`}>
                       {alloc.status}
@@ -912,7 +911,7 @@ export default function AdminClient() {
         </div>
         
         {allocations.length === 0 && (
-          <div className="text-center py-12 text-gray-500">
+          <div className="text-center py-12 text-ink-faint">
             <Coins className="w-12 h-12 mx-auto mb-3 opacity-50" />
             <p>No allocations found</p>
             <p className="text-sm mt-1">Token allocations will appear here after investments are confirmed</p>
@@ -926,10 +925,10 @@ export default function AdminClient() {
   const renderTabContent = () => {
     if (loading && activeTab !== 'allocations') {
       return (
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-8">
+        <div className="bg-surface border border-border rounded-xl p-8">
           <div className="flex flex-col items-center justify-center py-8">
-            <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-4" />
-            <span className="text-gray-400">Loading data from {chainName}...</span>
+            <Loader2 className="w-8 h-8 text-gold-500 animate-spin mb-4" />
+            <span className="text-ink-muted">Loading data from {chainName}...</span>
           </div>
         </div>
       );
@@ -972,18 +971,18 @@ export default function AdminClient() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-sunken">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/20 rounded-lg">
-                <Shield className="w-6 h-6 text-blue-400" />
+              <div className="p-2 bg-gold-500/20 rounded-lg">
+                <Shield className="w-6 h-6 text-gold-400" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-white">Admin Panel</h1>
-                <p className="text-gray-400">Manage projects, tokenization, trade, KYC, and platform settings</p>
+                <h1 className="text-3xl font-bold text-ink">Admin Panel</h1>
+                <p className="text-ink-muted">Manage projects, tokenization, trade, KYC, and platform settings</p>
               </div>
             </div>
             
@@ -995,22 +994,22 @@ export default function AdminClient() {
                 isSwitching={isSwitching}
                 onSwitch={(id) => switchToChain(id as SupportedChainId)}
               />
-              <button onClick={refreshAll} disabled={loading} className="p-2 hover:bg-gray-700 rounded-lg transition-colors disabled:opacity-50" title="Refresh all data">
-                <RefreshCw className={`w-5 h-5 text-gray-400 ${loading ? 'animate-spin' : ''}`} />
+              <button onClick={refreshAll} disabled={loading} className="p-2 hover:bg-surface-overlay rounded-lg transition-colors disabled:opacity-50" title="Refresh all data">
+                <RefreshCw className={`w-5 h-5 text-ink-muted ${loading ? 'animate-spin' : ''}`} />
               </button>
             </div>
           </div>
           
           {lastRefresh && (
-            <p className="text-xs text-gray-500 mt-2">Last updated: {lastRefresh.toLocaleTimeString()} on {chainName}</p>
+            <p className="text-xs text-ink-faint mt-2">Last updated: {lastRefresh.toLocaleTimeString()} on {chainName}</p>
           )}
         </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <QuickStatCard label="Crowdfunding" value={crowdfundingStats.pendingReview > 0 ? `${crowdfundingStats.pendingReview} pending` : crowdfundingStats.total} onClick={() => setActiveTab('crowdfunding')} color={crowdfundingStats.pendingReview > 0 ? "text-yellow-400" : "text-white"} hoverBorder="hover:border-blue-500/50" />
+          <QuickStatCard label="Crowdfunding" value={crowdfundingStats.pendingReview > 0 ? `${crowdfundingStats.pendingReview} pending` : crowdfundingStats.total} onClick={() => setActiveTab('crowdfunding')} color={crowdfundingStats.pendingReview > 0 ? "text-yellow-400" : "text-ink"} hoverBorder="hover:border-gold-500/50" />
           <QuickStatCard label="Pending KYC" value={kycStats.pending} onClick={() => setActiveTab('kyc')} color="text-yellow-400" hoverBorder="hover:border-yellow-500/50" />
-          <QuickStatCard label="Token Requests" value={tokenizationStats.pending} onClick={() => setActiveTab('tokenization')} color="text-purple-400" hoverBorder="hover:border-purple-500/50" />
+          <QuickStatCard label="Token Requests" value={tokenizationStats.pending} onClick={() => setActiveTab('tokenization')} color="text-gold-400" hoverBorder="hover:border-gold-500/50" />
           <QuickStatCard label="Active Trades" value={tradeStats.activeDeals} onClick={() => setActiveTab('trade')} color="text-cyan-400" hoverBorder="hover:border-cyan-500/50" />
           <QuickStatCard label="Open Disputes" value={disputeStats.pending + disputeStats.inMediation} onClick={() => setActiveTab('disputes')} color="text-red-400" hoverBorder="hover:border-red-500/50" />
           <QuickStatCard label="Trade Volume" value={formatVolume(tradeStats.totalVolume)} onClick={() => setActiveTab('trade')} color="text-green-400" hoverBorder="hover:border-green-500/50" />
@@ -1047,8 +1046,8 @@ export default function AdminClient() {
         </div>
 
         {/* Footer */}
-        <footer className="mt-8 pt-6 border-t border-gray-700/50">
-          <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-gray-400">
+        <footer className="mt-8 pt-6 border-t border-border/50">
+          <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-ink-muted">
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-2"><Globe className="w-4 h-4" />{chainName}</span>
               <span>•</span>
@@ -1062,11 +1061,11 @@ export default function AdminClient() {
                 <Book className="w-4 h-4" />Admin Docs
               </Link>
               {explorerUrl && (
-                <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-blue-400 hover:text-blue-300">
+                <a href={explorerUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-gold-400 hover:text-gold-300">
                   Explorer<ExternalLink className="w-3 h-3" />
                 </a>
               )}
-              <span className="text-gray-500">Admin: {address?.slice(0, 6)}...{address?.slice(-4)}</span>
+              <span className="text-ink-faint">Admin: {address?.slice(0, 6)}...{address?.slice(-4)}</span>
             </div>
           </div>
         </footer>

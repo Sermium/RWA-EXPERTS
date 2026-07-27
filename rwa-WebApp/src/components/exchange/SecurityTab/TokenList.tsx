@@ -1,5 +1,6 @@
 'use client';
 
+import { Layers } from 'lucide-react';
 import { TOKEN_CATEGORIES } from '../../constants';
 import { ListedToken, SecurityTokenData, CategoryCount } from '../../types';
 
@@ -46,12 +47,12 @@ export function TokenList({
               className={`
                 px-2 py-1 text-xs rounded-lg transition-colors flex items-center gap-1
                 ${selectedCategory === category.value
-                  ? 'bg-blue-500 text-white'
+                  ? 'bg-gold-500 text-white'
                   : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }
               `}
             >
-              <span>{category.icon}</span>
+              <category.icon className="w-3.5 h-3.5" />
               <span>{category.label}</span>
               {categoryCounts[category.value] > 0 && (
                 <span className="bg-gray-600 px-1.5 py-0.5 rounded-full text-[10px]">
@@ -67,7 +68,7 @@ export function TokenList({
       <div className="space-y-2 max-h-[500px] overflow-y-auto">
         {(securityTokenLoading || listedTokensLoading) ? (
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-500" />
           </div>
         ) : securityTokens.length === 0 && listedTokens.length === 0 ? (
           <div className="text-center py-8">
@@ -75,7 +76,7 @@ export function TokenList({
             {selectedCategory !== 'all' && (
               <button
                 onClick={() => onCategoryChange('all')}
-                className="text-blue-400 text-sm mt-2 hover:underline"
+                className="text-gold-400 text-sm mt-2 hover:underline"
               >
                 View all categories
               </button>
@@ -90,7 +91,7 @@ export function TokenList({
                 onClick={() => onSelectSecurityToken(token)}
                 className={`w-full p-3 rounded-lg text-left transition-colors ${
                   selectedSecurityToken?.address === token.address
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-gold-600 text-white'
                     : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
                 }`}
               >
@@ -110,7 +111,7 @@ export function TokenList({
                   onClick={() => onSelectListedToken(token)}
                   className={`w-full p-3 rounded-lg text-left transition-colors ${
                     selectedListedToken?.id === token.id
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-gold-600 text-white'
                       : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
                   }`}
                 >
@@ -126,10 +127,13 @@ export function TokenList({
                           }}
                         />
                       ) : (
-                        <span className="text-sm">{categoryInfo?.icon || '🔷'}</span>
+                        (() => {
+                          const CategoryIcon = categoryInfo?.icon || Layers;
+                          return <CategoryIcon className="w-4 h-4 text-gray-400" />;
+                        })()
                       )}
                       <span className="font-medium">{token.symbol}</span>
-                      <span className="text-xs bg-purple-600 px-1.5 py-0.5 rounded">RWA</span>
+                      <span className="text-xs bg-gold-600 px-1.5 py-0.5 rounded">RWA</span>
                     </div>
                     <span className={`text-sm ${
                       selectedListedToken?.id === token.id ? 'text-white' : 'text-green-400'

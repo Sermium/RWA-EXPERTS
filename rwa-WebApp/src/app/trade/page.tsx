@@ -184,14 +184,14 @@ const getStageIcon = (stage: DealStage) => {
 const getStageColor = (stage: DealStage) => {
   const stageInfo = DEAL_STAGES[stage];
   const colors: Record<string, string> = {
-    initiation: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
-    compliance: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
-    contract: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-    payment: 'bg-green-500/10 text-green-400 border-green-500/20',
-    fulfillment: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-    completion: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    initiation: 'bg-gold/10 text-gold border-gold/20',
+    compliance: 'bg-gold/10 text-gold border-gold/20',
+    contract: 'bg-gold/10 text-gold border-gold/20',
+    payment: 'bg-gold/10 text-gold border-gold/20',
+    fulfillment: 'bg-gold/10 text-gold border-gold/20',
+    completion: 'bg-success-muted text-success border-success/30',
   };
-  return colors[stageInfo.category] || 'bg-gray-500/10 text-gray-400 border-gray-500/20';
+  return colors[stageInfo.category] || 'bg-danger-muted text-danger border-danger/30';
 };
 
 const formatCurrency = (value: number) => {
@@ -215,50 +215,35 @@ const formatDate = (date: Date) => {
 // COMPONENTS
 // =============================================================================
 
-function StatsCard({ 
-  title, 
-  value, 
-  subtitle, 
-  icon, 
+function StatsCard({
+  title,
+  value,
+  subtitle,
+  icon,
   trend,
-  color = 'blue' 
-}: { 
-  title: string; 
-  value: string | number; 
+}: {
+  title: string;
+  value: string | number;
   subtitle?: string;
   icon: React.ReactNode;
   trend?: { value: number; positive: boolean };
   color?: 'blue' | 'green' | 'purple' | 'yellow';
 }) {
-  const colorClasses = {
-    blue: 'from-blue-500/20 to-blue-600/5 border-blue-500/20',
-    green: 'from-green-500/20 to-green-600/5 border-green-500/20',
-    purple: 'from-purple-500/20 to-purple-600/5 border-purple-500/20',
-    yellow: 'from-yellow-500/20 to-yellow-600/5 border-yellow-500/20',
-  };
-  
-  const iconColors = {
-    blue: 'text-blue-400',
-    green: 'text-green-400',
-    purple: 'text-purple-400',
-    yellow: 'text-yellow-400',
-  };
-
   return (
-    <div className={`bg-gradient-to-br ${colorClasses[color]} rounded-2xl p-6 border`}>
+    <div className="bg-surface rounded-2xl p-6 border border-border">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-gray-400 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-white">{value}</p>
-          {subtitle && <p className="text-sm text-gray-500 mt-1">{subtitle}</p>}
+          <p className="text-sm text-ink-muted mb-1">{title}</p>
+          <p className="text-3xl font-display font-medium text-ink">{value}</p>
+          {subtitle && <p className="text-sm text-ink-faint mt-1">{subtitle}</p>}
           {trend && (
-            <div className={`flex items-center mt-2 text-sm ${trend.positive ? 'text-green-400' : 'text-red-400'}`}>
+            <div className={`flex items-center mt-2 text-sm ${trend.positive ? 'text-success' : 'text-danger'}`}>
               <TrendingUp className={`h-4 w-4 mr-1 ${!trend.positive && 'rotate-180'}`} />
               {trend.value}% from last month
             </div>
           )}
         </div>
-        <div className={`p-3 rounded-xl bg-gray-800/50 ${iconColors[color]}`}>
+        <div className="p-3 rounded-xl bg-gold/10 text-gold">
           {icon}
         </div>
       </div>
@@ -272,13 +257,13 @@ function DealCard({ deal }: { deal: Partial<Deal> }) {
 
   return (
     <Link href={`/trade/deals/${deal.id}`}>
-      <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50 hover:border-blue-500/50 transition-all hover:shadow-lg hover:shadow-blue-500/5 cursor-pointer group">
+      <div className="bg-surface rounded-xl p-5 border border-border hover:border-gold/40 transition-colors duration-200 cursor-pointer group">
         <div className="flex items-start justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors">
+            <h3 className="text-lg font-semibold text-ink group-hover:text-gold transition-colors duration-200">
               {deal.title}
             </h3>
-            <p className="text-sm text-gray-400">{deal.reference}</p>
+            <p className="text-sm text-ink-muted">{deal.reference}</p>
           </div>
           <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getStageColor(stage)}`}>
             {getStageIcon(stage)}
@@ -288,30 +273,30 @@ function DealCard({ deal }: { deal: Partial<Deal> }) {
 
         <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <p className="text-xs text-gray-500 mb-1">Product</p>
-            <p className="text-sm text-white">{deal.product?.name}</p>
+            <p className="text-xs text-ink-faint mb-1">Product</p>
+            <p className="text-sm text-ink">{deal.product?.name}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 mb-1">Value</p>
-            <p className="text-sm text-white font-medium">
+            <p className="text-xs text-ink-faint mb-1">Value</p>
+            <p className="text-sm text-ink font-medium">
               {formatCurrency(deal.product?.totalValue || 0)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 mb-1">Seller</p>
-            <p className="text-sm text-white">{deal.seller?.companyName}</p>
+            <p className="text-xs text-ink-faint mb-1">Seller</p>
+            <p className="text-sm text-ink">{deal.seller?.companyName}</p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 mb-1">Origin</p>
-            <p className="text-sm text-white">{deal.seller?.country}</p>
+            <p className="text-xs text-ink-faint mb-1">Origin</p>
+            <p className="text-sm text-ink">{deal.seller?.country}</p>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
-          <p className="text-xs text-gray-500">
+        <div className="flex items-center justify-between pt-4 border-t border-border">
+          <p className="text-xs text-ink-faint">
             Updated {formatDate(deal.updatedAt || new Date())}
           </p>
-          <div className="flex items-center text-blue-400 text-sm group-hover:translate-x-1 transition-transform">
+          <div className="flex items-center text-gold text-sm group-hover:translate-x-1 transition-transform duration-200">
             View Details
             <ChevronRight className="h-4 w-4 ml-1" />
           </div>
@@ -331,12 +316,12 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/50 hover:border-blue-500/30 transition-all">
-      <div className="w-12 h-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400 mb-4">
+    <div className="bg-surface rounded-xl p-6 border border-border hover:border-gold/30 transition-colors duration-300">
+      <div className="w-12 h-12 rounded-xl bg-gold/10 flex items-center justify-center text-gold mb-4">
         {icon}
       </div>
-      <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-      <p className="text-gray-400 text-sm">{description}</p>
+      <h3 className="text-lg font-semibold text-ink mb-2">{title}</h3>
+      <p className="text-ink-muted text-sm">{description}</p>
     </div>
   );
 }
@@ -355,14 +340,14 @@ function ProcessStep({
   return (
     <div className="flex">
       <div className="flex flex-col items-center mr-4">
-        <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+        <div className="w-10 h-10 rounded-full bg-gold flex items-center justify-center text-surface-sunken font-semibold">
           {number}
         </div>
-        {!isLast && <div className="w-0.5 h-full bg-blue-500/30 mt-2" />}
+        {!isLast && <div className="w-0.5 h-full bg-gold/30 mt-2" />}
       </div>
       <div className="pb-8">
-        <h4 className="text-lg font-semibold text-white mb-1">{title}</h4>
-        <p className="text-gray-400 text-sm">{description}</p>
+        <h4 className="text-lg font-semibold text-ink mb-1">{title}</h4>
+        <p className="text-ink-muted text-sm">{description}</p>
       </div>
     </div>
   );
@@ -412,39 +397,38 @@ export default function TradePage() {
   ];
 
   return (
-    <main className="min-h-screen bg-gray-900">
+    <main className="min-h-screen bg-surface-sunken">
       {/* Hero Section */}
       <section className="relative py-16 md:py-24 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 to-transparent" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
-        
+        <div className="absolute inset-0 bg-grain opacity-30" />
+
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
-              <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-6">
+              <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-gold/10 text-gold border border-gold/25 mb-6">
                 <Lock className="h-4 w-4 mr-2" />
                 Secure International Trade
               </span>
-              <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              <h1 className="text-4xl md:text-5xl font-display font-medium text-ink mb-6">
                 International Trade
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                <span className="block italic text-gradient-gold">
                   Payment Platform
                 </span>
               </h1>
-              <p className="text-xl text-gray-400 mb-8">
-                Execute secure cross-border transactions with crypto-powered escrow, 
+              <p className="text-xl text-ink-muted mb-8">
+                Execute secure cross-border transactions with crypto-powered escrow,
                 complete compliance management, and milestone-based payment releases.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link href="/trade/deals/new">
-                  <button className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center">
+                  <button className="w-full sm:w-auto px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200 flex items-center justify-center">
                     <Plus className="h-5 w-5 mr-2" />
                     Create New Deal
                   </button>
                 </Link>
-                <button 
+                <button
                   onClick={() => setActiveTab('my-deals')}
-                  className="w-full sm:w-auto px-8 py-4 bg-gray-800 text-white font-semibold rounded-xl hover:bg-gray-700 transition-colors flex items-center justify-center"
+                  className="w-full sm:w-auto px-8 py-4 bg-surface border border-border text-ink font-semibold rounded-xl hover:border-border-strong transition-colors duration-200 flex items-center justify-center"
                 >
                   View My Deals
                   <ArrowRight className="h-5 w-5 ml-2" />
@@ -459,25 +443,21 @@ export default function TradePage() {
                   title="Active Deals"
                   value={dealSummary.active}
                   icon={<Briefcase className="h-6 w-6" />}
-                  color="blue"
                 />
                 <StatsCard
                   title="Total Value"
                   value={formatCurrency(dealSummary.totalValue)}
                   icon={<DollarSign className="h-6 w-6" />}
-                  color="green"
                 />
                 <StatsCard
                   title="In Escrow"
                   value={formatCurrency(dealSummary.pendingPayments)}
                   icon={<Lock className="h-6 w-6" />}
-                  color="purple"
                 />
                 <StatsCard
                   title="Completed"
                   value={dealSummary.completed}
                   icon={<CheckCircle2 className="h-6 w-6" />}
-                  color="yellow"
                 />
               </div>
             )}
@@ -486,17 +466,17 @@ export default function TradePage() {
       </section>
 
       {/* Navigation Tabs */}
-      <div className="border-b border-gray-800 sticky top-16 bg-gray-900/95 backdrop-blur-sm z-40">
+      <div className="border-b border-border sticky top-16 bg-surface-sunken/95 backdrop-blur-sm z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex space-x-1 overflow-x-auto py-4">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`flex items-center px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-colors duration-200 ${
                   activeTab === tab.id
-                    ? 'bg-blue-500/10 text-blue-400'
-                    : 'text-gray-400 hover:text-white hover:bg-gray-800'
+                    ? 'bg-gold/10 text-gold'
+                    : 'text-ink-muted hover:text-ink hover:bg-surface'
                 }`}
               >
                 {tab.icon}
@@ -515,10 +495,10 @@ export default function TradePage() {
             {/* Features Grid */}
             <section>
               <div className="text-center mb-12">
-                <h2 className="text-3xl font-bold text-white mb-4">
+                <h2 className="text-3xl font-display font-medium text-ink mb-4">
                   Why Use Our Platform?
                 </h2>
-                <p className="text-gray-400 max-w-2xl mx-auto">
+                <p className="text-ink-muted max-w-2xl mx-auto">
                   Our platform combines blockchain security with traditional trade finance workflows
                 </p>
               </div>
@@ -557,18 +537,18 @@ export default function TradePage() {
             </section>
 
             {/* Process Steps */}
-            <section className="bg-gray-800/30 rounded-2xl p-8 md:p-12 border border-gray-700/50">
+            <section className="bg-surface rounded-2xl p-8 md:p-12 border border-border">
               <div className="grid md:grid-cols-2 gap-12">
                 <div>
-                  <h2 className="text-3xl font-bold text-white mb-4">
+                  <h2 className="text-3xl font-display font-medium text-ink mb-4">
                     How It Works
                   </h2>
-                  <p className="text-gray-400 mb-8">
-                    Our streamlined process takes you from initial agreement to successful delivery 
+                  <p className="text-ink-muted mb-8">
+                    Our streamlined process takes you from initial agreement to successful delivery
                     with full transparency and security at every step.
                   </p>
                   <Link href="/trade/deals/new">
-                    <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors flex items-center">
+                    <button className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200 flex items-center">
                       Start Your First Deal
                       <ArrowUpRight className="h-5 w-5 ml-2" />
                     </button>
@@ -612,20 +592,20 @@ export default function TradePage() {
 
             {/* CTA Section */}
             <section className="text-center py-12">
-              <h2 className="text-3xl font-bold text-white mb-4">
+              <h2 className="text-3xl font-display font-medium text-ink mb-4">
                 Ready to Start Trading?
               </h2>
-              <p className="text-gray-400 mb-8 max-w-2xl mx-auto">
+              <p className="text-ink-muted mb-8 max-w-2xl mx-auto">
                 Create your first deal today and experience secure, compliant international trade
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link href="/trade/deals/new">
-                  <button className="px-8 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity">
+                  <button className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200">
                     Create New Deal
                   </button>
                 </Link>
                 <Link href="/docs/trade">
-                  <button className="px-8 py-4 bg-gray-800 text-white font-semibold rounded-xl hover:bg-gray-700 transition-colors">
+                  <button className="px-8 py-4 bg-surface border border-border text-ink font-semibold rounded-xl hover:border-border-strong transition-colors duration-200">
                     Read Documentation
                   </button>
                 </Link>
@@ -640,22 +620,22 @@ export default function TradePage() {
             {/* Search and Filter Bar */}
             <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
               <div className="relative flex-1 max-w-md">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-faint" />
                 <input
                   type="text"
                   placeholder="Search deals..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                  className="w-full pl-10 pr-4 py-3 bg-surface border border-border rounded-xl text-ink placeholder-ink-faint focus:border-gold outline-none transition-colors duration-200"
                 />
               </div>
               <div className="flex items-center gap-4">
                 <div className="relative">
-                  <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-faint" />
                   <select
                     value={filterStatus}
                     onChange={(e) => setFilterStatus(e.target.value)}
-                    className="pl-10 pr-8 py-3 bg-gray-800 border border-gray-700 rounded-xl text-white appearance-none cursor-pointer focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+                    className="pl-10 pr-8 py-3 bg-surface border border-border rounded-xl text-ink appearance-none cursor-pointer focus:border-gold outline-none transition-colors duration-200"
                   >
                     <option value="all">All Statuses</option>
                     <option value="draft">Draft</option>
@@ -669,7 +649,7 @@ export default function TradePage() {
                   </select>
                 </div>
                 <Link href="/trade/deals/new">
-                  <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors flex items-center">
+                  <button className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200 flex items-center">
                     <Plus className="h-5 w-5 mr-2" />
                     New Deal
                   </button>
@@ -680,7 +660,7 @@ export default function TradePage() {
             {/* Deals Grid */}
             {isLoading ? (
               <div className="flex items-center justify-center py-24">
-                <div className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                <div className="w-8 h-8 border-2 border-gold border-t-transparent rounded-full animate-spin" />
               </div>
             ) : filteredDeals.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -690,17 +670,17 @@ export default function TradePage() {
               </div>
             ) : (
               <div className="text-center py-24">
-                <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-6">
-                  <Briefcase className="h-8 w-8 text-gray-600" />
+                <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center mx-auto mb-6">
+                  <Briefcase className="h-8 w-8 text-ink-faint" />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">No deals found</h3>
-                <p className="text-gray-400 mb-6">
-                  {searchQuery || filterStatus !== 'all' 
+                <h3 className="text-xl font-semibold text-ink mb-2">No deals found</h3>
+                <p className="text-ink-muted mb-6">
+                  {searchQuery || filterStatus !== 'all'
                     ? 'Try adjusting your search or filters'
                     : "You haven't created any deals yet"}
                 </p>
                 <Link href="/trade/deals/new">
-                  <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors">
+                  <button className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200">
                     Create Your First Deal
                   </button>
                 </Link>
@@ -712,15 +692,15 @@ export default function TradePage() {
         {/* Documents Tab */}
         {activeTab === 'documents' && (
           <div className="text-center py-24">
-            <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-6">
-              <FileText className="h-8 w-8 text-gray-600" />
+            <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center mx-auto mb-6">
+              <FileText className="h-8 w-8 text-ink-faint" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Document Center</h3>
-            <p className="text-gray-400 mb-6">
+            <h3 className="text-xl font-semibold text-ink mb-2">Document Center</h3>
+            <p className="text-ink-muted mb-6">
               View and manage all trade documents across your deals
             </p>
             <Link href="/trade/documents">
-              <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors">
+              <button className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200">
                 Open Document Center
               </button>
             </Link>
@@ -730,15 +710,15 @@ export default function TradePage() {
         {/* Compliance Tab */}
         {activeTab === 'compliance' && (
           <div className="text-center py-24">
-            <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-6">
-              <Shield className="h-8 w-8 text-gray-600" />
+            <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center mx-auto mb-6">
+              <Shield className="h-8 w-8 text-ink-faint" />
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">Compliance Center</h3>
-            <p className="text-gray-400 mb-6">
+            <h3 className="text-xl font-semibold text-ink mb-2">Compliance Center</h3>
+            <p className="text-ink-muted mb-6">
               Manage KYC verification, sanctions screening, and compliance status
             </p>
             <Link href="/trade/compliance">
-              <button className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors">
+              <button className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200">
                 Open Compliance Center
               </button>
             </Link>

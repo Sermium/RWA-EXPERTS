@@ -119,7 +119,7 @@ function StripePaymentForm({
         <button
           type="submit"
           disabled={!stripe || isProcessing}
-          className="flex-1 py-3 rounded-xl bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+          className="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-500 to-gold-light-500 hover:from-gold-600 hover:to-gold-light-600 text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {isProcessing ? (
             <>
@@ -343,7 +343,7 @@ export function Step4Review({
         <h3 className="text-lg font-medium text-white">{title}</h3>
         <button
           onClick={() => onEdit(step)}
-          className="flex items-center gap-1 text-blue-400 hover:text-blue-300 text-sm"
+          className="flex items-center gap-1 text-gold-400 hover:text-gold-300 text-sm"
         >
           <Edit2 className="w-4 h-4" />
           Edit
@@ -392,7 +392,7 @@ export function Step4Review({
           )}
           <div>
             <p className="text-white font-medium">{formData.tokenName}</p>
-            <p className="text-blue-400 text-sm">${formData.tokenSymbol}</p>
+            <p className="text-gold-400 text-sm">${formData.tokenSymbol}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm">
@@ -436,9 +436,9 @@ export function Step4Review({
       </Section>
 
       {/* Payment Section */}
-      <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30 rounded-xl p-5">
+      <div className="bg-gradient-to-r from-gold-500/10 to-gold-light-500/10 border border-gold-500/30 rounded-xl p-5">
         <div className="flex items-center gap-2 mb-4">
-          <CreditCard className="w-5 h-5 text-blue-400" />
+          <CreditCard className="w-5 h-5 text-gold-400" />
           <h3 className="text-lg font-medium text-white">Tokenization Package</h3>
         </div>
 
@@ -447,8 +447,8 @@ export function Step4Review({
           {/* Base - Always included */}
           <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
-                <Coins className="w-5 h-5 text-blue-400" />
+              <div className="w-10 h-10 rounded-lg bg-gold-500/20 flex items-center justify-center">
+                <Coins className="w-5 h-5 text-gold-400" />
               </div>
               <div>
                 <p className="text-white font-medium">Token Creation</p>
@@ -464,14 +464,14 @@ export function Step4Review({
           {/* Escrow Option */}
           <label className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
             includeEscrow 
-              ? 'bg-purple-500/10 border-purple-500/50' 
+              ? 'bg-gold-500/10 border-gold-500/50' 
               : 'bg-gray-800/50 border-gray-700 hover:border-gray-600'
           }`}>
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                includeEscrow ? 'bg-purple-500/20' : 'bg-gray-700'
+                includeEscrow ? 'bg-gold-500/20' : 'bg-gray-700'
               }`}>
-                <Shield className="w-5 h-5 text-purple-400" />
+                <Shield className="w-5 h-5 text-gold-400" />
               </div>
               <div>
                 <p className="text-white font-medium">Escrow Vault</p>
@@ -487,7 +487,7 @@ export function Step4Review({
                 checked={includeEscrow}
                 onChange={(e) => setIncludeEscrow(e.target.checked)}
                 disabled={paymentStep !== 'idle' || showStripeForm}
-                className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500"
+                className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-gold-500 focus:ring-purple-500"
               />
             </div>
           </label>
@@ -534,15 +534,15 @@ export function Step4Review({
                 disabled={paymentStep !== 'idle'}
                 className={`p-4 rounded-xl border-2 transition-all ${
                   paymentMethod === 'crypto'
-                    ? 'border-blue-500 bg-blue-500/10'
+                    ? 'border-gold-500 bg-gold-500/10'
                     : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    paymentMethod === 'crypto' ? 'bg-blue-500/20' : 'bg-gray-700'
+                    paymentMethod === 'crypto' ? 'bg-gold-500/20' : 'bg-gray-700'
                   }`}>
-                    <Wallet className="w-5 h-5 text-blue-400" />
+                    <Wallet className="w-5 h-5 text-gold-400" />
                   </div>
                   <div className="text-left">
                     <p className="text-white font-medium">Crypto</p>
@@ -556,15 +556,15 @@ export function Step4Review({
                 disabled={paymentStep !== 'idle' || !stripePromise}
                 className={`p-4 rounded-xl border-2 transition-all ${
                   paymentMethod === 'stripe'
-                    ? 'border-purple-500 bg-purple-500/10'
+                    ? 'border-gold-500 bg-gold-500/10'
                     : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
                 } ${!stripePromise ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    paymentMethod === 'stripe' ? 'bg-purple-500/20' : 'bg-gray-700'
+                    paymentMethod === 'stripe' ? 'bg-gold-500/20' : 'bg-gray-700'
                   }`}>
-                    <Building2 className="w-5 h-5 text-purple-400" />
+                    <Building2 className="w-5 h-5 text-gold-400" />
                   </div>
                   <div className="text-left">
                     <p className="text-white font-medium">Card / Bank</p>
@@ -592,7 +592,7 @@ export function Step4Review({
                   disabled={paymentStep !== 'idle'}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                     selectedCurrency === 'USDC'
-                      ? 'bg-blue-500 text-white'
+                      ? 'bg-gold-500 text-white'
                       : 'text-gray-400 hover:text-white'
                   }`}
                 >
@@ -694,7 +694,7 @@ export function Step4Review({
                   className={`w-full py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
                     (paymentMethod === 'stripe') || 
                     (paymentMethod === 'crypto' && hasEnoughBalance && feeRecipient && isConnected)
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white'
+                      ? 'bg-gradient-to-r from-gold-500 to-gold-light-500 hover:from-gold-600 hover:to-gold-light-600 text-white'
                       : 'bg-gray-700 text-gray-500 cursor-not-allowed'
                   }`}
                 >

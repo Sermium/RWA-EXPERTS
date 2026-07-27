@@ -175,16 +175,16 @@ function LivenessMobileContent() {
   // Error state
   if (status === 'error') {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-6">
         <div className="text-center max-w-sm">
-          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-red-500/20 flex items-center justify-center">
+          <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-danger/20 flex items-center justify-center">
             <span className="text-4xl">⚠️</span>
           </div>
-          <h1 className="text-xl font-bold text-white mb-3">Camera Error</h1>
-          <p className="text-gray-400 mb-6">{cameraError}</p>
+          <h1 className="text-xl font-bold text-ink mb-3">Camera Error</h1>
+          <p className="text-ink-muted mb-6">{cameraError}</p>
           <button
             onClick={initCamera}
-            className="w-full py-3 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors"
+            className="w-full py-3 bg-gold-600 hover:bg-gold-500 text-ink font-medium rounded-xl transition-colors"
           >
             Try Again
           </button>
@@ -198,33 +198,33 @@ function LivenessMobileContent() {
     const passed = finalScore >= 60;
 
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-6">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-6">
         <div className="text-center max-w-sm">
           <div className={`w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center ${
-            passed ? 'bg-green-500/20' : 'bg-red-500/20'
+            passed ? 'bg-success/20' : 'bg-danger/20'
           }`}>
             <span className="text-5xl">{passed ? '✅' : '❌'}</span>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">
+          <h1 className="text-2xl font-bold text-ink mb-2">
             {passed ? 'Verification Complete!' : 'Verification Failed'}
           </h1>
-          <p className="text-gray-400 mb-6">
-            {passed 
+          <p className="text-ink-muted mb-6">
+            {passed
               ? 'You can close this page and return to your computer.'
               : 'Please return to your computer and try again.'}
           </p>
-          
-          <div className="bg-gray-800 rounded-xl p-4 mb-6">
-            <p className="text-gray-500 text-sm mb-1">Score</p>
-            <p className={`text-3xl font-bold ${passed ? 'text-green-400' : 'text-red-400'}`}>
+
+          <div className="bg-surface rounded-xl p-4 mb-6">
+            <p className="text-ink-faint text-sm mb-1">Score</p>
+            <p className={`text-3xl font-bold ${passed ? 'text-success' : 'text-danger'}`}>
               {finalScore}%
             </p>
-            <p className="text-gray-500 text-xs mt-1">
+            <p className="text-ink-faint text-xs mt-1">
               {completedChallenges.length} of {CHALLENGES.length} challenges
             </p>
           </div>
 
-          <p className="text-gray-500 text-sm">
+          <p className="text-ink-faint text-sm">
             This page will not close automatically for your security.
           </p>
         </div>
@@ -233,11 +233,11 @@ function LivenessMobileContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-surface-sunken flex flex-col">
       {/* Header */}
-      <div className="p-4 text-center border-b border-gray-800 bg-gray-900 sticky top-0 z-10">
-        <h1 className="text-lg font-bold text-white">Liveness Check</h1>
-        <p className="text-gray-400 text-sm">Follow the instructions</p>
+      <div className="p-4 text-center border-b border-border bg-surface-sunken sticky top-0 z-10">
+        <h1 className="text-lg font-bold text-ink">Liveness Check</h1>
+        <p className="text-ink-muted text-sm">Follow the instructions</p>
       </div>
 
       {/* Video */}
@@ -253,15 +253,15 @@ function LivenessMobileContent() {
 
         {/* Face guide */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-48 h-64 border-4 border-dashed border-white/30 rounded-full" />
+          <div className="w-48 h-64 border-4 border-dashed border-ink/30 rounded-full" />
         </div>
 
         {/* Loading */}
         {status === 'loading' && (
           <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
             <div className="text-center">
-              <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-white">Starting camera...</p>
+              <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-ink">Starting camera...</p>
             </div>
           </div>
         )}
@@ -270,8 +270,8 @@ function LivenessMobileContent() {
         {showCountdown && (
           <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
             <div className="text-center">
-              <div className="text-8xl font-bold text-white mb-4">{countdown}</div>
-              <p className="text-gray-300 text-xl">Get ready...</p>
+              <div className="text-8xl font-bold text-ink mb-4">{countdown}</div>
+              <p className="text-ink-muted text-xl">Get ready...</p>
             </div>
           </div>
         )}
@@ -281,13 +281,13 @@ function LivenessMobileContent() {
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-6 pt-16">
             <div className="flex items-center justify-center gap-3 mb-4">
               <span className="text-4xl">{CHALLENGES[currentChallengeIndex].icon}</span>
-              <span className="text-white font-semibold text-xl">
+              <span className="text-ink font-semibold text-xl">
                 {CHALLENGES[currentChallengeIndex].instruction}
               </span>
             </div>
-            <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-surface-overlay rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-100"
+                className="h-full bg-gradient-to-r from-gold-500 to-gold-light-500 transition-all duration-100"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -296,7 +296,7 @@ function LivenessMobileContent() {
       </div>
 
       {/* Bottom */}
-      <div className="p-4 bg-gray-900 border-t border-gray-800">
+      <div className="p-4 bg-surface-sunken border-t border-border">
         {/* Progress dots */}
         <div className="flex justify-center gap-2 mb-4">
           {CHALLENGES.map((challenge, index) => (
@@ -304,10 +304,10 @@ function LivenessMobileContent() {
               key={challenge.id}
               className={`w-3 h-3 rounded-full transition-colors ${
                 completedChallenges.includes(challenge.id)
-                  ? 'bg-green-500'
+                  ? 'bg-success'
                   : index === currentChallengeIndex && status === 'active'
-                  ? 'bg-purple-500 animate-pulse'
-                  : 'bg-gray-600'
+                  ? 'bg-gold-500 animate-pulse'
+                  : 'bg-border-strong'
               }`}
             />
           ))}
@@ -317,7 +317,7 @@ function LivenessMobileContent() {
         {status === 'ready' && !showCountdown && (
           <button
             onClick={startCheck}
-            className="w-full py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg rounded-xl"
+            className="w-full py-4 bg-gradient-to-r from-gold-600 to-gold-light-600 text-ink font-bold text-lg rounded-xl"
           >
             Start Verification
           </button>
@@ -325,7 +325,7 @@ function LivenessMobileContent() {
 
         {/* Status text */}
         {status === 'active' && (
-          <p className="text-center text-gray-400">
+          <p className="text-center text-ink-muted">
             Challenge {currentChallengeIndex + 1} of {CHALLENGES.length}
           </p>
         )}
@@ -337,10 +337,10 @@ function LivenessMobileContent() {
 export default function LivenessMobilePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-white">Loading...</p>
+          <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-ink">Loading...</p>
         </div>
       </div>
     }>

@@ -2,16 +2,17 @@
 "use client";
 
 import { useChainConfig } from "@/hooks/useChainConfig";
+import { Triangle, Hexagon, Gem, CircleDot, Square, Circle, Coins, Wrench, Link2, type LucideIcon } from "lucide-react";
 
-const chainIcons: Record<number, string> = {
-  43113: "🔺", 43114: "🔺",
-  137: "🟣", 80002: "🟣",
-  1: "💎", 11155111: "💎",
-  42161: "🔵", 421614: "🔵",
-  8453: "🔷", 84532: "🔷",
-  10: "🔴",
-  56: "🟡",
-  31337: "🔧",
+const chainIcons: Record<number, LucideIcon> = {
+  43113: Triangle, 43114: Triangle,
+  137: Hexagon, 80002: Hexagon,
+  1: Gem, 11155111: Gem,
+  42161: CircleDot, 421614: CircleDot,
+  8453: Square, 84532: Square,
+  10: Circle,
+  56: Coins,
+  31337: Wrench,
 };
 
 interface ChainBadgeProps {
@@ -21,7 +22,7 @@ interface ChainBadgeProps {
 
 export function ChainBadge({ onClick, className = "" }: ChainBadgeProps) {
   const { chainId, chainName, isDeployed, isTestnet, isSwitching } = useChainConfig();
-  const icon = chainIcons[chainId] || "⛓️";
+  const ChainIcon = chainIcons[chainId] || Link2;
 
   return (
     <button
@@ -41,13 +42,13 @@ export function ChainBadge({ onClick, className = "" }: ChainBadgeProps) {
       {isSwitching ? (
         <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
       ) : (
-        <span className="text-sm">{icon}</span>
+        <ChainIcon className="w-4 h-4" />
       )}
       <span className="text-sm font-medium hidden sm:inline">
         {isSwitching ? "Switching..." : chainName}
       </span>
       <span className="text-sm font-medium sm:hidden">
-        {isSwitching ? "..." : icon}
+        {isSwitching ? "..." : null}
       </span>
       {!isSwitching && (
         <svg 

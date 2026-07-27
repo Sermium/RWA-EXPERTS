@@ -45,18 +45,18 @@ interface TokenizationManagementProps {
 
 // Chain Badge Component
 const ChainBadge = ({ chainId, showWarning = false }: { chainId?: number; showWarning?: boolean }) => {
-  if (!chainId) return <span className="text-gray-500 text-xs">No chain</span>;
+  if (!chainId) return <span className="text-ink-faint text-xs">No chain</span>;
   
   const chain = getChainById(chainId);
-  if (!chain) return <span className="text-gray-500 text-xs">Chain {chainId}</span>;
+  if (!chain) return <span className="text-ink-faint text-xs">Chain {chainId}</span>;
   
   return (
     <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs ${
       showWarning
-        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
+        ? 'bg-warning/20 text-warning border border-warning/30'
         : chain.testnet 
-          ? 'bg-yellow-500/20 text-yellow-400' 
-          : 'bg-green-500/20 text-green-400'
+          ? 'bg-warning/20 text-warning' 
+          : 'bg-success/20 text-success'
     }`}>
       {showWarning && <AlertCircle className="w-3 h-3" />}
       <Globe className="w-3 h-3" />
@@ -424,10 +424,10 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
   if (loading && applications.length === 0) {
     return (
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-8">
+      <div className="bg-surface border border-border rounded-xl p-8">
         <div className="flex items-center justify-center py-8">
-          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-          <span className="ml-3 text-gray-400">Loading tokenization applications...</span>
+          <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
+          <span className="ml-3 text-ink-muted">Loading tokenization applications...</span>
         </div>
       </div>
     );
@@ -436,20 +436,20 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
+      <div className="bg-surface border border-border rounded-xl p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h2 className="text-xl font-bold text-white flex items-center gap-2">
-              <Coins className="w-5 h-5 text-purple-400" />
+            <h2 className="text-xl font-bold text-ink flex items-center gap-2">
+              <Coins className="w-5 h-5 text-gold-400" />
               Tokenization Applications
             </h2>
-            <p className="text-gray-400 text-sm mt-1">
+            <p className="text-ink-muted text-sm mt-1">
               {totalCount} total applications • Review and manage asset tokenization requests
             </p>
             {chainName && (
-              <p className="text-gray-500 text-xs mt-1 flex items-center gap-1">
+              <p className="text-ink-faint text-xs mt-1 flex items-center gap-1">
                 <Globe className="w-3 h-3" />
-                Admin connected to: <span className="text-blue-400">{chainName}</span>
+                Admin connected to: <span className="text-gold-400">{chainName}</span>
               </p>
             )}
           </div>
@@ -457,7 +457,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
           <button
             onClick={() => fetchApplications()}
             disabled={loading}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 text-white rounded-lg transition flex items-center gap-2"
+            className="px-4 py-2 bg-surface-raised hover:bg-surface-overlay disabled:opacity-50 text-ink rounded-lg transition flex items-center gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Refresh
@@ -467,25 +467,25 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mt-6">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
             <input
               type="text"
               placeholder="Search by name, company, email, or wallet..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+              className="w-full pl-10 pr-4 py-2 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:border-gold-500 focus:outline-none"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-gray-400" />
+            <Filter className="w-4 h-4 text-ink-muted" />
             <select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 setPage(1);
               }}
-              className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+              className="px-4 py-2 bg-surface-raised border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
             >
               <option value="all">All Statuses</option>
               <option value="pending">Pending Review</option>
@@ -498,14 +498,14 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
           {/* Chain Filter */}
           <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-gray-400" />
+            <Globe className="w-4 h-4 text-ink-muted" />
             <select
               value={chainFilter}
               onChange={(e) => {
                 setChainFilter(e.target.value);
                 setPage(1);
               }}
-              className="px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+              className="px-4 py-2 bg-surface-raised border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
             >
               <option value="all">All Chains</option>
               {uniqueChains.map(chainId => {
@@ -523,28 +523,28 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 flex items-center gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-          <p className="text-red-400 flex-1">{error}</p>
-          <button onClick={() => setError('')} className="text-red-400 hover:text-red-300">
+        <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 flex items-center gap-3">
+          <AlertCircle className="w-5 h-5 text-danger flex-shrink-0" />
+          <p className="text-danger flex-1">{error}</p>
+          <button onClick={() => setError('')} className="text-danger hover:text-red-300">
             <X className="w-4 h-4" />
           </button>
         </div>
       )}
 
       {/* Applications List */}
-      <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
+      <div className="bg-surface border border-border rounded-xl overflow-hidden">
         {filteredApplications.length === 0 ? (
           <div className="p-8 text-center">
-            <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-400">No tokenization applications found</p>
+            <FileText className="w-12 h-12 text-ink-faint mx-auto mb-3" />
+            <p className="text-ink-muted">No tokenization applications found</p>
             {(statusFilter !== 'all' || chainFilter !== 'all') && (
               <button
                 onClick={() => {
                   setStatusFilter('all');
                   setChainFilter('all');
                 }}
-                className="mt-2 text-blue-400 hover:text-blue-300 text-sm"
+                className="mt-2 text-gold-400 hover:text-gold-300 text-sm"
               >
                 Clear filters
               </button>
@@ -553,32 +553,32 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-700/50">
+              <thead className="bg-surface-raised/50">
                 <tr>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Asset</th>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Chain</th>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Company</th>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Type</th>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Value</th>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Fee</th>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Add-ons</th>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Status</th>
-                  <th className="text-left px-4 py-3 text-gray-400 text-sm font-medium">Date</th>
-                  <th className="text-right px-4 py-3 text-gray-400 text-sm font-medium">Actions</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Asset</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Chain</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Company</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Type</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Value</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Fee</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Add-ons</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Status</th>
+                  <th className="text-left px-4 py-3 text-ink-muted text-sm font-medium">Date</th>
+                  <th className="text-right px-4 py-3 text-ink-muted text-sm font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-700">
+              <tbody className="divide-y divide-border">
                 {filteredApplications.map((app) => {
                   const statusConfig = TOKENIZATION_STATUS[app.status] || TOKENIZATION_STATUS.pending;
                   const isCompleted = app.status === 'completed';
                   const wrongChain = isWrongChain(app.chain_id);
                   
                   return (
-                    <tr key={app.id} className={`hover:bg-gray-700/30 transition ${wrongChain ? 'opacity-60' : ''}`}>
+                    <tr key={app.id} className={`hover:bg-surface-raised/30 transition ${wrongChain ? 'opacity-60' : ''}`}>
                       <td className="px-4 py-4">
                         <div>
-                          <p className="text-white font-medium">{app.asset_name}</p>
-                          <p className="text-gray-500 text-xs font-mono">
+                          <p className="text-ink font-medium">{app.asset_name}</p>
+                          <p className="text-ink-faint text-xs font-mono">
                             {app.user_address.slice(0, 6)}...{app.user_address.slice(-4)}
                           </p>
                         </div>
@@ -588,35 +588,35 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                       </td>
                       <td className="px-4 py-4">
                         <div>
-                          <p className="text-gray-300 text-sm">{app.legal_entity_name || app.company_name || 'N/A'}</p>
-                          <p className="text-gray-500 text-xs">{app.contact_name || 'N/A'}</p>
+                          <p className="text-ink-muted text-sm">{app.legal_entity_name || app.company_name || 'N/A'}</p>
+                          <p className="text-ink-faint text-xs">{app.contact_name || 'N/A'}</p>
                         </div>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-gray-300 text-sm">
+                        <span className="text-ink-muted text-sm">
                           {ASSET_TYPE_LABELS[app.asset_type] || app.asset_type}
                         </span>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-white text-sm">{formatCurrency(app.estimated_value)}</span>
+                        <span className="text-ink text-sm">{formatCurrency(app.estimated_value)}</span>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-green-400 text-sm font-medium">${app.fee_amount}</span>
+                        <span className="text-success text-sm font-medium">${app.fee_amount}</span>
                       </td>
                       <td className="px-4 py-4">
                         <div className="flex gap-1">
                           {app.needs_escrow && (
-                            <span className="px-1.5 py-0.5 bg-green-500/20 text-green-400 text-xs rounded" title="Escrow">
+                            <span className="px-1.5 py-0.5 bg-success/20 text-success text-xs rounded" title="Escrow">
                               <Lock className="w-3 h-3" />
                             </span>
                           )}
                           {app.needs_dividends && (
-                            <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 text-xs rounded" title="Dividends">
+                            <span className="px-1.5 py-0.5 bg-warning/20 text-warning text-xs rounded" title="Dividends">
                               <TrendingUp className="w-3 h-3" />
                             </span>
                           )}
                           {!app.needs_escrow && !app.needs_dividends && (
-                            <span className="text-gray-500 text-xs">Base</span>
+                            <span className="text-ink-faint text-xs">Base</span>
                           )}
                         </div>
                       </td>
@@ -627,7 +627,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                         </span>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-gray-400 text-xs">
+                        <span className="text-ink-muted text-xs">
                           {new Date(app.created_at).toLocaleDateString()}
                         </span>
                       </td>
@@ -637,7 +637,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                           {wrongChain ? (
                             <button
                               onClick={() => handleSwitchChain(app.chain_id!)}
-                              className="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
+                              className="px-3 py-1.5 bg-gold hover:bg-gold-dark text-ink text-sm rounded-lg transition inline-flex items-center gap-1"
                             >
                               <RefreshCw className="w-4 h-4" />
                               Switch to {getChainById(app.chain_id!)?.name}
@@ -650,7 +650,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                                   href={getProjectPageUrl(app.id)}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
+                                  className="px-3 py-1.5 bg-green-600 hover:bg-success text-ink text-sm rounded-lg transition inline-flex items-center gap-1"
                                 >
                                   <ExternalLink className="w-4 h-4" />
                                   View Live
@@ -662,7 +662,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                                   href={getProjectPageUrl(app.id)}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
+                                  className="px-3 py-1.5 bg-surface-overlay hover:bg-gray-500 text-ink text-sm rounded-lg transition inline-flex items-center gap-1"
                                   title="Preview project page"
                                 >
                                   <Eye className="w-4 h-4" />
@@ -672,7 +672,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                               {/* View Details button - opens modal */}
                               <button
                                 onClick={() => openApplicationDetails(app)}
-                                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white text-sm rounded-lg transition inline-flex items-center gap-1"
+                                className="px-3 py-1.5 bg-gold-600 hover:bg-gold-500 text-ink text-sm rounded-lg transition inline-flex items-center gap-1"
                               >
                                 <FileText className="w-4 h-4" />
                                 Details
@@ -691,22 +691,22 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-gray-700">
-            <p className="text-gray-400 text-sm">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+            <p className="text-ink-muted text-sm">
               Page {page} of {totalPages} ({totalCount} total)
             </p>
             <div className="flex gap-2">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="p-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition"
+                className="p-2 bg-surface-raised hover:bg-surface-overlay disabled:opacity-50 disabled:cursor-not-allowed text-ink rounded-lg transition"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="p-2 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg transition"
+                className="p-2 bg-surface-raised hover:bg-surface-overlay disabled:opacity-50 disabled:cursor-not-allowed text-ink rounded-lg transition"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -717,13 +717,13 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
       {/* Application Details Modal */}
       {selectedApp && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface border border-border rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
             {/* Modal Header */}
-            <div className="flex items-start justify-between p-6 border-b border-gray-700">
+            <div className="flex items-start justify-between p-6 border-b border-border">
               <div className="flex-1">
                 <div className="flex items-center gap-3 flex-wrap">
-                  <h3 className="text-xl font-bold text-white">{selectedApp.asset_name}</h3>
+                  <h3 className="text-xl font-bold text-ink">{selectedApp.asset_name}</h3>
                   <ChainBadge chainId={selectedApp.chain_id} showWarning={isWrongChain(selectedApp.chain_id)} />
                   {/* View Live / Preview button in header - always accessible */}
                   <a
@@ -732,21 +732,21 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     rel="noopener noreferrer"
                     className={`px-3 py-1 text-sm rounded-lg transition inline-flex items-center gap-1 ${
                       selectedApp.status === 'completed'
-                        ? 'bg-green-600 hover:bg-green-500 text-white'
-                        : 'bg-gray-600 hover:bg-gray-500 text-gray-200'
+                        ? 'bg-green-600 hover:bg-success text-ink'
+                        : 'bg-surface-overlay hover:bg-gray-500 text-ink-muted'
                     }`}
                   >
                     <ExternalLink className="w-3 h-3" />
                     {selectedApp.status === 'completed' ? 'View Live' : 'Preview'}
                   </a>
                 </div>
-                <p className="text-gray-400 text-sm mt-1">
+                <p className="text-ink-muted text-sm mt-1">
                   ID: {selectedApp.id} • Submitted {formatDate(selectedApp.created_at)}
                 </p>
               </div>
               <button
                 onClick={() => setSelectedApp(null)}
-                className="p-2 hover:bg-gray-700 rounded-lg transition text-gray-400 hover:text-white"
+                className="p-2 hover:bg-surface-raised rounded-lg transition text-ink-muted hover:text-ink"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -754,19 +754,19 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
             {/* Wrong Chain Warning Banner */}
             {isWrongChain(selectedApp.chain_id) && (
-              <div className="mx-6 mt-4 p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-lg flex items-center justify-between">
+              <div className="mx-6 mt-4 p-4 bg-warning/10 border border-warning/30 rounded-lg flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <AlertCircle className="w-5 h-5 text-yellow-400" />
+                  <AlertCircle className="w-5 h-5 text-warning" />
                   <div>
-                    <p className="text-yellow-400 font-medium">Wrong Network</p>
-                    <p className="text-yellow-400/70 text-sm">
+                    <p className="text-warning font-medium">Wrong Network</p>
+                    <p className="text-warning/70 text-sm">
                       Switch to {getChainById(selectedApp.chain_id!)?.name} to manage this application
                     </p>
                   </div>
                 </div>
                 <button
                   onClick={() => handleSwitchChain(selectedApp.chain_id!)}
-                  className="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg transition flex items-center gap-2"
+                  className="px-4 py-2 bg-gold hover:bg-gold-dark text-ink rounded-lg transition flex items-center gap-2"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Switch Network
@@ -789,33 +789,33 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                 })()}
 
                 {selectedApp.needs_escrow && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-500/10 text-green-400 text-sm rounded-lg border border-green-500/30">
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-success/10 text-success text-sm rounded-lg border border-success/30">
                     <Lock className="w-4 h-4" /> Trade Escrow
                   </span>
                 )}
                 {selectedApp.needs_dividends && (
-                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-yellow-500/10 text-yellow-400 text-sm rounded-lg border border-yellow-500/30">
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-warning/10 text-warning text-sm rounded-lg border border-warning/30">
                     <TrendingUp className="w-4 h-4" /> Dividend Distributor
                   </span>
                 )}
               </div>
 
               {/* On-Chain Approval Status */}
-              <div className={`rounded-lg p-4 ${isWrongChain(selectedApp.chain_id) ? 'bg-gray-700/50 border border-gray-600' : 'bg-purple-500/10 border border-purple-500/30'}`}>
-                <h4 className={`font-medium mb-3 flex items-center gap-2 ${isWrongChain(selectedApp.chain_id) ? 'text-gray-400' : 'text-purple-400'}`}>
+              <div className={`rounded-lg p-4 ${isWrongChain(selectedApp.chain_id) ? 'bg-surface-raised/50 border border-border-strong' : 'bg-gold-500/10 border border-gold-500/30'}`}>
+                <h4 className={`font-medium mb-3 flex items-center gap-2 ${isWrongChain(selectedApp.chain_id) ? 'text-ink-muted' : 'text-gold-400'}`}>
                   <Shield className="w-4 h-4" />
                   On-Chain Deployer Status
-                  <span className="text-xs text-gray-400 ml-2">
+                  <span className="text-xs text-ink-muted ml-2">
                     ({getChainById(selectedApp.chain_id!)?.name || 'Unknown'})
                   </span>
                 </h4>
 
                 {isWrongChain(selectedApp.chain_id) ? (
-                  <p className="text-gray-500 text-sm">
+                  <p className="text-ink-faint text-sm">
                     Switch to {getChainById(selectedApp.chain_id!)?.name} to view and manage on-chain status
                   </p>
                 ) : onChainStatus.checking ? (
-                  <div className="flex items-center gap-2 text-gray-400">
+                  <div className="flex items-center gap-2 text-ink-muted">
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Checking on-chain status...
                   </div>
@@ -823,36 +823,36 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <span className="text-gray-400 text-sm">Approval Required:</span>
+                        <span className="text-ink-muted text-sm">Approval Required:</span>
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
                           onChainStatus.requiresApproval
-                            ? 'bg-yellow-500/20 text-yellow-400'
-                            : 'bg-gray-500/20 text-gray-400'
+                            ? 'bg-warning/20 text-warning'
+                            : 'bg-gray-500/20 text-ink-muted'
                         }`}>
                           {onChainStatus.requiresApproval ? 'Yes' : 'No (Open Deployment)'}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-3">
-                        <span className="text-gray-400 text-sm">Deployer Approved:</span>
+                        <span className="text-ink-muted text-sm">Deployer Approved:</span>
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
                           onChainStatus.isApproved
-                            ? 'bg-green-500/20 text-green-400'
-                            : 'bg-red-500/20 text-red-400'
-                        }`}>
-                          {onChainStatus.isApproved ? 'Yes ✓' : 'No ✗'}
+                            ? 'bg-success/20 text-success'
+                            : 'bg-danger/20 text-danger'
+                        } inline-flex items-center gap-1`}>
+                          {onChainStatus.isApproved ? <><CheckCircle2 className="w-3 h-3" /> Yes</> : <><XCircle className="w-3 h-3" /> No</>}
                         </span>
                       </div>
                     </div>
 
                     {/* Manual On-Chain Actions */}
                     {onChainStatus.requiresApproval && (
-                      <div className="flex gap-2 pt-2 border-t border-purple-500/20">
+                      <div className="flex gap-2 pt-2 border-t border-gold-500/20">
                         {!onChainStatus.isApproved ? (
                           <button
                             onClick={handleManualOnChainApproval}
                             disabled={updating}
-                            className="px-3 py-1.5 bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white text-sm rounded-lg transition flex items-center gap-1"
+                            className="px-3 py-1.5 bg-green-600 hover:bg-success disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
                           >
                             {updating ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
                             Approve On-Chain
@@ -861,7 +861,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                           <button
                             onClick={handleManualOnChainRevoke}
                             disabled={updating}
-                            className="px-3 py-1.5 bg-red-600 hover:bg-red-500 disabled:opacity-50 text-white text-sm rounded-lg transition flex items-center gap-1"
+                            className="px-3 py-1.5 bg-red-600 hover:bg-danger disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
                           >
                             {updating ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
                             Revoke On-Chain
@@ -870,7 +870,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                         <button
                           onClick={() => checkOnChainApproval(selectedApp.user_address, selectedApp.chain_id)}
                           disabled={onChainStatus.checking}
-                          className="px-3 py-1.5 bg-gray-600 hover:bg-gray-500 disabled:opacity-50 text-white text-sm rounded-lg transition flex items-center gap-1"
+                          className="px-3 py-1.5 bg-surface-overlay hover:bg-gray-500 disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
                         >
                           <RefreshCw className={`w-3 h-3 ${onChainStatus.checking ? 'animate-spin' : ''}`} />
                           Refresh
@@ -879,9 +879,10 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     )}
 
                     {selectedApp.status === 'approved' && onChainStatus.requiresApproval && !onChainStatus.isApproved && (
-                      <div className="mt-2 p-2 bg-yellow-500/10 border border-yellow-500/30 rounded text-yellow-400 text-xs">
-                        ⚠️ Application is approved in database but deployer is NOT approved on-chain.
-                        User will not be able to deploy until on-chain approval is granted.
+                      <div className="mt-2 p-2 bg-warning/10 border border-warning/30 rounded text-warning text-xs flex items-start gap-1.5">
+                        <AlertCircle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" />
+                        <span>Application is approved in database but deployer is NOT approved on-chain.
+                        User will not be able to deploy until on-chain approval is granted.</span>
                       </div>
                     )}
                   </div>
@@ -889,56 +890,56 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               </div>
 
               {/* Company Info */}
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-blue-400" />
+              <div className="bg-surface-raised/50 rounded-lg p-4">
+                <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-gold-400" />
                   Company & Contact Information
                 </h4>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-400">Company/Entity:</span>
-                    <span className="text-white ml-2">{selectedApp.legal_entity_name || selectedApp.company_name || 'N/A'}</span>
+                    <span className="text-ink-muted">Company/Entity:</span>
+                    <span className="text-ink ml-2">{selectedApp.legal_entity_name || selectedApp.company_name || 'N/A'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400">Contact Name:</span>
-                    <span className="text-white ml-2">{selectedApp.contact_name || 'N/A'}</span>
+                    <span className="text-ink-muted">Contact Name:</span>
+                    <span className="text-ink ml-2">{selectedApp.contact_name || 'N/A'}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400">Email:</span>
+                    <span className="text-ink-muted">Email:</span>
                     {(selectedApp.contact_email || selectedApp.email) ? (
-                      <a href={`mailto:${selectedApp.contact_email || selectedApp.email}`} className="text-blue-400 ml-2 hover:underline">
+                      <a href={`mailto:${selectedApp.contact_email || selectedApp.email}`} className="text-gold-400 ml-2 hover:underline">
                         {selectedApp.contact_email || selectedApp.email}
                       </a>
                     ) : (
-                      <span className="text-gray-500 ml-2">N/A</span>
+                      <span className="text-ink-faint ml-2">N/A</span>
                     )}
                   </div>
                   <div>
-                    <span className="text-gray-400">Phone:</span>
-                    <span className="text-white ml-2">{selectedApp.contact_phone || selectedApp.phone || 'N/A'}</span>
+                    <span className="text-ink-muted">Phone:</span>
+                    <span className="text-ink ml-2">{selectedApp.contact_phone || selectedApp.phone || 'N/A'}</span>
                   </div>
                   {selectedApp.contact_telegram && (
                     <div>
-                      <span className="text-gray-400">Telegram:</span>
-                      <span className="text-white ml-2">{selectedApp.contact_telegram}</span>
+                      <span className="text-ink-muted">Telegram:</span>
+                      <span className="text-ink ml-2">{selectedApp.contact_telegram}</span>
                     </div>
                   )}
                   {selectedApp.website && (
                     <div className="md:col-span-2">
-                      <span className="text-gray-400">Website:</span>
+                      <span className="text-ink-muted">Website:</span>
                       <a
                         href={selectedApp.website.startsWith('http') ? selectedApp.website : `https://${selectedApp.website}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 ml-2 hover:underline inline-flex items-center gap-1"
+                        className="text-gold-400 ml-2 hover:underline inline-flex items-center gap-1"
                       >
                         {selectedApp.website} <ExternalLink className="w-3 h-3" />
                       </a>
                     </div>
                   )}
                   <div className="md:col-span-2">
-                    <span className="text-gray-400">Wallet Address:</span>
-                    <span className="text-white ml-2 font-mono text-xs bg-gray-600 px-2 py-1 rounded">
+                    <span className="text-ink-muted">Wallet Address:</span>
+                    <span className="text-ink ml-2 font-mono text-xs bg-surface-overlay px-2 py-1 rounded">
                       {selectedApp.user_address}
                     </span>
                   </div>
@@ -946,40 +947,40 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               </div>
 
               {/* Fee & Payment Info */}
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-green-400" />
+              <div className="bg-surface-raised/50 rounded-lg p-4">
+                <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-success" />
                   Fee & Payment Details
                 </h4>
                 <div className="grid md:grid-cols-2 gap-4 text-sm">
                   <div>
-                    <span className="text-gray-400">Total Fee:</span>
-                    <span className="text-green-400 ml-2 font-semibold">${selectedApp.fee_amount} {selectedApp.fee_currency}</span>
+                    <span className="text-ink-muted">Total Fee:</span>
+                    <span className="text-success ml-2 font-semibold">${selectedApp.fee_amount} {selectedApp.fee_currency}</span>
                   </div>
                   <div>
-                    <span className="text-gray-400">Original Fee Paid:</span>
-                    <span className="text-white ml-2">${selectedApp.original_fee_paid || selectedApp.fee_amount || 0}</span>
+                    <span className="text-ink-muted">Original Fee Paid:</span>
+                    <span className="text-ink ml-2">${selectedApp.original_fee_paid || selectedApp.fee_amount || 0}</span>
                   </div>
                   {selectedApp.additional_fee_required && (
                     <div>
-                      <span className="text-gray-400">Additional Fee Required:</span>
-                      <span className="text-amber-400 ml-2">${selectedApp.additional_fee_required}</span>
+                      <span className="text-ink-muted">Additional Fee Required:</span>
+                      <span className="text-warning ml-2">${selectedApp.additional_fee_required}</span>
                     </div>
                   )}
                   {selectedApp.total_fee_paid && (
                     <div>
-                      <span className="text-gray-400">Total Paid:</span>
-                      <span className="text-green-400 ml-2 font-semibold">${selectedApp.total_fee_paid}</span>
+                      <span className="text-ink-muted">Total Paid:</span>
+                      <span className="text-success ml-2 font-semibold">${selectedApp.total_fee_paid}</span>
                     </div>
                   )}
                   {selectedApp.fee_tx_hash && (
                     <div className="md:col-span-2">
-                      <span className="text-gray-400">Payment TX:</span>
+                      <span className="text-ink-muted">Payment TX:</span>
                       <a
                         href={`${getExplorerUrl(selectedApp.chain_id)}/tx/${selectedApp.fee_tx_hash}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 ml-2 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                        className="text-gold-400 ml-2 font-mono text-xs hover:underline inline-flex items-center gap-1"
                       >
                         {selectedApp.fee_tx_hash.slice(0, 20)}...
                         <ExternalLink className="w-3 h-3" />
@@ -988,46 +989,46 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                   )}
                   {selectedApp.fee_paid_at && (
                     <div>
-                      <span className="text-gray-400">Paid At:</span>
-                      <span className="text-white ml-2">{formatDate(selectedApp.fee_paid_at)}</span>
+                      <span className="text-ink-muted">Paid At:</span>
+                      <span className="text-ink ml-2">{formatDate(selectedApp.fee_paid_at)}</span>
                     </div>
                   )}
                 </div>
               </div>
 
               {/* Asset Info */}
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-purple-400" />
+              <div className="bg-surface-raised/50 rounded-lg p-4">
+                <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-gold-400" />
                   Asset Details
                 </h4>
                 <div className="space-y-3 text-sm">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <span className="text-gray-400">Asset Type:</span>
-                      <span className="text-white ml-2">{ASSET_TYPE_LABELS[selectedApp.asset_type] || selectedApp.asset_type}</span>
+                      <span className="text-ink-muted">Asset Type:</span>
+                      <span className="text-ink ml-2">{ASSET_TYPE_LABELS[selectedApp.asset_type] || selectedApp.asset_type}</span>
                     </div>
                     <div>
-                      <span className="text-gray-400">Estimated Value:</span>
-                      <span className="text-white ml-2 font-semibold">{formatCurrency(selectedApp.estimated_value)}</span>
+                      <span className="text-ink-muted">Estimated Value:</span>
+                      <span className="text-ink ml-2 font-semibold">{formatCurrency(selectedApp.estimated_value)}</span>
                     </div>
                     <div>
-                      <span className="text-gray-400">Use Case:</span>
-                      <span className="text-white ml-2">{selectedApp.use_case?.replace(/_/g, ' ') || 'N/A'}</span>
+                      <span className="text-ink-muted">Use Case:</span>
+                      <span className="text-ink ml-2">{selectedApp.use_case?.replace(/_/g, ' ') || 'N/A'}</span>
                     </div>
                     <div>
-                      <span className="text-gray-400">Fee:</span>
-                      <span className="text-green-400 ml-2 font-semibold">${selectedApp.fee_amount} {selectedApp.fee_currency}</span>
+                      <span className="text-ink-muted">Fee:</span>
+                      <span className="text-success ml-2 font-semibold">${selectedApp.fee_amount} {selectedApp.fee_currency}</span>
                     </div>
                   </div>
                   <div>
-                    <span className="text-gray-400 block mb-1">Description:</span>
-                    <p className="text-white bg-gray-600/50 p-3 rounded">{selectedApp.asset_description}</p>
+                    <span className="text-ink-muted block mb-1">Description:</span>
+                    <p className="text-ink bg-surface-overlay/50 p-3 rounded">{selectedApp.asset_description}</p>
                   </div>
                   {selectedApp.additional_info && (
                     <div>
-                      <span className="text-gray-400 block mb-1">Additional Info:</span>
-                      <p className="text-white bg-gray-600/50 p-3 rounded">{selectedApp.additional_info}</p>
+                      <span className="text-ink-muted block mb-1">Additional Info:</span>
+                      <p className="text-ink bg-surface-overlay/50 p-3 rounded">{selectedApp.additional_info}</p>
                     </div>
                   )}
                 </div>
@@ -1035,23 +1036,23 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
               {/* Token Preferences */}
               {(selectedApp.token_name || selectedApp.token_symbol || selectedApp.total_supply) && (
-                <div className="bg-gray-700/50 rounded-lg p-4">
-                  <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-                    <Coins className="w-4 h-4 text-yellow-400" />
+                <div className="bg-surface-raised/50 rounded-lg p-4">
+                  <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
+                    <Coins className="w-4 h-4 text-warning" />
                     Token Preferences
                   </h4>
                   <div className="grid md:grid-cols-3 gap-4 text-sm">
                     <div>
-                      <span className="text-gray-400">Token Name:</span>
-                      <span className="text-white ml-2">{selectedApp.token_name || 'TBD'}</span>
+                      <span className="text-ink-muted">Token Name:</span>
+                      <span className="text-ink ml-2">{selectedApp.token_name || 'TBD'}</span>
                     </div>
                     <div>
-                      <span className="text-gray-400">Symbol:</span>
-                      <span className="text-white ml-2 font-mono">{selectedApp.token_symbol || 'TBD'}</span>
+                      <span className="text-ink-muted">Symbol:</span>
+                      <span className="text-ink ml-2 font-mono">{selectedApp.token_symbol || 'TBD'}</span>
                     </div>
                     <div>
-                      <span className="text-gray-400">Total Supply:</span>
-                      <span className="text-white ml-2">{selectedApp.total_supply || 'TBD'}</span>
+                      <span className="text-ink-muted">Total Supply:</span>
+                      <span className="text-ink ml-2">{selectedApp.total_supply || 'TBD'}</span>
                     </div>
                   </div>
                 </div>
@@ -1072,8 +1073,8 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                 if (docs.length === 0) return null;
 
                 return (
-                  <div className="bg-gray-700/50 rounded-lg p-4">
-                    <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+                  <div className="bg-surface-raised/50 rounded-lg p-4">
+                    <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
                       <FileText className="w-4 h-4 text-cyan-400" />
                       Documents ({docs.length})
                     </h4>
@@ -1084,14 +1085,14 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                           href={doc.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-3 p-3 bg-gray-600/50 rounded-lg hover:bg-gray-600 transition group"
+                          className="flex items-center gap-3 p-3 bg-surface-overlay/50 rounded-lg hover:bg-surface-overlay transition group"
                         >
-                          <FileText className="w-5 h-5 text-gray-400 group-hover:text-white" />
+                          <FileText className="w-5 h-5 text-ink-muted group-hover:text-ink" />
                           <div className="flex-1 min-w-0">
-                            <p className="text-white text-sm truncate">{doc.name}</p>
-                            <p className="text-gray-500 text-xs">{doc.type} • {((doc.size || 0) / 1024).toFixed(1)} KB</p>
+                            <p className="text-ink text-sm truncate">{doc.name}</p>
+                            <p className="text-ink-faint text-xs">{doc.type} • {((doc.size || 0) / 1024).toFixed(1)} KB</p>
                           </div>
-                          <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                          <ExternalLink className="w-4 h-4 text-ink-muted group-hover:text-ink" />
                         </a>
                       ))}
                     </div>
@@ -1101,8 +1102,8 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
 
               {/* Deployment Info */}
               {selectedApp.status === 'completed' && (selectedApp.token_address || selectedApp.nft_address) && (
-                <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-                  <h4 className="text-green-400 font-medium mb-3 flex items-center gap-2">
+                <div className="bg-success/10 border border-success/30 rounded-lg p-4">
+                  <h4 className="text-success font-medium mb-3 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4" />
                     Deployment Information
                     <ChainBadge chainId={selectedApp.chain_id} />
@@ -1110,12 +1111,12 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                   <div className="space-y-2 text-sm">
                     {selectedApp.token_address && (
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-400">Token Address:</span>
+                        <span className="text-ink-muted">Token Address:</span>
                         <a
                           href={`${getExplorerUrl(selectedApp.chain_id)}/address/${selectedApp.token_address}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                          className="text-gold-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
                         >
                           {selectedApp.token_address}
                           <ExternalLink className="w-3 h-3" />
@@ -1124,12 +1125,12 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     )}
                     {selectedApp.nft_address && (
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-400">NFT Address:</span>
+                        <span className="text-ink-muted">NFT Address:</span>
                         <a
                           href={`${getExplorerUrl(selectedApp.chain_id)}/address/${selectedApp.nft_address}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                          className="text-gold-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
                         >
                           {selectedApp.nft_address}
                           <ExternalLink className="w-3 h-3" />
@@ -1138,12 +1139,12 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     )}
                     {selectedApp.escrow_address && (
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-400">Escrow Address:</span>
+                        <span className="text-ink-muted">Escrow Address:</span>
                         <a
                           href={`${getExplorerUrl(selectedApp.chain_id)}/address/${selectedApp.escrow_address}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                          className="text-gold-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
                         >
                           {selectedApp.escrow_address}
                           <ExternalLink className="w-3 h-3" />
@@ -1152,12 +1153,12 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     )}
                     {selectedApp.deployment_tx_hash && (
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-400">TX Hash:</span>
+                        <span className="text-ink-muted">TX Hash:</span>
                         <a
                           href={`${getExplorerUrl(selectedApp.chain_id)}/tx/${selectedApp.deployment_tx_hash}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-blue-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
+                          className="text-gold-400 font-mono text-xs hover:underline inline-flex items-center gap-1"
                         >
                           {selectedApp.deployment_tx_hash}
                           <ExternalLink className="w-3 h-3" />
@@ -1169,12 +1170,12 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               )}
 
               {/* Admin Actions */}
-              <div className={`rounded-lg p-4 ${isWrongChain(selectedApp.chain_id) ? 'bg-gray-700/50 border border-gray-600' : 'bg-blue-500/10 border border-blue-500/30'}`}>
-                <h4 className={`font-medium mb-4 flex items-center gap-2 ${isWrongChain(selectedApp.chain_id) ? 'text-gray-400' : 'text-blue-400'}`}>
+              <div className={`rounded-lg p-4 ${isWrongChain(selectedApp.chain_id) ? 'bg-surface-raised/50 border border-border-strong' : 'bg-gold-500/10 border border-gold-500/30'}`}>
+                <h4 className={`font-medium mb-4 flex items-center gap-2 ${isWrongChain(selectedApp.chain_id) ? 'text-ink-muted' : 'text-gold-400'}`}>
                   <MessageSquare className="w-4 h-4" />
                   Admin Actions
                   {isWrongChain(selectedApp.chain_id) && (
-                    <span className="text-xs text-yellow-400 ml-2">(Switch network to enable)</span>
+                    <span className="text-xs text-warning ml-2">(Switch network to enable)</span>
                   )}
                 </h4>
 
@@ -1182,36 +1183,36 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                   <div className="grid md:grid-cols-2 gap-4">
                     {/* Status Update */}
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">Update Status</label>
+                      <label className="block text-sm text-ink-muted mb-1">Update Status</label>
                       <select
                         value={newStatus}
                         onChange={(e) => setNewStatus(e.target.value)}
                         disabled={isWrongChain(selectedApp.chain_id)}
-                        className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full px-4 py-2 bg-surface-raised border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <option value="">Select new status...</option>
                         <option value="pending" disabled={selectedApp.status === 'pending'}>
                           {selectedApp.status === 'pending' ? '• Current: Pending Review' : 'Pending Review'}
                         </option>
                         <option value="approved" disabled={selectedApp.status === 'approved'}>
-                          {selectedApp.status === 'approved' ? '• Current: Approved' : '✓ Approve (Ready to Deploy)'}
+                          {selectedApp.status === 'approved' ? '• Current: Approved' : 'Approve (Ready to Deploy)'}
                         </option>
                         <option value="rejected" disabled={selectedApp.status === 'rejected'}>
-                          {selectedApp.status === 'rejected' ? '• Current: Rejected' : '✗ Reject (Request Changes)'}
+                          {selectedApp.status === 'rejected' ? '• Current: Rejected' : 'Reject (Request Changes)'}
                         </option>
                       </select>
                     </div>
                     {/* Fee Amount - Now read-only since already paid */}
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">Fee Paid (USD)</label>
-                      <div className="px-4 py-2 bg-gray-600 border border-gray-600 rounded-lg text-green-400 font-medium">
+                      <label className="block text-sm text-ink-muted mb-1">Fee Paid (USD)</label>
+                      <div className="px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-success font-medium">
                         ${selectedApp.fee_amount} {selectedApp.fee_currency}
                       </div>
                     </div>
                   </div>
                   {/* Admin Notes */}
                   <div>
-                    <label className="block text-sm text-gray-400 mb-1">
+                    <label className="block text-sm text-ink-muted mb-1">
                       {newStatus === 'rejected' ? 'Rejection Reason (required)' : 'Admin Notes (internal)'}
                     </label>
                     <textarea
@@ -1219,10 +1220,10 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                       onChange={(e) => setAdminNotes(e.target.value)}
                       disabled={isWrongChain(selectedApp.chain_id)}
                       rows={3}
-                      className={`w-full px-4 py-2 bg-gray-700 border rounded-lg text-white focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
+                      className={`w-full px-4 py-2 bg-surface-raised border rounded-lg text-ink focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
                         newStatus === 'rejected' && !adminNotes.trim()
-                          ? 'border-red-500 focus:border-red-400'
-                          : 'border-gray-600 focus:border-blue-500'
+                          ? 'border-danger focus:border-red-400'
+                          : 'border-border-strong focus:border-gold-500'
                       }`}
                       placeholder={
                         newStatus === 'rejected'
@@ -1231,7 +1232,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                       }
                     />
                     {newStatus === 'rejected' && !adminNotes.trim() && (
-                      <p className="text-red-400 text-xs mt-1">Rejection reason is required</p>
+                      <p className="text-danger text-xs mt-1">Rejection reason is required</p>
                     )}
                   </div>
                 </div>
@@ -1239,7 +1240,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
             </div>
 
             {/* Modal Footer */}
-            <div className="flex items-center justify-between gap-3 p-6 border-t border-gray-700 bg-gray-800">
+            <div className="flex items-center justify-between gap-3 p-6 border-t border-border bg-surface">
               {/* Left side */}
               <div className="flex items-center gap-3">
                 {selectedApp.status === 'completed' && (
@@ -1247,7 +1248,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     href={getProjectPageUrl(selectedApp.id)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition inline-flex items-center gap-2"
+                    className="px-4 py-2 bg-green-600 hover:bg-success text-ink rounded-lg transition inline-flex items-center gap-2"
                   >
                     <ExternalLink className="w-4 h-4" />
                     View Live Project
@@ -1256,7 +1257,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                 {isWrongChain(selectedApp.chain_id) && (
                   <button
                     onClick={() => handleSwitchChain(selectedApp.chain_id!)}
-                    className="px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg transition flex items-center gap-2"
+                    className="px-4 py-2 bg-gold hover:bg-gold-dark text-ink rounded-lg transition flex items-center gap-2"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Switch to {getChainById(selectedApp.chain_id!)?.name}
@@ -1268,14 +1269,14 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
               <div className="flex gap-3">
                 <button
                   onClick={() => setSelectedApp(null)}
-                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+                  className="px-4 py-2 bg-surface-raised hover:bg-surface-overlay text-ink rounded-lg transition"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleUpdateApplication}
                   disabled={updating || isWrongChain(selectedApp.chain_id) || !newStatus || newStatus === selectedApp.status || (newStatus === 'rejected' && !adminNotes.trim())}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition flex items-center gap-2"
+                  className="px-6 py-2 bg-gold-600 hover:bg-gold-500 disabled:opacity-50 disabled:cursor-not-allowed text-ink font-medium rounded-lg transition flex items-center gap-2"
                 >
                   {updating ? (
                     <>

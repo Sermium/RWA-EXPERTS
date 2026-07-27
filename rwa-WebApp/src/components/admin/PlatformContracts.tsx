@@ -116,13 +116,13 @@ export default function PlatformContracts() {
   if (!isDeployed || !contracts) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white">Platform Contracts</h2>
-        <div className="bg-yellow-900/20 border border-yellow-600 rounded-xl p-6">
+        <h2 className="text-2xl font-bold text-ink">Platform Contracts</h2>
+        <div className="bg-warning/10 border border-warning rounded-xl p-6">
           <div className="flex items-center gap-3">
             <span className="text-2xl">âš ï¸</span>
             <div>
-              <h3 className="text-lg font-semibold text-yellow-400">Not Deployed</h3>
-              <p className="text-gray-400">
+              <h3 className="text-lg font-semibold text-warning">Not Deployed</h3>
+              <p className="text-ink-muted">
                 Platform contracts are not deployed on {chainName} (Chain ID: {chainId}).
               </p>
             </div>
@@ -135,11 +135,11 @@ export default function PlatformContracts() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white">Platform Contracts</h2>
-        <div className="bg-gray-800 rounded-xl p-6">
+        <h2 className="text-2xl font-bold text-ink">Platform Contracts</h2>
+        <div className="bg-surface rounded-xl p-6">
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full" />
-            <span className="ml-3 text-gray-400">Loading contracts for {chainName}...</span>
+            <div className="animate-spin w-6 h-6 border-2 border-gold-500 border-t-transparent rounded-full" />
+            <span className="ml-3 text-ink-muted">Loading contracts for {chainName}...</span>
           </div>
         </div>
       </div>
@@ -158,23 +158,23 @@ export default function PlatformContracts() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Platform Contracts</h2>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg">
-          <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-          <span className="text-sm text-gray-300">{chainName}</span>
+        <h2 className="text-2xl font-bold text-ink">Platform Contracts</h2>
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-surface rounded-lg">
+          <span className="w-2 h-2 bg-success rounded-full"></span>
+          <span className="text-sm text-ink-muted">{chainName}</span>
         </div>
       </div>
 
       {/* Core Contracts */}
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-700 bg-gradient-to-r from-blue-500/10 to-purple-500/10">
+      <div className="bg-surface rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-gold-500/10 to-gold-light-500/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-gold-500/20 flex items-center justify-center">
               <span className="text-xl">ðŸ›ï¸</span>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">Core Contracts</h3>
-              <p className="text-gray-400 text-sm">Main platform infrastructure</p>
+              <h3 className="text-lg font-semibold text-ink">Core Contracts</h3>
+              <p className="text-ink-muted text-sm">Main platform infrastructure</p>
             </div>
           </div>
         </div>
@@ -225,15 +225,15 @@ export default function PlatformContracts() {
       </div>
 
       {/* Implementation Contracts */}
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-700 bg-gradient-to-r from-purple-500/10 to-pink-500/10">
+      <div className="bg-surface rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-gold-500/10 to-pink-500/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-gold-500/20 flex items-center justify-center">
               <span className="text-xl">ðŸ”§</span>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">Implementation Contracts</h3>
-              <p className="text-gray-400 text-sm">Template contracts for project deployments</p>
+              <h3 className="text-lg font-semibold text-ink">Implementation Contracts</h3>
+              <p className="text-ink-muted text-sm">Template contracts for project deployments</p>
             </div>
           </div>
         </div>
@@ -278,15 +278,15 @@ export default function PlatformContracts() {
       </div>
 
       {/* Compliance Modules */}
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-700 bg-gradient-to-r from-orange-500/10 to-amber-500/10">
+      <div className="bg-surface rounded-xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-orange-500/10 to-amber-500/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center">
               <span className="text-xl">ðŸ›¡ï¸</span>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">Shared Compliance Modules</h3>
-              <p className="text-gray-400 text-sm">Global compliance modules</p>
+              <h3 className="text-lg font-semibold text-ink">Shared Compliance Modules</h3>
+              <p className="text-ink-muted text-sm">Global compliance modules</p>
             </div>
           </div>
         </div>
@@ -308,15 +308,15 @@ export default function PlatformContracts() {
 
       {/* Payment Tokens */}
       {tokens && (
-        <div className="bg-gray-800 rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-700 bg-gradient-to-r from-cyan-500/10 to-teal-500/10">
+        <div className="bg-surface rounded-xl overflow-hidden">
+          <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-cyan-500/10 to-teal-500/10">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
                 <span className="text-xl">ðŸ’°</span>
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-white">Payment Tokens</h3>
-                <p className="text-gray-400 text-sm">Accepted payment tokens on {chainName}</p>
+                <h3 className="text-lg font-semibold text-ink">Payment Tokens</h3>
+                <p className="text-ink-muted text-sm">Accepted payment tokens on {chainName}</p>
               </div>
             </div>
           </div>
@@ -329,32 +329,32 @@ export default function PlatformContracts() {
 
       {/* Factory Configuration */}
       {factoryConfig && (
-        <div className="bg-gray-800 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Factory Configuration</h3>
+        <div className="bg-surface rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-ink mb-4">Factory Configuration</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-700/50 rounded-lg p-4">
-              <p className="text-gray-400 text-sm">Platform Fee</p>
-              <p className="text-white text-xl font-semibold">{factoryConfig.platformFee ?? 'N/A'}%</p>
+            <div className="bg-surface-overlay/50 rounded-lg p-4">
+              <p className="text-ink-muted text-sm">Platform Fee</p>
+              <p className="text-ink text-xl font-semibold">{factoryConfig.platformFee ?? 'N/A'}%</p>
             </div>
-            <div className="bg-gray-700/50 rounded-lg p-4">
-              <p className="text-gray-400 text-sm">Creation Fee</p>
-              <p className="text-white text-xl font-semibold">
+            <div className="bg-surface-overlay/50 rounded-lg p-4">
+              <p className="text-ink-muted text-sm">Creation Fee</p>
+              <p className="text-ink text-xl font-semibold">
                 {factoryConfig.creationFee ?? 'N/A'} {nativeCurrency}
               </p>
             </div>
-            <div className="bg-gray-700/50 rounded-lg p-4">
-              <p className="text-gray-400 text-sm">Fee Recipient</p>
+            <div className="bg-surface-overlay/50 rounded-lg p-4">
+              <p className="text-ink-muted text-sm">Fee Recipient</p>
               {factoryConfig.feeRecipient && factoryConfig.feeRecipient !== ZERO_ADDRESS ? (
                 <a 
                   href={getExplorerAddressUrl(factoryConfig.feeRecipient)} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-blue-400 text-sm font-mono hover:underline"
+                  className="text-gold-400 text-sm font-mono hover:underline"
                 >
                   {truncateAddress(factoryConfig.feeRecipient)}
                 </a>
               ) : (
-                <p className="text-yellow-400 text-sm">Not set</p>
+                <p className="text-warning text-sm">Not set</p>
               )}
             </div>
           </div>
@@ -362,14 +362,14 @@ export default function PlatformContracts() {
       )}
 
       {/* KYC Info Box */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">KYC Verification</h3>
-        <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+      <div className="bg-surface rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-ink mb-4">KYC Verification</h3>
+        <div className="bg-gold-900/20 border border-gold-500/30 rounded-lg p-4">
           <div className="flex items-start gap-3">
             <span className="text-2xl">â„¹ï¸</span>
             <div>
-              <p className="text-blue-400 font-medium">DB-Driven KYC with On-Chain Registration</p>
-              <p className="text-gray-400 text-sm mt-1">
+              <p className="text-gold-400 font-medium">DB-Driven KYC with On-Chain Registration</p>
+              <p className="text-ink-muted text-sm mt-1">
                 KYC verification is managed through our database. Once approved, users receive a signed proof 
                 that they can use to register on-chain via the KYC Verifier contract. Investment limits are 
                 enforced at the application level based on the user's KYC tier (Bronze, Silver, Gold, Diamond).
@@ -380,21 +380,21 @@ export default function PlatformContracts() {
       </div>
 
       {/* Network Info */}
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Network Information</h3>
+      <div className="bg-surface rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-ink mb-4">Network Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gray-700/50 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Network</p>
-            <p className="text-white font-medium">{chainName}</p>
-            <p className="text-gray-400 text-xs mt-1">Chain ID: {chainId}</p>
+          <div className="bg-surface-overlay/50 rounded-lg p-4">
+            <p className="text-ink-muted text-sm">Network</p>
+            <p className="text-ink font-medium">{chainName}</p>
+            <p className="text-ink-muted text-xs mt-1">Chain ID: {chainId}</p>
           </div>
-          <div className="bg-gray-700/50 rounded-lg p-4">
-            <p className="text-gray-400 text-sm">Block Explorer</p>
+          <div className="bg-surface-overlay/50 rounded-lg p-4">
+            <p className="text-ink-muted text-sm">Block Explorer</p>
             <a 
               href={explorerUrl} 
               target="_blank" 
               rel="noopener noreferrer" 
-              className="text-blue-400 hover:underline break-all"
+              className="text-gold-400 hover:underline break-all"
             >
               {explorerUrl}
             </a>

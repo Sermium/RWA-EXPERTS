@@ -75,26 +75,26 @@ export default function RefundSection({
   const investedAmount = Number(investorDetails.amountUSD) / 1e6;
 
   return (
-    <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mt-6">
+    <div className="bg-danger/10 border border-danger/30 rounded-xl p-6 mt-6">
       <div className="flex items-start gap-3 mb-4">
         <span className="text-2xl">⚠️</span>
         <div>
-          <h3 className="text-lg font-bold text-red-400">Project Cancelled</h3>
-          <p className="text-red-400/80 text-sm">
+          <h3 className="text-lg font-bold text-danger">Project Cancelled</h3>
+          <p className="text-danger/80 text-sm">
             This project has been cancelled. You can claim a refund for your investment.
           </p>
         </div>
       </div>
 
-      <div className="bg-gray-800 rounded-lg p-4 mb-4">
+      <div className="bg-surface rounded-lg p-4 mb-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-gray-400 text-sm">Your Investment</p>
-            <p className="text-white text-xl font-bold">${investedAmount.toLocaleString()}</p>
+            <p className="text-ink-muted text-sm">Your Investment</p>
+            <p className="text-ink text-xl font-bold">${investedAmount.toLocaleString()}</p>
           </div>
           <div>
-            <p className="text-gray-400 text-sm">Status</p>
-            <p className={`text-xl font-bold ${investorDetails.refunded ? 'text-green-400' : 'text-yellow-400'}`}>
+            <p className="text-ink-muted text-sm">Status</p>
+            <p className={`text-xl font-bold ${investorDetails.refunded ? 'text-success' : 'text-warning'}`}>
               {investorDetails.refunded ? 'Refunded' : 'Pending Claim'}
             </p>
           </div>
@@ -102,24 +102,24 @@ export default function RefundSection({
       </div>
 
       {investorDetails.refunded ? (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-          <p className="text-green-400 flex items-center gap-2">
+        <div className="bg-success/10 border border-success/30 rounded-lg p-4">
+          <p className="text-success flex items-center gap-2">
             <span>✓</span>
             Your refund has been processed successfully.
           </p>
         </div>
       ) : !refundsEnabled ? (
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
-          <p className="text-yellow-400">
+        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
+          <p className="text-warning">
             Refunds are not yet enabled for this project. Please check back later.
           </p>
         </div>
       ) : (
         <>
           {isSuccess ? (
-            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-              <p className="text-green-400 font-medium">Refund Claimed Successfully!</p>
-              <p className="text-green-400/80 text-sm mt-1">
+            <div className="bg-success/10 border border-success/30 rounded-lg p-4">
+              <p className="text-success font-medium">Refund Claimed Successfully!</p>
+              <p className="text-success/80 text-sm mt-1">
                 Your funds have been returned to your wallet.
               </p>
               {hash && (
@@ -127,7 +127,7 @@ export default function RefundSection({
                   href={`${EXPLORER_URL}/tx/${hash}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-green-400/60 text-xs mt-2 inline-block hover:underline"
+                  className="text-success/60 text-xs mt-2 inline-block hover:underline"
                 >
                   View transaction →
                 </a>
@@ -137,11 +137,11 @@ export default function RefundSection({
             <button
               onClick={handleClaimRefund}
               disabled={!canClaim || isPending || isConfirming}
-              className="w-full py-3 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition"
+              className="w-full py-3 bg-danger hover:bg-danger/90 disabled:bg-surface-overlay disabled:cursor-not-allowed text-ink font-medium rounded-lg transition"
             >
               {isPending || isConfirming ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full"></span>
+                  <span className="animate-spin w-4 h-4 border-2 border-ink border-t-transparent rounded-full"></span>
                   {isPending ? 'Confirm in Wallet...' : 'Processing...'}
                 </span>
               ) : (
@@ -151,7 +151,7 @@ export default function RefundSection({
           )}
 
           {error && (
-            <p className="text-red-400 text-sm mt-3">{error}</p>
+            <p className="text-danger text-sm mt-3">{error}</p>
           )}
         </>
       )}

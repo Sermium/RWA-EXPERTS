@@ -128,52 +128,52 @@ const DISPUTE_STATUS_INFO: Record<DisputeStatus, {
 }> = {
   draft: {
     label: 'Draft',
-    color: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+    color: 'bg-gray-500/10 text-ink-muted border-gray-500/20',
     description: 'Dispute is being prepared',
   },
   submitted: {
     label: 'Submitted',
-    color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    color: 'bg-gold-500/10 text-gold-400 border-gold-500/20',
     description: 'Dispute submitted for review',
   },
   under_review: {
     label: 'Under Review',
-    color: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    color: 'bg-gold-500/10 text-gold-400 border-gold-500/20',
     description: 'Platform reviewing the dispute',
   },
   evidence_requested: {
     label: 'Evidence Requested',
-    color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
+    color: 'bg-yellow-500/10 text-warning border-yellow-500/20',
     description: 'Additional evidence required',
   },
   mediation: {
     label: 'In Mediation',
-    color: 'bg-orange-500/10 text-orange-400 border-orange-500/20',
+    color: 'bg-orange-500/10 text-warning border-orange-500/20',
     description: 'Parties attempting to reach agreement',
   },
   arbitration: {
     label: 'In Arbitration',
-    color: 'bg-red-500/10 text-red-400 border-red-500/20',
+    color: 'bg-red-500/10 text-danger border-red-500/20',
     description: 'Arbiter will make final decision',
   },
   resolved_buyer: {
     label: 'Resolved - Buyer',
-    color: 'bg-green-500/10 text-green-400 border-green-500/20',
+    color: 'bg-green-500/10 text-success border-green-500/20',
     description: 'Resolved in favor of buyer',
   },
   resolved_seller: {
     label: 'Resolved - Seller',
-    color: 'bg-green-500/10 text-green-400 border-green-500/20',
+    color: 'bg-green-500/10 text-success border-green-500/20',
     description: 'Resolved in favor of seller',
   },
   resolved_split: {
     label: 'Resolved - Split',
-    color: 'bg-green-500/10 text-green-400 border-green-500/20',
+    color: 'bg-green-500/10 text-success border-green-500/20',
     description: 'Resolved with split decision',
   },
   withdrawn: {
     label: 'Withdrawn',
-    color: 'bg-gray-500/10 text-gray-400 border-gray-500/20',
+    color: 'bg-gray-500/10 text-ink-muted border-gray-500/20',
     description: 'Dispute withdrawn by initiator',
   },
 };
@@ -199,8 +199,8 @@ function DisputeTimeline({ dispute }: { dispute: Dispute }) {
   const currentIndex = getCurrentStageIndex();
 
   return (
-    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-      <h3 className="text-lg font-semibold text-white mb-6">Dispute Progress</h3>
+    <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
+      <h3 className="text-lg font-semibold text-ink mb-6">Dispute Progress</h3>
       <div className="flex items-center justify-between">
         {stages.map((stage, index) => {
           const Icon = stage.icon;
@@ -212,22 +212,22 @@ function DisputeTimeline({ dispute }: { dispute: Dispute }) {
               <div className="flex flex-col items-center">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                   isCompleted 
-                    ? 'bg-green-500 border-green-500 text-white'
+                    ? 'bg-green-500 border-green-500 text-ink'
                     : isCurrent
-                      ? 'bg-blue-500 border-blue-500 text-white'
-                      : 'bg-gray-800 border-gray-700 text-gray-500'
+                      ? 'bg-gold-500 border-gold-500 text-ink'
+                      : 'bg-surface-raised border-border text-ink-faint'
                 }`}>
                   <Icon className="h-5 w-5" />
                 </div>
                 <span className={`mt-2 text-xs font-medium ${
-                  isCompleted ? 'text-green-400' : isCurrent ? 'text-blue-400' : 'text-gray-500'
+                  isCompleted ? 'text-success' : isCurrent ? 'text-gold-400' : 'text-ink-faint'
                 }`}>
                   {stage.label}
                 </span>
               </div>
               {index < stages.length - 1 && (
                 <div className={`w-12 md:w-20 h-0.5 mx-2 ${
-                  index < currentIndex ? 'bg-green-500' : 'bg-gray-700'
+                  index < currentIndex ? 'bg-green-500' : 'bg-surface-overlay'
                 }`} />
               )}
             </div>
@@ -261,8 +261,8 @@ function MessageThread({
 
   const getSenderColor = (senderType: string) => {
     switch (senderType) {
-      case 'buyer': return 'bg-blue-500';
-      case 'seller': return 'bg-purple-500';
+      case 'buyer': return 'bg-gold-500';
+      case 'seller': return 'bg-gold-500';
       case 'arbiter': return 'bg-yellow-500';
       case 'system': return 'bg-gray-500';
       default: return 'bg-gray-500';
@@ -270,9 +270,9 @@ function MessageThread({
   };
 
   return (
-    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 flex flex-col h-[500px]">
-      <div className="p-4 border-b border-gray-700">
-        <h3 className="text-lg font-semibold text-white flex items-center">
+    <div className="bg-surface/50 rounded-xl border border-border/50 flex flex-col h-[500px]">
+      <div className="p-4 border-b border-border">
+        <h3 className="text-lg font-semibold text-ink flex items-center">
           <MessageSquare className="h-5 w-5 mr-2" />
           Dispute Discussion
         </h3>
@@ -288,17 +288,17 @@ function MessageThread({
               <div className={`max-w-[70%] ${isOwn ? 'order-2' : ''}`}>
                 <div className="flex items-center gap-2 mb-1">
                   <div className={`w-6 h-6 rounded-full ${getSenderColor(msg.senderType)} flex items-center justify-center`}>
-                    <span className="text-xs text-white font-medium">
+                    <span className="text-xs text-ink font-medium">
                       {msg.senderType[0].toUpperCase()}
                     </span>
                   </div>
-                  <span className="text-xs text-gray-400 capitalize">{msg.senderType}</span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-ink-muted capitalize">{msg.senderType}</span>
+                  <span className="text-xs text-ink-faint">
                     {new Date(msg.createdAt).toLocaleTimeString()}
                   </span>
                 </div>
                 <div className={`rounded-xl p-3 ${
-                  isOwn ? 'bg-blue-500/20 text-blue-100' : 'bg-gray-700 text-gray-200'
+                  isOwn ? 'bg-gold-500/20 text-gold-100' : 'bg-surface-overlay text-ink-muted'
                 }`}>
                   <p className="text-sm">{msg.message}</p>
                   {msg.attachments.length > 0 && (
@@ -309,7 +309,7 @@ function MessageThread({
                           href={att.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center text-xs text-blue-400 hover:text-blue-300"
+                          className="flex items-center text-xs text-gold-400 hover:text-gold-300"
                         >
                           <Paperclip className="h-3 w-3 mr-1" />
                           {att.name}
@@ -325,25 +325,25 @@ function MessageThread({
       </div>
 
       {/* Input */}
-      <form onSubmit={handleSubmit} className="p-4 border-t border-gray-700">
+      <form onSubmit={handleSubmit} className="p-4 border-t border-border">
         <div className="flex gap-2">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder="Type your message..."
-            className="flex-1 px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-blue-500 outline-none"
+            className="flex-1 px-4 py-2 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-gold-500 outline-none"
           />
           <button
             type="button"
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-ink-muted hover:text-ink transition-colors"
           >
             <Paperclip className="h-5 w-5" />
           </button>
           <button
             type="submit"
             disabled={!newMessage.trim()}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-gold-500 text-ink rounded-lg hover:bg-gold-600 transition-colors disabled:opacity-50"
           >
             <Send className="h-5 w-5" />
           </button>
@@ -373,8 +373,8 @@ function ResolutionProposal({
   };
 
   return (
-    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-      <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+    <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
+      <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
         <Scale className="h-5 w-5 mr-2" />
         {isArbiter ? 'Final Resolution' : 'Propose Settlement'}
       </h3>
@@ -382,7 +382,7 @@ function ResolutionProposal({
       <div className="space-y-4">
         {/* Slider */}
         <div>
-          <div className="flex justify-between text-sm text-gray-400 mb-2">
+          <div className="flex justify-between text-sm text-ink-muted mb-2">
             <span>Buyer: {buyerPercentage}%</span>
             <span>Seller: {100 - buyerPercentage}%</span>
           </div>
@@ -392,21 +392,21 @@ function ResolutionProposal({
             max="100"
             value={buyerPercentage}
             onChange={(e) => setBuyerPercentage(parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-2 bg-surface-overlay rounded-lg appearance-none cursor-pointer"
           />
         </div>
 
         {/* Amounts */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-gray-900 rounded-lg p-4 text-center">
-            <p className="text-sm text-gray-400 mb-1">Buyer Receives</p>
-            <p className="text-xl font-bold text-blue-400">
+          <div className="bg-surface-sunken rounded-lg p-4 text-center">
+            <p className="text-sm text-ink-muted mb-1">Buyer Receives</p>
+            <p className="text-xl font-bold text-gold-400">
               ${buyerAmount.toLocaleString()}
             </p>
           </div>
-          <div className="bg-gray-900 rounded-lg p-4 text-center">
-            <p className="text-sm text-gray-400 mb-1">Seller Receives</p>
-            <p className="text-xl font-bold text-purple-400">
+          <div className="bg-surface-sunken rounded-lg p-4 text-center">
+            <p className="text-sm text-ink-muted mb-1">Seller Receives</p>
+            <p className="text-xl font-bold text-gold-400">
               ${sellerAmount.toLocaleString()}
             </p>
           </div>
@@ -414,7 +414,7 @@ function ResolutionProposal({
 
         {/* Reasoning */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-ink-muted mb-1">
             {isArbiter ? 'Resolution Reasoning' : 'Settlement Reasoning'}
           </label>
           <textarea
@@ -424,7 +424,7 @@ function ResolutionProposal({
             placeholder={isArbiter 
               ? 'Explain the basis for this resolution...'
               : 'Explain why you propose this settlement...'}
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 outline-none resize-none"
+            className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 outline-none resize-none"
           />
         </div>
 
@@ -432,7 +432,7 @@ function ResolutionProposal({
         <button
           onClick={handleSubmit}
           disabled={!reasoning.trim()}
-          className="w-full py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-50"
+          className="w-full py-3 bg-gold-500 text-ink font-medium rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50"
         >
           {isArbiter ? 'Submit Final Resolution' : 'Propose Settlement'}
         </button>
@@ -564,8 +564,8 @@ export default function DisputePage() {
 
   if (isLoading) {
     return (
-      <main className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+      <main className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <Loader2 className="h-8 w-8 text-gold-500 animate-spin" />
       </main>
     );
   }
@@ -573,26 +573,26 @@ export default function DisputePage() {
   // If no dispute exists, show creation form
   if (!dispute) {
     return (
-      <main className="min-h-screen bg-gray-900 py-8">
+      <main className="min-h-screen bg-surface-sunken py-8">
         <div className="max-w-3xl mx-auto px-4">
-          <Link href={`/trade/deals/${dealId}`} className="inline-flex items-center text-gray-400 hover:text-white mb-6">
+          <Link href={`/trade/deals/${dealId}`} className="inline-flex items-center text-ink-muted hover:text-ink mb-6">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Deal
           </Link>
 
-          <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
+          <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
             <div className="flex items-center mb-6">
-              <AlertTriangle className="h-8 w-8 text-red-400 mr-3" />
+              <AlertTriangle className="h-8 w-8 text-danger mr-3" />
               <div>
-                <h1 className="text-2xl font-bold text-white">Raise a Dispute</h1>
-                <p className="text-gray-400">Submit a formal dispute for this deal</p>
+                <h1 className="text-2xl font-bold text-ink">Raise a Dispute</h1>
+                <p className="text-ink-muted">Submit a formal dispute for this deal</p>
               </div>
             </div>
 
             <div className="space-y-6">
               {/* Dispute Type */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-muted mb-2">
                   Dispute Type
                 </label>
                 <div className="grid grid-cols-2 gap-3">
@@ -602,7 +602,7 @@ export default function DisputePage() {
                       className={`p-4 rounded-xl border cursor-pointer transition-all ${
                         disputeType === key
                           ? 'bg-red-500/10 border-red-500/50'
-                          : 'bg-gray-900 border-gray-700 hover:border-gray-600'
+                          : 'bg-surface-sunken border-border hover:border-border-strong'
                       }`}
                     >
                       <input
@@ -613,8 +613,8 @@ export default function DisputePage() {
                         onChange={(e) => setDisputeType(e.target.value as DisputeType)}
                         className="sr-only"
                       />
-                      <p className="text-white font-medium">{value.label}</p>
-                      <p className="text-xs text-gray-400 mt-1">{value.description}</p>
+                      <p className="text-ink font-medium">{value.label}</p>
+                      <p className="text-xs text-ink-muted mt-1">{value.description}</p>
                     </label>
                   ))}
                 </div>
@@ -622,7 +622,7 @@ export default function DisputePage() {
 
               {/* Description */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-muted mb-2">
                   Detailed Description
                 </label>
                 <textarea
@@ -630,13 +630,13 @@ export default function DisputePage() {
                   onChange={(e) => setDescription(e.target.value)}
                   rows={6}
                   placeholder="Describe the issue in detail, including dates, amounts, and any relevant circumstances..."
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 outline-none resize-none"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink placeholder-ink-faint focus:border-red-500 outline-none resize-none"
                 />
               </div>
 
               {/* Claimed Amount */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-muted mb-2">
                   Claimed Amount ($)
                 </label>
                 <input
@@ -644,18 +644,18 @@ export default function DisputePage() {
                   value={claimedAmount || ''}
                   onChange={(e) => setClaimedAmount(parseFloat(e.target.value) || 0)}
                   placeholder="Amount you're claiming"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-red-500 outline-none"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink placeholder-ink-faint focus:border-red-500 outline-none"
                 />
               </div>
 
               {/* Evidence Upload */}
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-ink-muted mb-2">
                   Supporting Evidence
                 </label>
-                <div className="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center">
-                  <Upload className="h-10 w-10 text-gray-500 mx-auto mb-3" />
-                  <p className="text-gray-400">Upload photos, documents, or other evidence</p>
+                <div className="border-2 border-dashed border-border rounded-xl p-8 text-center">
+                  <Upload className="h-10 w-10 text-ink-faint mx-auto mb-3" />
+                  <p className="text-ink-muted">Upload photos, documents, or other evidence</p>
                   <input
                     type="file"
                     multiple
@@ -666,7 +666,7 @@ export default function DisputePage() {
                 {evidence.length > 0 && (
                   <div className="mt-2 space-y-1">
                     {evidence.map((file, idx) => (
-                      <p key={idx} className="text-sm text-gray-400">• {file.name}</p>
+                      <p key={idx} className="text-sm text-ink-muted">• {file.name}</p>
                     ))}
                   </div>
                 )}
@@ -675,10 +675,10 @@ export default function DisputePage() {
               {/* Warning */}
               <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
                 <div className="flex items-start">
-                  <AlertTriangle className="h-5 w-5 text-yellow-400 mt-0.5 mr-3" />
+                  <AlertTriangle className="h-5 w-5 text-warning mt-0.5 mr-3" />
                   <div>
-                    <p className="text-yellow-400 font-medium">Important Notice</p>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-warning font-medium">Important Notice</p>
+                    <p className="text-sm text-ink-muted mt-1">
                       Filing a dispute will freeze the escrow funds until resolution. 
                       False or fraudulent claims may result in penalties and account suspension.
                     </p>
@@ -690,7 +690,7 @@ export default function DisputePage() {
               <button
                 onClick={handleSubmitDispute}
                 disabled={!description || !claimedAmount || isSubmitting}
-                className="w-full py-4 bg-red-500 text-white font-semibold rounded-xl hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center justify-center"
+                className="w-full py-4 bg-red-500 text-ink font-semibold rounded-xl hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center justify-center"
               >
                 {isSubmitting ? (
                   <>
@@ -716,9 +716,9 @@ export default function DisputePage() {
   const isResolved = dispute.status.startsWith('resolved');
 
   return (
-    <main className="min-h-screen bg-gray-900 py-8">
+    <main className="min-h-screen bg-surface-sunken py-8">
       <div className="max-w-6xl mx-auto px-4">
-        <Link href={`/trade/deals/${dealId}`} className="inline-flex items-center text-gray-400 hover:text-white mb-6">
+        <Link href={`/trade/deals/${dealId}`} className="inline-flex items-center text-ink-muted hover:text-ink mb-6">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Deal
         </Link>
@@ -727,17 +727,17 @@ export default function DisputePage() {
         <div className="flex items-start justify-between mb-6">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-white">Dispute #{dispute.id.slice(0, 8)}</h1>
+              <h1 className="text-2xl font-bold text-ink">Dispute #{dispute.id.slice(0, 8)}</h1>
               <span className={`px-3 py-1 rounded-full text-sm font-medium border ${statusInfo.color}`}>
                 {statusInfo.label}
               </span>
             </div>
-            <p className="text-gray-400">{DISPUTE_TYPES[dispute.type].label}</p>
+            <p className="text-ink-muted">{DISPUTE_TYPES[dispute.type].label}</p>
           </div>
           {dispute.deadline && !isResolved && (
             <div className="text-right">
-              <p className="text-sm text-gray-400">Resolution Deadline</p>
-              <p className="text-white font-medium flex items-center">
+              <p className="text-sm text-ink-muted">Resolution Deadline</p>
+              <p className="text-ink font-medium flex items-center">
                 <Calendar className="h-4 w-4 mr-1" />
                 {new Date(dispute.deadline).toLocaleDateString()}
               </p>
@@ -756,8 +756,8 @@ export default function DisputePage() {
               onClick={() => setActiveTab(tab as any)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === tab
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-800 text-gray-400 hover:text-white'
+                  ? 'bg-gold-500 text-ink'
+                  : 'bg-surface-raised text-ink-muted hover:text-ink'
               }`}
             >
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -771,14 +771,14 @@ export default function DisputePage() {
             {activeTab === 'details' && (
               <div className="space-y-6">
                 {/* Description */}
-                <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-                  <h3 className="text-lg font-semibold text-white mb-4">Dispute Description</h3>
-                  <p className="text-gray-300 whitespace-pre-wrap">{dispute.description}</p>
+                <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
+                  <h3 className="text-lg font-semibold text-ink mb-4">Dispute Description</h3>
+                  <p className="text-ink-muted whitespace-pre-wrap">{dispute.description}</p>
                 </div>
 
                 {/* Evidence */}
-                <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-                  <h3 className="text-lg font-semibold text-white mb-4">Evidence Submitted</h3>
+                <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
+                  <h3 className="text-lg font-semibold text-ink mb-4">Evidence Submitted</h3>
                   {dispute.evidence.length > 0 ? (
                     <div className="space-y-2">
                       {dispute.evidence.map((item, idx) => (
@@ -787,42 +787,42 @@ export default function DisputePage() {
                           href={item.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center p-3 bg-gray-900 rounded-lg hover:bg-gray-800 transition-colors"
+                          className="flex items-center p-3 bg-surface-sunken rounded-lg hover:bg-surface-raised transition-colors"
                         >
-                          <FileText className="h-5 w-5 text-blue-400 mr-3" />
-                          <span className="text-white">{item.name}</span>
+                          <FileText className="h-5 w-5 text-gold-400 mr-3" />
+                          <span className="text-ink">{item.name}</span>
                         </a>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-400">No evidence submitted yet</p>
+                    <p className="text-ink-muted">No evidence submitted yet</p>
                   )}
                 </div>
 
                 {/* Resolution */}
                 {dispute.resolution && (
                   <div className="bg-green-500/10 rounded-xl p-6 border border-green-500/20">
-                    <h3 className="text-lg font-semibold text-green-400 mb-4 flex items-center">
+                    <h3 className="text-lg font-semibold text-success mb-4 flex items-center">
                       <CheckCircle2 className="h-5 w-5 mr-2" />
                       Resolution
                     </h3>
                     <div className="grid grid-cols-2 gap-4 mb-4">
-                      <div className="bg-gray-900/50 rounded-lg p-4 text-center">
-                        <p className="text-sm text-gray-400 mb-1">Buyer Awarded</p>
-                        <p className="text-xl font-bold text-blue-400">
+                      <div className="bg-surface-sunken/50 rounded-lg p-4 text-center">
+                        <p className="text-sm text-ink-muted mb-1">Buyer Awarded</p>
+                        <p className="text-xl font-bold text-gold-400">
                           ${dispute.resolution.buyerAmount.toLocaleString()}
                         </p>
                       </div>
-                      <div className="bg-gray-900/50 rounded-lg p-4 text-center">
-                        <p className="text-sm text-gray-400 mb-1">Seller Awarded</p>
-                        <p className="text-xl font-bold text-purple-400">
+                      <div className="bg-surface-sunken/50 rounded-lg p-4 text-center">
+                        <p className="text-sm text-ink-muted mb-1">Seller Awarded</p>
+                        <p className="text-xl font-bold text-gold-400">
                           ${dispute.resolution.sellerAmount.toLocaleString()}
                         </p>
                       </div>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-400 mb-1">Reasoning</p>
-                      <p className="text-gray-300">{dispute.resolution.reasoning}</p>
+                      <p className="text-sm text-ink-muted mb-1">Reasoning</p>
+                      <p className="text-ink-muted">{dispute.resolution.reasoning}</p>
                     </div>
                   </div>
                 )}
@@ -848,49 +848,49 @@ export default function DisputePage() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Claimed Amount */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-              <h4 className="text-sm font-medium text-gray-400 mb-3">Claimed Amount</h4>
-              <p className="text-3xl font-bold text-white">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
+              <h4 className="text-sm font-medium text-ink-muted mb-3">Claimed Amount</h4>
+              <p className="text-3xl font-bold text-ink">
                 ${dispute.claimedAmount.toLocaleString()}
               </p>
             </div>
 
             {/* Status Info */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-              <h4 className="text-sm font-medium text-gray-400 mb-3">Current Status</h4>
+            <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
+              <h4 className="text-sm font-medium text-ink-muted mb-3">Current Status</h4>
               <div className={`p-4 rounded-lg border ${statusInfo.color}`}>
                 <p className="font-medium">{statusInfo.label}</p>
-                <p className="text-sm text-gray-400 mt-1">{statusInfo.description}</p>
+                <p className="text-sm text-ink-muted mt-1">{statusInfo.description}</p>
               </div>
             </div>
 
             {/* Arbiter */}
             {dispute.arbiter && (
-              <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-                <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center">
+              <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
+                <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center">
                   <Scale className="h-4 w-4 mr-2" />
                   Assigned Arbiter
                 </h4>
-                <p className="text-white font-mono text-sm truncate">{dispute.arbiter}</p>
+                <p className="text-ink font-mono text-sm truncate">{dispute.arbiter}</p>
               </div>
             )}
 
             {/* Key Dates */}
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-              <h4 className="text-sm font-medium text-gray-400 mb-3">Timeline</h4>
+            <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
+              <h4 className="text-sm font-medium text-ink-muted mb-3">Timeline</h4>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Filed</span>
-                  <span className="text-white">{new Date(dispute.createdAt).toLocaleDateString()}</span>
+                  <span className="text-ink-muted">Filed</span>
+                  <span className="text-ink">{new Date(dispute.createdAt).toLocaleDateString()}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">Last Update</span>
-                  <span className="text-white">{new Date(dispute.updatedAt).toLocaleDateString()}</span>
+                  <span className="text-ink-muted">Last Update</span>
+                  <span className="text-ink">{new Date(dispute.updatedAt).toLocaleDateString()}</span>
                 </div>
                 {dispute.resolution && (
                   <div className="flex justify-between">
-                    <span className="text-gray-400">Resolved</span>
-                    <span className="text-white">{new Date(dispute.resolution.resolvedAt).toLocaleDateString()}</span>
+                    <span className="text-ink-muted">Resolved</span>
+                    <span className="text-ink">{new Date(dispute.resolution.resolvedAt).toLocaleDateString()}</span>
                   </div>
                 )}
               </div>
@@ -898,7 +898,7 @@ export default function DisputePage() {
 
             {/* Actions */}
             {!isResolved && dispute.initiator.toLowerCase() === address?.toLowerCase() && (
-              <button className="w-full py-3 bg-gray-700 text-white rounded-xl hover:bg-gray-600 transition-colors">
+              <button className="w-full py-3 bg-surface-overlay text-ink rounded-xl hover:bg-gray-600 transition-colors">
                 Withdraw Dispute
               </button>
             )}

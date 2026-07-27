@@ -294,24 +294,24 @@ export function getRiskLevelName(level: number): string {
 
 export function getRiskLevelColor(level: number): string {
   const colors: Record<number, string> = {
-    0: 'text-gray-400',
-    1: 'text-green-400',
-    2: 'text-yellow-400',
-    3: 'text-orange-400',
-    4: 'text-red-400',
+    0: 'text-ink-muted',
+    1: 'text-success',
+    2: 'text-warning',
+    3: 'text-warning',
+    4: 'text-danger',
     5: 'text-red-600'
   };
-  return colors[level] || 'text-gray-400';
+  return colors[level] || 'text-ink-muted';
 }
 
 export function getRiskBadgeColors(level: number): { bg: string; text: string; border: string } {
   const colors: Record<number, { bg: string; text: string; border: string }> = {
-    0: { bg: 'bg-gray-500/20', text: 'text-gray-400', border: 'border-gray-500/30' },
-    1: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
-    2: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
-    3: { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500/30' },
-    4: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
-    5: { bg: 'bg-red-600/20', text: 'text-red-500', border: 'border-red-600/30' }
+    0: { bg: 'bg-gray-500/20', text: 'text-ink-muted', border: 'border-gray-500/30' },
+    1: { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' },
+    2: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' },
+    3: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' },
+    4: { bg: 'bg-danger/20', text: 'text-danger', border: 'border-danger/30' },
+    5: { bg: 'bg-red-600/20', text: 'text-danger', border: 'border-danger/40/30' }
   };
   return colors[level] || colors[0];
 }
@@ -321,17 +321,17 @@ export function getRiskBadgeColors(level: number): { bg: string; text: string; b
 // ============================================================================
 
 export function getScoreColor(score: number): string {
-  if (score >= 80) return 'text-green-400';
-  if (score >= 60) return 'text-yellow-400';
-  if (score >= 40) return 'text-orange-400';
-  return 'text-red-400';
+  if (score >= 80) return 'text-success';
+  if (score >= 60) return 'text-warning';
+  if (score >= 40) return 'text-warning';
+  return 'text-danger';
 }
 
 export function getScoreBarColor(score: number): string {
-  if (score >= 80) return 'bg-green-500';
-  if (score >= 60) return 'bg-yellow-500';
-  if (score >= 40) return 'bg-orange-500';
-  return 'bg-red-500';
+  if (score >= 80) return 'bg-success';
+  if (score >= 60) return 'bg-warning';
+  if (score >= 40) return 'bg-warning';
+  return 'bg-danger';
 }
 
 // ============================================================================

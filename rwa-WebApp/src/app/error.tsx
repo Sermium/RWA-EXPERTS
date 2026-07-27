@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { AlertTriangle } from 'lucide-react';
 
 export default function Error({
   error,
@@ -14,16 +15,16 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-2xl p-8 max-w-md w-full text-center border border-gray-700">
-        <div className="text-5xl mb-4">⚠️</div>
-        <h2 className="text-2xl font-bold text-white mb-2">Something went wrong!</h2>
-        <p className="text-gray-400 mb-6">
+    <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-4">
+      <div className="bg-surface rounded-2xl p-8 max-w-md w-full text-center border border-border">
+        <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-danger" />
+        <h2 className="text-2xl font-bold text-ink mb-2">Something went wrong!</h2>
+        <p className="text-ink-muted mb-6">
           {error.message || 'An unexpected error occurred'}
         </p>
         <button
           onClick={reset}
-          className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+          className="bg-gold-600 hover:bg-gold-700 text-ink px-6 py-3 rounded-xl font-medium transition-colors"
         >
           Try again
         </button>

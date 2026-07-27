@@ -63,7 +63,7 @@ function ChainLogo({ chainId, size = 24, className = "" }: { chainId: number; si
         className={`rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center ${className}`}
         style={{ width: size, height: size }}
       >
-        <span className="text-white" style={{ fontSize: size * 0.5 }}>⛓</span>
+        <span className="text-ink" style={{ fontSize: size * 0.5 }}>⛓</span>
       </div>
     );
   }
@@ -317,16 +317,16 @@ function WalletModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div 
-        className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 bg-surface-sunken/70 backdrop-blur-sm"
         onClick={onClose}
       />
       
-      <div className="relative bg-gray-900 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-md mx-4 overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-gray-700">
-          <h2 className="text-xl font-bold text-white">Connect Wallet</h2>
+      <div className="relative bg-surface rounded-2xl border border-border shadow-panel w-full max-w-md mx-4 overflow-hidden">
+        <div className="flex items-center justify-between p-5 border-b border-border">
+          <h2 className="text-xl font-bold text-ink">Connect Wallet</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-white transition-colors p-1"
+            className="text-ink-muted hover:text-ink transition-colors p-1"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -336,7 +336,7 @@ function WalletModal({ onClose }: { onClose: () => void }) {
         
         {(error || localError) && (
           <div className="mx-4 mt-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
-            <p className="text-red-400 text-sm">{localError || error?.message}</p>
+            <p className="text-danger text-sm">{localError || error?.message}</p>
           </div>
         )}
 
@@ -347,7 +347,7 @@ function WalletModal({ onClose }: { onClose: () => void }) {
               <span className="text-2xl">🦊</span>
               <div>
                 <p className="text-amber-400 font-medium">No wallet detected</p>
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-ink-muted mt-1">
                   Install a Web3 wallet to connect to the platform.
                 </p>
                 <a
@@ -369,8 +369,8 @@ function WalletModal({ onClose }: { onClose: () => void }) {
         <div className="p-4 space-y-2 max-h-96 overflow-y-auto">
           {availableConnectors.length === 0 ? (
             <div className="text-center py-8">
-              <p className="text-gray-400">No wallet connectors available.</p>
-              <p className="text-gray-500 text-sm mt-2">
+              <p className="text-ink-muted">No wallet connectors available.</p>
+              <p className="text-ink-faint text-sm mt-2">
                 Please install MetaMask or another Web3 wallet.
               </p>
             </div>
@@ -393,25 +393,25 @@ function WalletModal({ onClose }: { onClose: () => void }) {
                   className={`
                     w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 group
                     ${providerAvailable 
-                      ? 'bg-gray-800 hover:bg-gray-700' 
-                      : 'bg-gray-800/50 opacity-60'
+                      ? 'bg-surface-raised hover:bg-surface-overlay' 
+                      : 'bg-surface-raised/50 opacity-60'
                     }
                     disabled:opacity-50 disabled:cursor-not-allowed
                   `}
                 >
                   <span className="text-3xl">{icon}</span>
                   <div className="flex-1 text-left">
-                    <div className="text-white font-semibold group-hover:text-blue-400 transition-colors">
+                    <div className="text-ink font-semibold group-hover:text-gold transition-colors">
                       {name}
                     </div>
                     {!providerAvailable && !isWalletConnect && (
-                      <div className="text-xs text-gray-500">Not installed</div>
+                      <div className="text-xs text-ink-faint">Not installed</div>
                     )}
                   </div>
                   {isConnecting ? (
-                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <svg className="w-5 h-5 text-gray-500 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-5 h-5 text-ink-faint group-hover:text-gold transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   )}
@@ -421,8 +421,8 @@ function WalletModal({ onClose }: { onClose: () => void }) {
           )}
         </div>
         
-        <div className="p-4 border-t border-gray-700 bg-gray-800/50">
-          <p className="text-gray-400 text-sm text-center">
+        <div className="p-4 border-t border-border bg-surface-raised/50">
+          <p className="text-ink-muted text-sm text-center">
             By connecting, you agree to the Terms of Service
           </p>
         </div>
@@ -493,11 +493,11 @@ export function ConnectButton() {
       <>
         <button
           onClick={openModal}
-          className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25"
+          className="bg-gold hover:bg-gold-light text-surface-sunken font-semibold px-5 py-2.5 rounded-lg transition-all duration-200 shadow-lg shadow-gold/25"
         >
           Connect Wallet
         </button>
-        
+
         {!context && isModalOpen && <WalletModal onClose={closeModal} />}
       </>
     );
@@ -511,12 +511,12 @@ export function ConnectButton() {
           setShowDropdown(!showDropdown);
           setShowNetworks(false);
         }}
-        className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 border border-gray-700 rounded-xl px-3 py-2 transition-all"
+        className="flex items-center gap-2 bg-surface-raised hover:bg-surface-overlay border border-border rounded-xl px-3 py-2 transition-all"
       >
         {/* Chain Logo */}
         <div className="relative">
           {isSwitching ? (
-            <div className="w-6 h-6 rounded-full bg-gray-600 flex items-center justify-center">
+            <div className="w-6 h-6 rounded-full bg-surface-overlay flex items-center justify-center">
               <div className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
             </div>
           ) : (
@@ -528,13 +528,13 @@ export function ConnectButton() {
         <div className={`w-2 h-2 rounded-full ${isDeployed ? 'bg-green-500' : 'bg-yellow-500'}`} />
 
         {/* Address */}
-        <span className="text-white font-mono text-sm">
+        <span className="text-ink font-mono text-sm">
           {address.slice(0, 6)}...{address.slice(-4)}
         </span>
 
         {/* Dropdown Arrow */}
         <svg 
-          className={`w-4 h-4 text-gray-400 transition-transform ${showDropdown ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-ink-muted transition-transform ${showDropdown ? 'rotate-180' : ''}`}
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
@@ -545,12 +545,12 @@ export function ConnectButton() {
 
       {/* Dropdown Menu */}
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-80 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden">
+        <div className="absolute right-0 mt-2 w-80 bg-surface border border-border rounded-xl shadow-panel z-50 overflow-hidden">
           
           {/* Network Section */}
-          <div className="p-3 border-b border-gray-700">
+          <div className="p-3 border-b border-border">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs text-gray-500 uppercase tracking-wider font-medium">Network</span>
+              <span className="text-xs text-ink-faint uppercase tracking-wider font-medium">Network</span>
               {!isDeployed && (
                 <span className="text-xs text-yellow-500 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse" />
@@ -561,19 +561,19 @@ export function ConnectButton() {
             
             <button
               onClick={() => setShowNetworks(!showNetworks)}
-              className="w-full flex items-center justify-between p-2.5 bg-gray-800 hover:bg-gray-750 rounded-lg transition-colors"
+              className="w-full flex items-center justify-between p-2.5 bg-surface-raised hover:bg-gray-750 rounded-lg transition-colors"
             >
               <div className="flex items-center gap-3">
                 <ChainLogo chainId={chainId} size={32} />
                 <div className="text-left">
-                  <div className="text-white font-medium text-sm">{chainName}</div>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-ink font-medium text-sm">{chainName}</div>
+                  <div className="text-xs text-ink-muted">
                     {isTestnet ? 'Testnet' : 'Mainnet'}
                   </div>
                 </div>
               </div>
               <svg 
-                className={`w-4 h-4 text-gray-400 transition-transform ${showNetworks ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 text-ink-muted transition-transform ${showNetworks ? 'rotate-180' : ''}`}
                 fill="none" 
                 stroke="currentColor" 
                 viewBox="0 0 24 24"
@@ -596,23 +596,23 @@ export function ConnectButton() {
                         disabled={isSwitching}
                         className={`
                           w-full flex items-center gap-3 p-2.5 rounded-lg transition-all
-                          ${isSelected 
-                            ? 'bg-blue-900/40 border border-blue-500' 
-                            : 'bg-gray-800/50 hover:bg-gray-800 border border-transparent'
+                          ${isSelected
+                            ? 'bg-gold/10 border border-gold/50'
+                            : 'bg-surface-raised/50 hover:bg-surface-raised border border-transparent'
                           }
                           disabled:opacity-50 disabled:cursor-not-allowed
                         `}
                       >
                         <ChainLogo chainId={chain.id} size={28} />
                         <div className="flex-1 text-left">
-                          <div className="text-white text-sm font-medium">{chain.name}</div>
-                          <div className="text-xs text-gray-500">
+                          <div className="text-ink text-sm font-medium">{chain.name}</div>
+                          <div className="text-xs text-ink-faint">
                             {chain.testnet ? 'Testnet' : 'Mainnet'}
                           </div>
                         </div>
                         {isSelected && (
-                          <div className="w-5 h-5 rounded-full bg-blue-500 flex items-center justify-center">
-                            <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <div className="w-5 h-5 rounded-full bg-gold flex items-center justify-center">
+                            <svg className="w-3 h-3 text-surface-sunken" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                           </div>
@@ -621,14 +621,14 @@ export function ConnectButton() {
                     );
                   })
                 ) : (
-                  <div className="text-center py-4 text-gray-500 text-sm">
+                  <div className="text-center py-4 text-ink-faint text-sm">
                     No deployed networks available
                   </div>
                 )}
                 
                 {deployedChains.length === 1 && (
-                  <div className="mt-2 p-2 bg-blue-900/20 border border-blue-800/50 rounded-lg">
-                    <p className="text-xs text-blue-400 text-center">
+                  <div className="mt-2 p-2 bg-gold/10 border border-gold/30 rounded-lg">
+                    <p className="text-xs text-gold text-center">
                       More networks coming soon!
                     </p>
                   </div>
@@ -638,28 +638,28 @@ export function ConnectButton() {
           </div>
 
           {/* Wallet Section */}
-          <div className="p-3 border-b border-gray-700">
-            <div className="text-xs text-gray-500 uppercase tracking-wider font-medium mb-2">Wallet</div>
-            <div className="flex items-center justify-between p-2.5 bg-gray-800 rounded-lg">
+          <div className="p-3 border-b border-border">
+            <div className="text-xs text-ink-faint uppercase tracking-wider font-medium mb-2">Wallet</div>
+            <div className="flex items-center justify-between p-2.5 bg-surface-raised rounded-lg">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold to-gold-light" />
                 <div>
-                  <div className="text-white font-mono text-sm">{address.slice(0, 6)}...{address.slice(-4)}</div>
-                  <div className="text-xs text-gray-500">Connected</div>
+                  <div className="text-ink font-mono text-sm">{address.slice(0, 6)}...{address.slice(-4)}</div>
+                  <div className="text-xs text-ink-faint">Connected</div>
                 </div>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={handleCopyAddress}
-                  className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-surface-overlay rounded-lg transition-colors"
                   title={copied ? 'Copied!' : 'Copy address'}
                 >
                   {copied ? (
-                    <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                     </svg>
                   ) : (
-                    <svg className="w-4 h-4 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-4 h-4 text-ink-muted hover:text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                     </svg>
                   )}
@@ -668,10 +668,10 @@ export function ConnectButton() {
                   href={`${explorerUrl}/address/${address}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="p-1.5 hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-surface-overlay rounded-lg transition-colors"
                   title="View on explorer"
                 >
-                  <svg className="w-4 h-4 text-gray-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-ink-muted hover:text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                 </a>
@@ -686,7 +686,7 @@ export function ConnectButton() {
                 disconnect();
                 setShowDropdown(false);
               }}
-              className="w-full flex items-center gap-2 px-3 py-2.5 text-red-400 hover:bg-red-900/20 rounded-lg transition-colors"
+              className="w-full flex items-center gap-2 px-3 py-2.5 text-danger hover:bg-danger/10 rounded-lg transition-colors"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

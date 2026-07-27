@@ -11,8 +11,8 @@ export default function ApiReferencePage() {
   return (
     <div className="max-w-4xl">
       <div className="mb-12">
-        <h1 className="text-4xl font-bold text-white mb-4">API Reference</h1>
-        <p className="text-xl text-gray-400">
+        <h1 className="text-4xl font-bold text-ink mb-4">API Reference</h1>
+        <p className="text-xl text-ink-muted">
           Technical documentation for integrating with {COMPANY.name} APIs.
         </p>
       </div>
@@ -21,28 +21,28 @@ export default function ApiReferencePage() {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Overview</h2>
         
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-6">
-          <h3 className="font-semibold text-white mb-4">Base URL</h3>
-          <code className="bg-gray-900 px-3 py-2 rounded text-cyan-400 block">
+        <div className="bg-surface border border-border rounded-lg p-6 mb-6">
+          <h3 className="font-semibold text-ink mb-4">Base URL</h3>
+          <code className="bg-surface-sunken px-3 py-2 rounded text-cyan-400 block">
             {LINKS.api}
           </code>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+          <div className="bg-surface border border-border rounded-lg p-4">
             <Lock className="w-6 h-6 text-cyan-400 mb-2" />
-            <h4 className="font-semibold text-white">Authentication</h4>
-            <p className="text-sm text-gray-400 mt-1">Wallet signature + API key</p>
+            <h4 className="font-semibold text-ink">Authentication</h4>
+            <p className="text-sm text-ink-muted mt-1">Wallet signature + API key</p>
           </div>
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+          <div className="bg-surface border border-border rounded-lg p-4">
             <Code className="w-6 h-6 text-cyan-400 mb-2" />
-            <h4 className="font-semibold text-white">Format</h4>
-            <p className="text-sm text-gray-400 mt-1">JSON request/response</p>
+            <h4 className="font-semibold text-ink">Format</h4>
+            <p className="text-sm text-ink-muted mt-1">JSON request/response</p>
           </div>
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-4">
+          <div className="bg-surface border border-border rounded-lg p-4">
             <Clock className="w-6 h-6 text-cyan-400 mb-2" />
-            <h4 className="font-semibold text-white">Rate Limit</h4>
-            <p className="text-sm text-gray-400 mt-1">100 requests/minute</p>
+            <h4 className="font-semibold text-ink">Rate Limit</h4>
+            <p className="text-sm text-ink-muted mt-1">100 requests/minute</p>
           </div>
         </div>
       </section>
@@ -51,23 +51,23 @@ export default function ApiReferencePage() {
       <section className="mb-12">
         <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Authentication</h2>
         
-        <p className="text-gray-300 mb-4">
+        <p className="text-ink-muted mb-4">
           All authenticated endpoints require two headers:
         </p>
 
-        <div className="bg-gray-900 rounded-lg p-4 mb-6 overflow-x-auto">
-          <pre className="text-sm text-gray-300">
+        <div className="bg-surface-sunken rounded-lg p-4 mb-6 overflow-x-auto">
+          <pre className="text-sm text-ink-muted">
 {`x-wallet-address: 0xYourWalletAddress
 x-api-key: your-api-key (for partner integrations)`}
           </pre>
         </div>
 
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
             <div>
-              <h4 className="font-semibold text-yellow-400">API Keys</h4>
-              <p className="text-sm text-gray-300 mt-1">
+              <h4 className="font-semibold text-warning">API Keys</h4>
+              <p className="text-sm text-ink-muted mt-1">
                 API keys are required for partner integrations. Contact us at 
                 {CONTACT.partners} to request access.
               </p>
@@ -81,17 +81,17 @@ x-api-key: your-api-key (for partner integrations)`}
         <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Tokenization Endpoints</h2>
         
         {/* POST /api/tokenization/apply */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
-          <div className="bg-gray-900 px-4 py-3 border-b border-gray-700 flex items-center gap-3">
-            <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-mono rounded">POST</span>
-            <code className="text-white">/api/tokenization/apply</code>
+        <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
+          <div className="bg-surface-sunken px-4 py-3 border-b border-border flex items-center gap-3">
+            <span className="px-2 py-1 bg-success/20 text-success text-xs font-mono rounded">POST</span>
+            <code className="text-ink">/api/tokenization/apply</code>
           </div>
           <div className="p-4">
-            <p className="text-gray-400 mb-4">Submit a new tokenization application.</p>
+            <p className="text-ink-muted mb-4">Submit a new tokenization application.</p>
             
-            <h4 className="font-semibold text-white mb-2">Request Body</h4>
-            <div className="bg-gray-900 rounded-lg p-4 mb-4 overflow-x-auto">
-              <pre className="text-sm text-gray-300">
+            <h4 className="font-semibold text-ink mb-2">Request Body</h4>
+            <div className="bg-surface-sunken rounded-lg p-4 mb-4 overflow-x-auto">
+              <pre className="text-sm text-ink-muted">
 {`{
   "legal_entity_name": "ABC Properties Ltd",
   "contact_name": "John Doe",
@@ -116,9 +116,9 @@ x-api-key: your-api-key (for partner integrations)`}
               </pre>
             </div>
 
-            <h4 className="font-semibold text-white mb-2">Response (201 Created)</h4>
-            <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-              <pre className="text-sm text-gray-300">
+            <h4 className="font-semibold text-ink mb-2">Response (201 Created)</h4>
+            <div className="bg-surface-sunken rounded-lg p-4 overflow-x-auto">
+              <pre className="text-sm text-ink-muted">
 {`{
   "success": true,
   "data": {
@@ -134,17 +134,17 @@ x-api-key: your-api-key (for partner integrations)`}
         </div>
 
         {/* GET /api/tokenization/[id] */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
-          <div className="bg-gray-900 px-4 py-3 border-b border-gray-700 flex items-center gap-3">
-            <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs font-mono rounded">GET</span>
-            <code className="text-white">/api/tokenization/[id]</code>
+        <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
+          <div className="bg-surface-sunken px-4 py-3 border-b border-border flex items-center gap-3">
+            <span className="px-2 py-1 bg-gold-500/20 text-gold-400 text-xs font-mono rounded">GET</span>
+            <code className="text-ink">/api/tokenization/[id]</code>
           </div>
           <div className="p-4">
-            <p className="text-gray-400 mb-4">Get details of a specific application.</p>
+            <p className="text-ink-muted mb-4">Get details of a specific application.</p>
             
-            <h4 className="font-semibold text-white mb-2">Response (200 OK)</h4>
-            <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-              <pre className="text-sm text-gray-300">
+            <h4 className="font-semibold text-ink mb-2">Response (200 OK)</h4>
+            <div className="bg-surface-sunken rounded-lg p-4 overflow-x-auto">
+              <pre className="text-sm text-ink-muted">
 {`{
   "id": "uuid-string",
   "user_address": "0x...",
@@ -166,14 +166,14 @@ x-api-key: your-api-key (for partner integrations)`}
         </div>
 
         {/* PUT /api/tokenization/[id]/resubmit */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
-          <div className="bg-gray-900 px-4 py-3 border-b border-gray-700 flex items-center gap-3">
-            <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-mono rounded">PUT</span>
-            <code className="text-white">/api/tokenization/[id]/resubmit</code>
+        <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
+          <div className="bg-surface-sunken px-4 py-3 border-b border-border flex items-center gap-3">
+            <span className="px-2 py-1 bg-warning/20 text-warning text-xs font-mono rounded">PUT</span>
+            <code className="text-ink">/api/tokenization/[id]/resubmit</code>
           </div>
           <div className="p-4">
-            <p className="text-gray-400 mb-4">Resubmit a rejected application with updated information.</p>
-            <p className="text-sm text-gray-500">Only applications with status "rejected" can be resubmitted.</p>
+            <p className="text-ink-muted mb-4">Resubmit a rejected application with updated information.</p>
+            <p className="text-sm text-ink-faint">Only applications with status "rejected" can be resubmitted.</p>
           </div>
         </div>
       </section>
@@ -183,36 +183,36 @@ x-api-key: your-api-key (for partner integrations)`}
         <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Projects Endpoints</h2>
         
         {/* GET /api/projects/list */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
-          <div className="bg-gray-900 px-4 py-3 border-b border-gray-700 flex items-center gap-3">
-            <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs font-mono rounded">GET</span>
-            <code className="text-white">/api/projects/list</code>
+        <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
+          <div className="bg-surface-sunken px-4 py-3 border-b border-border flex items-center gap-3">
+            <span className="px-2 py-1 bg-gold-500/20 text-gold-400 text-xs font-mono rounded">GET</span>
+            <code className="text-ink">/api/projects/list</code>
           </div>
           <div className="p-4">
-            <p className="text-gray-400 mb-4">Get list of all deployed projects.</p>
+            <p className="text-ink-muted mb-4">Get list of all deployed projects.</p>
             
-            <h4 className="font-semibold text-white mb-2">Query Parameters</h4>
+            <h4 className="font-semibold text-ink mb-2">Query Parameters</h4>
             <div className="overflow-x-auto">
               <table className="w-full text-sm mb-4">
                 <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="text-left py-2 px-3 text-gray-400">Parameter</th>
-                    <th className="text-left py-2 px-3 text-gray-400">Type</th>
-                    <th className="text-left py-2 px-3 text-gray-400">Description</th>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 px-3 text-ink-muted">Parameter</th>
+                    <th className="text-left py-2 px-3 text-ink-muted">Type</th>
+                    <th className="text-left py-2 px-3 text-ink-muted">Description</th>
                   </tr>
                 </thead>
-                <tbody className="text-gray-300">
-                  <tr className="border-b border-gray-700/50">
+                <tbody className="text-ink-muted">
+                  <tr className="border-b border-border/50">
                     <td className="py-2 px-3 font-mono text-cyan-400">asset_type</td>
                     <td className="py-2 px-3">string</td>
                     <td className="py-2 px-3">Filter by asset type</td>
                   </tr>
-                  <tr className="border-b border-gray-700/50">
+                  <tr className="border-b border-border/50">
                     <td className="py-2 px-3 font-mono text-cyan-400">status</td>
                     <td className="py-2 px-3">string</td>
                     <td className="py-2 px-3">funding, funded, closed</td>
                   </tr>
-                  <tr className="border-b border-gray-700/50">
+                  <tr className="border-b border-border/50">
                     <td className="py-2 px-3 font-mono text-cyan-400">limit</td>
                     <td className="py-2 px-3">number</td>
                     <td className="py-2 px-3">Results per page (default: 20)</td>
@@ -226,9 +226,9 @@ x-api-key: your-api-key (for partner integrations)`}
               </table>
             </div>
 
-            <h4 className="font-semibold text-white mb-2">Response (200 OK)</h4>
-            <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-              <pre className="text-sm text-gray-300">
+            <h4 className="font-semibold text-ink mb-2">Response (200 OK)</h4>
+            <div className="bg-surface-sunken rounded-lg p-4 overflow-x-auto">
+              <pre className="text-sm text-ink-muted">
 {`{
   "success": true,
   "data": {
@@ -256,13 +256,13 @@ x-api-key: your-api-key (for partner integrations)`}
         </div>
 
         {/* GET /api/projects/[id] */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
-          <div className="bg-gray-900 px-4 py-3 border-b border-gray-700 flex items-center gap-3">
-            <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs font-mono rounded">GET</span>
-            <code className="text-white">/api/projects/[id]</code>
+        <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
+          <div className="bg-surface-sunken px-4 py-3 border-b border-border flex items-center gap-3">
+            <span className="px-2 py-1 bg-gold-500/20 text-gold-400 text-xs font-mono rounded">GET</span>
+            <code className="text-ink">/api/projects/[id]</code>
           </div>
           <div className="p-4">
-            <p className="text-gray-400 mb-4">Get detailed information about a specific project.</p>
+            <p className="text-ink-muted mb-4">Get detailed information about a specific project.</p>
           </div>
         </div>
       </section>
@@ -272,17 +272,17 @@ x-api-key: your-api-key (for partner integrations)`}
         <h2 className="text-2xl font-semibold text-cyan-400 mb-6">KYC Endpoints</h2>
         
         {/* GET /api/kyc/status/[address] */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
-          <div className="bg-gray-900 px-4 py-3 border-b border-gray-700 flex items-center gap-3">
-            <span className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs font-mono rounded">GET</span>
-            <code className="text-white">/api/kyc/status/[address]</code>
+        <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
+          <div className="bg-surface-sunken px-4 py-3 border-b border-border flex items-center gap-3">
+            <span className="px-2 py-1 bg-gold-500/20 text-gold-400 text-xs font-mono rounded">GET</span>
+            <code className="text-ink">/api/kyc/status/[address]</code>
           </div>
           <div className="p-4">
-            <p className="text-gray-400 mb-4">Get KYC status and limits for a wallet address.</p>
+            <p className="text-ink-muted mb-4">Get KYC status and limits for a wallet address.</p>
             
-            <h4 className="font-semibold text-white mb-2">Response (200 OK)</h4>
-            <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-              <pre className="text-sm text-gray-300">
+            <h4 className="font-semibold text-ink mb-2">Response (200 OK)</h4>
+            <div className="bg-surface-sunken rounded-lg p-4 overflow-x-auto">
+              <pre className="text-sm text-ink-muted">
 {`{
   "success": true,
   "data": {
@@ -301,17 +301,17 @@ x-api-key: your-api-key (for partner integrations)`}
         </div>
 
         {/* POST /api/kyc/initiate */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
-          <div className="bg-gray-900 px-4 py-3 border-b border-gray-700 flex items-center gap-3">
-            <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-mono rounded">POST</span>
-            <code className="text-white">/api/kyc/initiate</code>
+        <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
+          <div className="bg-surface-sunken px-4 py-3 border-b border-border flex items-center gap-3">
+            <span className="px-2 py-1 bg-success/20 text-success text-xs font-mono rounded">POST</span>
+            <code className="text-ink">/api/kyc/initiate</code>
           </div>
           <div className="p-4">
-            <p className="text-gray-400 mb-4">Start KYC verification process for a tier upgrade.</p>
+            <p className="text-ink-muted mb-4">Start KYC verification process for a tier upgrade.</p>
             
-            <h4 className="font-semibold text-white mb-2">Request Body</h4>
-            <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-              <pre className="text-sm text-gray-300">
+            <h4 className="font-semibold text-ink mb-2">Request Body</h4>
+            <div className="bg-surface-sunken rounded-lg p-4 overflow-x-auto">
+              <pre className="text-sm text-ink-muted">
 {`{
   "tier": "silver",
   "email": "user@example.com"
@@ -327,27 +327,27 @@ x-api-key: your-api-key (for partner integrations)`}
         <h2 className="text-2xl font-semibold text-cyan-400 mb-6">IPFS Endpoints</h2>
         
         {/* POST /api/ipfs/upload */}
-        <div className="bg-gray-800 border border-gray-700 rounded-lg mb-6 overflow-hidden">
-          <div className="bg-gray-900 px-4 py-3 border-b border-gray-700 flex items-center gap-3">
-            <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-mono rounded">POST</span>
-            <code className="text-white">/api/ipfs/upload</code>
+        <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
+          <div className="bg-surface-sunken px-4 py-3 border-b border-border flex items-center gap-3">
+            <span className="px-2 py-1 bg-success/20 text-success text-xs font-mono rounded">POST</span>
+            <code className="text-ink">/api/ipfs/upload</code>
           </div>
           <div className="p-4">
-            <p className="text-gray-400 mb-4">Upload a file to IPFS.</p>
+            <p className="text-ink-muted mb-4">Upload a file to IPFS.</p>
             
-            <h4 className="font-semibold text-white mb-2">Request</h4>
-            <p className="text-sm text-gray-400 mb-4">
+            <h4 className="font-semibold text-ink mb-2">Request</h4>
+            <p className="text-sm text-ink-muted mb-4">
               Content-Type: <code className="text-cyan-400">multipart/form-data</code>
             </p>
-            <ul className="text-sm text-gray-400 space-y-1 mb-4">
+            <ul className="text-sm text-ink-muted space-y-1 mb-4">
               <li>• Field name: <code className="text-cyan-400">file</code></li>
               <li>• Max size: 50MB</li>
               <li>• Allowed types: PDF, PNG, JPG, JPEG</li>
             </ul>
 
-            <h4 className="font-semibold text-white mb-2">Response (200 OK)</h4>
-            <div className="bg-gray-900 rounded-lg p-4 overflow-x-auto">
-              <pre className="text-sm text-gray-300">
+            <h4 className="font-semibold text-ink mb-2">Response (200 OK)</h4>
+            <div className="bg-surface-sunken rounded-lg p-4 overflow-x-auto">
+              <pre className="text-sm text-ink-muted">
 {`{
   "success": true,
   "data": {
@@ -368,37 +368,37 @@ x-api-key: your-api-key (for partner integrations)`}
       <section className="mb-12">
         <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Error Codes</h2>
         
-        <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+        <div className="bg-surface border border-border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-700 bg-gray-900">
-                <th className="text-left py-3 px-4 text-gray-400">Code</th>
-                <th className="text-left py-3 px-4 text-gray-400">Message</th>
-                <th className="text-left py-3 px-4 text-gray-400">Description</th>
+              <tr className="border-b border-border bg-surface-sunken">
+                <th className="text-left py-3 px-4 text-ink-muted">Code</th>
+                <th className="text-left py-3 px-4 text-ink-muted">Message</th>
+                <th className="text-left py-3 px-4 text-ink-muted">Description</th>
               </tr>
             </thead>
-            <tbody className="text-gray-300">
-              <tr className="border-b border-gray-700/50">
+            <tbody className="text-ink-muted">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4 font-mono">400</td>
                 <td className="py-3 px-4">Bad Request</td>
                 <td className="py-3 px-4">Invalid request body or parameters</td>
               </tr>
-              <tr className="border-b border-gray-700/50">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4 font-mono">401</td>
                 <td className="py-3 px-4">Unauthorized</td>
                 <td className="py-3 px-4">Missing or invalid authentication</td>
               </tr>
-              <tr className="border-b border-gray-700/50">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4 font-mono">403</td>
                 <td className="py-3 px-4">Forbidden</td>
                 <td className="py-3 px-4">Insufficient permissions (e.g., KYC tier)</td>
               </tr>
-              <tr className="border-b border-gray-700/50">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4 font-mono">404</td>
                 <td className="py-3 px-4">Not Found</td>
                 <td className="py-3 px-4">Resource does not exist</td>
               </tr>
-              <tr className="border-b border-gray-700/50">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4 font-mono">429</td>
                 <td className="py-3 px-4">Too Many Requests</td>
                 <td className="py-3 px-4">Rate limit exceeded</td>
@@ -412,9 +412,9 @@ x-api-key: your-api-key (for partner integrations)`}
           </table>
         </div>
 
-        <div className="mt-6 bg-gray-900 rounded-lg p-4">
-          <h4 className="font-semibold text-white mb-2">Error Response Format</h4>
-          <pre className="text-sm text-gray-300">
+        <div className="mt-6 bg-surface-sunken rounded-lg p-4">
+          <h4 className="font-semibold text-ink mb-2">Error Response Format</h4>
+          <pre className="text-sm text-ink-muted">
 {`{
   "success": false,
   "error": {
@@ -431,22 +431,22 @@ x-api-key: your-api-key (for partner integrations)`}
       <section className="mb-12">
         <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Rate Limits</h2>
         
-        <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+        <div className="bg-surface border border-border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-700 bg-gray-900">
-                <th className="text-left py-3 px-4 text-gray-400">Tier</th>
-                <th className="text-left py-3 px-4 text-gray-400">Limit</th>
-                <th className="text-left py-3 px-4 text-gray-400">Window</th>
+              <tr className="border-b border-border bg-surface-sunken">
+                <th className="text-left py-3 px-4 text-ink-muted">Tier</th>
+                <th className="text-left py-3 px-4 text-ink-muted">Limit</th>
+                <th className="text-left py-3 px-4 text-ink-muted">Window</th>
               </tr>
             </thead>
-            <tbody className="text-gray-300">
-              <tr className="border-b border-gray-700/50">
+            <tbody className="text-ink-muted">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4">Standard</td>
                 <td className="py-3 px-4">100 requests</td>
                 <td className="py-3 px-4">1 minute</td>
               </tr>
-              <tr className="border-b border-gray-700/50">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4">Partner</td>
                 <td className="py-3 px-4">500 requests</td>
                 <td className="py-3 px-4">1 minute</td>
@@ -460,11 +460,11 @@ x-api-key: your-api-key (for partner integrations)`}
           </table>
         </div>
 
-        <p className="text-gray-400 mt-4">
+        <p className="text-ink-muted mt-4">
           Rate limit headers are included in all responses:
         </p>
-        <div className="bg-gray-900 rounded-lg p-4 mt-2">
-          <pre className="text-sm text-gray-300">
+        <div className="bg-surface-sunken rounded-lg p-4 mt-2">
+          <pre className="text-sm text-ink-muted">
 {`X-RateLimit-Limit: 100
 X-RateLimit-Remaining: 95
 X-RateLimit-Reset: 1709971200`}
@@ -473,22 +473,22 @@ X-RateLimit-Reset: 1709971200`}
       </section>
 
       {/* Support */}
-      <section className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 border border-cyan-500/20 rounded-xl p-8">
-        <h2 className="text-2xl font-semibold text-white mb-4">API Support</h2>
-        <p className="text-gray-400 mb-6">
+      <section className="bg-gradient-to-r from-cyan-500/10 to-gold-light-500/10 border border-cyan-500/20 rounded-xl p-8">
+        <h2 className="text-2xl font-semibold text-ink mb-4">API Support</h2>
+        <p className="text-ink-muted mb-6">
           Need help with integration? Our developer team is here to assist.
         </p>
         <div className="grid md:grid-cols-3 gap-4 text-center">
           <div>
-            <h3 className="font-semibold text-white">Discord</h3>
+            <h3 className="font-semibold text-ink">Discord</h3>
             <p className="text-cyan-400 text-sm">{SOCIAL.discord}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-white">Email</h3>
+            <h3 className="font-semibold text-ink">Email</h3>
             <p className="text-cyan-400 text-sm">{CONTACT.api}</p>
           </div>
           <div>
-            <h3 className="font-semibold text-white">Partners</h3>
+            <h3 className="font-semibold text-ink">Partners</h3>
             <p className="text-cyan-400 text-sm">{CONTACT.partners}</p>
           </div>
         </div>

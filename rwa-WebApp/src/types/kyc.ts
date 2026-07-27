@@ -140,9 +140,9 @@ export const TIER_STYLES: Record<number, {
 }> = {
   0: {
     name: 'None',
-    color: 'text-gray-400',
-    bgColor: 'bg-gray-800',
-    borderColor: 'border-gray-600',
+    color: 'text-ink-muted',
+    bgColor: 'bg-surface-raised',
+    borderColor: 'border-border-strong',
     icon: '⚪',
     description: 'No verification',
     requirements: []

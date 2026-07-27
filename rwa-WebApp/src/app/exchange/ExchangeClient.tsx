@@ -698,10 +698,10 @@ export default function ExchangeClient() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#0a0a14] flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-          <p className="text-gray-400">Loading exchange...</p>
+          <Loader2 className="w-8 h-8 text-gold animate-spin" />
+          <p className="text-ink-muted">Loading exchange...</p>
         </div>
       </div>
     );
@@ -735,23 +735,23 @@ export default function ExchangeClient() {
     return (
       <div className="p-3 space-y-3">
         {/* Available Balance Section */}
-        <div className="p-2.5 bg-[#0d0d1a] rounded-lg border border-gray-800">
+        <div className="p-2.5 bg-surface rounded-lg border border-border">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-[10px] text-gray-500 uppercase tracking-wide">Available</span>
-            <Wallet className="w-3 h-3 text-gray-500" />
+            <span className="text-[10px] text-ink-faint uppercase tracking-wide">Available</span>
+            <Wallet className="w-3 h-3 text-ink-faint" />
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-sm font-medium text-white">
+              <span className="text-sm font-medium text-ink">
                 {orderSide === 'buy' 
                   ? quoteBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) 
                   : baseBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 4 })}
               </span>
-              <span className="text-xs text-gray-500 ml-1">{orderSide === 'buy' ? quoteSymbol : baseSymbol}</span>
+              <span className="text-xs text-ink-faint ml-1">{orderSide === 'buy' ? quoteSymbol : baseSymbol}</span>
             </div>
             <div className="text-right">
-              <span className="text-[10px] text-gray-500">≈ $</span>
-              <span className="text-xs text-gray-400">
+              <span className="text-[10px] text-ink-faint">≈ $</span>
+              <span className="text-xs text-ink-muted">
                 {orderSide === 'buy' 
                   ? quoteBalance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                   : (baseBalance * parseFloat(currentPrice || '0')).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
@@ -762,13 +762,13 @@ export default function ExchangeClient() {
         </div>
 
         {/* Order Type Tabs */}
-        <div className="flex gap-4 border-b border-gray-800 pb-1">
+        <div className="flex gap-4 border-b border-border pb-1">
           <button
             onClick={() => setOrderType('limit')}
             className={`text-xs font-medium pb-1 border-b-2 transition-colors ${
               orderType === 'limit'
-                ? `text-white border-${accentColor}-500`
-                : 'text-gray-500 border-transparent hover:text-gray-300'
+                ? `text-ink border-${accentColor}-500`
+                : 'text-ink-faint border-transparent hover:text-ink-muted'
             }`}
           >
             Limit
@@ -777,8 +777,8 @@ export default function ExchangeClient() {
             onClick={() => setOrderType('market')}
             className={`text-xs font-medium pb-1 border-b-2 transition-colors ${
               orderType === 'market'
-                ? `text-white border-${accentColor}-500`
-                : 'text-gray-500 border-transparent hover:text-gray-300'
+                ? `text-ink border-${accentColor}-500`
+                : 'text-ink-faint border-transparent hover:text-ink-muted'
             }`}
           >
             Market
@@ -788,14 +788,14 @@ export default function ExchangeClient() {
         {/* Quote Currency Selector (Security only) */}
         {!isCrypto && (
           <div className="flex items-center gap-2">
-            <span className="text-[10px] text-gray-500">Quote:</span>
-            <div className="flex bg-[#0d0d1a] rounded p-0.5 border border-gray-800">
+            <span className="text-[10px] text-ink-faint">Quote:</span>
+            <div className="flex bg-surface rounded p-0.5 border border-border">
               <button
                 onClick={() => setSecurityQuoteCurrency('USDC')}
                 className={`px-2 py-0.5 rounded text-[10px] font-medium transition-all ${
                   securityQuoteCurrency === 'USDC'
-                    ? 'bg-purple-600 text-white'
-                    : 'text-gray-500 hover:text-white'
+                    ? 'bg-gold text-surface-sunken'
+                    : 'text-ink-faint hover:text-ink'
                 }`}
               >
                 USDC
@@ -804,8 +804,8 @@ export default function ExchangeClient() {
                 onClick={() => setSecurityQuoteCurrency('USDT')}
                 className={`px-2 py-0.5 rounded text-[10px] font-medium transition-all ${
                   securityQuoteCurrency === 'USDT'
-                    ? 'bg-purple-600 text-white'
-                    : 'text-gray-500 hover:text-white'
+                    ? 'bg-gold text-surface-sunken'
+                    : 'text-ink-faint hover:text-ink'
                 }`}
               >
                 USDT
@@ -817,11 +817,11 @@ export default function ExchangeClient() {
         {/* Price Input */}
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="text-[10px] text-gray-500">Price</label>
+            <label className="text-[10px] text-ink-faint">Price</label>
             {orderType === 'limit' && currentPrice && (
               <button 
                 onClick={() => setOrderPrice(currentPrice)}
-                className="text-[10px] text-gray-500 hover:text-white"
+                className="text-[10px] text-ink-faint hover:text-ink"
               >
                 Last: {currentPrice}
               </button>
@@ -834,12 +834,12 @@ export default function ExchangeClient() {
                 value={orderPrice}
                 onChange={(e) => setOrderPrice(e.target.value)}
                 placeholder="0.00"
-                className="w-full px-3 py-2 text-sm bg-[#0d0d1a] border border-gray-800 rounded focus:border-gray-600 outline-none text-right pr-14"
+                className="w-full px-3 py-2 text-sm bg-surface border border-border rounded focus:border-border-strong outline-none text-right pr-14"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">{quoteSymbol}</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-faint">{quoteSymbol}</span>
             </div>
           ) : (
-            <div className="px-3 py-2 text-sm bg-[#0d0d1a] border border-gray-800 rounded text-gray-500 text-right">
+            <div className="px-3 py-2 text-sm bg-surface border border-border rounded text-ink-faint text-right">
               Market Price
             </div>
           )}
@@ -848,7 +848,7 @@ export default function ExchangeClient() {
         {/* Amount Input */}
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="text-[10px] text-gray-500">Amount</label>
+            <label className="text-[10px] text-ink-faint">Amount</label>
           </div>
           <div className="relative">
             <input
@@ -866,9 +866,9 @@ export default function ExchangeClient() {
                 }
               }}
               placeholder="0.00"
-              className="w-full px-3 py-2 text-sm bg-[#0d0d1a] border border-gray-800 rounded focus:border-gray-600 outline-none text-right pr-14"
+              className="w-full px-3 py-2 text-sm bg-surface border border-border rounded focus:border-border-strong outline-none text-right pr-14"
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-500">{baseSymbol}</span>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ink-faint">{baseSymbol}</span>
           </div>
         </div>
 
@@ -876,14 +876,14 @@ export default function ExchangeClient() {
         <div className="space-y-2">
           <div 
             ref={isCrypto ? cryptoSliderRef : securitySliderRef}
-            className="relative h-3 bg-[#0d0d1a] rounded-full cursor-pointer select-none"
+            className="relative h-3 bg-surface rounded-full cursor-pointer select-none"
             onMouseDown={(e) => handleSliderMouseDown(e, isCrypto ? 'crypto' : 'security')}
             onTouchStart={(e) => handleSliderTouchStart(e, isCrypto ? 'crypto' : 'security')}
           >
             {/* Filled track */}
             <div 
               className={`absolute left-0 top-0 h-full rounded-full pointer-events-none ${
-                orderSide === 'buy' ? 'bg-green-500' : 'bg-red-500'
+                orderSide === 'buy' ? 'bg-success' : 'bg-danger'
               }`}
               style={{ width: `${sliderValue}%` }}
             />
@@ -895,9 +895,9 @@ export default function ExchangeClient() {
                   className={`w-2.5 h-2.5 rounded-full border-2 transition-colors ${
                     sliderValue >= pct
                       ? orderSide === 'buy' 
-                        ? 'bg-green-500 border-green-400' 
-                        : 'bg-red-500 border-red-400'
-                      : 'bg-[#1a1a2e] border-gray-700'
+                        ? 'bg-success border-green-400' 
+                        : 'bg-danger border-red-400'
+                      : 'bg-surface-overlay border-border-strong'
                   }`}
                 />
               ))}
@@ -906,8 +906,8 @@ export default function ExchangeClient() {
             <div 
               className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 shadow-lg pointer-events-none ${
                 orderSide === 'buy' 
-                  ? 'bg-green-500 border-green-300' 
-                  : 'bg-red-500 border-red-300'
+                  ? 'bg-success border-green-300' 
+                  : 'bg-danger border-red-300'
               } ${isDragging ? 'scale-110' : ''}`}
               style={{ 
                 left: `calc(${sliderValue}% - 8px)`,
@@ -916,7 +916,7 @@ export default function ExchangeClient() {
             />
           </div>
           {/* Percentage labels */}
-          <div className="flex justify-between text-[10px] text-gray-600">
+          <div className="flex justify-between text-[10px] text-ink-faint">
             {[0, 25, 50, 75, 100].map((pct) => (
               <button
                 key={pct}
@@ -924,7 +924,7 @@ export default function ExchangeClient() {
                   if (isCrypto) handleCryptoSliderChange(pct);
                   else handleSecuritySliderChange(pct);
                 }}
-                className={`hover:text-gray-400 transition-colors w-6 text-center ${
+                className={`hover:text-ink-muted transition-colors w-6 text-center ${
                   sliderValue >= pct 
                     ? orderSide === 'buy' ? 'text-green-500' : 'text-red-500' 
                     : ''
@@ -937,11 +937,11 @@ export default function ExchangeClient() {
         </div>
 
         {/* Total */}
-        <div className="flex items-center justify-between p-2 bg-[#0d0d1a] rounded border border-gray-800">
-          <span className="text-[10px] text-gray-500">Total</span>
+        <div className="flex items-center justify-between p-2 bg-surface rounded border border-border">
+          <span className="text-[10px] text-ink-faint">Total</span>
           <div>
-            <span className="text-sm font-medium text-white">{orderTotal}</span>
-            <span className="text-xs text-gray-500 ml-1">{quoteSymbol}</span>
+            <span className="text-sm font-medium text-ink">{orderTotal}</span>
+            <span className="text-xs text-ink-faint ml-1">{quoteSymbol}</span>
           </div>
         </div>
 
@@ -957,8 +957,8 @@ export default function ExchangeClient() {
             disabled={!isConnected || submitting}
             className={`py-2 rounded text-xs font-medium transition-all ${
               orderSide === 'buy'
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-[#0d0d1a] border border-gray-800 text-gray-400 hover:text-white hover:border-green-600'
+                ? 'bg-success hover:bg-green-700 text-ink'
+                : 'bg-surface border border-border text-ink-muted hover:text-ink hover:border-success'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             Buy {baseSymbol}
@@ -973,8 +973,8 @@ export default function ExchangeClient() {
             disabled={!isConnected || submitting}
             className={`py-2 rounded text-xs font-medium transition-all ${
               orderSide === 'sell'
-                ? 'bg-red-600 hover:bg-red-700 text-white'
-                : 'bg-[#0d0d1a] border border-gray-800 text-gray-400 hover:text-white hover:border-red-600'
+                ? 'bg-danger hover:bg-red-700 text-ink'
+                : 'bg-surface border border-border text-ink-muted hover:text-ink hover:border-danger'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             Sell {baseSymbol}
@@ -988,8 +988,8 @@ export default function ExchangeClient() {
             disabled={!isConnected || submitting || (orderType === 'limit' && !orderPrice)}
             className={`w-full py-2.5 rounded text-xs font-bold transition-all flex items-center justify-center gap-2 ${
               orderSide === 'buy'
-                ? 'bg-green-600 hover:bg-green-700'
-                : 'bg-red-600 hover:bg-red-700'
+                ? 'bg-success hover:bg-green-700'
+                : 'bg-danger hover:bg-red-700'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {submitting ? (
@@ -1003,7 +1003,7 @@ export default function ExchangeClient() {
         )}
 
         {!isConnected && (
-          <p className="text-center text-yellow-500 text-[10px]">
+          <p className="text-center text-warning text-[10px]">
             Connect wallet to trade
           </p>
         )}
@@ -1012,25 +1012,25 @@ export default function ExchangeClient() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a14] text-white">
+    <div className="min-h-screen bg-surface-sunken text-ink">
       {/* Header */}
-      <div className="border-b border-gray-800 bg-[#0d0d1a]">
+      <div className="border-b border-border bg-surface">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Store className="w-5 h-5 text-blue-400" />
+              <Store className="w-5 h-5 text-gold-400" />
               <h1 className="text-lg font-bold">RWA Exchange</h1>
-              <span className="px-1.5 py-0.5 bg-green-500/20 text-green-400 text-[10px] rounded">Live</span>
+              <span className="px-1.5 py-0.5 bg-success/20 text-success text-[10px] rounded">Live</span>
             </div>
 
             {/* MAIN MARKET TYPE TABS */}
-            <div className="flex items-center gap-1 bg-[#1a1a2e] rounded-lg p-0.5">
+            <div className="flex items-center gap-1 bg-surface-overlay rounded-lg p-0.5">
               <button
                 onClick={() => setMarketType('crypto')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   marketType === 'crypto'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'bg-gold-600 text-ink'
+                    : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 <Coins className="w-3 h-3" />
@@ -1040,8 +1040,8 @@ export default function ExchangeClient() {
                 onClick={() => setMarketType('security')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   marketType === 'security'
-                    ? 'bg-purple-600 text-white'
-                    : 'text-gray-400 hover:text-white'
+                    ? 'bg-gold text-surface-sunken'
+                    : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 <Shield className="w-3 h-3" />
@@ -1052,7 +1052,7 @@ export default function ExchangeClient() {
             <div className="flex items-center gap-3">
               {/* Chain indicator for security tokens */}
               {marketType === 'security' && (
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-purple-500/10 text-purple-400 rounded text-xs">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-gold-500/10 text-gold-400 rounded text-xs">
                   <Activity className="w-3 h-3" />
                   {getChainName(chainId)}
                 </div>
@@ -1060,12 +1060,12 @@ export default function ExchangeClient() {
 
               {/* Wallet Status */}
               {isConnected ? (
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-green-500/10 text-green-400 rounded text-xs">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-success/10 text-success rounded text-xs">
                   <Wallet className="w-3 h-3" />
                   {truncateAddress(address || '')}
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-yellow-500/10 text-yellow-400 rounded text-xs">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-warning/10 text-warning rounded text-xs">
                   <AlertTriangle className="w-3 h-3" />
                   Connect Wallet
                 </div>
@@ -1081,48 +1081,48 @@ export default function ExchangeClient() {
           {cryptoPairs.length === 0 ? (
             <div className="max-w-7xl mx-auto px-4 py-16">
               <div className="text-center">
-                <Coins className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <Coins className="w-16 h-16 text-ink-faint mx-auto mb-4" />
                 <h2 className="text-2xl font-bold mb-2">Loading Crypto Pairs...</h2>
-                <p className="text-gray-400">Fetching live prices from MEXC</p>
+                <p className="text-ink-muted">Fetching live prices from MEXC</p>
               </div>
             </div>
           ) : (
             <div className="max-w-7xl mx-auto px-4 py-4">
               {/* Compact Market Info Bar */}
               {selectedCryptoPair && (
-                <div className="flex items-center gap-4 mb-4 p-3 bg-[#1a1a2e] rounded-lg border border-gray-800">
+                <div className="flex items-center gap-4 mb-4 p-3 bg-surface-overlay rounded-lg border border-border">
                   <div className="flex items-center gap-2">
                     {selectedCryptoPair.icon && (
                       <img src={selectedCryptoPair.icon} alt="" className="w-8 h-8" />
                     )}
                     <div>
                       <h2 className="text-sm font-bold">{selectedCryptoPair.baseAsset}/{selectedCryptoPair.quoteAsset}</h2>
-                      <p className="text-[10px] text-gray-500">MEXC Spot</p>
+                      <p className="text-[10px] text-ink-faint">MEXC Spot</p>
                     </div>
                   </div>
                   
                   <div className="flex-1 flex items-center gap-6 text-xs">
                     <div>
-                      <span className="text-gray-500">Price </span>
+                      <span className="text-ink-faint">Price </span>
                       <span className="font-bold text-lg">${selectedCryptoPair.price}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">24h </span>
-                      <span className={`font-medium ${parseFloat(selectedCryptoPair.change24h) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <span className="text-ink-faint">24h </span>
+                      <span className={`font-medium ${parseFloat(selectedCryptoPair.change24h) >= 0 ? 'text-success' : 'text-danger'}`}>
                         {parseFloat(selectedCryptoPair.change24h) >= 0 ? '+' : ''}{selectedCryptoPair.change24h}%
                       </span>
                     </div>
                     <div>
-                      <span className="text-gray-500">High </span>
-                      <span className="text-white">${selectedCryptoPair.high24h}</span>
+                      <span className="text-ink-faint">High </span>
+                      <span className="text-ink">${selectedCryptoPair.high24h}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Low </span>
-                      <span className="text-white">${selectedCryptoPair.low24h}</span>
+                      <span className="text-ink-faint">Low </span>
+                      <span className="text-ink">${selectedCryptoPair.low24h}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Vol </span>
-                      <span className="text-white">${formatNumber(selectedCryptoPair.volume24h)}</span>
+                      <span className="text-ink-faint">Vol </span>
+                      <span className="text-ink">${formatNumber(selectedCryptoPair.volume24h)}</span>
                     </div>
                   </div>
                 </div>
@@ -1142,21 +1142,21 @@ export default function ExchangeClient() {
               {/* Main Trading Interface */}
               <div className="grid grid-cols-12 gap-3">
                 {/* Left - All Pairs List */}
-                <div className="col-span-3 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col">
-                  <div className="p-2 border-b border-gray-800">
+                <div className="col-span-3 bg-surface-overlay rounded-lg border border-border h-[500px] flex flex-col">
+                  <div className="p-2 border-b border-border">
                     <div className="relative">
-                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500" />
+                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-ink-faint" />
                       <input
                         type="text"
                         value={cryptoSearchQuery}
                         onChange={(e) => setCryptoSearchQuery(e.target.value)}
                         placeholder="Search..."
-                        className="w-full pl-7 pr-3 py-1.5 bg-[#0d0d1a] rounded border border-gray-700 focus:border-blue-500 outline-none text-xs"
+                        className="w-full pl-7 pr-3 py-1.5 bg-surface rounded border border-border-strong focus:border-gold-500 outline-none text-xs"
                       />
                     </div>
                   </div>
                   
-                  <div className="flex items-center text-[10px] text-gray-500 px-2 py-1 border-b border-gray-800">
+                  <div className="flex items-center text-[10px] text-ink-faint px-2 py-1 border-b border-border">
                     <span className="flex-1">Pair</span>
                     <span className="w-20 text-right">Price</span>
                     <span className="w-16 text-right">24h %</span>
@@ -1167,15 +1167,15 @@ export default function ExchangeClient() {
                       <button
                         key={pair.symbol}
                         onClick={() => setSelectedCryptoPair(pair)}
-                        className={`w-full px-2 py-2 flex items-center hover:bg-white/5 transition-colors ${
-                          selectedCryptoPair?.symbol === pair.symbol ? 'bg-blue-500/10 border-l-2 border-blue-500' : ''
+                        className={`w-full px-2 py-2 flex items-center hover:bg-ink/5 transition-colors ${
+                          selectedCryptoPair?.symbol === pair.symbol ? 'bg-gold-500/10 border-l-2 border-gold-500' : ''
                         }`}
                       >
                         <div className="flex items-center gap-1.5 flex-1">
                           {pair.icon ? (
                             <img src={pair.icon} alt="" className="w-5 h-5" />
                           ) : (
-                            <div className="w-5 h-5 bg-gray-700 rounded-full flex items-center justify-center text-[8px]">
+                            <div className="w-5 h-5 bg-surface-overlay rounded-full flex items-center justify-center text-[8px]">
                               {pair.baseAsset.slice(0, 2)}
                             </div>
                           )}
@@ -1183,7 +1183,7 @@ export default function ExchangeClient() {
                         </div>
                         <span className="w-20 text-right text-xs">${pair.price}</span>
                         <span className={`w-16 text-right text-xs ${
-                          parseFloat(pair.change24h) >= 0 ? 'text-green-400' : 'text-red-400'
+                          parseFloat(pair.change24h) >= 0 ? 'text-success' : 'text-danger'
                         }`}>
                           {parseFloat(pair.change24h) >= 0 ? '+' : ''}{pair.change24h}%
                         </span>
@@ -1193,17 +1193,17 @@ export default function ExchangeClient() {
                 </div>
 
                 {/* Middle - Order Book */}
-                <div className="col-span-5 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col">
-                  <div className="p-2 border-b border-gray-800 flex items-center justify-between">
+                <div className="col-span-5 bg-surface-overlay rounded-lg border border-border h-[500px] flex flex-col">
+                  <div className="p-2 border-b border-border flex items-center justify-between">
                     <span className="text-xs font-medium">Order Book</span>
-                    <button onClick={fetchMexcOrderBook} className="p-1 hover:bg-white/10 rounded">
+                    <button onClick={fetchMexcOrderBook} className="p-1 hover:bg-ink/10 rounded">
                       <RefreshCw className={`w-3 h-3 ${cryptoOrderBookLoading ? 'animate-spin' : ''}`} />
                     </button>
                   </div>
 
                   {/* Order Book Header */}
-                  <div className="grid grid-cols-2 text-[10px] text-gray-500 border-b border-gray-800">
-                    <div className="flex px-2 py-1 border-r border-gray-800">
+                  <div className="grid grid-cols-2 text-[10px] text-ink-faint border-b border-border">
+                    <div className="flex px-2 py-1 border-r border-border">
                       <span className="flex-1">Bid</span>
                       <span className="flex-1 text-right">Amount</span>
                     </div>
@@ -1216,16 +1216,16 @@ export default function ExchangeClient() {
                   {/* Order Book Body */}
                   <div className="flex-1 grid grid-cols-2 overflow-hidden">
                     {/* Bids */}
-                    <div className="border-r border-gray-800 overflow-y-auto">
+                    <div className="border-r border-border overflow-y-auto">
                       {cryptoOrderBook.bids.slice(0, 15).map((bid, i) => {
                         const maxAmount = Math.max(...cryptoOrderBook.bids.slice(0, 15).map(b => parseFloat(b.amount)));
                         const widthPct = (parseFloat(bid.amount) / maxAmount) * 100;
                         return (
-                          <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-green-500/10 cursor-pointer"
+                          <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-success/10 cursor-pointer"
                             onClick={() => setCryptoOrderPrice(bid.price)}>
-                            <div className="absolute right-0 top-0 bottom-0 bg-green-500/10" style={{ width: `${widthPct}%` }} />
-                            <span className="flex-1 text-green-400 font-mono relative z-10">{parseFloat(bid.price).toFixed(2)}</span>
-                            <span className="flex-1 text-right text-gray-400 font-mono relative z-10">{parseFloat(bid.amount).toFixed(4)}</span>
+                            <div className="absolute right-0 top-0 bottom-0 bg-success/10" style={{ width: `${widthPct}%` }} />
+                            <span className="flex-1 text-success font-mono relative z-10">{parseFloat(bid.price).toFixed(2)}</span>
+                            <span className="flex-1 text-right text-ink-muted font-mono relative z-10">{parseFloat(bid.amount).toFixed(4)}</span>
                           </div>
                         );
                       })}
@@ -1236,11 +1236,11 @@ export default function ExchangeClient() {
                         const maxAmount = Math.max(...cryptoOrderBook.asks.slice(0, 15).map(a => parseFloat(a.amount)));
                         const widthPct = (parseFloat(ask.amount) / maxAmount) * 100;
                         return (
-                          <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-red-500/10 cursor-pointer"
+                          <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-danger/10 cursor-pointer"
                             onClick={() => setCryptoOrderPrice(ask.price)}>
-                            <div className="absolute left-0 top-0 bottom-0 bg-red-500/10" style={{ width: `${widthPct}%` }} />
-                            <span className="flex-1 text-red-400 font-mono relative z-10">{parseFloat(ask.price).toFixed(2)}</span>
-                            <span className="flex-1 text-right text-gray-400 font-mono relative z-10">{parseFloat(ask.amount).toFixed(4)}</span>
+                            <div className="absolute left-0 top-0 bottom-0 bg-danger/10" style={{ width: `${widthPct}%` }} />
+                            <span className="flex-1 text-danger font-mono relative z-10">{parseFloat(ask.price).toFixed(2)}</span>
+                            <span className="flex-1 text-right text-ink-muted font-mono relative z-10">{parseFloat(ask.amount).toFixed(4)}</span>
                           </div>
                         );
                       })}
@@ -1248,14 +1248,14 @@ export default function ExchangeClient() {
                   </div>
 
                   {/* Spread */}
-                  <div className="p-2 border-t border-gray-800 text-center">
+                  <div className="p-2 border-t border-border text-center">
                     <span className="text-lg font-bold">${selectedCryptoPair?.price}</span>
                   </div>
                 </div>
 
                 {/* Right - Order Form */}
-                <div className="col-span-4 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col overflow-hidden">
-                  <div className="p-2 border-b border-gray-800">
+                <div className="col-span-4 bg-surface-overlay rounded-lg border border-border h-[500px] flex flex-col overflow-hidden">
+                  <div className="p-2 border-b border-border">
                     <span className="text-xs font-medium">{selectedCryptoPair?.baseAsset}/USDT</span>
                   </div>
                   <div className="flex-1 overflow-y-auto">
@@ -1274,10 +1274,10 @@ export default function ExchangeClient() {
           {securityTokens.length === 0 ? (
             <div className="max-w-7xl mx-auto px-4 py-16">
               <div className="text-center">
-                <Shield className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+                <Shield className="w-16 h-16 text-ink-faint mx-auto mb-4" />
                 <h2 className="text-2xl font-bold mb-2">No Security Tokens on {getChainName(chainId)}</h2>
-                <p className="text-gray-400 mb-6">No tokenized assets are currently listed on this network.</p>
-                <a href="/dashboard" className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded text-sm">
+                <p className="text-ink-muted mb-6">No tokenized assets are currently listed on this network.</p>
+                <a href="/dashboard" className="inline-flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-700 rounded text-sm">
                   List Your Asset <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
@@ -1286,33 +1286,33 @@ export default function ExchangeClient() {
             <div className="max-w-7xl mx-auto px-4 py-4">
               {/* Compact Market Info Bar */}
               {selectedSecurityToken && (
-                <div className="flex items-center gap-4 mb-4 p-3 bg-[#1a1a2e] rounded-lg border border-purple-800/30">
+                <div className="flex items-center gap-4 mb-4 p-3 bg-surface-overlay rounded-lg border border-gold-800/30">
                   <div className="flex items-center gap-2">
                     {selectedSecurityToken.logoUrl ? (
                       <img src={selectedSecurityToken.logoUrl} alt="" className="w-8 h-8 rounded" />
                     ) : (
-                      <div className="w-8 h-8 bg-purple-700 rounded flex items-center justify-center text-xs font-bold">
+                      <div className="w-8 h-8 bg-gold-700 rounded flex items-center justify-center text-xs font-bold">
                         {selectedSecurityToken.symbol?.slice(0, 2)}
                       </div>
                     )}
                     <div>
                       <h2 className="text-sm font-bold">{selectedSecurityToken.symbol}/{selectedSecurityToken.tradingPair}</h2>
-                      <p className="text-[10px] text-gray-500">{selectedSecurityToken.name}</p>
+                      <p className="text-[10px] text-ink-faint">{selectedSecurityToken.name}</p>
                     </div>
                   </div>
                   
                   <div className="flex-1 flex items-center gap-6 text-xs">
                     <div>
-                      <span className="text-gray-500">Price </span>
+                      <span className="text-ink-faint">Price </span>
                       <span className="font-bold text-lg">${selectedSecurityToken.price}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">MCap </span>
-                      <span className="text-white">${formatNumber(selectedSecurityToken.marketCap || '0')}</span>
+                      <span className="text-ink-faint">MCap </span>
+                      <span className="text-ink">${formatNumber(selectedSecurityToken.marketCap || '0')}</span>
                     </div>
                     <div>
-                      <span className="text-gray-500">Supply </span>
-                      <span className="text-white">{formatNumber(selectedSecurityToken.totalSupply || '0')}</span>
+                      <span className="text-ink-faint">Supply </span>
+                      <span className="text-ink">{formatNumber(selectedSecurityToken.totalSupply || '0')}</span>
                     </div>
                   </div>
                 </div>
@@ -1336,21 +1336,21 @@ export default function ExchangeClient() {
                 {/* Left - Token List & Recent Trades */}
                 <div className="col-span-3 space-y-3">
                   {/* Token List */}
-                  <div className="bg-[#1a1a2e] rounded-lg border border-gray-800 h-[280px] flex flex-col">
-                    <div className="p-2 border-b border-gray-800">
+                  <div className="bg-surface-overlay rounded-lg border border-border h-[280px] flex flex-col">
+                    <div className="p-2 border-b border-border">
                       <div className="relative">
-                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-gray-500" />
+                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3 h-3 text-ink-faint" />
                         <input
                           type="text"
                           value={securitySearchQuery}
                           onChange={(e) => setSecuritySearchQuery(e.target.value)}
                           placeholder="Search..."
-                          className="w-full pl-7 pr-3 py-1.5 bg-[#0d0d1a] rounded border border-gray-700 focus:border-purple-500 outline-none text-xs"
+                          className="w-full pl-7 pr-3 py-1.5 bg-surface rounded border border-border-strong focus:border-gold-500 outline-none text-xs"
                         />
                       </div>
                     </div>
                     
-                    <div className="flex items-center text-[10px] text-gray-500 px-2 py-1 border-b border-gray-800">
+                    <div className="flex items-center text-[10px] text-ink-faint px-2 py-1 border-b border-border">
                       <span className="flex-1">Token</span>
                       <span className="w-16 text-right">Price</span>
                       <span className="w-16 text-right">MCap</span>
@@ -1361,37 +1361,37 @@ export default function ExchangeClient() {
                         <button
                           key={token.id}
                           onClick={() => setSelectedSecurityToken(token)}
-                          className={`w-full px-2 py-1.5 flex items-center hover:bg-white/5 transition-colors ${
-                            selectedSecurityToken?.id === token.id ? 'bg-purple-500/10 border-l-2 border-purple-500' : ''
+                          className={`w-full px-2 py-1.5 flex items-center hover:bg-ink/5 transition-colors ${
+                            selectedSecurityToken?.id === token.id ? 'bg-gold-500/10 border-l-2 border-gold-500' : ''
                           }`}
                         >
                           <div className="flex items-center gap-1.5 flex-1">
                             {token.logoUrl ? (
                               <img src={token.logoUrl} alt="" className="w-4 h-4 rounded" />
                             ) : (
-                              <div className="w-4 h-4 bg-purple-700 rounded flex items-center justify-center text-[8px]">
+                              <div className="w-4 h-4 bg-gold-700 rounded flex items-center justify-center text-[8px]">
                                 {token.symbol?.slice(0, 2)}
                               </div>
                             )}
                             <span className="font-medium text-xs">{token.symbol}</span>
                           </div>
                           <span className="w-16 text-right text-xs">${token.price}</span>
-                          <span className="w-16 text-right text-[10px] text-gray-500">${formatNumber(token.marketCap || '0')}</span>
+                          <span className="w-16 text-right text-[10px] text-ink-faint">${formatNumber(token.marketCap || '0')}</span>
                         </button>
                       ))}
                     </div>
                   </div>
 
                   {/* Recent Trades */}
-                  <div className="bg-[#1a1a2e] rounded-lg border border-gray-800 h-[200px] flex flex-col">
-                    <div className="p-2 border-b border-gray-800 flex items-center justify-between">
+                  <div className="bg-surface-overlay rounded-lg border border-border h-[200px] flex flex-col">
+                    <div className="p-2 border-b border-border flex items-center justify-between">
                       <span className="text-xs font-medium">Recent Trades</span>
-                      <button onClick={fetchSecurityTrades} className="p-1 hover:bg-white/10 rounded">
+                      <button onClick={fetchSecurityTrades} className="p-1 hover:bg-ink/10 rounded">
                         <RefreshCw className="w-3 h-3" />
                       </button>
                     </div>
                     
-                    <div className="flex items-center text-[10px] text-gray-500 px-2 py-1 border-b border-gray-800">
+                    <div className="flex items-center text-[10px] text-ink-faint px-2 py-1 border-b border-border">
                       <span className="flex-1">Price</span>
                       <span className="flex-1 text-right">Amount</span>
                       <span className="flex-1 text-right">Time</span>
@@ -1399,15 +1399,15 @@ export default function ExchangeClient() {
                     
                     <div className="flex-1 overflow-y-auto">
                       {securityTrades.length === 0 ? (
-                        <div className="text-center text-gray-600 text-[10px] py-6">No trades yet</div>
+                        <div className="text-center text-ink-faint text-[10px] py-6">No trades yet</div>
                       ) : (
                         securityTrades.map((trade) => (
-                          <div key={trade.id} className="flex text-[10px] px-2 py-0.5 hover:bg-white/5">
-                            <span className={`flex-1 ${trade.side === 'buy' ? 'text-green-400' : 'text-red-400'}`}>
+                          <div key={trade.id} className="flex text-[10px] px-2 py-0.5 hover:bg-ink/5">
+                            <span className={`flex-1 ${trade.side === 'buy' ? 'text-success' : 'text-danger'}`}>
                               {parseFloat(trade.price).toFixed(4)}
                             </span>
-                            <span className="flex-1 text-right text-gray-400">{formatNumber(trade.amount)}</span>
-                            <span className="flex-1 text-right text-gray-600">{formatTime(trade.created_at)}</span>
+                            <span className="flex-1 text-right text-ink-muted">{formatNumber(trade.amount)}</span>
+                            <span className="flex-1 text-right text-ink-faint">{formatTime(trade.created_at)}</span>
                           </div>
                         ))
                       )}
@@ -1416,17 +1416,17 @@ export default function ExchangeClient() {
                 </div>
 
                 {/* Middle - Order Book */}
-                <div className="col-span-5 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col">
-                  <div className="p-2 border-b border-gray-800 flex items-center justify-between">
+                <div className="col-span-5 bg-surface-overlay rounded-lg border border-border h-[500px] flex flex-col">
+                  <div className="p-2 border-b border-border flex items-center justify-between">
                     <span className="text-xs font-medium">Order Book</span>
-                    <button onClick={fetchSecurityOrderBook} className="p-1 hover:bg-white/10 rounded">
+                    <button onClick={fetchSecurityOrderBook} className="p-1 hover:bg-ink/10 rounded">
                       <RefreshCw className="w-3 h-3" />
                     </button>
                   </div>
 
                   {/* Order Book Header */}
-                  <div className="grid grid-cols-2 text-[10px] text-gray-500 border-b border-gray-800">
-                    <div className="flex px-2 py-1 border-r border-gray-800">
+                  <div className="grid grid-cols-2 text-[10px] text-ink-faint border-b border-border">
+                    <div className="flex px-2 py-1 border-r border-border">
                       <span className="flex-1">Bid</span>
                       <span className="flex-1 text-right">Amount</span>
                     </div>
@@ -1439,12 +1439,12 @@ export default function ExchangeClient() {
                   {/* Order Book Body */}
                   <div className="flex-1 grid grid-cols-2 overflow-hidden">
                     {/* Bids */}
-                    <div className="border-r border-gray-800 overflow-y-auto">
+                    <div className="border-r border-border overflow-y-auto">
                       {securityOrderBook.bids.length === 0 ? (
                         Array.from({ length: 15 }).map((_, i) => (
                           <div key={i} className="flex text-[10px] px-2 py-0.5">
-                            <span className="flex-1 text-green-400/20">-</span>
-                            <span className="flex-1 text-right text-gray-700">-</span>
+                            <span className="flex-1 text-success/20">-</span>
+                            <span className="flex-1 text-right text-ink-faint">-</span>
                           </div>
                         ))
                       ) : (
@@ -1452,11 +1452,11 @@ export default function ExchangeClient() {
                           const maxAmount = Math.max(...securityOrderBook.bids.slice(0, 15).map(b => parseFloat(b.amount)));
                           const widthPct = maxAmount > 0 ? (parseFloat(bid.amount) / maxAmount) * 100 : 0;
                           return (
-                            <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-green-500/10 cursor-pointer"
+                            <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-success/10 cursor-pointer"
                               onClick={() => setSecurityOrderPrice(bid.price)}>
-                              <div className="absolute right-0 top-0 bottom-0 bg-green-500/10" style={{ width: `${widthPct}%` }} />
-                              <span className="flex-1 text-green-400 font-mono relative z-10">{parseFloat(bid.price).toFixed(4)}</span>
-                              <span className="flex-1 text-right text-gray-400 font-mono relative z-10">{formatNumber(bid.amount)}</span>
+                              <div className="absolute right-0 top-0 bottom-0 bg-success/10" style={{ width: `${widthPct}%` }} />
+                              <span className="flex-1 text-success font-mono relative z-10">{parseFloat(bid.price).toFixed(4)}</span>
+                              <span className="flex-1 text-right text-ink-muted font-mono relative z-10">{formatNumber(bid.amount)}</span>
                             </div>
                           );
                         })
@@ -1467,8 +1467,8 @@ export default function ExchangeClient() {
                       {securityOrderBook.asks.length === 0 ? (
                         Array.from({ length: 15 }).map((_, i) => (
                           <div key={i} className="flex text-[10px] px-2 py-0.5">
-                            <span className="flex-1 text-red-400/20">-</span>
-                            <span className="flex-1 text-right text-gray-700">-</span>
+                            <span className="flex-1 text-danger/20">-</span>
+                            <span className="flex-1 text-right text-ink-faint">-</span>
                           </div>
                         ))
                       ) : (
@@ -1476,11 +1476,11 @@ export default function ExchangeClient() {
                           const maxAmount = Math.max(...securityOrderBook.asks.slice(0, 15).map(a => parseFloat(a.amount)));
                           const widthPct = maxAmount > 0 ? (parseFloat(ask.amount) / maxAmount) * 100 : 0;
                           return (
-                            <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-red-500/10 cursor-pointer"
+                            <div key={i} className="relative flex text-[10px] px-2 py-0.5 hover:bg-danger/10 cursor-pointer"
                               onClick={() => setSecurityOrderPrice(ask.price)}>
-                              <div className="absolute left-0 top-0 bottom-0 bg-red-500/10" style={{ width: `${widthPct}%` }} />
-                              <span className="flex-1 text-red-400 font-mono relative z-10">{parseFloat(ask.price).toFixed(4)}</span>
-                              <span className="flex-1 text-right text-gray-400 font-mono relative z-10">{formatNumber(ask.amount)}</span>
+                              <div className="absolute left-0 top-0 bottom-0 bg-danger/10" style={{ width: `${widthPct}%` }} />
+                              <span className="flex-1 text-danger font-mono relative z-10">{parseFloat(ask.price).toFixed(4)}</span>
+                              <span className="flex-1 text-right text-ink-muted font-mono relative z-10">{formatNumber(ask.amount)}</span>
                             </div>
                           );
                         })
@@ -1489,23 +1489,23 @@ export default function ExchangeClient() {
                   </div>
 
                   {/* Spread */}
-                  <div className="p-2 border-t border-gray-800 text-center">
+                  <div className="p-2 border-t border-border text-center">
                     <span className="text-lg font-bold">${selectedSecurityToken?.price}</span>
                   </div>
                 </div>
 
                 {/* Right - Order Form */}
-                <div className="col-span-4 bg-[#1a1a2e] rounded-lg border border-gray-800 h-[500px] flex flex-col overflow-hidden">
+                <div className="col-span-4 bg-surface-overlay rounded-lg border border-border h-[500px] flex flex-col overflow-hidden">
                   {/* Tabs */}
-                  <div className="flex border-b border-gray-800">
+                  <div className="flex border-b border-border">
                     {(['trade', 'orders', 'history'] as const).map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
                         className={`flex-1 py-2 text-xs font-medium transition-colors ${
                           activeTab === tab
-                            ? 'text-purple-400 border-b-2 border-purple-400'
-                            : 'text-gray-500 hover:text-white'
+                            ? 'text-gold-400 border-b-2 border-gold-400'
+                            : 'text-ink-faint hover:text-ink'
                         }`}
                       >
                         {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -1520,29 +1520,29 @@ export default function ExchangeClient() {
                       <div className="p-3">
                         <h4 className="text-xs font-medium mb-2">Open Orders</h4>
                         {securityOrders.filter(o => o.status === 'open' || o.status === 'partial').length === 0 ? (
-                          <div className="text-center text-gray-600 text-[10px] py-8">No open orders</div>
+                          <div className="text-center text-ink-faint text-[10px] py-8">No open orders</div>
                         ) : (
                           <div className="space-y-2">
                             {securityOrders
                               .filter(o => o.status === 'open' || o.status === 'partial')
                               .map((order) => (
-                                <div key={order.id} className="p-2 bg-[#0d0d1a] rounded flex items-center justify-between">
+                                <div key={order.id} className="p-2 bg-surface rounded flex items-center justify-between">
                                   <div>
                                     <div className="flex items-center gap-1">
                                       <span className={`px-1 py-0.5 rounded text-[8px] ${
-                                        order.side === 'buy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                                        order.side === 'buy' ? 'bg-success/20 text-success' : 'bg-danger/20 text-danger'
                                       }`}>
                                         {order.side?.toUpperCase()}
                                       </span>
                                       <span className="text-[10px] font-medium">{selectedSecurityToken?.symbol}</span>
                                     </div>
-                                    <div className="text-[9px] text-gray-500 mt-0.5">
+                                    <div className="text-[9px] text-ink-faint mt-0.5">
                                       @ ${order.price} • {formatNumber(order.amount)} tokens
                                     </div>
                                   </div>
                                   <button
                                     onClick={() => handleCancelSecurityOrder(order.id)}
-                                    className="p-1 text-red-400 hover:bg-red-500/10 rounded"
+                                    className="p-1 text-danger hover:bg-danger/10 rounded"
                                   >
                                     <X className="w-3 h-3" />
                                   </button>
@@ -1557,27 +1557,27 @@ export default function ExchangeClient() {
                       <div className="p-3">
                         <h4 className="text-xs font-medium mb-2">Order History</h4>
                         {securityOrders.filter(o => o.status === 'filled' || o.status === 'cancelled').length === 0 ? (
-                          <div className="text-center text-gray-600 text-[10px] py-8">No order history</div>
+                          <div className="text-center text-ink-faint text-[10px] py-8">No order history</div>
                         ) : (
                           <div className="space-y-2">
                             {securityOrders
                               .filter(o => o.status === 'filled' || o.status === 'cancelled')
                               .map((order) => (
-                                <div key={order.id} className="p-2 bg-[#0d0d1a] rounded">
+                                <div key={order.id} className="p-2 bg-surface rounded">
                                   <div className="flex items-center gap-1">
                                     <span className={`px-1 py-0.5 rounded text-[8px] ${
-                                      order.side === 'buy' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                                      order.side === 'buy' ? 'bg-success/20 text-success' : 'bg-danger/20 text-danger'
                                     }`}>
                                       {order.side?.toUpperCase()}
                                     </span>
                                     <span className="text-[10px] font-medium">{selectedSecurityToken?.symbol}</span>
                                     <span className={`px-1 py-0.5 rounded text-[8px] ${
-                                      order.status === 'filled' ? 'bg-blue-500/20 text-blue-400' : 'bg-gray-500/20 text-gray-400'
+                                      order.status === 'filled' ? 'bg-gold-500/20 text-gold-400' : 'bg-surface-overlay/20 text-ink-muted'
                                     }`}>
                                       {order.status}
                                     </span>
                                   </div>
-                                  <div className="flex justify-between text-[9px] text-gray-500 mt-0.5">
+                                  <div className="flex justify-between text-[9px] text-ink-faint mt-0.5">
                                     <span>@ ${order.price}</span>
                                     <span>{formatTime(order.created_at)}</span>
                                   </div>

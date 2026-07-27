@@ -14,6 +14,7 @@ import {
   ExternalLink,
   AlertCircle,
   CheckCircle2,
+  XCircle,
   Pause,
   Play,
   Globe,
@@ -62,11 +63,11 @@ function NetworkBadge({
   isTestnet: boolean;
 }) {
   return (
-    <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-700/50 rounded-lg">
+    <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-raised/50 rounded-lg">
       <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-yellow-400' : 'bg-green-400'}`} />
-      <span className="text-sm text-gray-300">{chainName}</span>
+      <span className="text-sm text-ink-muted">{chainName}</span>
       {isTestnet && (
-        <span className="text-xs px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">
+        <span className="text-xs px-1.5 py-0.5 bg-warning/20 text-warning rounded">
           Testnet
         </span>
       )}
@@ -282,21 +283,21 @@ export default function FactorySettings() {
 
   // Address Display Component
   const AddressDisplay = ({ label, address, warning }: { label: string; address: string; warning?: boolean }) => (
-    <div className="flex justify-between items-center py-2 border-b border-gray-700">
-      <span className="text-gray-400">{label}</span>
+    <div className="flex justify-between items-center py-2 border-b border-border">
+      <span className="text-ink-muted">{label}</span>
       {address && address !== ZERO_ADDRESS ? (
         <a 
           href={getExplorerAddressUrl(address)} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className="text-blue-400 font-mono text-xs hover:underline flex items-center gap-1"
+          className="text-gold-400 font-mono text-xs hover:underline flex items-center gap-1"
         >
           {address.slice(0, 6)}...{address.slice(-4)}
           <ExternalLink className="w-3 h-3" />
         </a>
       ) : (
-        <span className={warning ? 'text-red-400' : 'text-yellow-400'}>
-          {warning ? '❌ Not Set' : 'Not Set'}
+        <span className={`inline-flex items-center gap-1 ${warning ? 'text-danger' : 'text-warning'}`}>
+          {warning && <XCircle className="w-3.5 h-3.5" />} Not Set
         </span>
       )}
     </div>
@@ -309,19 +310,19 @@ export default function FactorySettings() {
     label: string; placeholder: string; value: string; setValue: (v: string) => void; onClick: () => void; buttonText: string; disabled?: boolean 
   }) => (
     <div className="space-y-2">
-      <label className="block text-gray-400 text-sm">{label}</label>
+      <label className="block text-ink-muted text-sm">{label}</label>
       <div className="flex gap-2">
         <input
           type="text"
           value={value}
           onChange={(e) => setValue(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 text-sm font-mono"
+          className="flex-1 p-3 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint text-sm font-mono"
         />
         <button
           onClick={onClick}
           disabled={disabled || processing || !value}
-          className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium text-sm whitespace-nowrap flex items-center gap-2"
+          className="px-4 py-3 bg-gold-600 hover:bg-gold-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-ink font-medium text-sm whitespace-nowrap flex items-center gap-2"
         >
           {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : buttonText}
         </button>
@@ -334,23 +335,23 @@ export default function FactorySettings() {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-            <Settings className="w-7 h-7 text-blue-400" />
+          <h2 className="text-2xl font-bold text-ink flex items-center gap-3">
+            <Settings className="w-7 h-7 text-gold-400" />
             Factory Settings
           </h2>
           <NetworkBadge chainName={chainName || 'Unknown'} isTestnet={isTestnet} />
         </div>
 
-        <div className="bg-gray-800 rounded-xl p-8 text-center border border-gray-700">
-          <AlertCircle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-white mb-2">Factory Not Deployed</h3>
-          <p className="text-gray-400 mb-6">
+        <div className="bg-surface rounded-xl p-8 text-center border border-border">
+          <AlertCircle className="w-16 h-16 text-warning mx-auto mb-4" />
+          <h3 className="text-xl font-semibold text-ink mb-2">Factory Not Deployed</h3>
+          <p className="text-ink-muted mb-6">
             RWALaunchpadFactory contract is not configured for {chainName}.
           </p>
           
           {deployedChains.length > 0 && (
             <div>
-              <p className="text-gray-500 text-sm mb-3">Switch to a network with factory deployed:</p>
+              <p className="text-ink-faint text-sm mb-3">Switch to a network with factory deployed:</p>
               <div className="flex justify-center gap-2 flex-wrap">
                 {deployedChains
                   .filter(chain => chain.id !== chainId)
@@ -359,7 +360,7 @@ export default function FactorySettings() {
                       key={chain.id}
                       onClick={() => handleSwitchNetwork(chain.id)}
                       disabled={isSwitching}
-                      className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition disabled:opacity-50"
+                      className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-ink rounded-lg transition disabled:opacity-50"
                     >
                       {isSwitching ? <RefreshCw className="w-4 h-4 animate-spin" /> : chain.name}
                     </button>
@@ -376,19 +377,19 @@ export default function FactorySettings() {
     return (
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-            <Settings className="w-7 h-7 text-blue-400" />
+          <h2 className="text-2xl font-bold text-ink flex items-center gap-3">
+            <Settings className="w-7 h-7 text-gold-400" />
             Factory Settings
           </h2>
           <NetworkBadge chainName={chainName || 'Unknown'} isTestnet={isTestnet} />
         </div>
-        <div className="bg-gray-800 rounded-xl p-6">
+        <div className="bg-surface rounded-xl p-6">
           <div className="animate-pulse space-y-4">
-            <div className="h-4 bg-gray-700 rounded w-1/4"></div>
-            <div className="h-10 bg-gray-700 rounded"></div>
-            <div className="h-10 bg-gray-700 rounded"></div>
+            <div className="h-4 bg-surface-raised rounded w-1/4"></div>
+            <div className="h-10 bg-surface-raised rounded"></div>
+            <div className="h-10 bg-surface-raised rounded"></div>
           </div>
-          <p className="text-gray-500 text-center mt-4">Loading factory data from {chainName}...</p>
+          <p className="text-ink-faint text-center mt-4">Loading factory data from {chainName}...</p>
         </div>
       </div>
     );
@@ -398,15 +399,15 @@ export default function FactorySettings() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-          <Settings className="w-7 h-7 text-blue-400" />
+        <h2 className="text-2xl font-bold text-ink flex items-center gap-3">
+          <Settings className="w-7 h-7 text-gold-400" />
           Factory Settings
         </h2>
         <div className="flex items-center gap-3">
           <NetworkBadge chainName={chainName || 'Unknown'} isTestnet={isTestnet} />
           <button 
             onClick={fetchFactoryData} 
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white text-sm flex items-center gap-2"
+            className="px-4 py-2 bg-surface-raised hover:bg-surface-overlay rounded-lg text-ink text-sm flex items-center gap-2"
           >
             <RefreshCw className="w-4 h-4" />
             Refresh
@@ -416,11 +417,11 @@ export default function FactorySettings() {
 
       {/* Network Switcher */}
       {deployedChains.length > 1 && (
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+        <div className="bg-surface/50 border border-border rounded-xl p-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Globe className="w-5 h-5 text-blue-400" />
-              <span className="text-gray-300">Manage factory on:</span>
+              <Globe className="w-5 h-5 text-gold-400" />
+              <span className="text-ink-muted">Manage factory on:</span>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               {deployedChains.map((chain) => (
@@ -430,8 +431,8 @@ export default function FactorySettings() {
                   disabled={chain.id === chainId || isSwitching}
                   className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                     chain.id === chainId
-                      ? 'bg-blue-500/20 text-blue-400 cursor-default'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600 hover:text-white'
+                      ? 'bg-gold-500/20 text-gold-400 cursor-default'
+                      : 'bg-surface-raised text-ink-muted hover:bg-surface-overlay hover:text-ink'
                   } disabled:opacity-50`}
                 >
                   {isSwitching ? <RefreshCw className="w-3 h-3 animate-spin" /> : chain.name}
@@ -446,8 +447,8 @@ export default function FactorySettings() {
       {result && (
         <div className={`p-4 rounded-lg flex items-center gap-3 ${
           result.success 
-            ? 'bg-green-900/50 border border-green-500 text-green-400' 
-            : 'bg-red-900/50 border border-red-500 text-red-400'
+            ? 'bg-success-muted border border-success text-success' 
+            : 'bg-danger-muted border border-danger text-danger'
         }`}>
           {result.success ? <CheckCircle2 className="w-5 h-5" /> : <AlertCircle className="w-5 h-5" />}
           <span>{result.message}</span>
@@ -466,32 +467,32 @@ export default function FactorySettings() {
 
       {/* Quick Status Overview */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-        <div className={`p-4 rounded-xl ${factoryData?.paused ? 'bg-red-900/30 border border-red-500' : 'bg-green-900/30 border border-green-500'}`}>
-          <p className="text-gray-400 text-sm">Status</p>
-          <p className={`text-xl font-bold ${factoryData?.paused ? 'text-red-400' : 'text-green-400'}`}>
-            {factoryData?.paused ? '⏸️ PAUSED' : '✅ ACTIVE'}
+        <div className={`p-4 rounded-xl ${factoryData?.paused ? 'bg-danger-muted border border-danger' : 'bg-success-muted border border-success'}`}>
+          <p className="text-ink-muted text-sm">Status</p>
+          <p className={`text-xl font-bold flex items-center gap-1.5 ${factoryData?.paused ? 'text-danger' : 'text-success'}`}>
+            {factoryData?.paused ? <><Pause className="w-4 h-4" /> PAUSED</> : <><CheckCircle2 className="w-4 h-4" /> ACTIVE</>}
           </p>
         </div>
-        <div className="p-4 bg-gray-800 rounded-xl border border-gray-700">
-          <p className="text-gray-400 text-sm">Projects</p>
-          <p className="text-xl font-bold text-white">{factoryData?.projectCounter?.toString() || '0'}</p>
+        <div className="p-4 bg-surface rounded-xl border border-border">
+          <p className="text-ink-muted text-sm">Projects</p>
+          <p className="text-xl font-bold text-ink">{factoryData?.projectCounter?.toString() || '0'}</p>
         </div>
-        <div className="p-4 bg-gray-800 rounded-xl border border-gray-700">
-          <p className="text-gray-400 text-sm">Creation Fee</p>
-          <p className="text-xl font-bold text-white">{formatEther(factoryData?.creationFee || 0n)} {currencySymbol}</p>
+        <div className="p-4 bg-surface rounded-xl border border-border">
+          <p className="text-ink-muted text-sm">Creation Fee</p>
+          <p className="text-xl font-bold text-ink">{formatEther(factoryData?.creationFee || 0n)} {currencySymbol}</p>
         </div>
-        <div className="p-4 bg-gray-800 rounded-xl border border-gray-700">
-          <p className="text-gray-400 text-sm">Platform Fee</p>
-          <p className="text-xl font-bold text-white">{Number(factoryData?.platformFeeBps || 0) / 100}%</p>
+        <div className="p-4 bg-surface rounded-xl border border-border">
+          <p className="text-ink-muted text-sm">Platform Fee</p>
+          <p className="text-xl font-bold text-ink">{Number(factoryData?.platformFeeBps || 0) / 100}%</p>
         </div>
-        <div className="p-4 bg-gray-800 rounded-xl border border-gray-700">
-          <p className="text-gray-400 text-sm">Network</p>
-          <p className="text-xl font-bold text-white truncate">{chainName}</p>
+        <div className="p-4 bg-surface rounded-xl border border-border">
+          <p className="text-ink-muted text-sm">Network</p>
+          <p className="text-xl font-bold text-ink truncate">{chainName}</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-700 pb-2 overflow-x-auto">
+      <div className="flex gap-2 border-b border-border pb-2 overflow-x-auto">
         {([
           { key: 'status', label: 'Status', icon: Settings },
           { key: 'implementations', label: 'Implementations', icon: Code },
@@ -502,7 +503,7 @@ export default function FactorySettings() {
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2 rounded-t-lg font-medium transition flex items-center gap-2 whitespace-nowrap ${
-              activeTab === tab.key ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+              activeTab === tab.key ? 'bg-surface-raised text-ink' : 'text-ink-muted hover:text-ink'
             }`}
           >
             <tab.icon className="w-4 h-4" />
@@ -512,28 +513,28 @@ export default function FactorySettings() {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+      <div className="bg-surface rounded-xl p-6 border border-border">
         {/* STATUS TAB */}
         {activeTab === 'status' && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Settings className="w-5 h-5 text-blue-400" />
+            <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
+              <Settings className="w-5 h-5 text-gold-400" />
               Contract Status on {chainName}
             </h3>
             
             {/* Pause Controls */}
-            <div className="p-4 bg-gray-700/50 rounded-lg">
+            <div className="p-4 bg-surface-raised/50 rounded-lg">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <p className="text-white font-medium">Pause Status</p>
-                  <p className="text-gray-400 text-sm">When paused, no new projects can be deployed on {chainName}</p>
+                  <p className="text-ink font-medium">Pause Status</p>
+                  <p className="text-ink-muted text-sm">When paused, no new projects can be deployed on {chainName}</p>
                 </div>
                 <div className="flex gap-2">
                   {factoryData?.paused ? (
                     <button
                       onClick={handleUnpause}
                       disabled={processing}
-                      className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-white font-medium flex items-center gap-2"
+                      className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center gap-2"
                     >
                       {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
                       UNPAUSE
@@ -542,7 +543,7 @@ export default function FactorySettings() {
                     <button
                       onClick={handlePause}
                       disabled={processing}
-                      className="px-6 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-white font-medium flex items-center gap-2"
+                      className="px-6 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center gap-2"
                     >
                       {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Pause className="w-4 h-4" />}
                       PAUSE
@@ -554,8 +555,8 @@ export default function FactorySettings() {
 
             {/* Key Addresses */}
             <div>
-              <h4 className="text-white font-medium mb-3">Key Addresses</h4>
-              <div className="bg-gray-700/50 rounded-lg p-4">
+              <h4 className="text-ink font-medium mb-3">Key Addresses</h4>
+              <div className="bg-surface-raised/50 rounded-lg p-4">
                 <AddressDisplay label="Owner" address={factoryData?.owner || ''} />
                 <AddressDisplay label="Project NFT" address={factoryData?.projectNFT || ''} warning={!factoryData?.projectNFT || factoryData.projectNFT === ZERO_ADDRESS} />
                 <AddressDisplay label="Fee Recipient" address={factoryData?.platformFeeRecipient || ''} />
@@ -590,19 +591,19 @@ export default function FactorySettings() {
         {/* IMPLEMENTATIONS TAB */}
         {activeTab === 'implementations' && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Code className="w-5 h-5 text-purple-400" />
+            <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
+              <Code className="w-5 h-5 text-gold-400" />
               Implementation Contracts on {chainName}
             </h3>
-            <p className="text-gray-400 text-sm">These are the base contracts used when deploying new projects on {chainName}.</p>
+            <p className="text-ink-muted text-sm">These are the base contracts used when deploying new projects on {chainName}.</p>
 
             {/* KYC Info Box */}
-            <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+            <div className="bg-gold-900/20 border border-gold-500/30 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <span className="text-xl">ℹ️</span>
                 <div>
-                  <p className="text-blue-400 font-medium">KYC is DB-Driven</p>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-gold-400 font-medium">KYC is DB-Driven</p>
+                  <p className="text-ink-muted text-sm">
                     KYC verification is managed through the database and KYCVerifier contract. 
                     Identity registries are no longer required as implementations.
                   </p>
@@ -611,8 +612,8 @@ export default function FactorySettings() {
             </div>
 
             {/* Current Implementations */}
-            <div className="bg-gray-700/50 rounded-lg p-4">
-              <h4 className="text-white font-medium mb-3">Current Implementations</h4>
+            <div className="bg-surface-raised/50 rounded-lg p-4">
+              <h4 className="text-ink font-medium mb-3">Current Implementations</h4>
               <AddressDisplay label="SecurityToken" address={factoryData?.implementations?.securityToken || ''} warning />
               <AddressDisplay label="EscrowVault" address={factoryData?.implementations?.escrowVault || ''} warning />
               <AddressDisplay label="Compliance" address={factoryData?.implementations?.compliance || ''} warning />
@@ -636,47 +637,47 @@ export default function FactorySettings() {
         {/* FEES TAB */}
         {activeTab === 'fees' && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-400" />
+            <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-success" />
               Fee Configuration on {chainName}
             </h3>
 
             {/* Current Fees */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-gray-700/50 rounded-lg">
-                <p className="text-gray-400 text-sm">Creation Fee</p>
-                <p className="text-2xl font-bold text-white">{formatEther(factoryData?.creationFee || 0n)} {currencySymbol}</p>
-                <p className="text-gray-500 text-xs">Paid when deploying a new project</p>
+              <div className="p-4 bg-surface-raised/50 rounded-lg">
+                <p className="text-ink-muted text-sm">Creation Fee</p>
+                <p className="text-2xl font-bold text-ink">{formatEther(factoryData?.creationFee || 0n)} {currencySymbol}</p>
+                <p className="text-ink-faint text-xs">Paid when deploying a new project</p>
               </div>
-              <div className="p-4 bg-gray-700/50 rounded-lg">
-                <p className="text-gray-400 text-sm">Platform Fee</p>
-                <p className="text-2xl font-bold text-white">{Number(factoryData?.platformFeeBps || 0) / 100}%</p>
-                <p className="text-gray-500 text-xs">{factoryData?.platformFeeBps?.toString() || '0'} basis points</p>
+              <div className="p-4 bg-surface-raised/50 rounded-lg">
+                <p className="text-ink-muted text-sm">Platform Fee</p>
+                <p className="text-2xl font-bold text-ink">{Number(factoryData?.platformFeeBps || 0) / 100}%</p>
+                <p className="text-ink-faint text-xs">{factoryData?.platformFeeBps?.toString() || '0'} basis points</p>
               </div>
             </div>
 
             {/* Fee Recipient */}
-            <div className="p-4 bg-gray-700/50 rounded-lg">
-              <p className="text-gray-400 text-sm">Fee Recipient</p>
+            <div className="p-4 bg-surface-raised/50 rounded-lg">
+              <p className="text-ink-muted text-sm">Fee Recipient</p>
               {explorerUrl ? (
                 <a 
                   href={getExplorerAddressUrl(factoryData?.platformFeeRecipient || '')} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-blue-400 font-mono text-sm hover:underline flex items-center gap-1"
+                  className="text-gold-400 font-mono text-sm hover:underline flex items-center gap-1"
                 >
                   {factoryData?.platformFeeRecipient}
                   <ExternalLink className="w-3 h-3" />
                 </a>
               ) : (
-                <p className="text-white font-mono text-sm">{factoryData?.platformFeeRecipient}</p>
+                <p className="text-ink font-mono text-sm">{factoryData?.platformFeeRecipient}</p>
               )}
             </div>
 
             {/* Update Forms */}
             <div className="grid gap-4">
               <div className="space-y-2">
-                <label className="block text-gray-400 text-sm">Creation Fee (in {currencySymbol})</label>
+                <label className="block text-ink-muted text-sm">Creation Fee (in {currencySymbol})</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
@@ -684,12 +685,12 @@ export default function FactorySettings() {
                     value={newCreationFee}
                     onChange={(e) => setNewCreationFee(e.target.value)}
                     placeholder="0.1"
-                    className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500"
+                    className="flex-1 p-3 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint"
                   />
                   <button
                     onClick={handleSetCreationFee}
                     disabled={processing || !newCreationFee}
-                    className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg text-white font-medium flex items-center gap-2"
+                    className="px-4 py-3 bg-gold-600 hover:bg-gold-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center gap-2"
                   >
                     {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Update'}
                   </button>
@@ -697,24 +698,24 @@ export default function FactorySettings() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-gray-400 text-sm">Platform Fee (basis points, 100 = 1%)</label>
+                <label className="block text-ink-muted text-sm">Platform Fee (basis points, 100 = 1%)</label>
                 <div className="flex gap-2">
                   <input
                     type="number"
                     value={newPlatformFeeBps}
                     onChange={(e) => setNewPlatformFeeBps(e.target.value)}
                     placeholder="250"
-                    className="flex-1 p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500"
+                    className="flex-1 p-3 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint"
                   />
                   <button
                     onClick={handleSetPlatformFeeBps}
                     disabled={processing || !newPlatformFeeBps}
-                    className="px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg text-white font-medium flex items-center gap-2"
+                    className="px-4 py-3 bg-gold-600 hover:bg-gold-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center gap-2"
                   >
                     {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : 'Update'}
                   </button>
                 </div>
-                <p className="text-gray-500 text-xs">Current: {Number(factoryData?.platformFeeBps || 0)} bps = {Number(factoryData?.platformFeeBps || 0) / 100}%</p>
+                <p className="text-ink-faint text-xs">Current: {Number(factoryData?.platformFeeBps || 0)} bps = {Number(factoryData?.platformFeeBps || 0) / 100}%</p>
               </div>
 
               <InputWithButton
@@ -733,17 +734,17 @@ export default function FactorySettings() {
         {/* ACCESS TAB */}
         {activeTab === 'access' && (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-              <Shield className="w-5 h-5 text-yellow-400" />
+            <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
+              <Shield className="w-5 h-5 text-warning" />
               Access Control on {chainName}
             </h3>
 
             {/* Approval Requirement */}
-            <div className="p-4 bg-gray-700/50 rounded-lg">
+            <div className="p-4 bg-surface-raised/50 rounded-lg">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <p className="text-white font-medium">Require Deployer Approval</p>
-                  <p className="text-gray-400 text-sm">
+                  <p className="text-ink font-medium">Require Deployer Approval</p>
+                  <p className="text-ink-muted text-sm">
                     {factoryData?.requireApproval 
                       ? `Only approved addresses can deploy projects on ${chainName}` 
                       : `Anyone can deploy projects on ${chainName}`}
@@ -752,8 +753,8 @@ export default function FactorySettings() {
                 <div className="flex gap-2">
                   <span className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 ${
                     factoryData?.requireApproval 
-                      ? 'bg-yellow-500/20 text-yellow-400' 
-                      : 'bg-green-500/20 text-green-400'
+                      ? 'bg-warning/20 text-warning' 
+                      : 'bg-success/20 text-success'
                   }`}>
                     {factoryData?.requireApproval ? <Lock className="w-3 h-3" /> : <Unlock className="w-3 h-3" />}
                     {factoryData?.requireApproval ? 'Restricted' : 'Open'}
@@ -764,7 +765,7 @@ export default function FactorySettings() {
                 <button
                   onClick={() => handleSetRequireApproval(true)}
                   disabled={processing || factoryData?.requireApproval}
-                  className="flex-1 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 disabled:opacity-50 rounded-lg text-white font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-gold hover:bg-gold-dark disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
                 >
                   {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />}
                   Enable Approval
@@ -772,7 +773,7 @@ export default function FactorySettings() {
                 <button
                   onClick={() => handleSetRequireApproval(false)}
                   disabled={processing || !factoryData?.requireApproval}
-                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-white font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
                 >
                   {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Unlock className="w-4 h-4" />}
                   Disable (Open)
@@ -781,23 +782,23 @@ export default function FactorySettings() {
             </div>
 
             {/* Manage Deployer Approval */}
-            <div className="p-4 bg-gray-700/50 rounded-lg space-y-4">
-              <h4 className="text-white font-medium">Manage Deployer Approval</h4>
+            <div className="p-4 bg-surface-raised/50 rounded-lg space-y-4">
+              <h4 className="text-ink font-medium">Manage Deployer Approval</h4>
               <div className="space-y-2">
-                <label className="block text-gray-400 text-sm">Deployer Address</label>
+                <label className="block text-ink-muted text-sm">Deployer Address</label>
                 <input
                   type="text"
                   value={newDeployerAddress}
                   onChange={(e) => setNewDeployerAddress(e.target.value)}
                   placeholder="0x..."
-                  className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 font-mono"
+                  className="w-full p-3 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint font-mono"
                 />
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={() => { setNewDeployerApproval(true); handleSetDeployerApproval(); }}
                   disabled={processing || !isAddress(newDeployerAddress)}
-                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-white font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
                 >
                   {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                   Approve
@@ -805,7 +806,7 @@ export default function FactorySettings() {
                 <button
                   onClick={() => { setNewDeployerApproval(false); handleSetDeployerApproval(); }}
                   disabled={processing || !isAddress(newDeployerAddress)}
-                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-white font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
                 >
                   {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <AlertCircle className="w-4 h-4" />}
                   Revoke
@@ -817,23 +818,23 @@ export default function FactorySettings() {
       </div>
 
       {/* Network Info Footer */}
-      <div className="bg-gray-800/30 border border-gray-700 rounded-xl p-4">
+      <div className="bg-surface/30 border border-border rounded-xl p-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-sm">
-          <div className="flex items-center gap-4 text-gray-500 flex-wrap">
-            <span>Network: <span className="text-gray-300">{chainName}</span></span>
+          <div className="flex items-center gap-4 text-ink-faint flex-wrap">
+            <span>Network: <span className="text-ink-muted">{chainName}</span></span>
             <span>•</span>
-            <span>Chain ID: <span className="text-gray-300">{chainId}</span></span>
+            <span>Chain ID: <span className="text-ink-muted">{chainId}</span></span>
             <span>•</span>
-            <span>Currency: <span className="text-gray-300">{currencySymbol}</span></span>
+            <span>Currency: <span className="text-ink-muted">{currencySymbol}</span></span>
             <span>•</span>
-            <span>Factory: <span className="text-gray-300 font-mono text-xs">{factoryAddress?.slice(0, 10)}...</span></span>
+            <span>Factory: <span className="text-ink-muted font-mono text-xs">{factoryAddress?.slice(0, 10)}...</span></span>
           </div>
           {explorerUrl && (
             <a
               href={getExplorerAddressUrl(factoryAddress || '')}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1 text-blue-400 hover:text-blue-300 transition-colors"
+              className="flex items-center gap-1 text-gold-400 hover:text-gold-300 transition-colors"
             >
               <ExternalLink className="w-3 h-3" />
               View Factory Contract
@@ -844,16 +845,16 @@ export default function FactorySettings() {
 
       {/* Processing Overlay */}
       {(processing || txLoading) && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 p-6 rounded-xl text-center border border-gray-700">
-            <div className="animate-spin w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p className="text-white">Processing transaction on {chainName}...</p>
+        <div className="fixed inset-0 bg-surface-sunken/50 flex items-center justify-center z-50">
+          <div className="bg-surface p-6 rounded-xl text-center border border-border">
+            <div className="animate-spin w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p className="text-ink">Processing transaction on {chainName}...</p>
             {txHash && explorerUrl && (
               <a 
                 href={getExplorerTxUrl(txHash)} 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-blue-400 text-sm hover:underline flex items-center justify-center gap-1 mt-2"
+                className="text-gold-400 text-sm hover:underline flex items-center justify-center gap-1 mt-2"
               >
                 View on Explorer <ExternalLink className="w-3 h-3" />
               </a>

@@ -1,5 +1,7 @@
 'use client';
 
+import { ScanFace, ArrowLeft, ArrowRight, EyeOff, Smile, type LucideIcon } from 'lucide-react';
+
 // Dynamic import to avoid SSR issues
 let faceapi: typeof import('@vladmandic/face-api') | null = null;
 
@@ -7,7 +9,7 @@ export interface LivenessChallenge {
   type: 'center' | 'turn_left' | 'turn_right' | 'blink' | 'smile';
   instruction: string;
   completed: boolean;
-  icon: string;
+  icon: LucideIcon;
 }
 
 export interface LivenessResult {
@@ -20,11 +22,11 @@ export interface LivenessResult {
 }
 
 const CHALLENGES: Omit<LivenessChallenge, 'completed'>[] = [
-  { type: 'center', instruction: 'Look straight at the camera', icon: '👤' },
-  { type: 'turn_left', instruction: 'Slowly turn your head LEFT', icon: '👈' },
-  { type: 'turn_right', instruction: 'Slowly turn your head RIGHT', icon: '👉' },
-  { type: 'blink', instruction: 'Blink your eyes 2 times', icon: '😑' },
-  { type: 'smile', instruction: 'Give us a big smile!', icon: '😊' },
+  { type: 'center', instruction: 'Look straight at the camera', icon: ScanFace },
+  { type: 'turn_left', instruction: 'Slowly turn your head LEFT', icon: ArrowLeft },
+  { type: 'turn_right', instruction: 'Slowly turn your head RIGHT', icon: ArrowRight },
+  { type: 'blink', instruction: 'Blink your eyes 2 times', icon: EyeOff },
+  { type: 'smile', instruction: 'Give us a big smile!', icon: Smile },
 ];
 
 // Performance settings

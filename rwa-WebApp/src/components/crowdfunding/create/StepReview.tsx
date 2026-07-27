@@ -110,7 +110,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-xl p-6 border border-green-500/20">
+      <div className="bg-gradient-to-r from-green-500/10 to-gold-light-500/10 rounded-xl p-6 border border-green-500/20">
         <h3 className="text-xl font-semibold text-white mb-2">Review Your Project</h3>
         <p className="text-gray-400">
           Please review all details carefully before deploying. Some settings cannot be changed after deployment.
@@ -120,7 +120,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
       {/* Basic Information */}
       <section className="bg-gray-800 rounded-xl p-6 border border-gray-700">
         <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <span className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center text-sm">📋</span>
+          <span className="w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center text-sm">📋</span>
           Basic Information
         </h4>
         
@@ -137,7 +137,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
             <label className="text-sm text-gray-400">Website</label>
             <p className="text-white font-medium mt-1">
               {data.website ? (
-                <a href={data.website} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                <a href={data.website} target="_blank" rel="noopener noreferrer" className="text-gold-400 hover:underline">
                   {data.website}
                 </a>
               ) : (
@@ -161,7 +161,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
 
         {/* Currency Info Banner */}
         {isLocalCurrency && (
-          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4 mb-6">
+          <div className="bg-gold-500/10 border border-gold-500/20 rounded-lg p-4 mb-6">
             <div className="flex items-center gap-3">
               <span className="text-2xl">{currency?.flag}</span>
               <div>
@@ -207,7 +207,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
           {/* Net to Project */}
           <div className="bg-gray-700/50 rounded-lg p-4">
             <label className="text-sm text-gray-400">Net to Project</label>
-            <p className="text-2xl font-bold text-blue-400 mt-1">
+            <p className="text-2xl font-bold text-gold-400 mt-1">
               ${netToProject.toLocaleString()}
             </p>
             {isLocalCurrency && (
@@ -220,7 +220,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
           {/* Investor Share */}
           <div className="bg-gray-700/50 rounded-lg p-4">
             <label className="text-sm text-gray-400">Investor Share</label>
-            <p className="text-2xl font-bold text-purple-400 mt-1">
+            <p className="text-2xl font-bold text-gold-400 mt-1">
               {data.investorSharePercentage}%
             </p>
             {data.projectedROI > 0 && (
@@ -235,7 +235,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
       {/* Milestones */}
       <section className="bg-gray-800 rounded-xl p-6 border border-gray-700">
         <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <span className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center text-sm">🎯</span>
+          <span className="w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center text-sm">🎯</span>
           Milestones
           <span className="ml-auto text-sm font-normal text-gray-400">
             {data.milestones.length} milestones • {totalMilestonePercentage}% allocated
@@ -247,9 +247,9 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
           <div className="h-4 bg-gray-700 rounded-full overflow-hidden flex">
             {data.milestones.map((milestone, index) => {
               const colors = [
-                'bg-blue-500',
+                'bg-gold-500',
                 'bg-green-500',
-                'bg-purple-500',
+                'bg-gold-500',
                 'bg-yellow-500',
                 'bg-pink-500',
                 'bg-cyan-500',
@@ -280,8 +280,8 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-400 font-bold text-sm">{index + 1}</span>
+                  <div className="w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-gold-400 font-bold text-sm">{index + 1}</span>
                   </div>
                   <div>
                     <h5 className="font-semibold text-white">{milestone.title}</h5>
@@ -384,11 +384,11 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
 
         {/* Info banner when platform fee comes from investors */}
         {platformFeeFromInvestors && (
-          <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-3 mb-4 flex items-start gap-2">
-            <svg className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <div className="bg-gold-900/20 border border-gold-700/50 rounded-lg p-3 mb-4 flex items-start gap-2">
+            <svg className="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
-            <p className="text-xs text-blue-300">
+            <p className="text-xs text-gold-300">
               With {data.investorSharePercentage}% investor allocation, the {PLATFORM_TOKEN_FEE_PERCENT}% platform fee is deducted from investor tokens. 
               Effective investor share: {investorEffectivePercentage.toFixed(1)}%
             </p>
@@ -401,7 +401,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
           <div className="flex items-center gap-2 mb-2">
             <div className="flex-1 h-6 bg-gray-700 rounded-full overflow-hidden flex">
               <div
-                className="bg-blue-500 h-full"
+                className="bg-gold-500 h-full"
                 style={{ width: `${investorEffectivePercentage}%` }}
               />
               <div
@@ -410,7 +410,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
               />
               {ownerPercentage > 0 && (
                 <div
-                  className="bg-purple-500 h-full"
+                  className="bg-gold-500 h-full"
                   style={{ width: `${ownerPercentage}%` }}
                 />
               )}
@@ -418,8 +418,8 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
           </div>
           <div className={`grid gap-2 text-xs ${ownerPercentage > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-blue-500" />
-              <span className="text-blue-400">
+              <div className="w-3 h-3 rounded-full bg-gold-500" />
+              <span className="text-gold-400">
                 Investors: {investorEffectivePercentage.toFixed(1)}% ({investorTokens.toLocaleString()} tokens)
               </span>
             </div>
@@ -431,8 +431,8 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
             </div>
             {ownerPercentage > 0 && (
               <div className="flex items-center gap-2">
-                <div className="w-3 h-3 rounded-full bg-purple-500" />
-                <span className="text-purple-400">
+                <div className="w-3 h-3 rounded-full bg-gold-500" />
+                <span className="text-gold-400">
                   Project: {ownerPercentage.toFixed(1)}% ({ownerTokens.toLocaleString()} tokens)
                 </span>
               </div>
@@ -616,7 +616,7 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
       </section>
 
       {/* Summary Card */}
-      <section className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-xl p-6 border border-blue-500/20">
+      <section className="bg-gradient-to-r from-gold-500/10 to-gold-light-500/10 rounded-xl p-6 border border-gold-500/20">
         <h4 className="text-lg font-semibold text-white mb-4">Deployment Summary</h4>
         
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
@@ -632,13 +632,13 @@ export default function StepReview({ data, uploadedUrls, onNext, onBack, isEditM
             )}
           </div>
           <div>
-            <div className="text-2xl font-bold text-purple-400">
+            <div className="text-2xl font-bold text-gold-400">
               {data.milestones.length}
             </div>
             <div className="text-sm text-gray-400">Milestones</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-blue-400">
+            <div className="text-2xl font-bold text-gold-400">
               {data.totalSupply.toLocaleString()}
             </div>
             <div className="text-sm text-gray-400">{data.tokenSymbol} Tokens</div>

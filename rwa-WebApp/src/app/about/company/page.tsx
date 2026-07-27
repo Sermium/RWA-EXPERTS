@@ -5,6 +5,7 @@ import { useChainConfig } from '@/hooks/useChainConfig';
 import { CHAINS } from '@/config/chains';
 import { getDeployedChainIds } from '@/config/deployments';
 import { COMPANY } from '@/config/contacts';
+import { Lock, Globe, Scale, Search, Handshake, Lightbulb, Building2, Coins, BarChart3, Banknote } from 'lucide-react';
 
 export default function CompanyPage() {
   // Multichain config
@@ -30,32 +31,32 @@ export default function CompanyPage() {
 
   const values = [
     {
-      icon: '🔒',
+      icon: Lock,
       title: 'Security First',
       description: 'All smart contracts are audited and follow best practices for security. Your investments are protected by battle-tested code.'
     },
     {
-      icon: '🌐',
+      icon: Globe,
       title: 'Global Access',
       description: 'Anyone, anywhere can participate in real-world asset investments with as little as $100, breaking down traditional barriers.'
     },
     {
-      icon: '⚖️',
+      icon: Scale,
       title: 'Regulatory Compliance',
       description: 'We work within regulatory frameworks, implementing KYC/AML procedures and security token standards.'
     },
     {
-      icon: '🔍',
+      icon: Search,
       title: 'Transparency',
       description: 'All transactions are on-chain and verifiable. Project milestones, fund releases, and token distributions are fully transparent.'
     },
     {
-      icon: '🤝',
+      icon: Handshake,
       title: 'Community Driven',
       description: 'Our platform is built for the community. Token holders participate in governance and platform decisions.'
     },
     {
-      icon: '💡',
+      icon: Lightbulb,
       title: 'Innovation',
       description: 'We leverage cutting-edge blockchain technology to create new possibilities for asset tokenization and investment.'
     },
@@ -80,8 +81,8 @@ export default function CompanyPage() {
     <div className="space-y-16">
       {/* Mission Section */}
       <section className="max-w-4xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-white mb-6">Our Mission</h2>
-        <p className="text-xl text-gray-300 leading-relaxed">
+        <h2 className="text-3xl font-bold text-ink mb-6">Our Mission</h2>
+        <p className="text-xl text-ink-muted leading-relaxed">
           {COMPANY.name} is on a mission to bridge the gap between traditional real-world assets 
           and the decentralized finance ecosystem. We believe that everyone should have access 
           to investment opportunities that were previously reserved for institutions and 
@@ -90,14 +91,14 @@ export default function CompanyPage() {
       </section>
 
       {/* Stats Section */}
-      <section className="bg-gray-800/30 rounded-3xl p-8 border border-gray-700/50">
+      <section className="bg-surface/30 rounded-3xl p-8 border border-border/50">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, index) => (
             <div key={index} className="text-center">
-              <div className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-2">
+              <div className="text-4xl font-bold bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">
                 {stat.value}
               </div>
-              <div className="text-gray-400">{stat.label}</div>
+              <div className="text-ink-muted">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -105,39 +106,39 @@ export default function CompanyPage() {
 
       {/* What We Do Section */}
       <section>
-        <h2 className="text-3xl font-bold text-white mb-8 text-center">What We Do</h2>
+        <h2 className="text-3xl font-bold text-ink mb-8 text-center">What We Do</h2>
         <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-          <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700/50">
-            <div className="text-4xl mb-4">🏗️</div>
-            <h3 className="text-xl font-semibold text-white mb-3">Asset Tokenization</h3>
-            <p className="text-gray-400">
+          <div className="bg-surface/50 rounded-2xl p-6 border border-border/50">
+            <Building2 className="w-9 h-9 mb-4 text-gold" />
+            <h3 className="text-xl font-semibold text-ink mb-3">Asset Tokenization</h3>
+            <p className="text-ink-muted">
               We help project owners tokenize their real-world assets, creating compliant 
               security tokens that represent fractional ownership in properties, businesses, 
               commodities, and more.
             </p>
           </div>
-          <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700/50">
-            <div className="text-4xl mb-4">💰</div>
-            <h3 className="text-xl font-semibold text-white mb-3">Investment Platform</h3>
-            <p className="text-gray-400">
+          <div className="bg-surface/50 rounded-2xl p-6 border border-border/50">
+            <Coins className="w-9 h-9 mb-4 text-gold" />
+            <h3 className="text-xl font-semibold text-ink mb-3">Investment Platform</h3>
+            <p className="text-ink-muted">
               Our platform connects verified investors with tokenized asset opportunities, 
               enabling investments with cryptocurrency or traditional payment methods through 
               our secure escrow system.
             </p>
           </div>
-          <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700/50">
-            <div className="text-4xl mb-4">📊</div>
-            <h3 className="text-xl font-semibold text-white mb-3">Milestone Management</h3>
-            <p className="text-gray-400">
+          <div className="bg-surface/50 rounded-2xl p-6 border border-border/50">
+            <BarChart3 className="w-9 h-9 mb-4 text-gold" />
+            <h3 className="text-xl font-semibold text-ink mb-3">Milestone Management</h3>
+            <p className="text-ink-muted">
               Projects release funds through milestone-based systems, ensuring accountability 
               and protecting investor interests. Each milestone is verified before funds 
               are released.
             </p>
           </div>
-          <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700/50">
-            <div className="text-4xl mb-4">💸</div>
-            <h3 className="text-xl font-semibold text-white mb-3">Dividend Distribution</h3>
-            <p className="text-gray-400">
+          <div className="bg-surface/50 rounded-2xl p-6 border border-border/50">
+            <Banknote className="w-9 h-9 mb-4 text-gold" />
+            <h3 className="text-xl font-semibold text-ink mb-3">Dividend Distribution</h3>
+            <p className="text-ink-muted">
               Token holders receive their share of project returns through our automated 
               dividend distribution system, with full transparency and on-chain verification.
             </p>
@@ -147,16 +148,16 @@ export default function CompanyPage() {
 
       {/* Our Values Section */}
       <section>
-        <h2 className="text-3xl font-bold text-white mb-8 text-center">Our Values</h2>
+        <h2 className="text-3xl font-bold text-ink mb-8 text-center">Our Values</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
           {values.map((value, index) => (
             <div 
               key={index}
-              className="bg-gray-800/30 rounded-xl p-6 border border-gray-700/50 hover:border-purple-500/50 transition-colors"
+              className="bg-surface/30 rounded-xl p-6 border border-border/50 hover:border-gold/30 transition-colors"
             >
-              <div className="text-3xl mb-3">{value.icon}</div>
-              <h3 className="text-lg font-semibold text-white mb-2">{value.title}</h3>
-              <p className="text-gray-400 text-sm">{value.description}</p>
+              <value.icon className="w-8 h-8 mb-3 text-gold" />
+              <h3 className="text-lg font-semibold text-ink mb-2">{value.title}</h3>
+              <p className="text-ink-muted text-sm">{value.description}</p>
             </div>
           ))}
         </div>
@@ -164,25 +165,25 @@ export default function CompanyPage() {
 
       {/* Timeline Section */}
       <section>
-        <h2 className="text-3xl font-bold text-white mb-8 text-center">Our Journey</h2>
+        <h2 className="text-3xl font-bold text-ink mb-8 text-center">Our Journey</h2>
         <div className="max-w-3xl mx-auto">
           <div className="relative">
             {/* Vertical line */}
-            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-purple-500 to-blue-500" />
+            <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-gold to-gold-light" />
             
             <div className="space-y-8">
               {milestones.map((milestone, index) => (
                 <div key={index} className="relative flex items-start gap-6">
                   {/* Dot */}
                   <div className="relative z-10 w-16 h-16 flex items-center justify-center">
-                    <div className="w-4 h-4 rounded-full bg-gradient-to-r from-purple-500 to-blue-500" />
+                    <div className="w-4 h-4 rounded-full bg-gradient-to-r from-gold to-gold-light" />
                   </div>
                   
                   {/* Content */}
-                  <div className="flex-1 bg-gray-800/50 rounded-xl p-6 border border-gray-700/50">
-                    <div className="text-purple-400 text-sm font-medium mb-1">{milestone.year}</div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{milestone.title}</h3>
-                    <p className="text-gray-400">{milestone.description}</p>
+                  <div className="flex-1 bg-surface/50 rounded-xl p-6 border border-border/50">
+                    <div className="text-gold text-sm font-medium mb-1">{milestone.year}</div>
+                    <h3 className="text-lg font-semibold text-ink mb-2">{milestone.title}</h3>
+                    <p className="text-ink-muted">{milestone.description}</p>
                   </div>
                 </div>
               ))}
@@ -192,10 +193,10 @@ export default function CompanyPage() {
       </section>
 
       {/* Technology Section - Multichain */}
-      <section className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 rounded-3xl p-8 border border-purple-500/20">
-        <h2 className="text-3xl font-bold text-white mb-6 text-center">Multichain Infrastructure</h2>
+      <section className="bg-gradient-to-r from-gold/5 to-gold/10 rounded-3xl p-8 border border-gold/20">
+        <h2 className="text-3xl font-bold text-ink mb-6 text-center">Multichain Infrastructure</h2>
         <div className="max-w-4xl mx-auto text-center">
-          <p className="text-gray-300 mb-8">
+          <p className="text-ink-muted mb-8">
             Our platform is deployed across multiple blockchain networks, providing users with 
             flexibility, low transaction costs, and access to different ecosystems. All our 
             smart contracts are open source and verified on-chain.
@@ -203,7 +204,7 @@ export default function CompanyPage() {
 
           {/* Supported Chains */}
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-white mb-4">Deployed Networks</h3>
+            <h3 className="text-lg font-semibold text-ink mb-4">Deployed Networks</h3>
             <div className="flex flex-wrap justify-center gap-3">
               {deployedChains.map((chain) => (
                 <div
@@ -224,7 +225,7 @@ export default function CompanyPage() {
           {/* Current Chain Contracts */}
           {isDeployed && contractLinks.length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">
+              <h3 className="text-lg font-semibold text-ink mb-4">
                 Contracts on {chainName}
                 {isTestnet && <span className="ml-2 text-yellow-400 text-sm">(Testnet)</span>}
               </h3>
@@ -235,7 +236,7 @@ export default function CompanyPage() {
                     href={`${explorerUrl}/address/${contract.address}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg text-sm text-gray-300 transition-colors flex items-center gap-2"
+                    className="px-4 py-2 bg-surface hover:bg-surface-overlay rounded-lg text-sm text-ink-muted transition-colors flex items-center gap-2"
                   >
                     <span>{contract.name}</span>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -244,7 +245,7 @@ export default function CompanyPage() {
                   </a>
                 ))}
               </div>
-              <p className="text-gray-500 text-xs mt-4">
+              <p className="text-ink-faint text-xs mt-4">
                 View contract source code and transactions on the block explorer
               </p>
             </div>
@@ -262,9 +263,9 @@ export default function CompanyPage() {
 
           {/* Native Currency Info */}
           {isDeployed && (
-            <div className="mt-8 p-4 bg-gray-800/50 rounded-lg inline-block">
-              <p className="text-gray-400 text-sm">
-                Transactions on {chainName} use <span className="text-white font-semibold">{nativeCurrency}</span> for gas fees
+            <div className="mt-8 p-4 bg-surface/50 rounded-lg inline-block">
+              <p className="text-ink-muted text-sm">
+                Transactions on {chainName} use <span className="text-ink font-semibold">{nativeCurrency}</span> for gas fees
               </p>
             </div>
           )}
@@ -273,13 +274,13 @@ export default function CompanyPage() {
 
       {/* Contact CTA */}
       <section className="text-center">
-        <h2 className="text-2xl font-bold text-white mb-4">Want to Learn More?</h2>
-        <p className="text-gray-400 mb-6">
+        <h2 className="text-2xl font-bold text-ink mb-4">Want to Learn More?</h2>
+        <p className="text-ink-muted mb-6">
           Have questions about our platform or interested in listing your project?
         </p>
         <a
           href="mailto:{CONTACT.general}"
-          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-semibold rounded-xl transition-all"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-all"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />

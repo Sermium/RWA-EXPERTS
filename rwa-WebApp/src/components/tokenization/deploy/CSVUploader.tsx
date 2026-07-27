@@ -282,7 +282,7 @@ export default function CSVUploader({
           onClick={() => setInputMode('manual')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             inputMode === 'manual'
-              ? 'bg-blue-600 text-white'
+              ? 'bg-gold-600 text-white'
               : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -293,7 +293,7 @@ export default function CSVUploader({
           onClick={() => setInputMode('csv')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             inputMode === 'csv'
-              ? 'bg-blue-600 text-white'
+              ? 'bg-gold-600 text-white'
               : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -315,7 +315,7 @@ export default function CSVUploader({
                 onChange={(e) => setManualAddress(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="0x..."
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-gold-500"
               />
             </div>
             
@@ -330,7 +330,7 @@ export default function CSVUploader({
                 min="0"
                 step="any"
                 max={remainingTokens}
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-blue-500"
+                className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-gold-500"
               />
             </div>
             
@@ -338,7 +338,7 @@ export default function CSVUploader({
               <button
                 type="button"
                 onClick={handleAddManual}
-                className="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+                className="w-full sm:w-auto px-4 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
               >
                 Add
               </button>
@@ -369,7 +369,7 @@ export default function CSVUploader({
               className="w-full flex items-center justify-between p-3 text-left hover:bg-slate-700/30 transition-colors"
             >
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span className="text-sm text-slate-300">CSV Format Guide</span>
@@ -408,7 +408,7 @@ export default function CSVUploader({
                 <button
                   type="button"
                   onClick={downloadTemplate}
-                  className="flex items-center gap-2 text-sm text-blue-400 hover:text-blue-300"
+                  className="flex items-center gap-2 text-sm text-gold-400 hover:text-gold-300"
                 >
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -427,7 +427,7 @@ export default function CSVUploader({
             onClick={() => fileInputRef.current?.click()}
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
               isDragging
-                ? 'border-blue-500 bg-blue-500/10'
+                ? 'border-gold-500 bg-gold-500/10'
                 : 'border-slate-600 hover:border-slate-500 bg-slate-800/30'
             }`}
           >
@@ -442,7 +442,7 @@ export default function CSVUploader({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
             <p className="text-sm text-slate-300">
-              Drag & drop your CSV file here, or <span className="text-blue-400">browse</span>
+              Drag & drop your CSV file here, or <span className="text-gold-400">browse</span>
             </p>
             <p className="text-xs text-slate-500 mt-1">
               Or switch to Manual Entry for small distributions
@@ -514,7 +514,7 @@ export default function CSVUploader({
                             type="button"
                             onClick={() => fillRemaining(index)}
                             title="Fill remaining tokens"
-                            className="p-1 text-slate-500 hover:text-blue-400"
+                            className="p-1 text-slate-500 hover:text-gold-400"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -551,7 +551,7 @@ export default function CSVUploader({
             <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
               <div
                 className={`h-full transition-all ${
-                  allocationPercentage > 100 ? 'bg-red-500' : 'bg-blue-500'
+                  allocationPercentage > 100 ? 'bg-red-500' : 'bg-gold-500'
                 }`}
                 style={{ width: `${Math.min(allocationPercentage, 100)}%` }}
               />

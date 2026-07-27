@@ -255,11 +255,11 @@ export default function PlatformSettings() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <h2 className="text-2xl font-bold text-white">Platform Settings</h2>
-        <div className="bg-gray-800 rounded-xl p-6">
+        <h2 className="text-2xl font-bold text-ink">Platform Settings</h2>
+        <div className="bg-surface rounded-xl p-6">
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full" />
-            <span className="ml-3 text-gray-400">Loading settings...</span>
+            <div className="animate-spin w-6 h-6 border-2 border-gold-500 border-t-transparent rounded-full" />
+            <span className="ml-3 text-ink-muted">Loading settings...</span>
           </div>
         </div>
       </div>
@@ -270,14 +270,14 @@ export default function PlatformSettings() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Platform Settings</h2>
+        <h2 className="text-2xl font-bold text-ink">Platform Settings</h2>
         <div className="flex gap-2">
           {!editing ? (
             <>
               <button
                 onClick={handleRecalculateFees}
                 disabled={recalculating}
-                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 rounded-lg text-white text-sm flex items-center gap-2"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-700 disabled:opacity-50 rounded-lg text-ink text-sm flex items-center gap-2"
               >
                 {recalculating ? (
                   <RefreshCw className="w-4 h-4 animate-spin" />
@@ -288,7 +288,7 @@ export default function PlatformSettings() {
               </button>
               <button
                 onClick={() => setEditing(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm flex items-center gap-2"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-700 rounded-lg text-ink text-sm flex items-center gap-2"
               >
                 <span>âœï¸</span> Edit Fees
               </button>
@@ -297,14 +297,14 @@ export default function PlatformSettings() {
             <>
               <button
                 onClick={handleCancel}
-                className="px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-white text-sm"
+                className="px-4 py-2 bg-surface-raised hover:bg-surface-overlay rounded-lg text-ink text-sm"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-white text-sm flex items-center gap-2"
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-ink text-sm flex items-center gap-2"
               >
                 {saving ? (
                   <>
@@ -324,8 +324,8 @@ export default function PlatformSettings() {
       {message && (
         <div className={`p-4 rounded-lg flex items-center gap-2 ${
           message.type === 'success'
-            ? 'bg-green-900/50 text-green-400 border border-green-500/30'
-            : 'bg-red-900/50 text-red-400 border border-red-500/30'
+            ? 'bg-success/10 text-success border border-success/40'
+            : 'bg-danger/10 text-danger border border-danger/40'
         }`}>
           <span>{message.type === 'success' ? 'âœ…' : 'âŒ'}</span>
           {message.text}
@@ -333,146 +333,146 @@ export default function PlatformSettings() {
       )}
 
       {/* Platform-Wide Fees */}
-      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+      <div className="bg-surface/50 rounded-xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
           <span>ðŸŒ</span> Platform-Wide Fees
-          <span className="text-xs text-gray-500 font-normal">(Same across all chains)</span>
+          <span className="text-xs text-ink-faint font-normal">(Same across all chains)</span>
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Submission Fees */}
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Crowdfunding Submission Fee (USD)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Crowdfunding Submission Fee (USD)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.CROWDFUNDING_SUBMISSION_FEE}
                 onChange={(e) => updatePlatformFee('CROWDFUNDING_SUBMISSION_FEE', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-2xl font-bold text-white">${platformFees.CROWDFUNDING_SUBMISSION_FEE}</p>
+              <p className="text-2xl font-bold text-ink">${platformFees.CROWDFUNDING_SUBMISSION_FEE}</p>
             )}
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Tokenization Submission Fee (USD)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Tokenization Submission Fee (USD)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.TOKENIZATION_SUBMISSION_FEE}
                 onChange={(e) => updatePlatformFee('TOKENIZATION_SUBMISSION_FEE', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-2xl font-bold text-white">${platformFees.TOKENIZATION_SUBMISSION_FEE}</p>
+              <p className="text-2xl font-bold text-ink">${platformFees.TOKENIZATION_SUBMISSION_FEE}</p>
             )}
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Escrow Transaction Fee (BPS)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Escrow Transaction Fee (BPS)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.ESCROW_TRANSACTION_FEE_BPS}
                 onChange={(e) => updatePlatformFee('ESCROW_TRANSACTION_FEE_BPS', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-2xl font-bold text-white">{platformFees.ESCROW_TRANSACTION_FEE_BPS} BPS <span className="text-sm text-gray-400">({platformFees.ESCROW_TRANSACTION_FEE_BPS / 100}%)</span></p>
+              <p className="text-2xl font-bold text-ink">{platformFees.ESCROW_TRANSACTION_FEE_BPS} BPS <span className="text-sm text-ink-muted">({platformFees.ESCROW_TRANSACTION_FEE_BPS / 100}%)</span></p>
             )}
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Crowdfunding USDT Fee (BPS)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Crowdfunding USDT Fee (BPS)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.CROWDFUNDING_PLATFORM_USDT_FEE_BPS}
                 onChange={(e) => updatePlatformFee('CROWDFUNDING_PLATFORM_USDT_FEE_BPS', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-2xl font-bold text-white">{platformFees.CROWDFUNDING_PLATFORM_USDT_FEE_BPS} BPS <span className="text-sm text-gray-400">({platformFees.CROWDFUNDING_PLATFORM_USDT_FEE_BPS / 100}%)</span></p>
+              <p className="text-2xl font-bold text-ink">{platformFees.CROWDFUNDING_PLATFORM_USDT_FEE_BPS} BPS <span className="text-sm text-ink-muted">({platformFees.CROWDFUNDING_PLATFORM_USDT_FEE_BPS / 100}%)</span></p>
             )}
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Crowdfunding Token Fee (BPS)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Crowdfunding Token Fee (BPS)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.CROWDFUNDING_PLATFORM_TOKEN_FEE_BPS}
                 onChange={(e) => updatePlatformFee('CROWDFUNDING_PLATFORM_TOKEN_FEE_BPS', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-2xl font-bold text-white">{platformFees.CROWDFUNDING_PLATFORM_TOKEN_FEE_BPS} BPS <span className="text-sm text-gray-400">({platformFees.CROWDFUNDING_PLATFORM_TOKEN_FEE_BPS / 100}%)</span></p>
+              <p className="text-2xl font-bold text-ink">{platformFees.CROWDFUNDING_PLATFORM_TOKEN_FEE_BPS} BPS <span className="text-sm text-ink-muted">({platformFees.CROWDFUNDING_PLATFORM_TOKEN_FEE_BPS / 100}%)</span></p>
             )}
           </div>
         </div>
       </div>
 
       {/* Fee Distribution */}
-      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+      <div className="bg-surface/50 rounded-xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
           <span>ðŸ“Š</span> Fee Distribution
         </h3>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Fee Receiver (BPS)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Fee Receiver (BPS)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.FEE_RECEIVER_BPS}
                 onChange={(e) => updatePlatformFee('FEE_RECEIVER_BPS', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-xl font-bold text-white">{platformFees.FEE_RECEIVER_BPS / 100}%</p>
+              <p className="text-xl font-bold text-ink">{platformFees.FEE_RECEIVER_BPS / 100}%</p>
             )}
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Liquidity Wallet (BPS)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Liquidity Wallet (BPS)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.LIQUIDITY_WALLET_BPS}
                 onChange={(e) => updatePlatformFee('LIQUIDITY_WALLET_BPS', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-xl font-bold text-white">{platformFees.LIQUIDITY_WALLET_BPS / 100}%</p>
+              <p className="text-xl font-bold text-ink">{platformFees.LIQUIDITY_WALLET_BPS / 100}%</p>
             )}
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Treasury Wallet (BPS)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Treasury Wallet (BPS)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.TREASURY_WALLET_BPS}
                 onChange={(e) => updatePlatformFee('TREASURY_WALLET_BPS', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-xl font-bold text-white">{platformFees.TREASURY_WALLET_BPS / 100}%</p>
+              <p className="text-xl font-bold text-ink">{platformFees.TREASURY_WALLET_BPS / 100}%</p>
             )}
           </div>
 
-          <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
-            <label className="block text-gray-400 text-sm mb-2">Investor Allocation (BPS)</label>
+          <div className="bg-surface rounded-lg p-4 border border-border">
+            <label className="block text-ink-muted text-sm mb-2">Investor Allocation (BPS)</label>
             {editing ? (
               <input
                 type="number"
                 value={editedPlatformFees.INVESTOR_ALLOCATION_BPS}
                 onChange={(e) => updatePlatformFee('INVESTOR_ALLOCATION_BPS', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded text-white"
+                className="w-full p-2 bg-surface-overlay border border-border-strong rounded text-ink"
               />
             ) : (
-              <p className="text-xl font-bold text-white">{platformFees.INVESTOR_ALLOCATION_BPS / 100}%</p>
+              <p className="text-xl font-bold text-ink">{platformFees.INVESTOR_ALLOCATION_BPS / 100}%</p>
             )}
           </div>
         </div>
@@ -482,14 +482,14 @@ export default function PlatformSettings() {
       <div className="overflow-x-auto">
         <table className="w-full text-left">
           <thead>
-            <tr className="border-b border-gray-700">
-              <th className="py-3 px-4 text-gray-400 font-medium">Chain</th>
-              <th className="py-3 px-4 text-gray-400 font-medium">Native Price</th>
-              <th className="py-3 px-4 text-gray-400 font-medium">KYC Fee (USD)</th>
-              <th className="py-3 px-4 text-gray-400 font-medium">â†’ Native</th>
-              <th className="py-3 px-4 text-gray-400 font-medium">Creation Fee (USD)</th>
-              <th className="py-3 px-4 text-gray-400 font-medium">â†’ Native</th>
-              {editing && <th className="py-3 px-4 text-gray-400 font-medium">Actions</th>}
+            <tr className="border-b border-border">
+              <th className="py-3 px-4 text-ink-muted font-medium">Chain</th>
+              <th className="py-3 px-4 text-ink-muted font-medium">Native Price</th>
+              <th className="py-3 px-4 text-ink-muted font-medium">KYC Fee (USD)</th>
+              <th className="py-3 px-4 text-ink-muted font-medium">â†’ Native</th>
+              <th className="py-3 px-4 text-ink-muted font-medium">Creation Fee (USD)</th>
+              <th className="py-3 px-4 text-ink-muted font-medium">â†’ Native</th>
+              {editing && <th className="py-3 px-4 text-ink-muted font-medium">Actions</th>}
             </tr>
           </thead>
           <tbody>
@@ -508,12 +508,12 @@ export default function PlatformSettings() {
               const creationNative = price > 0 ? (creationUsd / price).toFixed(6) : '0';
               
               return (
-                <tr key={chainId} className="border-b border-gray-700/50 hover:bg-gray-700/30">
+                <tr key={chainId} className="border-b border-border/50 hover:bg-surface-overlay/30">
                   {/* Chain Name */}
                   <td className="py-3 px-4">
-                    <span className="text-white font-medium">{CHAIN_NAMES[chainId]}</span>
-                    <span className="text-xs text-gray-500 ml-2">({chainId})</span>
-                    <span className="text-xs text-gray-400 ml-2">{symbol}</span>
+                    <span className="text-ink font-medium">{CHAIN_NAMES[chainId]}</span>
+                    <span className="text-xs text-ink-faint ml-2">({chainId})</span>
+                    <span className="text-xs text-ink-muted ml-2">{symbol}</span>
                   </td>
                   
                   {/* Native Token Price */}
@@ -532,7 +532,7 @@ export default function PlatformSettings() {
                           min="0"
                           value={kycUsd}
                           onChange={(e) => updateChainFeeUsd(chainId, 'KYC_FEE_USD', e.target.value)}
-                          className="w-20 p-1.5 bg-gray-700 border border-green-500/50 rounded text-white text-sm focus:border-green-400 focus:outline-none"
+                          className="w-20 p-1.5 bg-surface-overlay border border-green-500/50 rounded text-ink text-sm focus:border-green-400 focus:outline-none"
                         />
                       </div>
                     ) : (
@@ -542,7 +542,7 @@ export default function PlatformSettings() {
                   
                   {/* KYC Native Amount - CALCULATED */}
                   <td className="py-3 px-4">
-                    <span className="text-gray-400 font-mono text-sm">
+                    <span className="text-ink-muted font-mono text-sm">
                       {storedFees?.KYC_FEE_FORMATTED || `${kycNative} ${symbol}`}
                     </span>
                   </td>
@@ -551,24 +551,24 @@ export default function PlatformSettings() {
                   <td className="py-3 px-4">
                     {editing ? (
                       <div className="flex items-center gap-1">
-                        <span className="text-blue-400">$</span>
+                        <span className="text-gold-400">$</span>
                         <input
                           type="number"
                           step="0.01"
                           min="0"
                           value={creationUsd}
                           onChange={(e) => updateChainFeeUsd(chainId, 'CREATION_FEE_USD', e.target.value)}
-                          className="w-20 p-1.5 bg-gray-700 border border-blue-500/50 rounded text-white text-sm focus:border-blue-400 focus:outline-none"
+                          className="w-20 p-1.5 bg-surface-overlay border border-gold-500/50 rounded text-ink text-sm focus:border-gold-400 focus:outline-none"
                         />
                       </div>
                     ) : (
-                      <span className="text-blue-400 font-semibold">${creationUsd.toFixed(2)}</span>
+                      <span className="text-gold-400 font-semibold">${creationUsd.toFixed(2)}</span>
                     )}
                   </td>
                   
                   {/* Creation Native Amount - CALCULATED */}
                   <td className="py-3 px-4">
-                    <span className="text-gray-400 font-mono text-sm">
+                    <span className="text-ink-muted font-mono text-sm">
                       {storedFees?.CREATION_FEE_FORMATTED || `${creationNative} ${symbol}`}
                     </span>
                   </td>
@@ -576,7 +576,7 @@ export default function PlatformSettings() {
                   {/* Actions when editing */}
                   {editing && (
                     <td className="py-3 px-4">
-                      <span className="text-gray-500 text-xs">Auto-calc</span>
+                      <span className="text-ink-faint text-xs">Auto-calc</span>
                     </td>
                   )}
                 </tr>
@@ -587,15 +587,15 @@ export default function PlatformSettings() {
       </div>
 
       {/* Info Box */}
-      <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-6">
+      <div className="bg-gold-900/20 border border-gold-500/30 rounded-xl p-6">
         <div className="flex items-start gap-3">
           <span className="text-2xl">â„¹ï¸</span>
           <div>
-            <h4 className="text-blue-400 font-semibold">Fee Management</h4>
-            <p className="text-gray-400 text-sm mt-1">
+            <h4 className="text-gold-400 font-semibold">Fee Management</h4>
+            <p className="text-ink-muted text-sm mt-1">
               Fees are stored in USD and automatically converted to native tokens using live market prices.
               The conversion happens when you save changes or click "Recalculate Prices".
-              For automated updates, configure a cron job to call <code className="text-blue-300">/api/admin/settings/fee/recalculate</code> periodically.
+              For automated updates, configure a cron job to call <code className="text-gold-300">/api/admin/settings/fee/recalculate</code> periodically.
             </p>
           </div>
         </div>

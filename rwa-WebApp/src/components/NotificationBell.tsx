@@ -43,13 +43,13 @@ const NOTIFICATION_ICONS: Record<NotificationType, React.ReactNode> = {
 const NOTIFICATION_COLORS: Record<NotificationType, string> = {
   trade_update: 'bg-cyan-500/20 text-cyan-400',
   payment_received: 'bg-green-500/20 text-green-400',
-  payment_sent: 'bg-blue-500/20 text-blue-400',
-  document_uploaded: 'bg-purple-500/20 text-purple-400',
+  payment_sent: 'bg-gold-500/20 text-gold-400',
+  document_uploaded: 'bg-gold-500/20 text-gold-400',
   document_verified: 'bg-green-500/20 text-green-400',
   milestone_completed: 'bg-green-500/20 text-green-400',
   dispute_opened: 'bg-red-500/20 text-red-400',
   dispute_update: 'bg-orange-500/20 text-orange-400',
-  message_received: 'bg-blue-500/20 text-blue-400',
+  message_received: 'bg-gold-500/20 text-gold-400',
   kyc_update: 'bg-yellow-500/20 text-yellow-400',
   system_alert: 'bg-gray-500/20 text-gray-400',
 };
@@ -88,7 +88,7 @@ function NotificationItem({
       onClick={handleClick}
       className={`
         p-4 border-b border-gray-700/50 hover:bg-gray-800/50 transition-colors cursor-pointer
-        ${!notification.read ? 'bg-blue-500/5' : ''}
+        ${!notification.read ? 'bg-gold-500/5' : ''}
         ${PRIORITY_COLORS[notification.priority]}
       `}
     >
@@ -102,7 +102,7 @@ function NotificationItem({
               {notification.title}
             </p>
             {!notification.read && (
-              <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5" />
+              <div className="w-2 h-2 rounded-full bg-gold-500 flex-shrink-0 mt-1.5" />
             )}
           </div>
           <p className="text-sm text-gray-400 mt-0.5 line-clamp-2">{notification.message}</p>
@@ -194,7 +194,7 @@ export default function NotificationBell() {
             <div className="flex items-center gap-2">
               <h3 className="text-white font-semibold">Notifications</h3>
               {unreadCount > 0 && (
-                <span className="px-2 py-0.5 text-xs font-medium bg-blue-500/20 text-blue-400 rounded-full">
+                <span className="px-2 py-0.5 text-xs font-medium bg-gold-500/20 text-gold-400 rounded-full">
                   {unreadCount} new
                 </span>
               )}
@@ -224,7 +224,7 @@ export default function NotificationBell() {
           <div className="max-h-[400px] overflow-y-auto">
             {connecting ? (
               <div className="p-8 text-center">
-                <Loader2 className="h-6 w-6 text-blue-500 animate-spin mx-auto mb-2" />
+                <Loader2 className="h-6 w-6 text-gold-500 animate-spin mx-auto mb-2" />
                 <p className="text-gray-400 text-sm">Connecting...</p>
               </div>
             ) : notifications.length === 0 ? (

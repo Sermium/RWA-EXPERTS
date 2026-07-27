@@ -159,8 +159,8 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
     const maxDepth = 3;
 
     return (
-      <div className={`${depth > 0 ? 'ml-8 border-l-2 border-gray-700 pl-4' : ''}`}>
-        <div className="bg-gray-800/50 rounded-lg p-4 mb-3">
+      <div className={`${depth > 0 ? 'ml-8 border-l-2 border-border pl-4' : ''}`}>
+        <div className="bg-surface/50 rounded-lg p-4 mb-3">
           {/* Header */}
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -168,14 +168,14 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
                 <User className="w-4 h-4 text-emerald-400" />
               </div>
               <div>
-                <span className="text-white font-medium text-sm">{comment.author_name}</span>
-                <span className="text-gray-500 text-xs ml-2">{formatDate(comment.created_at)}</span>
+                <span className="text-ink font-medium text-sm">{comment.author_name}</span>
+                <span className="text-ink-faint text-xs ml-2">{formatDate(comment.created_at)}</span>
               </div>
             </div>
             {isAuthor && (
               <button
                 onClick={() => handleDelete(comment.id)}
-                className="p-1 text-gray-500 hover:text-red-400 transition-colors"
+                className="p-1 text-ink-faint hover:text-red-400 transition-colors"
                 title="Delete"
               >
                 <Trash2 className="w-4 h-4" />
@@ -184,7 +184,7 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
           </div>
 
           {/* Content */}
-          <p className="text-gray-300 text-sm whitespace-pre-wrap mb-3">{comment.content}</p>
+          <p className="text-ink-muted text-sm whitespace-pre-wrap mb-3">{comment.content}</p>
 
           {/* Actions */}
           <div className="flex items-center gap-4">
@@ -194,7 +194,7 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
               className={`flex items-center gap-1 text-sm transition-colors ${
                 comment.userLiked 
                   ? 'text-red-400' 
-                  : 'text-gray-500 hover:text-red-400'
+                  : 'text-ink-faint hover:text-red-400'
               } disabled:opacity-50 disabled:cursor-not-allowed`}
             >
               <Heart className={`w-4 h-4 ${comment.userLiked ? 'fill-current' : ''}`} />
@@ -205,7 +205,7 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
               <button
                 onClick={() => setReplyingTo(replyingTo === comment.id ? null : comment.id)}
                 disabled={!isConnected}
-                className="flex items-center gap-1 text-sm text-gray-500 hover:text-emerald-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-1 text-sm text-ink-faint hover:text-emerald-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Reply className="w-4 h-4" />
                 <span>Reply</span>
@@ -215,13 +215,13 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
 
           {/* Reply form */}
           {replyingTo === comment.id && (
-            <div className="mt-3 pt-3 border-t border-gray-700">
+            <div className="mt-3 pt-3 border-t border-border">
               <textarea
                 value={replyContent}
                 onChange={(e) => setReplyContent(e.target.value)}
                 placeholder="Write a reply..."
                 rows={2}
-                className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 resize-none"
+                className="w-full px-3 py-2 bg-surface-sunken border border-border rounded-lg text-ink text-sm placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 resize-none"
               />
               <div className="flex justify-end gap-2 mt-2">
                 <button
@@ -229,14 +229,14 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
                     setReplyingTo(null);
                     setReplyContent('');
                   }}
-                  className="px-3 py-1.5 text-sm text-gray-400 hover:text-white transition-colors"
+                  className="px-3 py-1.5 text-sm text-ink-muted hover:text-ink transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleSubmitComment(comment.id)}
                   disabled={!replyContent.trim() || isSubmitting}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 text-white text-sm rounded-lg transition-colors flex items-center gap-1"
+                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-surface-overlay text-ink text-sm rounded-lg transition-colors flex items-center gap-1"
                 >
                   {isSubmitting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
                   Reply
@@ -255,8 +255,8 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
   };
 
   return (
-    <section className="mt-12 pt-8 border-t border-gray-800">
-      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
+    <section className="mt-12 pt-8 border-t border-border">
+      <h2 className="text-2xl font-bold text-ink mb-6 flex items-center gap-2">
         <MessageCircle className="w-6 h-6 text-emerald-400" />
         Discussion ({totalComments})
       </h2>
@@ -264,21 +264,21 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
       {/* New comment form */}
       <div className="mb-8">
         {isConnected ? (
-          <div className="bg-gray-800/50 rounded-xl p-4">
+          <div className="bg-surface/50 rounded-xl p-4">
             <textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Share your thoughts..."
               rows={3}
               maxLength={2000}
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 resize-none"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 resize-none"
             />
             <div className="flex items-center justify-between mt-3">
-              <span className="text-xs text-gray-500">{newComment.length}/2000</span>
+              <span className="text-xs text-ink-faint">{newComment.length}/2000</span>
               <button
                 onClick={() => handleSubmitComment()}
                 disabled={!newComment.trim() || isSubmitting}
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-surface-overlay disabled:cursor-not-allowed text-ink rounded-lg transition-colors flex items-center gap-2"
               >
                 {isSubmitting ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -290,9 +290,9 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
             </div>
           </div>
         ) : (
-          <div className="bg-gray-800/50 rounded-xl p-6 text-center">
+          <div className="bg-surface/50 rounded-xl p-6 text-center">
             <AlertCircle className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-            <p className="text-gray-400">Connect your wallet to join the discussion</p>
+            <p className="text-ink-muted">Connect your wallet to join the discussion</p>
           </div>
         )}
 
@@ -310,8 +310,8 @@ export default function BlogComments({ postId }: BlogCommentsProps) {
         </div>
       ) : comments.length === 0 ? (
         <div className="text-center py-8">
-          <MessageCircle className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-          <p className="text-gray-500">No comments yet. Be the first to share your thoughts!</p>
+          <MessageCircle className="w-12 h-12 text-ink-faint mx-auto mb-3" />
+          <p className="text-ink-faint">No comments yet. Be the first to share your thoughts!</p>
         </div>
       ) : (
         <div className="space-y-2">

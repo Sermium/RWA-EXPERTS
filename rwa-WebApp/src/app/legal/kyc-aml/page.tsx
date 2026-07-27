@@ -9,8 +9,8 @@ export default function KycAmlPage() {
   return (
     <article className="max-w-4xl prose prose-invert prose-cyan">
       <div className="mb-8 not-prose">
-        <h1 className="text-4xl font-bold text-white mb-2">KYC/AML Policy</h1>
-        <p className="text-gray-400">Last Updated: March 2026</p>
+        <h1 className="text-4xl font-display font-bold text-ink mb-2">KYC/AML Policy</h1>
+        <p className="text-ink-muted">Last Updated: March 2026</p>
       </div>
 
       <section className="mb-8">
@@ -45,25 +45,25 @@ export default function KycAmlPage() {
         <div className="not-prose my-4 overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-700">
-                <th className="text-left py-2 px-4 text-gray-400">Risk Level</th>
-                <th className="text-left py-2 px-4 text-gray-400">Indicators</th>
-                <th className="text-left py-2 px-4 text-gray-400">Measures</th>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 px-4 text-ink-muted">Risk Level</th>
+                <th className="text-left py-2 px-4 text-ink-muted">Indicators</th>
+                <th className="text-left py-2 px-4 text-ink-muted">Measures</th>
               </tr>
             </thead>
-            <tbody className="text-gray-300">
-              <tr className="border-b border-gray-800">
-                <td className="py-2 px-4 text-green-400">Low</td>
+            <tbody className="text-ink-muted">
+              <tr className="border-b border-border">
+                <td className="py-2 px-4 text-success">Low</td>
                 <td className="py-2 px-4">Small transactions, low-risk countries</td>
                 <td className="py-2 px-4">Standard verification</td>
               </tr>
-              <tr className="border-b border-gray-800">
-                <td className="py-2 px-4 text-yellow-400">Medium</td>
+              <tr className="border-b border-border">
+                <td className="py-2 px-4 text-warning">Medium</td>
                 <td className="py-2 px-4">Moderate amounts, some risk factors</td>
                 <td className="py-2 px-4">Enhanced monitoring</td>
               </tr>
               <tr>
-                <td className="py-2 px-4 text-red-400">High</td>
+                <td className="py-2 px-4 text-danger">High</td>
                 <td className="py-2 px-4">PEPs, high-risk countries, large amounts</td>
                 <td className="py-2 px-4">Enhanced due diligence, senior approval</td>
               </tr>

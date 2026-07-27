@@ -55,7 +55,7 @@ export function SecurityTradeForm({
     return (
       <div className="bg-gray-900 rounded-xl p-4">
         <h3 className="font-semibold mb-4 flex items-center gap-2">
-          <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
           </svg>
           Trade
@@ -101,7 +101,7 @@ export function SecurityTradeForm({
   return (
     <div className="bg-gray-900 rounded-xl p-4">
       <h3 className="font-semibold mb-4 flex items-center gap-2">
-        <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
         </svg>
         Trade
@@ -113,7 +113,7 @@ export function SecurityTradeForm({
           <button
             onClick={() => onOrderTypeChange('limit')}
             className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
-              orderType === 'limit' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+              orderType === 'limit' ? 'bg-gold-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
             Limit
@@ -121,7 +121,7 @@ export function SecurityTradeForm({
           <button
             onClick={() => onOrderTypeChange('market')}
             className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
-              orderType === 'market' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+              orderType === 'market' ? 'bg-gold-600 text-white' : 'text-gray-400 hover:text-white'
             }`}
           >
             Market
@@ -158,7 +158,7 @@ export function SecurityTradeForm({
               onChange={(e) => onPriceChange(e.target.value)}
               placeholder="0.00"
               step="0.01"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
             />
           </div>
         )}
@@ -171,7 +171,7 @@ export function SecurityTradeForm({
             value={orderAmount}
             onChange={(e) => onAmountChange(e.target.value)}
             placeholder="0.00"
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
           />
           <div className="flex gap-2 mt-2">
             {[25, 50, 75, 100].map((pct) => (
@@ -230,7 +230,7 @@ export function SecurityTradeForm({
         {/* Transaction Link */}
         {txHash && (
           <div className="text-center">
-            <a href={`${explorerUrl}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-400 hover:text-blue-300">
+            <a href={`${explorerUrl}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="text-sm text-gold-400 hover:text-gold-300">
               View Transaction →
             </a>
           </div>

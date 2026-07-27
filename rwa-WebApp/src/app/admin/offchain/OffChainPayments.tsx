@@ -71,36 +71,36 @@ export default function OffChainPayments({ projects, onRefresh }: OffChainPaymen
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-white">Off-Chain Payments</h2>
+      <h2 className="text-2xl font-bold text-ink">Off-Chain Payments</h2>
 
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-2">Record Swipe / Card Payment</h3>
-        <p className="text-gray-400 text-sm mb-6">
+      <div className="bg-surface rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-ink mb-2">Record Swipe / Card Payment</h3>
+        <p className="text-ink-muted text-sm mb-6">
           Record off-chain payments (Swipe, card, wire transfer). The investor will receive security tokens but funds are managed externally.
         </p>
 
         {(processing || txLoading) && (
-          <div className="p-4 rounded-lg bg-blue-900/50 text-blue-400 mb-4">
+          <div className="p-4 rounded-lg bg-gold-900/50 text-gold-400 mb-4">
             Processing transaction... Please confirm in your wallet.
           </div>
         )}
 
         {result && (
-          <div className={`p-4 rounded-lg mb-4 ${result.success ? 'bg-green-900/50 text-green-400' : 'bg-red-900/50 text-red-400'}`}>
+          <div className={`p-4 rounded-lg mb-4 ${result.success ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger'}`}>
             {result.message}
           </div>
         )}
 
         <div className="space-y-4">
           <div>
-            <label className="block text-gray-400 text-sm mb-2">Select Project</label>
+            <label className="block text-ink-muted text-sm mb-2">Select Project</label>
             <select
               value={selectedProject?.id || ''}
               onChange={(e) => {
                 const project = activeProjects.find(p => p.id === Number(e.target.value));
                 setSelectedProject(project || null);
               }}
-              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white"
+              className="w-full p-3 bg-surface-raised border border-border-strong rounded-lg text-ink"
             >
               <option value="">Select a project...</option>
               {activeProjects.map(p => (
@@ -112,21 +112,21 @@ export default function OffChainPayments({ projects, onRefresh }: OffChainPaymen
           </div>
 
           <div>
-            <label className="block text-gray-400 text-sm mb-2">Investor Wallet Address</label>
+            <label className="block text-ink-muted text-sm mb-2">Investor Wallet Address</label>
             <input
               type="text"
               value={investorAddress}
               onChange={(e) => setInvestorAddress(e.target.value)}
               placeholder="0x..."
-              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400"
+              className="w-full p-3 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint"
             />
             {investorAddress && !isAddress(investorAddress) && (
-              <p className="text-red-400 text-sm mt-1">Invalid address format</p>
+              <p className="text-danger text-sm mt-1">Invalid address format</p>
             )}
           </div>
 
           <div>
-            <label className="block text-gray-400 text-sm mb-2">Amount (USD)</label>
+            <label className="block text-ink-muted text-sm mb-2">Amount (USD)</label>
             <input
               type="number"
               value={amountUSD}
@@ -134,33 +134,33 @@ export default function OffChainPayments({ projects, onRefresh }: OffChainPaymen
               placeholder="1000.00"
               min="0"
               step="0.01"
-              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400"
+              className="w-full p-3 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint"
             />
           </div>
 
           <div>
-            <label className="block text-gray-400 text-sm mb-2">Payment Reference</label>
+            <label className="block text-ink-muted text-sm mb-2">Payment Reference</label>
             <input
               type="text"
               value={paymentReference}
               onChange={(e) => setPaymentReference(e.target.value)}
               placeholder="SWIPE-12345 or transaction ID"
-              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400"
+              className="w-full p-3 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint"
             />
           </div>
 
           <button
             onClick={handleRecordPayment}
             disabled={!selectedProject || !investorAddress || !isAddress(investorAddress) || !amountUSD || !paymentReference || processing || txLoading}
-            className="w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-white font-medium"
+            className="w-full px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-lg text-ink font-medium"
           >
             {processing || txLoading ? 'Processing...' : 'Record Off-Chain Payment'}
           </button>
         </div>
       </div>
 
-      <div className="bg-yellow-900/30 border border-yellow-700 rounded-xl p-4">
-        <h4 className="text-yellow-400 font-medium mb-2">Important Notes</h4>
+      <div className="bg-warning-muted border border-yellow-700 rounded-xl p-4">
+        <h4 className="text-warning font-medium mb-2">Important Notes</h4>
         <ul className="text-yellow-200/80 text-sm space-y-1">
           <li>• Off-chain payments are tracked separately from on-chain funds</li>
           <li>• Security tokens will be minted to the investor&apos;s wallet</li>

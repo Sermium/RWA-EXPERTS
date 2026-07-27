@@ -37,15 +37,15 @@ function SuccessContent() {
   }, [applicationId, router]);
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+    <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
       <div className="text-center max-w-md mx-auto px-4">
-        <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle className="w-10 h-10 text-green-400" />
+        <div className="w-20 h-20 bg-success/15 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle className="w-10 h-10 text-success" />
         </div>
         
-        <h1 className="text-3xl font-bold text-white mb-4">Payment Successful!</h1>
+        <h1 className="text-3xl font-bold text-ink mb-4">Payment Successful!</h1>
         
-        <p className="text-gray-400 mb-8">
+        <p className="text-ink-muted mb-8">
           Your $500 submission fee has been received. Your crowdfunding application 
           has been submitted for review. We'll notify you once it's been reviewed.
         </p>
@@ -53,20 +53,20 @@ function SuccessContent() {
         <div className="space-y-4">
           <Link
             href={`/crowdfunding/submitted?applicationId=${applicationId}`}
-            className="block w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-white font-medium"
+            className="block w-full px-6 py-3 bg-gold-600 hover:bg-gold-700 rounded-lg text-ink font-medium"
           >
             View Application Status
           </Link>
           
           <Link
             href="/dashboard"
-            className="block w-full px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-lg text-white"
+            className="block w-full px-6 py-3 bg-surface-overlay hover:bg-border-strong rounded-lg text-ink"
           >
             Go to Dashboard
           </Link>
         </div>
 
-        <p className="text-gray-500 text-sm mt-6">
+        <p className="text-ink-faint text-sm mt-6">
           Redirecting automatically...
         </p>
       </div>
@@ -77,8 +77,8 @@ function SuccessContent() {
 export default function PaymentSuccessPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <RefreshCw className="w-8 h-8 text-blue-400 animate-spin" />
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <RefreshCw className="w-8 h-8 text-gold-400 animate-spin" />
       </div>
     }>
       <SuccessContent />

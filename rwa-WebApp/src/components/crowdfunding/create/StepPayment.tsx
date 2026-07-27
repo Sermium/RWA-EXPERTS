@@ -134,7 +134,7 @@ function CardPaymentForm({
       <button
         type="submit"
         disabled={!stripe || processing}
-        className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+        className="w-full px-6 py-4 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
       >
         {processing ? (
           <>
@@ -321,16 +321,16 @@ function CryptoPaymentForm({
                 onClick={() => setSelectedToken(token)}
                 className={`flex-1 p-4 rounded-xl border-2 transition-all ${
                   isSelected
-                    ? 'border-blue-500 bg-blue-500/10'
+                    ? 'border-gold-500 bg-gold-500/10'
                     : 'border-gray-700 bg-gray-800 hover:border-gray-600'
                 }`}
               >
                 <div className="flex items-center justify-center gap-2">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    token === 'USDT' ? 'bg-green-500/20' : 'bg-blue-500/20'
+                    token === 'USDT' ? 'bg-green-500/20' : 'bg-gold-500/20'
                   }`}>
                     <span className={`text-sm font-bold ${
-                      token === 'USDT' ? 'text-green-400' : 'text-blue-400'
+                      token === 'USDT' ? 'text-green-400' : 'text-gold-400'
                     }`}>
                       {token === 'USDT' ? '₮' : '$'}
                     </span>
@@ -419,7 +419,7 @@ function CryptoPaymentForm({
             <span className="text-gray-400 text-sm">Payment Address (Fee Receiver)</span>
             <button
               onClick={copyAddress}
-              className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1"
+              className="text-gold-400 hover:text-gold-300 text-sm flex items-center gap-1"
             >
               {copied ? <CheckCircle className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
               {copied ? 'Copied!' : 'Copy'}
@@ -433,9 +433,9 @@ function CryptoPaymentForm({
 
       {/* Status Messages */}
       {isWritePending && (
-        <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 flex items-center gap-3">
-          <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />
-          <p className="text-blue-400">Please confirm the transaction in your wallet...</p>
+        <div className="bg-gold-500/10 border border-gold-500/30 rounded-lg p-4 flex items-center gap-3">
+          <Loader2 className="w-5 h-5 text-gold-400 animate-spin" />
+          <p className="text-gold-400">Please confirm the transaction in your wallet...</p>
         </div>
       )}
 
@@ -475,7 +475,7 @@ function CryptoPaymentForm({
             ? 'bg-red-600/50 cursor-not-allowed text-red-200'
             : isWritePending || isConfirming || isConfirmed
               ? 'bg-gray-600 cursor-not-allowed text-white'
-              : 'bg-purple-600 hover:bg-purple-700 text-white'
+              : 'bg-gold-600 hover:bg-gold-700 text-white'
         }`}
       >
         {isWritePending ? (
@@ -682,7 +682,7 @@ export default function StepPayment({
   if (isLoading && !paymentMethod) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
-        <Loader2 className="w-12 h-12 text-blue-500 animate-spin mb-4" />
+        <Loader2 className="w-12 h-12 text-gold-500 animate-spin mb-4" />
         <p className="text-gray-400">Preparing your application...</p>
       </div>
     );
@@ -742,10 +742,10 @@ export default function StepPayment({
           <button
             onClick={() => handleMethodSelect('card')}
             disabled={isLoading || !applicationId}
-            className="w-full p-4 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-blue-500 rounded-xl transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full p-4 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-gold-500 rounded-xl transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center">
-              <CreditCard className="w-6 h-6 text-blue-400" />
+            <div className="w-12 h-12 bg-gold-500/20 rounded-lg flex items-center justify-center">
+              <CreditCard className="w-6 h-6 text-gold-400" />
             </div>
             <div className="text-left flex-1">
               <p className="text-white font-medium">Credit / Debit Card</p>
@@ -759,12 +759,12 @@ export default function StepPayment({
             disabled={isLoading || !applicationId || !cryptoAvailable}
             className={`w-full p-4 bg-gray-800 border border-gray-700 rounded-xl transition-all flex items-center gap-4 ${
               cryptoAvailable 
-                ? 'hover:bg-gray-750 hover:border-purple-500' 
+                ? 'hover:bg-gray-750 hover:border-gold-500' 
                 : 'opacity-50 cursor-not-allowed'
             }`}
           >
-            <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center">
-              <Wallet className="w-6 h-6 text-purple-400" />
+            <div className="w-12 h-12 bg-gold-500/20 rounded-lg flex items-center justify-center">
+              <Wallet className="w-6 h-6 text-gold-400" />
             </div>
             <div className="text-left flex-1">
               <p className="text-white font-medium">Cryptocurrency</p>
@@ -807,7 +807,7 @@ export default function StepPayment({
 
           {isLoading ? (
             <div className="flex flex-col items-center py-8">
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-3" />
+              <Loader2 className="w-8 h-8 text-gold-500 animate-spin mb-3" />
               <p className="text-gray-400">Loading payment form...</p>
             </div>
           ) : clientSecret && stripePromise ? (
@@ -827,7 +827,7 @@ export default function StepPayment({
             </div>
           ) : (
             <div className="flex flex-col items-center py-8">
-              <Loader2 className="w-8 h-8 text-blue-500 animate-spin mb-3" />
+              <Loader2 className="w-8 h-8 text-gold-500 animate-spin mb-3" />
               <p className="text-gray-400">Initializing payment...</p>
             </div>
           )}

@@ -129,14 +129,14 @@ export default function FundingValidationPanel() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-white">Funding Validation</h2>
-          <p className="text-gray-400">Validate completed fundraises and distribute tokens</p>
+          <h2 className="text-2xl font-bold text-ink">Funding Validation</h2>
+          <p className="text-ink-muted">Validate completed fundraises and distribute tokens</p>
         </div>
         
         <button
           onClick={loadProjects}
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white"
+          className="flex items-center gap-2 px-4 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg text-ink"
         >
           <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
           Refresh
@@ -145,42 +145,42 @@ export default function FundingValidationPanel() {
 
       {/* Validation Result */}
       {validationResult && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6">
+        <div className="bg-success/10 border border-success/30 rounded-xl p-6">
           <div className="flex items-start gap-4">
-            <CheckCircle className="w-8 h-8 text-green-400 flex-shrink-0" />
+            <CheckCircle className="w-8 h-8 text-success flex-shrink-0" />
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-green-400 mb-2">
+              <h3 className="text-lg font-semibold text-success mb-2">
                 Funding Validated Successfully!
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500">Total Raised</p>
-                  <p className="text-white font-medium">
+                  <p className="text-ink-faint">Total Raised</p>
+                  <p className="text-ink font-medium">
                     {formatCurrency((validationResult.summary as Record<string, number>)?.totalRaised || 0)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Platform Fee</p>
-                  <p className="text-white font-medium">
+                  <p className="text-ink-faint">Platform Fee</p>
+                  <p className="text-ink font-medium">
                     {formatCurrency((validationResult.summary as Record<string, number>)?.platformFee || 0)}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Tokens Minted</p>
-                  <p className="text-white font-medium">
+                  <p className="text-ink-faint">Tokens Minted</p>
+                  <p className="text-ink font-medium">
                     {((validationResult.summary as Record<string, number>)?.tokensMinted || 0).toLocaleString()}
                   </p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Off-chain Converted</p>
-                  <p className="text-white font-medium">
+                  <p className="text-ink-faint">Off-chain Converted</p>
+                  <p className="text-ink font-medium">
                     {formatCurrency((validationResult.summary as Record<string, number>)?.offchainConverted || 0)}
                   </p>
                 </div>
               </div>
               {(validationResult.txHashes as Record<string, string>)?.injection && (
-                <p className="text-gray-500 text-sm mt-3">
-                  Injection TX: <span className="font-mono text-gray-400">
+                <p className="text-ink-faint text-sm mt-3">
+                  Injection TX: <span className="font-mono text-ink-muted">
                     {(validationResult.txHashes as Record<string, string>).injection.slice(0, 20)}...
                   </span>
                 </p>
@@ -192,10 +192,10 @@ export default function FundingValidationPanel() {
 
       {/* Error Display */}
       {error && (
-        <div className="flex items-center gap-2 p-4 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400">
+        <div className="flex items-center gap-2 p-4 bg-danger/10 border border-danger/30 rounded-lg text-danger">
           <AlertCircle className="w-5 h-5" />
           <p>{error}</p>
-          <button onClick={() => setError(null)} className="ml-auto text-red-300 hover:text-red-200">
+          <button onClick={() => setError(null)} className="ml-auto text-danger/80 hover:text-danger">
             Dismiss
           </button>
         </div>
@@ -204,12 +204,12 @@ export default function FundingValidationPanel() {
       {/* Projects List */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <RefreshCw className="w-8 h-8 text-blue-400 animate-spin" />
+          <RefreshCw className="w-8 h-8 text-gold-400 animate-spin" />
         </div>
       ) : projects.length === 0 ? (
-        <div className="text-center py-12 bg-gray-800/50 border border-gray-700 rounded-xl">
-          <Target className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">No projects pending funding validation</p>
+        <div className="text-center py-12 bg-surface/50 border border-border rounded-xl">
+          <Target className="w-12 h-12 text-ink-faint mx-auto mb-4" />
+          <p className="text-ink-muted">No projects pending funding validation</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -221,45 +221,45 @@ export default function FundingValidationPanel() {
             return (
               <div
                 key={project.id}
-                className="bg-gray-800/50 border border-gray-700 rounded-xl overflow-hidden"
+                className="bg-surface/50 border border-border rounded-xl overflow-hidden"
               >
                 {/* Project Header */}
                 <div
-                  className="p-4 cursor-pointer hover:bg-gray-800/70 transition-colors"
+                  className="p-4 cursor-pointer hover:bg-surface/70 transition-colors"
                   onClick={() => setExpandedId(isExpanded ? null : project.id)}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-white">{project.name}</h3>
-                        <span className="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded-full text-xs">
+                        <h3 className="text-lg font-semibold text-ink">{project.name}</h3>
+                        <span className="px-2 py-0.5 bg-warning/10 text-warning rounded-full text-xs">
                           Ready to Validate
                         </span>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-gray-400">
+                      <div className="flex items-center gap-4 text-sm text-ink-muted">
                         <span>Chain ID: {project.chainId}</span>
                         <span>Project #{project.projectId}</span>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-white">{formatCurrency(totalRaised)}</p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-2xl font-bold text-ink">{formatCurrency(totalRaised)}</p>
+                      <p className="text-sm text-ink-faint">
                         of {formatCurrency(project.fundingGoal)} goal ({progress.toFixed(1)}%)
                       </p>
                     </div>
 
                     {isExpanded ? (
-                      <ChevronUp className="w-5 h-5 text-gray-400" />
+                      <ChevronUp className="w-5 h-5 text-ink-muted" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-gray-400" />
+                      <ChevronDown className="w-5 h-5 text-ink-muted" />
                     )}
                   </div>
 
                   {/* Progress Bar */}
-                  <div className="mt-4 h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <div className="mt-4 h-2 bg-surface-overlay rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-blue-500 to-green-500"
+                      className="h-full bg-gradient-to-r from-gold-500 to-green-500"
                       style={{ width: `${Math.min(progress, 100)}%` }}
                     />
                   </div>
@@ -267,38 +267,38 @@ export default function FundingValidationPanel() {
 
                 {/* Expanded Content */}
                 {isExpanded && (
-                  <div className="border-t border-gray-700 p-4 space-y-4">
+                  <div className="border-t border-border p-4 space-y-4">
                     {/* Funding Breakdown */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="bg-gray-900/50 rounded-lg p-4">
+                      <div className="bg-surface-sunken/50 rounded-lg p-4">
                         <div className="flex items-center gap-3 mb-2">
-                          <Wallet className="w-5 h-5 text-blue-400" />
-                          <span className="text-gray-400 text-sm">On-Chain (Crypto)</span>
+                          <Wallet className="w-5 h-5 text-gold-400" />
+                          <span className="text-ink-muted text-sm">On-Chain (Crypto)</span>
                         </div>
-                        <p className="text-xl font-bold text-white">
+                        <p className="text-xl font-bold text-ink">
                           {formatCurrency(project.totalRaisedOnChain)}
                         </p>
                       </div>
 
-                      <div className="bg-gray-900/50 rounded-lg p-4">
+                      <div className="bg-surface-sunken/50 rounded-lg p-4">
                         <div className="flex items-center gap-3 mb-2">
-                          <CreditCard className="w-5 h-5 text-purple-400" />
-                          <span className="text-gray-400 text-sm">Off-Chain (Stripe)</span>
+                          <CreditCard className="w-5 h-5 text-gold-400" />
+                          <span className="text-ink-muted text-sm">Off-Chain (Stripe)</span>
                         </div>
-                        <p className="text-xl font-bold text-white">
+                        <p className="text-xl font-bold text-ink">
                           {formatCurrency(project.totalOffchainPending)}
                         </p>
-                        <p className="text-xs text-gray-500 mt-1">
+                        <p className="text-xs text-ink-faint mt-1">
                           {project.offchainPayments.length} payment(s) pending conversion
                         </p>
                       </div>
 
-                      <div className="bg-gray-900/50 rounded-lg p-4">
+                      <div className="bg-surface-sunken/50 rounded-lg p-4">
                         <div className="flex items-center gap-3 mb-2">
                           <Coins className="w-5 h-5 text-green-400" />
-                          <span className="text-gray-400 text-sm">Total Raised</span>
+                          <span className="text-ink-muted text-sm">Total Raised</span>
                         </div>
-                        <p className="text-xl font-bold text-white">
+                        <p className="text-xl font-bold text-ink">
                           {formatCurrency(totalRaised)}
                         </p>
                       </div>
@@ -307,44 +307,44 @@ export default function FundingValidationPanel() {
                     {/* Off-Chain Payments List */}
                     {project.offchainPayments.length > 0 && (
                       <div>
-                        <h4 className="text-sm font-medium text-gray-400 mb-3">
+                        <h4 className="text-sm font-medium text-ink-muted mb-3">
                           Pending Off-Chain Payments ({project.offchainPayments.length})
                         </h4>
-                        <div className="bg-gray-900/50 rounded-lg overflow-hidden">
+                        <div className="bg-surface-sunken/50 rounded-lg overflow-hidden">
                           <table className="w-full text-sm">
                             <thead>
-                              <tr className="border-b border-gray-700">
-                                <th className="text-left p-3 text-gray-500 font-medium">Investor</th>
-                                <th className="text-left p-3 text-gray-500 font-medium">Amount</th>
-                                <th className="text-left p-3 text-gray-500 font-medium">Method</th>
-                                <th className="text-left p-3 text-gray-500 font-medium">Date</th>
-                                <th className="text-left p-3 text-gray-500 font-medium">Status</th>
+                              <tr className="border-b border-border">
+                                <th className="text-left p-3 text-ink-faint font-medium">Investor</th>
+                                <th className="text-left p-3 text-ink-faint font-medium">Amount</th>
+                                <th className="text-left p-3 text-ink-faint font-medium">Method</th>
+                                <th className="text-left p-3 text-ink-faint font-medium">Date</th>
+                                <th className="text-left p-3 text-ink-faint font-medium">Status</th>
                               </tr>
                             </thead>
                             <tbody>
                               {project.offchainPayments.map((payment) => (
-                                <tr key={payment.id} className="border-b border-gray-800">
+                                <tr key={payment.id} className="border-b border-border">
                                   <td className="p-3">
                                     <div>
-                                      <p className="text-white font-mono">
+                                      <p className="text-ink font-mono">
                                         {formatAddress(payment.investorAddress)}
                                       </p>
                                       {payment.investorEmail && (
-                                        <p className="text-gray-500 text-xs">{payment.investorEmail}</p>
+                                        <p className="text-ink-faint text-xs">{payment.investorEmail}</p>
                                       )}
                                     </div>
                                   </td>
-                                  <td className="p-3 text-white font-medium">
+                                  <td className="p-3 text-ink font-medium">
                                     {formatCurrency(payment.amountUsd)}
                                   </td>
-                                  <td className="p-3 text-gray-400">
+                                  <td className="p-3 text-ink-muted">
                                     {payment.paymentMethod}
                                   </td>
-                                  <td className="p-3 text-gray-400">
+                                  <td className="p-3 text-ink-muted">
                                     {new Date(payment.createdAt).toLocaleDateString()}
                                   </td>
                                   <td className="p-3">
-                                    <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs">
+                                    <span className="px-2 py-1 bg-warning/10 text-warning rounded-full text-xs">
                                       {payment.status}
                                     </span>
                                   </td>
@@ -358,25 +358,25 @@ export default function FundingValidationPanel() {
 
                     {/* Contract Addresses */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="p-3 bg-gray-900/50 rounded-lg">
-                        <p className="text-gray-500 text-xs mb-1">Token Address</p>
-                        <p className="text-white font-mono text-sm">
+                      <div className="p-3 bg-surface-sunken/50 rounded-lg">
+                        <p className="text-ink-faint text-xs mb-1">Token Address</p>
+                        <p className="text-ink font-mono text-sm">
                           {project.tokenAddress || 'Not deployed'}
                         </p>
                       </div>
-                      <div className="p-3 bg-gray-900/50 rounded-lg">
-                        <p className="text-gray-500 text-xs mb-1">Escrow Address</p>
-                        <p className="text-white font-mono text-sm">
+                      <div className="p-3 bg-surface-sunken/50 rounded-lg">
+                        <p className="text-ink-faint text-xs mb-1">Escrow Address</p>
+                        <p className="text-ink font-mono text-sm">
                           {formatAddress(project.escrowAddress)}
                         </p>
                       </div>
                     </div>
 
                     {/* Validation Action */}
-                    <div className="pt-4 border-t border-gray-700">
-                      <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-4">
-                        <h4 className="text-blue-400 font-medium mb-2">Validation Process</h4>
-                        <ol className="text-sm text-gray-400 space-y-1">
+                    <div className="pt-4 border-t border-border">
+                      <div className="bg-gold-500/10 border border-gold-500/30 rounded-lg p-4 mb-4">
+                        <h4 className="text-gold-400 font-medium mb-2">Validation Process</h4>
+                        <ol className="text-sm text-ink-muted space-y-1">
                           <li>1. Platform fee ({((project.totalRaisedOnChain > 0 ? 1.5 : 0))}% crypto + 2.9% Stripe) will be collected</li>
                           <li>2. Off-chain payments will be converted to USDC and injected into escrow</li>
                           <li>3. Security tokens will be minted to all investors</li>
@@ -387,7 +387,7 @@ export default function FundingValidationPanel() {
                       <button
                         onClick={() => handleValidateFunding(project)}
                         disabled={validatingId === project.id}
-                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 disabled:bg-green-800 disabled:cursor-not-allowed rounded-lg text-white font-medium"
+                        className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-success hover:bg-success/90 disabled:bg-success/40 disabled:cursor-not-allowed rounded-lg text-ink font-medium"
                       >
                         {validatingId === project.id ? (
                           <>

@@ -126,7 +126,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                 type="text"
                 value={form.display_name}
                 onChange={(e) => setForm(f => ({ ...f, display_name: e.target.value }))}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
             <div>
@@ -136,7 +136,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                 value={form.timeline}
                 onChange={(e) => setForm(f => ({ ...f, timeline: e.target.value }))}
                 placeholder="e.g., Q1-Q2 2026"
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
           </div>
@@ -152,7 +152,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                   step="0.000001"
                   value={form.token_price_usd}
                   onChange={(e) => setForm(f => ({ ...f, token_price_usd: parseFloat(e.target.value) }))}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none font-mono"
                 />
               </div>
               <div>
@@ -161,7 +161,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                   type="number"
                   value={form.min_investment_usd}
                   onChange={(e) => setForm(f => ({ ...f, min_investment_usd: parseFloat(e.target.value) }))}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
                 />
               </div>
               <div>
@@ -170,7 +170,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                   type="number"
                   value={form.max_investment_usd}
                   onChange={(e) => setForm(f => ({ ...f, max_investment_usd: parseFloat(e.target.value) }))}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
                 />
               </div>
             </div>
@@ -184,7 +184,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                 type="number"
                 value={form.target_amount_usd}
                 onChange={(e) => setForm(f => ({ ...f, target_amount_usd: parseFloat(e.target.value) }))}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
             <div>
@@ -194,7 +194,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                 step="0.1"
                 value={form.token_allocation_percent}
                 onChange={(e) => setForm(f => ({ ...f, token_allocation_percent: parseFloat(e.target.value) }))}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
             <div>
@@ -203,7 +203,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                 type="number"
                 value={form.vesting_months}
                 onChange={(e) => setForm(f => ({ ...f, vesting_months: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
           </div>
@@ -232,13 +232,13 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                 value={newDeliverable}
                 onChange={(e) => setNewDeliverable(e.target.value)}
                 placeholder="Add new deliverable..."
-                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none text-sm"
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addDeliverable())}
               />
               <button
                 type="button"
                 onClick={addDeliverable}
-                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+                className="px-3 py-2 bg-gold-600 hover:bg-gold-700 rounded-lg"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -257,7 +257,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded-lg flex items-center gap-2"
+              className="px-4 py-2 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg flex items-center gap-2"
             >
               {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Save Changes
@@ -375,7 +375,7 @@ export default function FundraisingManagement() {
     const configs: Record<string, { bg: string; text: string; icon: any }> = {
       active: { bg: 'bg-green-500/20', text: 'text-green-400', icon: Rocket },
       upcoming: { bg: 'bg-gray-500/20', text: 'text-gray-400', icon: Lock },
-      completed: { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: CheckCircle },
+      completed: { bg: 'bg-gold-500/20', text: 'text-gold-400', icon: CheckCircle },
       cancelled: { bg: 'bg-red-500/20', text: 'text-red-400', icon: X },
       pending: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: Clock },
       confirmed: { bg: 'bg-green-500/20', text: 'text-green-400', icon: Check },
@@ -410,7 +410,7 @@ export default function FundraisingManagement() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <RefreshCw className="w-8 h-8 animate-spin text-blue-500" />
+        <RefreshCw className="w-8 h-8 animate-spin text-gold-500" />
       </div>
     );
   }
@@ -440,8 +440,8 @@ export default function FundraisingManagement() {
         </div>
         <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-500/20 rounded-lg">
-              <TrendingUp className="w-5 h-5 text-blue-400" />
+            <div className="p-2 bg-gold-500/20 rounded-lg">
+              <TrendingUp className="w-5 h-5 text-gold-400" />
             </div>
             <div>
               <p className="text-gray-400 text-sm">Target</p>
@@ -451,8 +451,8 @@ export default function FundraisingManagement() {
         </div>
         <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <Users className="w-5 h-5 text-purple-400" />
+            <div className="p-2 bg-gold-500/20 rounded-lg">
+              <Users className="w-5 h-5 text-gold-400" />
             </div>
             <div>
               <p className="text-gray-400 text-sm">Investors</p>
@@ -478,7 +478,7 @@ export default function FundraisingManagement() {
         <button
           onClick={() => setActiveTab('rounds')}
           className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
-            activeTab === 'rounds' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+            activeTab === 'rounds' ? 'bg-gold-600 text-white' : 'text-gray-400 hover:text-white'
           }`}
         >
           Rounds ({rounds.length})
@@ -486,7 +486,7 @@ export default function FundraisingManagement() {
         <button
           onClick={() => setActiveTab('investments')}
           className={`px-4 py-2 rounded-t-lg font-medium transition-colors flex items-center gap-2 ${
-            activeTab === 'investments' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+            activeTab === 'investments' ? 'bg-gold-600 text-white' : 'text-gray-400 hover:text-white'
           }`}
         >
           Investments ({investments.length})
@@ -518,7 +518,7 @@ export default function FundraisingManagement() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={(e) => { e.stopPropagation(); setEditingRound(round); }}
-                    className="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg"
+                    className="p-2 bg-gold-600 hover:bg-gold-700 rounded-lg"
                     title="Edit Round"
                   >
                     <Edit className="w-4 h-4" />
@@ -569,7 +569,7 @@ export default function FundraisingManagement() {
                             <button
                               onClick={() => updateRoundStatus(round.id, 'completed')}
                               disabled={updating === round.id}
-                              className="px-3 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded-lg text-sm font-medium flex items-center gap-2"
+                              className="px-3 py-2 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-sm font-medium flex items-center gap-2"
                             >
                               <CheckCircle className="w-4 h-4" /> Complete Round
                             </button>
@@ -640,7 +640,7 @@ export default function FundraisingManagement() {
                 key={status}
                 onClick={() => setStatusFilter(status)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  statusFilter === status ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  statusFilter === status ? 'bg-gold-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -712,7 +712,7 @@ export default function FundraisingManagement() {
                               href={`https://snowtrace.io/tx/${inv.payment_tx_hash}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-400 hover:underline text-sm"
+                              className="text-gold-400 hover:underline text-sm"
                             >
                               View TX
                             </a>

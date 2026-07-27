@@ -30,10 +30,10 @@ export function ProgressSteps({ currentStep, onStepClick }: ProgressStepsProps) 
                 className={`
                   w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-all
                   ${step.number < currentStep
-                    ? 'bg-green-500 text-white'
+                    ? 'bg-success text-ink'
                     : step.number === currentStep
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-gray-700 text-gray-400'
+                    ? 'bg-gold-500 text-ink'
+                    : 'bg-surface-overlay text-ink-muted'
                   }
                   ${step.number <= currentStep ? 'cursor-pointer hover:scale-105' : 'cursor-not-allowed'}
                 `}
@@ -46,7 +46,7 @@ export function ProgressSteps({ currentStep, onStepClick }: ProgressStepsProps) 
               </div>
               <span
                 className={`mt-2 text-xs font-medium ${
-                  step.number <= currentStep ? 'text-white' : 'text-gray-500'
+                  step.number <= currentStep ? 'text-ink' : 'text-ink-faint'
                 }`}
               >
                 {step.label}
@@ -56,7 +56,7 @@ export function ProgressSteps({ currentStep, onStepClick }: ProgressStepsProps) 
             {index < STEPS.length - 1 && (
               <div
                 className={`flex-1 h-1 mx-2 rounded ${
-                  step.number < currentStep ? 'bg-green-500' : 'bg-gray-700'
+                  step.number < currentStep ? 'bg-success' : 'bg-surface-overlay'
                 }`}
               />
             )}

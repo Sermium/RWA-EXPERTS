@@ -366,31 +366,31 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Token Distribution</h3>
-              <p className="text-slate-400 text-sm">
+              <h3 className="text-lg font-semibold text-ink mb-2">Token Distribution</h3>
+              <p className="text-ink-muted text-sm">
                 Specify how tokens should be distributed. Add recipients manually or upload a CSV.
                 Unallocated tokens will be minted to your wallet.
               </p>
             </div>
 
-            <div className="bg-slate-700/50 rounded-xl p-4">
+            <div className="bg-surface-overlay/50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-slate-400">Total Supply</span>
-                <span className="text-white font-semibold">
+                <span className="text-ink-muted">Total Supply</span>
+                <span className="text-ink font-semibold">
                   {totalSupply.toLocaleString()} {application.token_symbol}
                 </span>
               </div>
               {allocations.length > 0 && (
                 <>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-400">Allocated</span>
-                    <span className="text-white">
+                    <span className="text-ink-muted">Allocated</span>
+                    <span className="text-ink">
                       {totalAllocated.toLocaleString()} ({((totalAllocated / totalSupply) * 100).toFixed(1)}%)
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">To your wallet</span>
-                    <span className="text-blue-400">
+                    <span className="text-ink-muted">To your wallet</span>
+                    <span className="text-gold-400">
                       {remainingTokens.toLocaleString()} ({((remainingTokens / totalSupply) * 100).toFixed(1)}%)
                     </span>
                   </div>
@@ -407,7 +407,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
             <div className="flex gap-4 pt-4">
               <button
                 onClick={onBack}
-                className="px-6 py-3 bg-slate-700 text-slate-300 rounded-lg font-medium hover:bg-slate-600 transition"
+                className="px-6 py-3 bg-surface-overlay text-ink-muted rounded-lg font-medium hover:bg-border-strong transition"
               >
                 <ArrowLeft className="w-4 h-4 inline mr-2" />
                 Back
@@ -415,7 +415,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
               <button
                 onClick={() => setStep('review')}
                 disabled={allocations.length > 0 && !allAllocationsValid}
-                className="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                className="flex-1 px-6 py-3 bg-gold-600 text-ink rounded-lg font-medium hover:bg-gold-500 disabled:opacity-50 disabled:cursor-not-allowed transition"
               >
                 Continue to Review
                 <ArrowRight className="w-4 h-4 inline ml-2" />
@@ -428,14 +428,14 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
         return (
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Review Deployment</h3>
-              <p className="text-slate-400 text-sm">
+              <h3 className="text-lg font-semibold text-ink mb-2">Review Deployment</h3>
+              <p className="text-ink-muted text-sm">
                 Review the deployment details before proceeding.
               </p>
             </div>
 
             {/* Project summary */}
-            <div className="bg-slate-700/50 rounded-xl p-5 space-y-4">
+            <div className="bg-surface-overlay/50 rounded-xl p-5 space-y-4">
               <div className="flex items-center gap-4">
                 {application.logo_url && (
                   <img 
@@ -445,40 +445,40 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                   />
                 )}
                 <div>
-                  <h4 className="font-semibold text-white">{application.asset_name}</h4>
-                  <p className="text-sm text-slate-400">{application.asset_type}</p>
+                  <h4 className="font-semibold text-ink">{application.asset_name}</h4>
+                  <p className="text-sm text-ink-muted">{application.asset_type}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-600">
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-border-strong">
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Token Name</p>
-                  <p className="text-white font-medium">{application.token_name}</p>
+                  <p className="text-xs text-ink-faint mb-1">Token Name</p>
+                  <p className="text-ink font-medium">{application.token_name}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Token Symbol</p>
-                  <p className="text-white font-medium">{application.token_symbol}</p>
+                  <p className="text-xs text-ink-faint mb-1">Token Symbol</p>
+                  <p className="text-ink font-medium">{application.token_symbol}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Total Supply</p>
-                  <p className="text-white font-medium">{totalSupply.toLocaleString()}</p>
+                  <p className="text-xs text-ink-faint mb-1">Total Supply</p>
+                  <p className="text-ink font-medium">{totalSupply.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">Network</p>
-                  <p className="text-white font-medium">{chainName}</p>
+                  <p className="text-xs text-ink-faint mb-1">Network</p>
+                  <p className="text-ink font-medium">{chainName}</p>
                 </div>
               </div>
 
               {/* Features */}
-              <div className="flex gap-3 pt-4 border-t border-slate-600">
+              <div className="flex gap-3 pt-4 border-t border-border-strong">
                 {application.needs_escrow && (
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/20 text-green-400 rounded-lg text-sm">
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-success/20 text-success rounded-lg text-sm">
                     <Lock className="w-4 h-4" />
                     Trade Escrow
                   </span>
                 )}
                 {application.needs_dividends && (
-                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-yellow-500/20 text-yellow-400 rounded-lg text-sm">
+                  <span className="flex items-center gap-1.5 px-3 py-1.5 bg-warning/20 text-warning rounded-lg text-sm">
                     <TrendingUp className="w-4 h-4" />
                     Dividends
                   </span>
@@ -487,27 +487,27 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
             </div>
 
             {/* Distribution summary */}
-            <div className="bg-slate-700/50 rounded-xl p-5">
-              <h4 className="font-medium text-white mb-3 flex items-center gap-2">
-                <Users className="w-4 h-4 text-blue-400" />
+            <div className="bg-surface-overlay/50 rounded-xl p-5">
+              <h4 className="font-medium text-ink mb-3 flex items-center gap-2">
+                <Users className="w-4 h-4 text-gold-400" />
                 Token Distribution
               </h4>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Recipients from list</span>
-                  <span className="text-white">{allocations.length}</span>
+                  <span className="text-ink-muted">Recipients from list</span>
+                  <span className="text-ink">{allocations.length}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Tokens to recipients</span>
-                  <span className="text-white">{totalAllocated.toLocaleString()}</span>
+                  <span className="text-ink-muted">Tokens to recipients</span>
+                  <span className="text-ink">{totalAllocated.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-400">Tokens to your wallet</span>
-                  <span className="text-blue-400">{remainingTokens.toLocaleString()}</span>
+                  <span className="text-ink-muted">Tokens to your wallet</span>
+                  <span className="text-gold-400">{remainingTokens.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-sm pt-2 border-t border-slate-600">
-                  <span className="text-slate-400">Total mint transactions</span>
-                  <span className="text-white">
+                <div className="flex justify-between text-sm pt-2 border-t border-border-strong">
+                  <span className="text-ink-muted">Total mint transactions</span>
+                  <span className="text-ink">
                     {Math.ceil((allocations.length + (remainingTokens > 0 ? 1 : 0)) / BATCH_SIZE)} batch(es)
                   </span>
                 </div>
@@ -517,14 +517,14 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
             <div className="flex gap-4 pt-4">
               <button
                 onClick={() => setStep('distribution')}
-                className="px-6 py-3 bg-slate-700 text-slate-300 rounded-lg font-medium hover:bg-slate-600 transition"
+                className="px-6 py-3 bg-surface-overlay text-ink-muted rounded-lg font-medium hover:bg-border-strong transition"
               >
                 <ArrowLeft className="w-4 h-4 inline mr-2" />
                 Back
               </button>
               <button
                 onClick={handleDeploy}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition flex items-center justify-center gap-2"
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-ink rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition flex items-center justify-center gap-2"
               >
                 <Rocket className="w-5 h-5" />
                 Deploy Token
@@ -536,9 +536,9 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
       case 'deploying':
         return (
           <div className="text-center py-8">
-            <Loader2 className="w-16 h-16 text-blue-500 animate-spin mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">Deploying Contracts</h3>
-            <p className="text-slate-400 mb-6">
+            <Loader2 className="w-16 h-16 text-gold-500 animate-spin mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-ink mb-2">Deploying Contracts</h3>
+            <p className="text-ink-muted mb-6">
               Please confirm the transaction in your wallet and wait for confirmation...
             </p>
             {deployTxHash && (
@@ -546,7 +546,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                 href={getTxUrl(deployTxHash)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 text-sm font-mono inline-flex items-center gap-1"
+                className="text-gold-400 hover:text-gold-300 text-sm font-mono inline-flex items-center gap-1"
               >
                 View transaction <ExternalLink className="w-3 h-3" />
               </a>
@@ -557,19 +557,19 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
       case 'minting':
         return (
           <div className="text-center py-8">
-            <Loader2 className="w-16 h-16 text-purple-500 animate-spin mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">Minting Tokens</h3>
-            <p className="text-slate-400 mb-4">
+            <Loader2 className="w-16 h-16 text-gold-500 animate-spin mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-ink mb-2">Minting Tokens</h3>
+            <p className="text-ink-muted mb-4">
               Minting tokens to {mintProgress.total} recipients...
             </p>
             <div className="max-w-xs mx-auto">
-              <div className="flex justify-between text-sm text-slate-400 mb-1">
+              <div className="flex justify-between text-sm text-ink-muted mb-1">
                 <span>Progress</span>
                 <span>{mintProgress.current} / {mintProgress.total}</span>
               </div>
-              <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+              <div className="h-2 bg-surface-overlay rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-purple-500 transition-all"
+                  className="h-full bg-gold-500 transition-all"
                   style={{ width: `${(mintProgress.current / mintProgress.total) * 100}%` }}
                 />
               </div>
@@ -579,7 +579,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                 href={getTxUrl(mintTxHash)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 text-sm font-mono inline-flex items-center gap-1 mt-4"
+                className="text-gold-400 hover:text-gold-300 text-sm font-mono inline-flex items-center gap-1 mt-4"
               >
                 View latest transaction <ExternalLink className="w-3 h-3" />
               </a>
@@ -590,37 +590,37 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
       case 'success':
         return (
           <div className="text-center py-8">
-            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle2 className="w-10 h-10 text-green-400" />
+            <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle2 className="w-10 h-10 text-success" />
             </div>
-            <h3 className="text-xl font-semibold text-green-400 mb-2">Deployment Successful!</h3>
-            <p className="text-slate-400 mb-6">
+            <h3 className="text-xl font-semibold text-success mb-2">Deployment Successful!</h3>
+            <p className="text-ink-muted mb-6">
               Your token has been deployed and tokens have been minted.
             </p>
 
             {deployedContracts && (
-              <div className="bg-slate-700/50 rounded-xl p-5 text-left mb-6 max-w-md mx-auto">
-                <h4 className="font-medium text-white mb-3">Contract Addresses</h4>
+              <div className="bg-surface-overlay/50 rounded-xl p-5 text-left mb-6 max-w-md mx-auto">
+                <h4 className="font-medium text-ink mb-3">Contract Addresses</h4>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center">
-                    <span className="text-slate-400">Security Token</span>
+                    <span className="text-ink-muted">Security Token</span>
                     <a
                       href={getAddressUrl(deployedContracts.tokenAddress)}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-400 hover:text-blue-300 font-mono text-xs"
+                      className="text-gold-400 hover:text-gold-300 font-mono text-xs"
                     >
                       {deployedContracts.tokenAddress.slice(0, 8)}...{deployedContracts.tokenAddress.slice(-6)}
                     </a>
                   </div>
                   {deployedContracts.nftAddress && (
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Project NFT</span>
+                      <span className="text-ink-muted">Project NFT</span>
                       <a
                         href={getAddressUrl(deployedContracts.nftAddress)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 font-mono text-xs"
+                        className="text-gold-400 hover:text-gold-300 font-mono text-xs"
                       >
                         {deployedContracts.nftAddress.slice(0, 8)}...{deployedContracts.nftAddress.slice(-6)}
                       </a>
@@ -628,12 +628,12 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                   )}
                   {deployedContracts.escrowAddress && (
                     <div className="flex justify-between items-center">
-                      <span className="text-slate-400">Trade Escrow</span>
+                      <span className="text-ink-muted">Trade Escrow</span>
                       <a
                         href={getAddressUrl(deployedContracts.escrowAddress)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-400 hover:text-blue-300 font-mono text-xs"
+                        className="text-gold-400 hover:text-gold-300 font-mono text-xs"
                       >
                         {deployedContracts.escrowAddress.slice(0, 8)}...{deployedContracts.escrowAddress.slice(-6)}
                       </a>
@@ -646,13 +646,13 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => window.location.href = `/tokenization/${application.id}`}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition"
+                className="px-6 py-3 bg-gold-600 text-ink rounded-lg font-medium hover:bg-gold-500 transition"
               >
                 View Project
               </button>
               <button
                 onClick={() => window.location.href = '/dashboard'}
-                className="px-6 py-3 bg-slate-700 text-slate-300 rounded-lg font-medium hover:bg-slate-600 transition"
+                className="px-6 py-3 bg-surface-overlay text-ink-muted rounded-lg font-medium hover:bg-border-strong transition"
               >
                 Dashboard
               </button>
@@ -663,21 +663,21 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
       case 'error':
         return (
           <div className="text-center py-8">
-            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <XCircle className="w-10 h-10 text-red-400" />
+            <div className="w-16 h-16 bg-danger/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <XCircle className="w-10 h-10 text-danger" />
             </div>
-            <h3 className="text-xl font-semibold text-red-400 mb-2">Deployment Failed</h3>
-            <p className="text-slate-400 mb-6 max-w-md mx-auto">{error}</p>
+            <h3 className="text-xl font-semibold text-danger mb-2">Deployment Failed</h3>
+            <p className="text-ink-muted mb-6 max-w-md mx-auto">{error}</p>
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => { setStep('review'); setError(''); }}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition"
+                className="px-6 py-3 bg-gold-600 text-ink rounded-lg font-medium hover:bg-gold-500 transition"
               >
                 Try Again
               </button>
               <button
                 onClick={onBack}
-                className="px-6 py-3 bg-slate-700 text-slate-300 rounded-lg font-medium hover:bg-slate-600 transition"
+                className="px-6 py-3 bg-surface-overlay text-ink-muted rounded-lg font-medium hover:bg-border-strong transition"
               >
                 Go Back
               </button>
@@ -694,9 +694,9 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
   if (!isConnected) {
     return (
       <div className="p-8 text-center">
-        <AlertCircle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-white mb-2">Connect Wallet</h3>
-        <p className="text-slate-400">Please connect your wallet to deploy.</p>
+        <AlertCircle className="w-16 h-16 text-warning mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-ink mb-2">Connect Wallet</h3>
+        <p className="text-ink-muted">Please connect your wallet to deploy.</p>
       </div>
     );
   }
@@ -704,9 +704,9 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
   if (!isOwner) {
     return (
       <div className="p-8 text-center">
-        <XCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-red-400 mb-2">Access Denied</h3>
-        <p className="text-slate-400">Only the project owner can deploy this token.</p>
+        <XCircle className="w-16 h-16 text-danger mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-danger mb-2">Access Denied</h3>
+        <p className="text-ink-muted">Only the project owner can deploy this token.</p>
       </div>
     );
   }
@@ -714,14 +714,14 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
   if (!isDeployed) {
     return (
       <div className="p-8 text-center">
-        <AlertCircle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-        <h3 className="text-xl font-semibold text-yellow-400 mb-2">Wrong Network</h3>
-        <p className="text-slate-400 mb-4">Contracts not deployed on {chainName}.</p>
+        <AlertCircle className="w-16 h-16 text-warning mx-auto mb-4" />
+        <h3 className="text-xl font-semibold text-warning mb-2">Wrong Network</h3>
+        <p className="text-ink-muted mb-4">Contracts not deployed on {chainName}.</p>
         {deployedChains[0] && (
           <button
             onClick={() => switchToChain(deployedChains[0].id as any)}
             disabled={isSwitching}
-            className="px-6 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-500 disabled:opacity-50 transition"
+            className="px-6 py-3 bg-warning text-surface-sunken rounded-lg font-medium hover:bg-warning/90 disabled:opacity-50 transition"
           >
             {isSwitching ? 'Switching...' : `Switch to ${deployedChains[0].name}`}
           </button>
@@ -733,21 +733,21 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
   return (
     <div className="p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-700">
-        <h2 className="text-xl font-semibold text-white">Deploy Token</h2>
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-border">
+        <h2 className="text-xl font-semibold text-ink">Deploy Token</h2>
         <div className="flex items-center gap-3">
           {isTestnet && (
-            <span className="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-medium rounded-full">
+            <span className="px-2.5 py-1 bg-warning/20 text-warning text-xs font-medium rounded-full">
               Testnet
             </span>
           )}
-          <span className="px-2.5 py-1 bg-blue-500/20 text-blue-400 text-xs font-medium rounded-full">
+          <span className="px-2.5 py-1 bg-gold-500/20 text-gold-400 text-xs font-medium rounded-full">
             {chainName}
           </span>
           {onClose && (
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded-lg transition"
+              className="p-1.5 text-ink-muted hover:text-ink hover:bg-surface-overlay rounded-lg transition"
             >
               <XCircle className="w-5 h-5" />
             </button>
@@ -763,12 +763,12 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
               <div className={`flex items-center gap-2 ${
                 (step === 'distribution' && i === 0) ||
                 (step === 'review' && i <= 1)
-                  ? 'text-blue-400' : 'text-slate-500'
+                  ? 'text-gold-400' : 'text-ink-faint'
               }`}>
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
                   (step === 'distribution' && i === 0) ||
                   (step === 'review' && i <= 1)
-                    ? 'bg-blue-500/20' : 'bg-slate-700'
+                    ? 'bg-gold-500/20' : 'bg-surface-overlay'
                 }`}>
                   {i + 1}
                 </div>
@@ -776,7 +776,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
                   {s === 'distribution' ? 'Distribution' : s === 'review' ? 'Review' : 'Deploy'}
                 </span>
               </div>
-              {i < 2 && <div className="flex-1 h-px bg-slate-700" />}
+              {i < 2 && <div className="flex-1 h-px bg-surface-overlay" />}
             </React.Fragment>
           ))}
         </div>

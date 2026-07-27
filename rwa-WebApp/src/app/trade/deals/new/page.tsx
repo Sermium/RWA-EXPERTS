@@ -208,23 +208,23 @@ function StepIndicator({
               <div className={`
                 w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all
                 ${isCompleted 
-                  ? 'bg-green-500 border-green-500 text-white' 
+                  ? 'bg-green-500 border-green-500 text-ink' 
                   : isCurrent 
-                    ? 'bg-blue-500 border-blue-500 text-white'
-                    : 'bg-gray-800 border-gray-700 text-gray-500'
+                    ? 'bg-gold-500 border-gold-500 text-ink'
+                    : 'bg-surface-raised border-border text-ink-faint'
                 }
               `}>
                 {isCompleted ? <Check className="h-6 w-6" /> : step.icon}
               </div>
               <span className={`mt-2 text-sm font-medium ${
-                isCurrent ? 'text-blue-400' : isCompleted ? 'text-green-400' : 'text-gray-500'
+                isCurrent ? 'text-gold-400' : isCompleted ? 'text-success' : 'text-ink-faint'
               }`}>
                 {step.label}
               </span>
             </div>
             {index < steps.length - 1 && (
               <div className={`w-16 md:w-24 h-0.5 mx-2 ${
-                index < currentIndex ? 'bg-green-500' : 'bg-gray-700'
+                index < currentIndex ? 'bg-green-500' : 'bg-surface-overlay'
               }`} />
             )}
           </div>
@@ -244,9 +244,9 @@ function FormSection({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50 mb-6">
-      <h3 className="text-lg font-semibold text-white mb-1">{title}</h3>
-      {description && <p className="text-sm text-gray-400 mb-4">{description}</p>}
+    <div className="bg-surface/50 rounded-xl p-6 border border-border/50 mb-6">
+      <h3 className="text-lg font-semibold text-ink mb-1">{title}</h3>
+      {description && <p className="text-sm text-ink-muted mb-4">{description}</p>}
       <div className="space-y-4">{children}</div>
     </div>
   );
@@ -277,13 +277,13 @@ function InputField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-300 mb-1.5">
+      <label className="block text-sm font-medium text-ink-muted mb-1.5">
         {label}
-        {required && <span className="text-red-400 ml-1">*</span>}
+        {required && <span className="text-danger ml-1">*</span>}
       </label>
       <div className="relative">
         {icon && (
-          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+          <div className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-faint">
             {icon}
           </div>
         )}
@@ -295,15 +295,15 @@ function InputField({
           placeholder={placeholder}
           required={required}
           className={`
-            w-full px-4 py-3 bg-gray-900 border rounded-xl text-white placeholder-gray-500 
-            focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all
+            w-full px-4 py-3 bg-surface-sunken border rounded-xl text-ink placeholder-ink-faint 
+            focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all
             ${icon ? 'pl-10' : ''}
-            ${error ? 'border-red-500' : 'border-gray-700'}
+            ${error ? 'border-red-500' : 'border-border'}
           `}
         />
       </div>
-      {helpText && <p className="mt-1 text-xs text-gray-500">{helpText}</p>}
-      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {helpText && <p className="mt-1 text-xs text-ink-faint">{helpText}</p>}
+      {error && <p className="mt-1 text-xs text-danger">{error}</p>}
     </div>
   );
 }
@@ -329,9 +329,9 @@ function SelectField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-300 mb-1.5">
+      <label className="block text-sm font-medium text-ink-muted mb-1.5">
         {label}
-        {required && <span className="text-red-400 ml-1">*</span>}
+        {required && <span className="text-danger ml-1">*</span>}
       </label>
       <div className="relative">
         <select
@@ -340,9 +340,9 @@ function SelectField({
           onChange={onChange}
           required={required}
           className={`
-            w-full px-4 py-3 bg-gray-900 border rounded-xl text-white appearance-none cursor-pointer
-            focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all
-            ${error ? 'border-red-500' : 'border-gray-700'}
+            w-full px-4 py-3 bg-surface-sunken border rounded-xl text-ink appearance-none cursor-pointer
+            focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all
+            ${error ? 'border-red-500' : 'border-border'}
           `}
         >
           <option value="" disabled>{placeholder}</option>
@@ -350,9 +350,9 @@ function SelectField({
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
-        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none" />
+        <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-faint pointer-events-none" />
       </div>
-      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-1 text-xs text-danger">{error}</p>}
     </div>
   );
 }
@@ -378,9 +378,9 @@ function TextAreaField({
 }) {
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-300 mb-1.5">
+      <label className="block text-sm font-medium text-ink-muted mb-1.5">
         {label}
-        {required && <span className="text-red-400 ml-1">*</span>}
+        {required && <span className="text-danger ml-1">*</span>}
       </label>
       <textarea
         name={name}
@@ -390,12 +390,12 @@ function TextAreaField({
         rows={rows}
         required={required}
         className={`
-          w-full px-4 py-3 bg-gray-900 border rounded-xl text-white placeholder-gray-500 
-          focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none
-          ${error ? 'border-red-500' : 'border-gray-700'}
+          w-full px-4 py-3 bg-surface-sunken border rounded-xl text-ink placeholder-ink-faint 
+          focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all resize-none
+          ${error ? 'border-red-500' : 'border-border'}
         `}
       />
-      {error && <p className="mt-1 text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-1 text-xs text-danger">{error}</p>}
     </div>
   );
 }
@@ -421,10 +421,10 @@ function KYCAuthorizationBanner({
 
   if (isLoading) {
     return (
-      <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50 mb-6">
+      <div className="bg-surface/50 rounded-xl p-4 border border-border/50 mb-6">
         <div className="flex items-center">
-          <Loader2 className="h-5 w-5 text-blue-400 animate-spin mr-3" />
-          <span className="text-gray-400">Checking KYC authorization...</span>
+          <Loader2 className="h-5 w-5 text-gold-400 animate-spin mr-3" />
+          <span className="text-ink-muted">Checking KYC authorization...</span>
         </div>
       </div>
     );
@@ -448,14 +448,14 @@ function KYCAuthorizationBanner({
         {/* Buyer KYC */}
         <div className={`rounded-xl p-4 border ${buyerInfo.color.replace('text-', 'border-').replace('400', '500/30')} ${buyerInfo.color.replace('text-', 'bg-').replace('400', '500/10')}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Buyer KYC Level</span>
+            <span className="text-sm text-ink-muted">Buyer KYC Level</span>
             <div className={`flex items-center ${buyerInfo.color}`}>
               {KYC_ICONS[buyerKYC.level]}
               <span className="ml-1 font-semibold">{buyerInfo.label}</span>
             </div>
           </div>
           {buyerKYC.level !== 'none' && limits && (
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-ink-faint">
               Max deal: ${limits.maxDealValue.toLocaleString()}
             </div>
           )}
@@ -464,14 +464,14 @@ function KYCAuthorizationBanner({
         {/* Seller KYC */}
         <div className={`rounded-xl p-4 border ${sellerInfo.color.replace('text-', 'border-').replace('400', '500/30')} ${sellerInfo.color.replace('text-', 'bg-').replace('400', '500/10')}`}>
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">Seller KYC Level</span>
+            <span className="text-sm text-ink-muted">Seller KYC Level</span>
             <div className={`flex items-center ${sellerInfo.color}`}>
               {KYC_ICONS[sellerKYC.level]}
               <span className="ml-1 font-semibold">{sellerInfo.label}</span>
             </div>
           </div>
           {sellerKYC.level !== 'none' && limits && (
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-ink-faint">
               Max deal: ${limits.maxDealValue.toLocaleString()}
             </div>
           )}
@@ -485,9 +485,9 @@ function KYCAuthorizationBanner({
           {authResult.errors.length > 0 && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
               <div className="flex items-start">
-                <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 mr-3 flex-shrink-0" />
+                <AlertTriangle className="h-5 w-5 text-danger mt-0.5 mr-3 flex-shrink-0" />
                 <div className="flex-1">
-                  <p className="text-red-400 font-semibold mb-2">Authorization Issues</p>
+                  <p className="text-danger font-semibold mb-2">Authorization Issues</p>
                   <ul className="space-y-1">
                     {authResult.errors.map((error, i) => (
                       <li key={i} className="text-sm text-red-300 flex items-start">
@@ -498,12 +498,12 @@ function KYCAuthorizationBanner({
                   </ul>
                   {authResult.requiredUpgrade && (
                     <div className="mt-3 pt-3 border-t border-red-500/20">
-                      <p className="text-sm text-gray-400 mb-2">
-                        Required KYC level for this deal: <span className="text-white font-semibold">{KYC_LEVEL_INFO[authResult.requiredUpgrade].label}</span>
+                      <p className="text-sm text-ink-muted mb-2">
+                        Required KYC level for this deal: <span className="text-ink font-semibold">{KYC_LEVEL_INFO[authResult.requiredUpgrade].label}</span>
                       </p>
                       <button
                         onClick={onUpgradeClick}
-                        className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm font-medium transition-colors flex items-center"
+                        className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-danger rounded-lg text-sm font-medium transition-colors flex items-center"
                       >
                         <TrendingUp className="h-4 w-4 mr-2" />
                         Upgrade KYC Level
@@ -519,9 +519,9 @@ function KYCAuthorizationBanner({
           {authResult.warnings.length > 0 && authResult.errors.length === 0 && (
             <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
               <div className="flex items-start">
-                <AlertCircle className="h-5 w-5 text-yellow-400 mt-0.5 mr-3 flex-shrink-0" />
+                <AlertCircle className="h-5 w-5 text-warning mt-0.5 mr-3 flex-shrink-0" />
                 <div>
-                  <p className="text-yellow-400 font-semibold mb-2">Warnings</p>
+                  <p className="text-warning font-semibold mb-2">Warnings</p>
                   <ul className="space-y-1">
                     {authResult.warnings.map((warning, i) => (
                       <li key={i} className="text-sm text-yellow-300 flex items-start">
@@ -539,10 +539,10 @@ function KYCAuthorizationBanner({
           {authResult.authorized && authResult.errors.length === 0 && (
             <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
               <div className="flex items-center">
-                <CheckCircle2 className="h-5 w-5 text-green-400 mr-3" />
+                <CheckCircle2 className="h-5 w-5 text-success mr-3" />
                 <div>
-                  <p className="text-green-400 font-semibold">Authorized for Trade</p>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-success font-semibold">Authorized for Trade</p>
+                  <p className="text-sm text-ink-muted">
                     Both parties meet KYC requirements for a ${dealValue.toLocaleString()} deal
                   </p>
                 </div>
@@ -552,24 +552,24 @@ function KYCAuthorizationBanner({
 
           {/* Effective Limits */}
           {limits && effectiveLevel !== 'none' && (
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-              <p className="text-sm text-gray-400 mb-3">Effective Trade Limits (based on lowest KYC level)</p>
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
+              <p className="text-sm text-ink-muted mb-3">Effective Trade Limits (based on lowest KYC level)</p>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500">Max Deal Value</p>
-                  <p className="text-white font-semibold">${limits.maxDealValue.toLocaleString()}</p>
+                  <p className="text-ink-faint">Max Deal Value</p>
+                  <p className="text-ink font-semibold">${limits.maxDealValue.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Monthly Volume</p>
-                  <p className="text-white font-semibold">${limits.maxMonthlyVolume.toLocaleString()}</p>
+                  <p className="text-ink-faint">Monthly Volume</p>
+                  <p className="text-ink font-semibold">${limits.maxMonthlyVolume.toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Max Milestones</p>
-                  <p className="text-white font-semibold">{limits.maxMilestones}</p>
+                  <p className="text-ink-faint">Max Milestones</p>
+                  <p className="text-ink font-semibold">{limits.maxMilestones}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500">Min Advance</p>
-                  <p className="text-white font-semibold">{limits.minAdvancePayment}%</p>
+                  <p className="text-ink-faint">Min Advance</p>
+                  <p className="text-ink font-semibold">{limits.minAdvancePayment}%</p>
                 </div>
               </div>
             </div>
@@ -619,7 +619,7 @@ function PartiesStep({
       <FormSection title="Buyer Information" description="Your company details">
         {/* KYC Badge */}
         <div className={`flex items-center justify-between p-3 rounded-lg border ${buyerInfo.color.replace('text-', 'border-').replace('400', '500/30')} ${buyerInfo.color.replace('text-', 'bg-').replace('400', '500/10')} mb-4`}>
-          <span className="text-sm text-gray-400">KYC Status</span>
+          <span className="text-sm text-ink-muted">KYC Status</span>
           <div className={`flex items-center ${buyerInfo.color}`}>
             {buyerKYC.loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -706,7 +706,7 @@ function PartiesStep({
       <FormSection title="Seller Information" description="Counterparty details">
         {/* KYC Badge */}
         <div className={`flex items-center justify-between p-3 rounded-lg border ${sellerInfo.color.replace('text-', 'border-').replace('400', '500/30')} ${sellerInfo.color.replace('text-', 'bg-').replace('400', '500/10')} mb-4`}>
-          <span className="text-sm text-gray-400">KYC Status</span>
+          <span className="text-sm text-ink-muted">KYC Status</span>
           <div className={`flex items-center ${sellerInfo.color}`}>
             {sellerKYC.loading ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -855,7 +855,7 @@ function ProductStep({
               error={errors['product.category']}
             />
             {categoryRequiresUpgrade && (
-              <p className="mt-1 text-xs text-yellow-400 flex items-center">
+              <p className="mt-1 text-xs text-warning flex items-center">
                 <AlertCircle className="h-3 w-3 mr-1" />
                 This category may require higher KYC level
               </p>
@@ -935,26 +935,26 @@ function ProductStep({
         />
 
         {/* Total Value Display */}
-        <div className="mt-4 p-4 bg-gray-900 rounded-xl border border-gray-700">
+        <div className="mt-4 p-4 bg-surface-sunken rounded-xl border border-border">
           <div className="flex items-center justify-between">
-            <span className="text-gray-400">Total Deal Value</span>
-            <span className="text-2xl font-bold text-white">
+            <span className="text-ink-muted">Total Deal Value</span>
+            <span className="text-2xl font-bold text-ink">
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 2,
               }).format(totalValue)}
-              <span className="text-sm text-gray-400 ml-2">{data.product.currency}</span>
+              <span className="text-sm text-ink-muted ml-2">{data.product.currency}</span>
             </span>
           </div>
-          <div className="text-sm text-gray-500 mt-1">
+          <div className="text-sm text-ink-faint mt-1">
             {data.product.quantity.toLocaleString()} {data.product.unit} × ${data.product.unitPrice.toLocaleString()} per unit
           </div>
           
           {/* Deal value authorization indicator */}
           {authResult && totalValue > 0 && (
-            <div className={`mt-3 pt-3 border-t border-gray-700 flex items-center ${
-              authResult.authorized ? 'text-green-400' : 'text-red-400'
+            <div className={`mt-3 pt-3 border-t border-border flex items-center ${
+              authResult.authorized ? 'text-success' : 'text-danger'
             }`}>
               {authResult.authorized ? (
                 <>
@@ -974,23 +974,23 @@ function ProductStep({
 
       {/* Category-specific requirements notice */}
       {data.product.category && (
-        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+        <div className="bg-gold-500/10 border border-gold-500/20 rounded-xl p-4">
           <div className="flex items-start">
-            <Info className="h-5 w-5 text-blue-400 mt-0.5 mr-3 flex-shrink-0" />
+            <Info className="h-5 w-5 text-gold-400 mt-0.5 mr-3 flex-shrink-0" />
             <div>
-              <p className="text-blue-400 font-medium">
+              <p className="text-gold-400 font-medium">
                 {PRODUCT_CATEGORIES[data.product.category].label} Requirements
               </p>
-              <p className="text-sm text-gray-400 mt-1">
+              <p className="text-sm text-ink-muted mt-1">
                 This category requires: {PRODUCT_CATEGORIES[data.product.category].requiredCertifications.join(', ') || 'Standard documentation'}
               </p>
               {PRODUCT_CATEGORIES[data.product.category].specialDocuments.length > 0 && (
-                <p className="text-sm text-gray-400 mt-1">
+                <p className="text-sm text-ink-muted mt-1">
                   Special documents: {PRODUCT_CATEGORIES[data.product.category].specialDocuments.join(', ')}
                 </p>
               )}
               {PRODUCT_CATEGORIES[data.product.category].minKycLevel && (
-                <p className="text-sm text-yellow-400 mt-2">
+                <p className="text-sm text-warning mt-2">
                   Minimum KYC Level: {KYC_LEVEL_INFO[PRODUCT_CATEGORIES[data.product.category].minKycLevel!].label}
                 </p>
               )}
@@ -1038,30 +1038,30 @@ function TermsStep({
 
         {/* Incoterm Details */}
         {selectedIncoterm && (
-          <div className="bg-gray-900 rounded-xl p-4 border border-gray-700">
-            <h4 className="font-medium text-white mb-2">{selectedIncoterm.name}</h4>
-            <p className="text-sm text-gray-400 mb-3">{selectedIncoterm.description}</p>
+          <div className="bg-surface-sunken rounded-xl p-4 border border-border">
+            <h4 className="font-medium text-ink mb-2">{selectedIncoterm.name}</h4>
+            <p className="text-sm text-ink-muted mb-3">{selectedIncoterm.description}</p>
             <div className="grid md:grid-cols-2 gap-4 text-sm">
               <div>
-                <p className="text-gray-500 mb-1">Seller Responsibilities:</p>
-                <ul className="list-disc list-inside text-gray-400">
+                <p className="text-ink-faint mb-1">Seller Responsibilities:</p>
+                <ul className="list-disc list-inside text-ink-muted">
                   {selectedIncoterm.sellerResponsibility.map((r, i) => (
                     <li key={i}>{r}</li>
                   ))}
                 </ul>
               </div>
               <div>
-                <p className="text-gray-500 mb-1">Buyer Responsibilities:</p>
-                <ul className="list-disc list-inside text-gray-400">
+                <p className="text-ink-faint mb-1">Buyer Responsibilities:</p>
+                <ul className="list-disc list-inside text-ink-muted">
                   {selectedIncoterm.buyerResponsibility.map((r, i) => (
                     <li key={i}>{r}</li>
                   ))}
                 </ul>
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-700">
-              <span className="text-xs text-gray-500">Risk Transfer Point: </span>
-              <span className="text-xs text-blue-400">{selectedIncoterm.riskTransfer}</span>
+            <div className="mt-3 pt-3 border-t border-border">
+              <span className="text-xs text-ink-faint">Risk Transfer Point: </span>
+              <span className="text-xs text-gold-400">{selectedIncoterm.riskTransfer}</span>
             </div>
           </div>
         )}
@@ -1128,28 +1128,28 @@ function TermsStep({
         </div>
 
         <div className="grid md:grid-cols-2 gap-4 mt-4">
-          <label className="flex items-center p-4 bg-gray-900 rounded-xl border border-gray-700 cursor-pointer hover:border-blue-500/50 transition-colors">
+          <label className="flex items-center p-4 bg-surface-sunken rounded-xl border border-border cursor-pointer hover:border-gold-500/50 transition-colors">
             <input
               type="checkbox"
               checked={data.terms.inspectionRequired}
               onChange={(e) => onChange('inspectionRequired', e.target.checked)}
-              className="w-5 h-5 rounded border-gray-600 text-blue-500 focus:ring-blue-500 bg-gray-800"
+              className="w-5 h-5 rounded border-border-strong text-gold-500 focus:ring-gold-500 bg-surface-raised"
             />
             <div className="ml-3">
-              <span className="text-white font-medium">Third-Party Inspection</span>
-              <p className="text-sm text-gray-400">Require pre-shipment inspection</p>
+              <span className="text-ink font-medium">Third-Party Inspection</span>
+              <p className="text-sm text-ink-muted">Require pre-shipment inspection</p>
             </div>
           </label>
-          <label className="flex items-center p-4 bg-gray-900 rounded-xl border border-gray-700 cursor-pointer hover:border-blue-500/50 transition-colors">
+          <label className="flex items-center p-4 bg-surface-sunken rounded-xl border border-border cursor-pointer hover:border-gold-500/50 transition-colors">
             <input
               type="checkbox"
               checked={data.terms.insuranceRequired}
               onChange={(e) => onChange('insuranceRequired', e.target.checked)}
-              className="w-5 h-5 rounded border-gray-600 text-blue-500 focus:ring-blue-500 bg-gray-800"
+              className="w-5 h-5 rounded border-border-strong text-gold-500 focus:ring-gold-500 bg-surface-raised"
             />
             <div className="ml-3">
-              <span className="text-white font-medium">Cargo Insurance</span>
-              <p className="text-sm text-gray-400">Require insurance coverage</p>
+              <span className="text-ink font-medium">Cargo Insurance</span>
+              <p className="text-sm text-ink-muted">Require insurance coverage</p>
             </div>
           </label>
         </div>
@@ -1210,14 +1210,14 @@ function MilestonesStep({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-white">Payment Milestones</h3>
-          <p className="text-sm text-gray-400">Define when payments will be released from escrow</p>
+          <h3 className="text-lg font-semibold text-ink">Payment Milestones</h3>
+          <p className="text-sm text-ink-muted">Define when payments will be released from escrow</p>
         </div>
         <button
           type="button"
           onClick={addMilestone}
           disabled={data.milestones.length >= maxMilestones}
-          className="px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-colors flex items-center text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-surface-raised text-ink rounded-lg hover:bg-surface-overlay transition-colors flex items-center text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Milestone
@@ -1226,12 +1226,12 @@ function MilestonesStep({
 
       {/* Milestone Limits Info */}
       {authResult?.effectiveKycLevel && (
-        <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+        <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
           <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-400">
+            <span className="text-ink-muted">
               Your KYC level allows up to {maxMilestones} milestones
             </span>
-            <span className={data.milestones.length >= maxMilestones ? 'text-yellow-400' : 'text-gray-400'}>
+            <span className={data.milestones.length >= maxMilestones ? 'text-warning' : 'text-ink-muted'}>
               {data.milestones.length} / {maxMilestones} used
             </span>
           </div>
@@ -1239,21 +1239,21 @@ function MilestonesStep({
       )}
 
       {/* Total Percentage Bar */}
-      <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+      <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-400">Total Payment Allocation</span>
-          <span className={`text-sm font-medium ${totalPercentage === 100 ? 'text-green-400' : 'text-yellow-400'}`}>
+          <span className="text-sm text-ink-muted">Total Payment Allocation</span>
+          <span className={`text-sm font-medium ${totalPercentage === 100 ? 'text-success' : 'text-warning'}`}>
             {totalPercentage}% / 100%
           </span>
         </div>
-        <div className="h-3 bg-gray-700 rounded-full overflow-hidden">
+        <div className="h-3 bg-surface-overlay rounded-full overflow-hidden">
           <div 
-            className={`h-full transition-all ${totalPercentage === 100 ? 'bg-green-500' : totalPercentage > 100 ? 'bg-red-500' : 'bg-blue-500'}`}
+            className={`h-full transition-all ${totalPercentage === 100 ? 'bg-green-500' : totalPercentage > 100 ? 'bg-red-500' : 'bg-gold-500'}`}
             style={{ width: `${Math.min(totalPercentage, 100)}%` }}
           />
         </div>
         {totalPercentage !== 100 && (
-          <p className="text-xs text-yellow-400 mt-2">
+          <p className="text-xs text-warning mt-2">
             {totalPercentage < 100 
               ? `${100 - totalPercentage}% remaining to allocate`
               : `${totalPercentage - 100}% over-allocated - please adjust`
@@ -1266,9 +1266,9 @@ function MilestonesStep({
       {milestoneValidation && !milestoneValidation.valid && (
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
           <div className="flex items-start">
-            <AlertCircle className="h-5 w-5 text-yellow-400 mt-0.5 mr-3 flex-shrink-0" />
+            <AlertCircle className="h-5 w-5 text-warning mt-0.5 mr-3 flex-shrink-0" />
             <div>
-              <p className="text-yellow-400 font-semibold mb-2">Milestone Configuration Issues</p>
+              <p className="text-warning font-semibold mb-2">Milestone Configuration Issues</p>
               <ul className="space-y-1">
                 {milestoneValidation.errors.map((error, i) => (
                   <li key={i} className="text-sm text-yellow-300 flex items-start">
@@ -1287,18 +1287,18 @@ function MilestonesStep({
         {data.milestones.map((milestone, index) => (
           <div 
             key={milestone.id}
-            className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50"
+            className="bg-surface/50 rounded-xl p-5 border border-border/50"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center">
-                <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-sm font-medium mr-3">
+                <div className="w-8 h-8 rounded-full bg-gold-500/20 flex items-center justify-center text-gold-400 text-sm font-medium mr-3">
                   {index + 1}
                 </div>
                 <input
                   type="text"
                   value={milestone.name}
                   onChange={(e) => updateMilestone(milestone.id, 'name', e.target.value)}
-                  className="text-lg font-semibold text-white bg-transparent border-none focus:ring-0 outline-none"
+                  className="text-lg font-semibold text-ink bg-transparent border-none focus:ring-0 outline-none"
                   placeholder="Milestone name"
                 />
               </div>
@@ -1306,7 +1306,7 @@ function MilestonesStep({
                 <button
                   type="button"
                   onClick={() => removeMilestone(milestone.id)}
-                  className="p-2 text-gray-500 hover:text-red-400 transition-colors"
+                  className="p-2 text-ink-faint hover:text-danger transition-colors"
                 >
                   <Trash2 className="h-5 w-5" />
                 </button>
@@ -1315,17 +1315,17 @@ function MilestonesStep({
 
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Description</label>
+                <label className="block text-sm text-ink-muted mb-1">Description</label>
                 <input
                   type="text"
                   value={milestone.description}
                   onChange={(e) => updateMilestone(milestone.id, 'description', e.target.value)}
                   placeholder="What triggers this milestone?"
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:border-blue-500 outline-none"
+                  className="w-full px-3 py-2 bg-surface-sunken border border-border rounded-lg text-ink text-sm focus:border-gold-500 outline-none"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Payment Release (%)</label>
+                <label className="block text-sm text-ink-muted mb-1">Payment Release (%)</label>
                 <div className="flex items-center">
                   <input
                     type="number"
@@ -1333,9 +1333,9 @@ function MilestonesStep({
                     max="100"
                     value={milestone.paymentPercentage}
                     onChange={(e) => updateMilestone(milestone.id, 'paymentPercentage', parseInt(e.target.value) || 0)}
-                    className="w-24 px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:border-blue-500 outline-none"
+                    className="w-24 px-3 py-2 bg-surface-sunken border border-border rounded-lg text-ink text-sm focus:border-gold-500 outline-none"
                   />
-                  <span className="ml-3 text-sm text-gray-400">
+                  <span className="ml-3 text-sm text-ink-muted">
                     = {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format((totalValue * milestone.paymentPercentage) / 100)}
                   </span>
                 </div>
@@ -1348,9 +1348,9 @@ function MilestonesStep({
                   type="checkbox"
                   checked={milestone.autoRelease}
                   onChange={(e) => updateMilestone(milestone.id, 'autoRelease', e.target.checked)}
-                  className="w-4 h-4 rounded border-gray-600 text-blue-500 focus:ring-blue-500 bg-gray-800"
+                  className="w-4 h-4 rounded border-border-strong text-gold-500 focus:ring-gold-500 bg-surface-raised"
                 />
-                <span className="ml-2 text-sm text-gray-400">
+                <span className="ml-2 text-sm text-ink-muted">
                   Auto-release when documents verified
                 </span>
               </label>
@@ -1361,8 +1361,8 @@ function MilestonesStep({
 
       {errors['milestones'] && (
         <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center">
-          <AlertCircle className="h-5 w-5 text-red-400 mr-3" />
-          <p className="text-red-400 text-sm">{errors['milestones']}</p>
+          <AlertCircle className="h-5 w-5 text-danger mr-3" />
+          <p className="text-danger text-sm">{errors['milestones']}</p>
         </div>
       )}
     </div>
@@ -1398,18 +1398,18 @@ function ReviewStep({
           <div className="flex items-center">
             {authResult.authorized ? (
               <>
-                <CheckCircle2 className="h-6 w-6 text-green-400 mr-3" />
+                <CheckCircle2 className="h-6 w-6 text-success mr-3" />
                 <div>
-                  <p className="text-green-400 font-semibold">Ready to Submit</p>
-                  <p className="text-sm text-gray-400">All authorization checks passed</p>
+                  <p className="text-success font-semibold">Ready to Submit</p>
+                  <p className="text-sm text-ink-muted">All authorization checks passed</p>
                 </div>
               </>
             ) : (
               <>
-                <AlertTriangle className="h-6 w-6 text-red-400 mr-3" />
+                <AlertTriangle className="h-6 w-6 text-danger mr-3" />
                 <div>
-                  <p className="text-red-400 font-semibold">Authorization Required</p>
-                  <p className="text-sm text-gray-400">Please resolve the issues above before submitting</p>
+                  <p className="text-danger font-semibold">Authorization Required</p>
+                  <p className="text-sm text-ink-muted">Please resolve the issues above before submitting</p>
                 </div>
               </>
             )}
@@ -1417,11 +1417,11 @@ function ReviewStep({
         </div>
       )}
 
-      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 flex items-start">
-        <Info className="h-5 w-5 text-blue-400 mt-0.5 mr-3 flex-shrink-0" />
+      <div className="bg-gold-500/10 border border-gold-500/20 rounded-xl p-4 flex items-start">
+        <Info className="h-5 w-5 text-gold-400 mt-0.5 mr-3 flex-shrink-0" />
         <div>
-          <p className="text-blue-400 font-medium">Review Your Deal</p>
-          <p className="text-sm text-gray-400 mt-1">
+          <p className="text-gold-400 font-medium">Review Your Deal</p>
+          <p className="text-sm text-ink-muted mt-1">
             Please review all details carefully before submitting. Once submitted, you'll need to sign
             the Letter of Intent and complete KYC verification.
           </p>
@@ -1430,8 +1430,8 @@ function ReviewStep({
 
       {/* Parties Summary */}
       <div className="grid md:grid-cols-2 gap-6">
-        <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
-          <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center justify-between">
+        <div className="bg-surface/50 rounded-xl p-5 border border-border/50">
+          <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center justify-between">
             <span className="flex items-center">
               <Users className="h-4 w-4 mr-2" />
               Buyer
@@ -1441,14 +1441,14 @@ function ReviewStep({
               <span className="ml-1">{buyerInfo.label}</span>
             </span>
           </h4>
-          <p className="text-lg font-semibold text-white">{data.buyer.companyName}</p>
-          <p className="text-sm text-gray-400">{COUNTRIES[data.buyer.country]?.name}</p>
-          <p className="text-sm text-gray-400 mt-2">{data.buyer.contactName}</p>
-          <p className="text-sm text-gray-400">{data.buyer.contactEmail}</p>
-          <p className="text-xs text-gray-500 mt-2 font-mono truncate">{data.buyer.walletAddress}</p>
+          <p className="text-lg font-semibold text-ink">{data.buyer.companyName}</p>
+          <p className="text-sm text-ink-muted">{COUNTRIES[data.buyer.country]?.name}</p>
+          <p className="text-sm text-ink-muted mt-2">{data.buyer.contactName}</p>
+          <p className="text-sm text-ink-muted">{data.buyer.contactEmail}</p>
+          <p className="text-xs text-ink-faint mt-2 font-mono truncate">{data.buyer.walletAddress}</p>
         </div>
-        <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
-          <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center justify-between">
+        <div className="bg-surface/50 rounded-xl p-5 border border-border/50">
+          <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center justify-between">
             <span className="flex items-center">
               <Users className="h-4 w-4 mr-2" />
               Seller
@@ -1458,86 +1458,86 @@ function ReviewStep({
               <span className="ml-1">{sellerInfo.label}</span>
             </span>
           </h4>
-          <p className="text-lg font-semibold text-white">{data.seller.companyName}</p>
-          <p className="text-sm text-gray-400">{COUNTRIES[data.seller.country]?.name}</p>
-          <p className="text-sm text-gray-400 mt-2">{data.seller.contactName}</p>
-          <p className="text-sm text-gray-400">{data.seller.contactEmail}</p>
-          <p className="text-xs text-gray-500 mt-2 font-mono truncate">{data.seller.walletAddress}</p>
+          <p className="text-lg font-semibold text-ink">{data.seller.companyName}</p>
+          <p className="text-sm text-ink-muted">{COUNTRIES[data.seller.country]?.name}</p>
+          <p className="text-sm text-ink-muted mt-2">{data.seller.contactName}</p>
+          <p className="text-sm text-ink-muted">{data.seller.contactEmail}</p>
+          <p className="text-xs text-ink-faint mt-2 font-mono truncate">{data.seller.walletAddress}</p>
         </div>
       </div>
 
       {/* Product Summary */}
-      <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
-        <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center">
+      <div className="bg-surface/50 rounded-xl p-5 border border-border/50">
+        <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center">
           <Package className="h-4 w-4 mr-2" />
           Product Details
         </h4>
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <p className="text-lg font-semibold text-white">{data.product.name}</p>
-            <p className="text-sm text-gray-400">{PRODUCT_CATEGORIES[data.product.category]?.label}</p>
+            <p className="text-lg font-semibold text-ink">{data.product.name}</p>
+            <p className="text-sm text-ink-muted">{PRODUCT_CATEGORIES[data.product.category]?.label}</p>
             {data.product.hsCode && (
-              <p className="text-sm text-gray-400">HS Code: {data.product.hsCode}</p>
+              <p className="text-sm text-ink-muted">HS Code: {data.product.hsCode}</p>
             )}
           </div>
           <div className="text-right">
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-ink-muted">
               {data.product.quantity.toLocaleString()} {data.product.unit} × ${data.product.unitPrice.toLocaleString()}
             </p>
-            <p className="text-2xl font-bold text-white">
+            <p className="text-2xl font-bold text-ink">
               {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalValue)}
             </p>
-            <p className="text-sm text-gray-400">{data.product.currency}</p>
+            <p className="text-sm text-ink-muted">{data.product.currency}</p>
           </div>
         </div>
         {data.product.description && (
-          <p className="text-sm text-gray-400 mt-4 pt-4 border-t border-gray-700">
+          <p className="text-sm text-ink-muted mt-4 pt-4 border-t border-border">
             {data.product.description}
           </p>
         )}
       </div>
 
       {/* Terms Summary */}
-      <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
-        <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center">
+      <div className="bg-surface/50 rounded-xl p-5 border border-border/50">
+        <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center">
           <Ship className="h-4 w-4 mr-2" />
           Trade Terms
         </h4>
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <p className="text-sm text-gray-500">Incoterm</p>
-            <p className="text-white font-medium">{data.terms.incoterm} - {INCOTERMS[data.terms.incoterm]?.name}</p>
+            <p className="text-sm text-ink-faint">Incoterm</p>
+            <p className="text-ink font-medium">{data.terms.incoterm} - {INCOTERMS[data.terms.incoterm]?.name}</p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Delivery Date</p>
-            <p className="text-white font-medium">
+            <p className="text-sm text-ink-faint">Delivery Date</p>
+            <p className="text-ink font-medium">
               {new Date(data.terms.deliveryDate).toLocaleDateString('en-US', { 
                 year: 'numeric', month: 'long', day: 'numeric' 
               })}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Origin</p>
-            <p className="text-white font-medium">
+            <p className="text-sm text-ink-faint">Origin</p>
+            <p className="text-ink font-medium">
               {data.terms.originPort ? `${data.terms.originPort}, ` : ''}{COUNTRIES[data.terms.originCountry]?.name}
             </p>
           </div>
           <div>
-            <p className="text-sm text-gray-500">Destination</p>
-            <p className="text-white font-medium">
+            <p className="text-sm text-ink-faint">Destination</p>
+            <p className="text-ink font-medium">
               {data.terms.destinationPort ? `${data.terms.destinationPort}, ` : ''}{COUNTRIES[data.terms.destinationCountry]?.name}
             </p>
           </div>
         </div>
-        <div className="flex gap-4 mt-4 pt-4 border-t border-gray-700">
+        <div className="flex gap-4 mt-4 pt-4 border-t border-border">
           {data.terms.inspectionRequired && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-500/10 text-purple-400 border border-purple-500/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gold-500/10 text-gold-400 border border-gold-500/20">
               <Shield className="h-3 w-3 mr-1" />
               Inspection Required
             </span>
           )}
           {data.terms.insuranceRequired && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-green-400 border border-green-500/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-success border border-green-500/20">
               <Shield className="h-3 w-3 mr-1" />
               Insurance Required
             </span>
@@ -1546,30 +1546,30 @@ function ReviewStep({
       </div>
 
       {/* Milestones Summary */}
-      <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
-        <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center">
+      <div className="bg-surface/50 rounded-xl p-5 border border-border/50">
+        <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center">
           <DollarSign className="h-4 w-4 mr-2" />
           Payment Milestones
         </h4>
         <div className="space-y-3">
           {data.milestones.filter(m => m.paymentPercentage > 0).map((milestone, index) => (
-            <div key={milestone.id} className="flex items-center justify-between py-2 border-b border-gray-700 last:border-0">
+            <div key={milestone.id} className="flex items-center justify-between py-2 border-b border-border last:border-0">
               <div className="flex items-center">
-                <span className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 text-xs mr-3">
+                <span className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center text-gold-400 text-xs mr-3">
                   {index + 1}
                 </span>
                 <div>
-                  <p className="text-white text-sm font-medium">{milestone.name}</p>
+                  <p className="text-ink text-sm font-medium">{milestone.name}</p>
                   {milestone.autoRelease && (
-                    <p className="text-xs text-green-400">Auto-release</p>
+                    <p className="text-xs text-success">Auto-release</p>
                   )}
                 </div>
               </div>
               <div className="text-right">
-                <p className="text-white font-medium">
+                <p className="text-ink font-medium">
                   {new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format((totalValue * milestone.paymentPercentage) / 100)}
                 </p>
-                <p className="text-xs text-gray-400">{milestone.paymentPercentage}%</p>
+                <p className="text-xs text-ink-muted">{milestone.paymentPercentage}%</p>
               </div>
             </div>
           ))}
@@ -1577,35 +1577,35 @@ function ReviewStep({
       </div>
 
       {/* Fee Summary */}
-      <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
-        <h4 className="text-sm font-medium text-gray-400 mb-3">Fee Summary</h4>
+      <div className="bg-surface/50 rounded-xl p-5 border border-border/50">
+        <h4 className="text-sm font-medium text-ink-muted mb-3">Fee Summary</h4>
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Deal Value</span>
-            <span className="text-white">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalValue)}</span>
+            <span className="text-ink-muted">Deal Value</span>
+            <span className="text-ink">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalValue)}</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Platform Fee (0.5%)</span>
-            <span className="text-white">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(platformFee)}</span>
+            <span className="text-ink-muted">Platform Fee (0.5%)</span>
+            <span className="text-ink">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(platformFee)}</span>
           </div>
-          <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-700">
-            <span className="text-white">Total to Deposit</span>
-            <span className="text-white">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalValue + platformFee)}</span>
+          <div className="flex justify-between text-lg font-bold pt-2 border-t border-border">
+            <span className="text-ink">Total to Deposit</span>
+            <span className="text-ink">{new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(totalValue + platformFee)}</span>
           </div>
         </div>
       </div>
 
       {/* Required Documents Preview */}
       {authResult?.effectiveKycLevel && (
-        <div className="bg-gray-800/50 rounded-xl p-5 border border-gray-700/50">
-          <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center">
+        <div className="bg-surface/50 rounded-xl p-5 border border-border/50">
+          <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center">
             <FileText className="h-4 w-4 mr-2" />
             Required Documents for This Deal
           </h4>
           <div className="grid md:grid-cols-2 gap-2">
             {getDealRequirements(data.product.category, totalValue).requiredDocuments.map((doc, i) => (
-              <div key={i} className="flex items-center text-sm text-gray-400">
-                <Check className="h-4 w-4 text-green-400 mr-2" />
+              <div key={i} className="flex items-center text-sm text-ink-muted">
+                <Check className="h-4 w-4 text-success mr-2" />
                 {doc}
               </div>
             ))}
@@ -1886,29 +1886,29 @@ export default function NewDealPage() {
 
   if (!isConnected) {
     return (
-      <main className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <main className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-6">
-            <Shield className="h-8 w-8 text-gray-600" />
+          <div className="w-16 h-16 rounded-full bg-surface-raised flex items-center justify-center mx-auto mb-6">
+            <Shield className="h-8 w-8 text-ink-faint" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Connect Wallet</h1>
-          <p className="text-gray-400 mb-6">Please connect your wallet to create a new deal</p>
+          <h1 className="text-2xl font-bold text-ink mb-2">Connect Wallet</h1>
+          <p className="text-ink-muted mb-6">Please connect your wallet to create a new deal</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-900 py-8">
+    <main className="min-h-screen bg-surface-sunken py-8">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/trade" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-4">
+          <Link href="/trade" className="inline-flex items-center text-ink-muted hover:text-ink transition-colors mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Trade
           </Link>
-          <h1 className="text-3xl font-bold text-white">Create New Deal</h1>
-          <p className="text-gray-400 mt-1">Set up an international trade transaction with escrow protection</p>
+          <h1 className="text-3xl font-bold text-ink">Create New Deal</h1>
+          <p className="text-ink-muted mt-1">Set up an international trade transaction with escrow protection</p>
         </div>
 
         {/* Step Indicator */}
@@ -1968,8 +1968,8 @@ export default function NewDealPage() {
         {/* Error Display */}
         {errors.submit && (
           <div className="mb-6 bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center">
-            <AlertCircle className="h-5 w-5 text-red-400 mr-3" />
-            <p className="text-red-400">{errors.submit}</p>
+            <AlertCircle className="h-5 w-5 text-danger mr-3" />
+            <p className="text-danger">{errors.submit}</p>
           </div>
         )}
 
@@ -1979,7 +1979,7 @@ export default function NewDealPage() {
             type="button"
             onClick={handlePrevious}
             disabled={currentStepIndex === 0}
-            className="px-6 py-3 bg-gray-800 text-white rounded-xl hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            className="px-6 py-3 bg-surface-raised text-ink rounded-xl hover:bg-surface-overlay transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
           >
             <ArrowLeft className="h-5 w-5 mr-2" />
             Previous
@@ -1990,7 +1990,7 @@ export default function NewDealPage() {
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || !authResult?.authorized}
-              className="px-8 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              className="px-8 py-3 bg-gradient-to-r from-gold-500 to-cyan-500 text-ink font-semibold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
             >
               {isSubmitting ? (
                 <>
@@ -2008,7 +2008,7 @@ export default function NewDealPage() {
             <button
               type="button"
               onClick={handleNext}
-              className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors flex items-center"
+              className="px-6 py-3 bg-gold-500 text-ink font-semibold rounded-xl hover:bg-gold-600 transition-colors flex items-center"
             >
               Next
               <ArrowRight className="h-5 w-5 ml-2" />

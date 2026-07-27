@@ -86,7 +86,7 @@ export function Step2Tokenization({
       {/* Asset Value Reference */}
       <div className="p-4 bg-gray-700/50 border border-gray-600 rounded-xl">
         <div className="flex items-center gap-2 mb-2">
-          <Calculator className="w-5 h-5 text-blue-400" />
+          <Calculator className="w-5 h-5 text-gold-400" />
           <span className="text-gray-300 font-medium">Asset Valuation</span>
         </div>
         <p className="text-2xl font-bold text-white">
@@ -107,7 +107,7 @@ export function Step2Tokenization({
           <div>
             <p className="text-xs text-gray-400 mb-2">Logo (1:1)</p>
             {logoFile ? (
-              <div className="relative aspect-square bg-gray-700 rounded-xl overflow-hidden border-2 border-blue-500/50">
+              <div className="relative aspect-square bg-gray-700 rounded-xl overflow-hidden border-2 border-gold-500/50">
                 <img src={logoFile.url} alt="Logo" className="w-full h-full object-cover" />
                 <button
                   onClick={removeLogo}
@@ -120,10 +120,10 @@ export function Step2Tokenization({
               <button
                 onClick={() => logoInputRef.current?.click()}
                 disabled={uploadingLogo}
-                className="w-full aspect-square bg-gray-700/50 border-2 border-dashed border-gray-600 rounded-xl flex flex-col items-center justify-center hover:border-blue-500 hover:bg-gray-700 transition-all"
+                className="w-full aspect-square bg-gray-700/50 border-2 border-dashed border-gray-600 rounded-xl flex flex-col items-center justify-center hover:border-gold-500 hover:bg-gray-700 transition-all"
               >
                 {uploadingLogo ? (
-                  <Loader2 className="w-6 h-6 text-blue-400 animate-spin" />
+                  <Loader2 className="w-6 h-6 text-gold-400 animate-spin" />
                 ) : (
                   <>
                     <Image className="w-6 h-6 text-gray-400 mb-1" />
@@ -145,7 +145,7 @@ export function Step2Tokenization({
           <div className="col-span-3">
             <p className="text-xs text-gray-400 mb-2">Banner (3:1)</p>
             {bannerFile ? (
-              <div className="relative aspect-[3/1] bg-gray-700 rounded-xl overflow-hidden border-2 border-purple-500/50">
+              <div className="relative aspect-[3/1] bg-gray-700 rounded-xl overflow-hidden border-2 border-gold-500/50">
                 <img src={bannerFile.url} alt="Banner" className="w-full h-full object-cover" />
                 <button
                   onClick={removeBanner}
@@ -158,10 +158,10 @@ export function Step2Tokenization({
               <button
                 onClick={() => bannerInputRef.current?.click()}
                 disabled={uploadingBanner}
-                className="w-full aspect-[3/1] bg-gray-700/50 border-2 border-dashed border-gray-600 rounded-xl flex flex-col items-center justify-center hover:border-purple-500 hover:bg-gray-700 transition-all"
+                className="w-full aspect-[3/1] bg-gray-700/50 border-2 border-dashed border-gray-600 rounded-xl flex flex-col items-center justify-center hover:border-gold-500 hover:bg-gray-700 transition-all"
               >
                 {uploadingBanner ? (
-                  <Loader2 className="w-6 h-6 text-purple-400 animate-spin" />
+                  <Loader2 className="w-6 h-6 text-gold-400 animate-spin" />
                 ) : (
                   <>
                     <Image className="w-6 h-6 text-gray-400 mb-1" />
@@ -193,7 +193,7 @@ export function Step2Tokenization({
             value={formData.tokenName}
             onChange={(e) => handleTokenNameChange(e.target.value)}
             placeholder="e.g., Downtown Office Token"
-            className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
               errors.tokenName ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -219,7 +219,7 @@ export function Step2Tokenization({
             }}
             placeholder="e.g., DOT"
             maxLength={10}
-            className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase ${
+            className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 uppercase ${
               errors.tokenSymbol ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -244,7 +244,7 @@ export function Step2Tokenization({
             value={formData.totalSupply}
             onChange={(e) => updateFormData('totalSupply', formatNumber(e.target.value))}
             placeholder="e.g., 1,000,000"
-            className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
               errors.totalSupply ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -260,7 +260,7 @@ export function Step2Tokenization({
       {/* Price Per Token (Calculated - Read Only) */}
       <div>
         <label className="block text-sm font-medium text-gray-300 mb-2">
-          Price Per Token <span className="text-blue-400 text-xs">(Auto-calculated)</span>
+          Price Per Token <span className="text-gold-400 text-xs">(Auto-calculated)</span>
         </label>
         <div className="relative">
           <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -289,7 +289,7 @@ export function Step2Tokenization({
           <select
             value={formData.useCase}
             onChange={(e) => updateFormData('useCase', e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 appearance-none"
+            className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-gold-500 appearance-none"
           >
             <option value="">Select a use case</option>
             {USE_CASES.map((useCase) => (
@@ -303,7 +303,7 @@ export function Step2Tokenization({
 
       {/* Summary Card */}
       {formData.tokenName && formData.totalSupply && totalSupply > 0 && (
-        <div className="mt-6 overflow-hidden rounded-xl border border-blue-500/30">
+        <div className="mt-6 overflow-hidden rounded-xl border border-gold-500/30">
           {/* Banner Preview - 3:1 */}
           {bannerFile ? (
             <div className="relative aspect-[3/1] bg-gray-700">
@@ -311,11 +311,11 @@ export function Step2Tokenization({
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/80 to-transparent" />
             </div>
           ) : (
-            <div className="aspect-[3/1] bg-gradient-to-r from-blue-500/20 to-purple-500/20" />
+            <div className="aspect-[3/1] bg-gradient-to-r from-gold-500/20 to-gold-light-500/20" />
           )}
           
           {/* Token Info */}
-          <div className="p-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 -mt-12 relative">
+          <div className="p-4 bg-gradient-to-r from-gold-500/10 to-gold-light-500/10 -mt-12 relative">
             <div className="flex items-end gap-4 mb-4">
               {logoFile ? (
                 <img 
@@ -330,7 +330,7 @@ export function Step2Tokenization({
               )}
               <div className="pb-1">
                 <p className="text-white font-semibold text-lg">{formData.tokenName}</p>
-                <p className="text-blue-400 font-medium">${formData.tokenSymbol}</p>
+                <p className="text-gold-400 font-medium">${formData.tokenSymbol}</p>
               </div>
             </div>
 

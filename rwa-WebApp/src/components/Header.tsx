@@ -9,7 +9,7 @@ import { useAccount } from 'wagmi';
 import { useKYC, getTierInfo, KYCTier } from '@/contexts/KYCContext';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Menu, X, LayoutDashboard } from 'lucide-react';
+import { ChevronDown, Menu, X, LayoutDashboard, Clock, XCircle, AlertTriangle, Lock, Link2, Star, ArrowRight, type LucideIcon } from 'lucide-react';
 import { ChainSelectorModal } from './ui/ChainSelectorModal';
 
 // Role check helpers
@@ -66,9 +66,9 @@ function KYCBadge() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg animate-pulse">
-        <div className="w-4 h-4 bg-gray-600 rounded-full" />
-        <div className="w-16 h-4 bg-gray-600 rounded" />
+      <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-raised rounded-lg animate-pulse">
+        <div className="w-4 h-4 bg-border-strong rounded-full" />
+        <div className="w-16 h-4 bg-border-strong rounded" />
       </div>
     );
   }
@@ -85,21 +85,21 @@ function KYCBadge() {
   };
 
   const getStatusStyle = () => {
-    if (isPending) return 'bg-yellow-900/30 border-yellow-600 text-yellow-400';
-    if (isRejected) return 'bg-red-900/30 border-red-600 text-red-400';
-    if (isExpired) return 'bg-orange-900/30 border-orange-600 text-orange-400';
+    if (isPending) return 'bg-warning-muted border-warning/40 text-warning';
+    if (isRejected) return 'bg-danger-muted border-danger/40 text-danger';
+    if (isExpired) return 'bg-warning-muted border-warning/40 text-warning';
     if (isApproved && tier !== 'None') {
       return `${tierInfo.bgColor} ${tierInfo.borderColor} ${tierInfo.color}`;
     }
-    return 'bg-gray-800 border-gray-600 text-gray-400';
+    return 'bg-surface-raised border-border-strong text-ink-muted';
   };
 
-  const getStatusIcon = () => {
-    if (isPending) return '⏳';
-    if (isRejected) return '❌';
-    if (isExpired) return '⚠️';
+  const getStatusIcon = (): LucideIcon => {
+    if (isPending) return Clock;
+    if (isRejected) return XCircle;
+    if (isExpired) return AlertTriangle;
     if (isApproved && tier !== 'None') return tierInfo.icon;
-    return '🔒';
+    return Lock;
   };
 
   const getStatusLabel = () => {
@@ -110,6 +110,9 @@ function KYCBadge() {
     return 'Verify';
   };
 
+  const StatusIcon = getStatusIcon();
+  const NextTierIcon = getTierInfo(getNextTier(tier)).icon;
+
   return (
     <div className="relative" ref={dropdownRef}>
       <button
@@ -117,33 +120,26 @@ function KYCBadge() {
         onClick={() => setShowDropdown(!showDropdown)}
         className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all hover:opacity-80 ${getStatusStyle()}`}
       >
-        <span className="text-sm">{getStatusIcon()}</span>
+        <StatusIcon className="w-4 h-4" />
         <span className="text-sm font-medium hidden sm:inline">{getStatusLabel()}</span>
         {isApproved && tier !== 'None' && (
           <span className="text-xs opacity-70 hidden md:inline">
             {displayLimit(remainingLimit)}
           </span>
         )}
-        <svg
-          className={`w-3 h-3 transition-transform ${showDropdown ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <ChevronDown className={`w-3 h-3 transition-transform ${showDropdown ? 'rotate-180' : ''}`} />
       </button>
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-72 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden">
-          <div className={`px-4 py-3 ${tierInfo.bgColor} border-b border-gray-700`}>
+        <div className="absolute right-0 mt-2 w-72 bg-surface border border-border rounded-xl shadow-panel z-50 overflow-hidden">
+          <div className={`px-4 py-3 ${tierInfo.bgColor} border-b border-border`}>
             <div className="flex items-center gap-3">
-              <span className="text-2xl">{getStatusIcon()}</span>
+              <StatusIcon className={`w-6 h-6 ${tierInfo.color}`} />
               <div>
                 <div className={`font-semibold ${tierInfo.color}`}>
                   {isApproved ? `${tierInfo.label} Tier` : getStatusLabel()}
                 </div>
-                <div className="text-xs text-gray-400">
+                <div className="text-xs text-ink-muted">
                   {isApproved ? 'KYC Verified' : 'Identity Verification'}
                 </div>
               </div>
@@ -152,20 +148,20 @@ function KYCBadge() {
 
           {/* Role badges */}
           {isApproved && tier !== 'None' && (
-            <div className="px-4 py-2 border-b border-gray-700">
+            <div className="px-4 py-2 border-b border-border">
               <div className="flex flex-wrap gap-2">
                 {canInvest(tier) && (
-                  <span className="px-2 py-0.5 text-xs bg-green-900/30 text-green-400 rounded-full">
+                  <span className="px-2 py-0.5 text-xs bg-success/10 text-success rounded-full">
                     Investor
                   </span>
                 )}
                 {canOwn(tier) && (
-                  <span className="px-2 py-0.5 text-xs bg-purple-900/30 text-purple-400 rounded-full">
+                  <span className="px-2 py-0.5 text-xs bg-gold/10 text-gold rounded-full">
                     Owner
                   </span>
                 )}
                 {canRefer(tier) && (
-                  <span className="px-2 py-0.5 text-xs bg-blue-900/30 text-blue-400 rounded-full">
+                  <span className="px-2 py-0.5 text-xs bg-ink-muted/10 text-ink-muted rounded-full">
                     Referrer
                   </span>
                 )}
@@ -174,12 +170,12 @@ function KYCBadge() {
           )}
 
           {isApproved && tier !== 'None' && (
-            <div className="px-4 py-3 border-b border-gray-700">
-              <div className="text-xs text-gray-500 mb-2">Investment Limits</div>
+            <div className="px-4 py-3 border-b border-border">
+              <div className="text-xs text-ink-faint mb-2">Investment Limits</div>
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Tier Limit</span>
-                  <span className="text-white">
+                  <span className="text-ink-muted">Tier Limit</span>
+                  <span className="text-ink">
                     {isDiamond ? (
                       <span className="text-cyan-400">∞ Unlimited</span>
                     ) : (
@@ -188,12 +184,12 @@ function KYCBadge() {
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Used</span>
-                  <span className="text-gray-300">{formatLimit(usedLimit)}</span>
+                  <span className="text-ink-muted">Used</span>
+                  <span className="text-ink-muted">{formatLimit(usedLimit)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Remaining</span>
-                  <span className="text-green-400 font-medium">
+                  <span className="text-ink-muted">Remaining</span>
+                  <span className="text-success font-medium">
                     {isDiamond ? (
                       <span className="text-cyan-400">∞ Unlimited</span>
                     ) : (
@@ -203,11 +199,11 @@ function KYCBadge() {
                 </div>
                 {!isDiamond && investmentLimit > 0 && (
                   <div className="mt-2">
-                    <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                    <div className="h-2 bg-surface-raised rounded-full overflow-hidden">
                       <div
                         className={`h-full ${tierInfo.color.replace('text-', 'bg-')} transition-all`}
-                        style={{ 
-                          width: `${Math.min(100, (usedLimit / investmentLimit) * 100)}%` 
+                        style={{
+                          width: `${Math.min(100, (usedLimit / investmentLimit) * 100)}%`
                         }}
                       />
                     </div>
@@ -218,15 +214,13 @@ function KYCBadge() {
           )}
 
           {isApproved && tier !== 'Diamond' && tier !== 'None' && (
-            <div className="px-4 py-3 border-b border-gray-700">
-              <div className="text-xs text-gray-500 mb-2">Upgrade Available</div>
+            <div className="px-4 py-3 border-b border-border">
+              <div className="text-xs text-ink-faint mb-2">Upgrade Available</div>
               <div className="flex items-center gap-2 text-sm">
-                <span className={tierInfo.color}>{tierInfo.icon}</span>
-                <span className="text-gray-400">→</span>
-                <span className={getTierInfo(getNextTier(tier)).color}>
-                  {getTierInfo(getNextTier(tier)).icon}
-                </span>
-                <span className="text-gray-300">
+                <tierInfo.icon className={`w-4 h-4 ${tierInfo.color}`} />
+                <ArrowRight className="w-3.5 h-3.5 text-ink-faint" />
+                <NextTierIcon className={`w-4 h-4 ${getTierInfo(getNextTier(tier)).color}`} />
+                <span className="text-ink-muted">
                   {getTierInfo(getNextTier(tier)).label}
                 </span>
               </div>
@@ -236,7 +230,7 @@ function KYCBadge() {
           <div className="p-3">
             <Link
               href="/kyc"
-              className="block w-full px-4 py-2 text-center text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="block w-full px-4 py-2 text-center text-sm font-medium bg-gold hover:bg-gold-light text-surface-sunken rounded-lg transition-colors"
               onClick={() => setShowDropdown(false)}
             >
               {isApproved ? 'Manage KYC' : isPending ? 'View Status' : 'Start Verification'}
@@ -282,27 +276,27 @@ function DropdownMenu({ label, items, isActive }: { label: string; items: { href
 
   return (
     <div ref={containerRef} className="relative">
-      <button 
-        type="button" 
-        className={`flex items-center gap-1 py-2 transition-colors ${isActive ? 'text-white' : 'text-gray-300 hover:text-white'}`}
+      <button
+        type="button"
+        className={`flex items-center gap-1 py-2 transition-colors duration-200 ${isActive ? 'text-ink' : 'text-ink-muted hover:text-ink'}`}
         onClick={() => setIsOpen(prev => !prev)}
       >
         {label}
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
-      
+
       {isOpen && (
-        <div className="absolute top-full left-0 pt-2 z-50">
-          <div className="w-56 bg-gray-800 border border-gray-700 rounded-lg shadow-xl overflow-hidden">
+        <div className="absolute top-full left-0 pt-2 z-50 animate-fade-up">
+          <div className="w-56 bg-surface-raised border border-border rounded-lg shadow-panel overflow-hidden">
             {items.map(item => (
-              <Link 
-                key={item.href} 
-                href={item.href} 
-                className="block px-4 py-3 text-gray-300 hover:text-white hover:bg-gray-700 transition-colors"
+              <Link
+                key={item.href}
+                href={item.href}
+                className="block px-4 py-3 text-ink-muted hover:text-ink hover:bg-surface-overlay transition-colors duration-150"
                 onClick={() => setIsOpen(false)}
               >
                 <div className="font-medium">{item.label}</div>
-                {item.description && <div className="text-xs text-gray-500 mt-0.5">{item.description}</div>}
+                {item.description && <div className="text-xs text-ink-faint mt-0.5">{item.description}</div>}
               </Link>
             ))}
           </div>
@@ -334,19 +328,19 @@ function MobileDropdown({
     <div>
       <button
         type="button"
-        className="flex items-center justify-between w-full py-2 text-gray-300 hover:text-white transition-colors"
+        className="flex items-center justify-between w-full py-2 text-ink-muted hover:text-ink transition-colors duration-200"
         onClick={handleToggle}
       >
         {label}
-        <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
-        <div className="pl-4 mt-1 space-y-1 border-l border-gray-700">
+        <div className="pl-4 mt-1 space-y-1 border-l border-border">
           {items.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="block py-2 text-gray-400 hover:text-white transition-colors"
+              className="block py-2 text-ink-muted hover:text-ink transition-colors duration-150"
               onClick={onItemClick}
             >
               {item.label}
@@ -466,18 +460,18 @@ export default function Header() {
 
   return (
     <>
-      <header className="bg-gray-900 border-b border-gray-800 sticky top-0 z-40">
+      <header className="bg-surface-sunken/95 backdrop-blur border-b border-border sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <Link href="/" className="flex items-center gap-2">
-              <Image 
-                src="/logo.png" 
-                alt="Qwilon" 
-                width={50}
-                height={50}
+              <Image
+                src="/logo.png"
+                alt="Qwilon"
+                width={40}
+                height={40}
                 className="object-contain"
               />
-              <span className="text-4xl font-bold hidden sm:inline bg-gradient-to-r from-[#BF953F] via-[#FCF6BA] to-[#B38728] bg-clip-text text-transparent">Qwilon</span>
+              <span className="text-2xl font-display font-medium hidden sm:inline text-gradient-gold">Qwilon</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-6">
@@ -485,31 +479,31 @@ export default function Header() {
               <DropdownMenu label="Let's Start" items={letsStartItems} isActive={isLetsStartSection} />
               <DropdownMenu label="Platform" items={platformItems} isActive={isPlatformSection} />
               <DropdownMenu label="Docs" items={docsItems} isActive={isDocsSection} />
-              
+
               {showDashboard && (
-                <Link 
-                  href="/dashboard" 
-                  className={`flex items-center gap-1.5 py-2 transition-colors ${
-                    isDashboardSection ? 'text-white' : 'text-gray-300 hover:text-white'
+                <Link
+                  href="/dashboard"
+                  className={`flex items-center gap-1.5 py-2 transition-colors duration-200 ${
+                    isDashboardSection ? 'text-ink' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   <span>Dashboard</span>
                   {isOwner && (
-                    <span className="text-xs px-1.5 py-0.5 bg-purple-600/30 text-purple-400 rounded">Pro</span>
+                    <span className="text-xs px-1.5 py-0.5 bg-gold/15 text-gold rounded">Pro</span>
                   )}
                 </Link>
               )}
-              
+
               {isAdmin && (
-                <Link 
-                  href="/admin" 
-                  className={`flex items-center gap-1 transition-colors ${
-                    pathname.startsWith('/admin') ? 'text-white' : 'text-gray-300 hover:text-white'
+                <Link
+                  href="/admin"
+                  className={`flex items-center gap-1 transition-colors duration-200 ${
+                    pathname.startsWith('/admin') ? 'text-ink' : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   Admin
-                  {isSuperAdmin && <span className="text-yellow-400 text-xs">★</span>}
+                  {isSuperAdmin && <Star className="w-3 h-3 text-gold fill-gold" />}
                 </Link>
               )}
             </nav>
@@ -519,7 +513,7 @@ export default function Header() {
               <ConnectButton />
               <button
                 type="button"
-                className="md:hidden p-2 text-gray-400 hover:text-white transition-colors"
+                className="md:hidden p-2 text-ink-muted hover:text-ink transition-colors duration-200"
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -528,45 +522,49 @@ export default function Header() {
           </div>
 
           {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-gray-800">
+            <div className="md:hidden py-4 border-t border-border animate-fade-up">
               <nav className="space-y-2">
                 <MobileDropdown label="About" items={aboutItems} onItemClick={() => setMobileMenuOpen(false)} />
                 <MobileDropdown label="Let's Start" items={letsStartItems} onItemClick={() => setMobileMenuOpen(false)} />
                 <MobileDropdown label="Platform" items={platformItems} onItemClick={() => setMobileMenuOpen(false)} />
                 <MobileDropdown label="Docs" items={docsItems} onItemClick={() => setMobileMenuOpen(false)} />
                 <MobileDropdown label="Legal" items={legalItems} onItemClick={() => setMobileMenuOpen(false)} />
-                
+
                 {showDashboard && (
-                  <Link 
-                    href="/dashboard" 
-                    className="flex items-center gap-2 py-2 text-gray-300 hover:text-white transition-colors"
+                  <Link
+                    href="/dashboard"
+                    className="flex items-center gap-2 py-2 text-ink-muted hover:text-ink transition-colors duration-200"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                     {isOwner && (
-                      <span className="text-xs px-1.5 py-0.5 bg-purple-600/30 text-purple-400 rounded">Pro</span>
+                      <span className="text-xs px-1.5 py-0.5 bg-gold/15 text-gold rounded">Pro</span>
                     )}
                   </Link>
                 )}
-                
+
                 <button
                   type="button"
                   onClick={() => { setMobileMenuOpen(false); setChainModalOpen(true); }}
-                  className="flex items-center gap-2 w-full py-2 text-gray-300 hover:text-white transition-colors"
+                  className="flex items-center gap-2 w-full py-2 text-ink-muted hover:text-ink transition-colors duration-200"
                 >
-                  <span>🔗</span>
+                  <Link2 className="w-4 h-4" />
                   Switch Network
                 </button>
-                
+
                 {isAdmin && (
-                  <Link 
-                    href="/admin" 
-                    className="flex items-center gap-2 py-2 text-gray-300 hover:text-white transition-colors"
+                  <Link
+                    href="/admin"
+                    className="flex items-center gap-2 py-2 text-ink-muted hover:text-ink transition-colors duration-200"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Admin
-                    {isSuperAdmin && <span className="text-yellow-400 text-xs">★ Super</span>}
+                    {isSuperAdmin && (
+                      <span className="flex items-center gap-1 text-xs text-gold">
+                        <Star className="w-3 h-3 fill-gold" /> Super
+                      </span>
+                    )}
                   </Link>
                 )}
               </nav>

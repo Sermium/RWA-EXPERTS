@@ -17,7 +17,7 @@ export default function TradeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-sunken">
       {children}
     </div>
   );

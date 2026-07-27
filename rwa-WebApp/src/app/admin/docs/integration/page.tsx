@@ -1,12 +1,13 @@
 // src/app/admin/docs/integration/page.tsx
-import { 
-  Plug, 
-  Code, 
-  Webhook, 
+import {
+  Plug,
+  Code,
+  Webhook,
   Key,
   CheckCircle,
   Copy,
-  ExternalLink
+  ExternalLink,
+  AlertTriangle
 } from 'lucide-react';
 import { CONTACT, SOCIAL, LINKS, mailto, COMPANY } from '@/config/contacts';
 
@@ -15,8 +16,8 @@ export default function IntegrationGuidePage() {
     <div className="max-w-8xl">
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-blue-500/20 rounded-lg">
-            <Plug className="w-6 h-6 text-blue-400" />
+          <div className="p-2 bg-gold-500/20 rounded-lg">
+            <Plug className="w-6 h-6 text-gold-400" />
           </div>
           <div>
             <h1 className="text-3xl font-bold text-white">Integration Guide</h1>
@@ -136,8 +137,8 @@ Content-Type: application/json`}
               </pre>
             </div>
             
-            <p className="text-sm text-yellow-400">
-              ⚠️ Contact {CONTACT.partners} to obtain API credentials.
+            <p className="text-sm text-yellow-400 flex items-center gap-1.5">
+              <AlertTriangle className="w-4 h-4 flex-shrink-0" /> Contact {CONTACT.partners} to obtain API credentials.
             </p>
           </div>
 
@@ -153,7 +154,7 @@ Content-Type: application/json`}
               ].map((endpoint, i) => (
                 <div key={i} className="flex items-center gap-3 p-3 bg-gray-900/50 rounded-lg">
                   <span className={`px-2 py-1 rounded text-xs font-mono ${
-                    endpoint.method === 'GET' ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400'
+                    endpoint.method === 'GET' ? 'bg-gold-500/20 text-gold-400' : 'bg-green-500/20 text-green-400'
                   }`}>
                     {endpoint.method}
                   </span>
@@ -318,15 +319,15 @@ Content-Type: application/json`}
             </div>
           </div>
           
-          <p className="text-sm text-yellow-400 mt-4">
-            ⚠️ Testnet data is reset weekly. Do not use for production.
+          <p className="text-sm text-yellow-400 mt-4 flex items-center gap-1.5">
+            <AlertTriangle className="w-4 h-4 flex-shrink-0" /> Testnet data is reset weekly. Do not use for production.
           </p>
         </div>
       </section>
 
       {/* Support */}
-      <section className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-6">
-        <h2 className="text-xl font-semibold text-blue-400 mb-4 flex items-center gap-2">
+      <section className="bg-gold-500/10 border border-gold-500/30 rounded-xl p-6">
+        <h2 className="text-xl font-semibold text-gold-400 mb-4 flex items-center gap-2">
           <Plug className="w-5 h-5" />
           Integration Support
         </h2>

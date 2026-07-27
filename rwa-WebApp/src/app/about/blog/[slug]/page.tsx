@@ -109,7 +109,7 @@ export default function BlogArticlePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
       </div>
     );
@@ -117,7 +117,7 @@ export default function BlogArticlePage() {
 
   if (error || !post) {
     return (
-      <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center text-white">
+      <div className="min-h-screen bg-surface-sunken flex flex-col items-center justify-center text-ink">
         <h1 className="text-2xl font-bold mb-4">{error || 'Article not found'}</h1>
         <Link 
           href="/about/blog"
@@ -131,15 +131,15 @@ export default function BlogArticlePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white">
+    <div className="min-h-screen bg-surface-sunken text-ink">
       {/* Header */}
-      <div className="bg-gradient-to-b from-gray-900 to-gray-950 border-b border-gray-800">
+      <div className="bg-gradient-to-b from-surface-sunken to-surface-sunken border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-8">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-gray-400 mb-6">
-            <Link href="/" className="hover:text-white">Home</Link>
+          <nav className="flex items-center gap-2 text-sm text-ink-muted mb-6">
+            <Link href="/" className="hover:text-ink">Home</Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/about/blog" className="hover:text-white">Blog</Link>
+            <Link href="/about/blog" className="hover:text-ink">Blog</Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-emerald-400">{post.category}</span>
           </nav>
@@ -147,7 +147,7 @@ export default function BlogArticlePage() {
           {/* Back button */}
           <Link 
             href="/about/blog"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+            className="inline-flex items-center gap-2 text-ink-muted hover:text-ink mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Blog
@@ -166,7 +166,7 @@ export default function BlogArticlePage() {
           </h1>
 
           {/* Meta info */}
-          <div className="flex flex-wrap items-center gap-6 text-gray-400">
+          <div className="flex flex-wrap items-center gap-6 text-ink-muted">
             <div className="flex items-center gap-2">
               {post.author_avatar_url ? (
                 <Image 
@@ -181,7 +181,7 @@ export default function BlogArticlePage() {
                   <User className="w-5 h-5 text-emerald-400" />
                 </div>
               )}
-              <span className="text-white">{post.author_name}</span>
+              <span className="text-ink">{post.author_name}</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
@@ -217,15 +217,15 @@ export default function BlogArticlePage() {
       {/* Content */}
       <article className="max-w-4xl mx-auto px-4 py-12">
         {/* Action buttons */}
-        <div className="flex items-center gap-4 mb-8 pb-8 border-b border-gray-800">
+        <div className="flex items-center gap-4 mb-8 pb-8 border-b border-border">
           <button
             onClick={handleShare}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-overlay rounded-lg transition-colors"
           >
             <Share2 className="w-4 h-4" />
             Share
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+          <button className="flex items-center gap-2 px-4 py-2 bg-surface hover:bg-surface-overlay rounded-lg transition-colors">
             <Bookmark className="w-4 h-4" />
             Save
           </button>
@@ -234,29 +234,29 @@ export default function BlogArticlePage() {
         {/* Article content */}
         <div 
           className="prose prose-invert prose-lg max-w-none
-            prose-headings:text-white prose-headings:font-bold
-            prose-p:text-gray-300 prose-p:leading-relaxed
+            prose-headings:text-ink prose-headings:font-bold
+            prose-p:text-ink-muted prose-p:leading-relaxed
             prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
-            prose-strong:text-white
-            prose-code:text-emerald-400 prose-code:bg-gray-800 prose-code:px-2 prose-code:py-1 prose-code:rounded
-            prose-pre:bg-gray-900 prose-pre:border prose-pre:border-gray-800
-            prose-blockquote:border-l-emerald-500 prose-blockquote:text-gray-400
-            prose-li:text-gray-300"
+            prose-strong:text-ink
+            prose-code:text-emerald-400 prose-code:bg-surface prose-code:px-2 prose-code:py-1 prose-code:rounded
+            prose-pre:bg-surface-sunken prose-pre:border prose-pre:border-border
+            prose-blockquote:border-l-emerald-500 prose-blockquote:text-ink-muted
+            prose-li:text-ink-muted"
           dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br />') }}
         />
 
         {/* Tags */}
         {post.tags && post.tags.length > 0 && (
-          <div className="mt-12 pt-8 border-t border-gray-800">
+          <div className="mt-12 pt-8 border-t border-border">
             <div className="flex items-center gap-2 mb-4">
-              <Tag className="w-5 h-5 text-gray-400" />
-              <span className="text-gray-400">Tags</span>
+              <Tag className="w-5 h-5 text-ink-muted" />
+              <span className="text-ink-muted">Tags</span>
             </div>
             <div className="flex flex-wrap gap-2">
               {post.tags.map((tag) => (
                 <span 
                   key={tag}
-                  className="px-3 py-1 bg-gray-800 text-gray-300 text-sm rounded-full hover:bg-gray-700 transition-colors cursor-pointer"
+                  className="px-3 py-1 bg-surface text-ink-muted text-sm rounded-full hover:bg-surface-overlay transition-colors cursor-pointer"
                 >
                   {tag}
                 </span>
@@ -273,7 +273,7 @@ export default function BlogArticlePage() {
 
       {/* Related Posts */}
       {relatedPosts.length > 0 && (
-        <section className="bg-gray-900/50 py-16 mt-12">
+        <section className="bg-surface-sunken/50 py-16 mt-12">
           <div className="max-w-6xl mx-auto px-4">
             <h2 className="text-2xl font-bold mb-8">Related Articles</h2>
             <div className="grid md:grid-cols-3 gap-6">
@@ -281,7 +281,7 @@ export default function BlogArticlePage() {
                 <Link
                   key={relatedPost.id}
                   href={`/about/blog/${relatedPost.slug}`}
-                  className="group bg-gray-800/50 rounded-xl overflow-hidden hover:bg-gray-800 transition-all duration-300"
+                  className="group bg-surface/50 rounded-xl overflow-hidden hover:bg-surface transition-all duration-300"
                 >
                   {relatedPost.cover_image_url && (
                     <div className="relative aspect-video">
@@ -297,13 +297,13 @@ export default function BlogArticlePage() {
                     <span className="text-xs text-emerald-400 mb-2 block">
                       {relatedPost.category}
                     </span>
-                    <h3 className="font-semibold text-white group-hover:text-emerald-400 transition-colors line-clamp-2">
+                    <h3 className="font-semibold text-ink group-hover:text-emerald-400 transition-colors line-clamp-2">
                       {relatedPost.title}
                     </h3>
-                    <p className="text-sm text-gray-400 mt-2 line-clamp-2">
+                    <p className="text-sm text-ink-muted mt-2 line-clamp-2">
                       {relatedPost.excerpt}
                     </p>
-                    <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                    <div className="flex items-center gap-4 mt-3 text-xs text-ink-faint">
                       <span>{formatDate(relatedPost.published_at)}</span>
                       <span>{relatedPost.read_time} min read</span>
                     </div>
@@ -319,14 +319,14 @@ export default function BlogArticlePage() {
       <section className="py-16">
         <div className="max-w-2xl mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-4">Stay Updated</h2>
-          <p className="text-gray-400 mb-6">
+          <p className="text-ink-muted mb-6">
             Subscribe to our newsletter for the latest insights on RWA tokenization and blockchain technology.
           </p>
           <div className="flex gap-3 max-w-md mx-auto">
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-emerald-500 text-white"
+              className="flex-1 px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-emerald-500 text-ink"
             />
             <button className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-medium transition-colors">
               Subscribe

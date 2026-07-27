@@ -136,21 +136,21 @@ export default function NotificationCenter() {
 
   const getNotificationColor = (type: string) => {
     const colors: Record<string, string> = {
-      deal_created: 'bg-blue-500/20 text-blue-400',
-      deal_updated: 'bg-blue-500/20 text-blue-400',
-      stage_changed: 'bg-purple-500/20 text-purple-400',
+      deal_created: 'bg-gold-500/20 text-gold-400',
+      deal_updated: 'bg-gold-500/20 text-gold-400',
+      stage_changed: 'bg-gold-500/20 text-gold-400',
       document_uploaded: 'bg-cyan-500/20 text-cyan-400',
       document_verified: 'bg-green-500/20 text-green-400',
       milestone_completed: 'bg-green-500/20 text-green-400',
       payment_received: 'bg-green-500/20 text-green-400',
       payment_released: 'bg-green-500/20 text-green-400',
-      message_received: 'bg-gray-500/20 text-gray-400',
-      dispute_filed: 'bg-red-500/20 text-red-400',
-      dispute_resolved: 'bg-yellow-500/20 text-yellow-400',
+      message_received: 'bg-surface-overlay text-ink-muted',
+      dispute_filed: 'bg-danger/20 text-danger',
+      dispute_resolved: 'bg-warning/20 text-warning',
       kyc_approved: 'bg-green-500/20 text-green-400',
-      kyc_rejected: 'bg-red-500/20 text-red-400',
+      kyc_rejected: 'bg-danger/20 text-danger',
     };
-    return colors[type] || 'bg-gray-500/20 text-gray-400';
+    return colors[type] || 'bg-surface-overlay text-ink-muted';
   };
 
   const formatTime = (date: Date) => {
@@ -174,11 +174,11 @@ export default function NotificationCenter() {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-400 hover:text-white transition-colors"
+        className="relative p-2 text-ink-muted hover:text-ink transition-colors"
       >
         <Bell className="h-6 w-6" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-danger rounded-full flex items-center justify-center text-xs text-ink font-bold">
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -186,22 +186,22 @@ export default function NotificationCenter() {
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-96 bg-gray-800 rounded-xl border border-gray-700 shadow-xl z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-2 w-96 bg-surface rounded-xl border border-border shadow-panel z-50 overflow-hidden">
           {/* Header */}
-          <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-white">Notifications</h3>
+          <div className="p-4 border-b border-border flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-ink">Notifications</h3>
             <div className="flex items-center gap-2">
               {unreadCount > 0 && (
                 <button
                   onClick={() => markAsRead()}
-                  className="text-sm text-blue-400 hover:text-blue-300 transition-colors"
+                  className="text-sm text-gold-400 hover:text-gold-300 transition-colors"
                 >
                   Mark all read
                 </button>
               )}
               <button
                 onClick={() => setIsOpen(false)}
-                className="p-1 text-gray-400 hover:text-white transition-colors"
+                className="p-1 text-ink-muted hover:text-ink transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -212,20 +212,20 @@ export default function NotificationCenter() {
           <div className="max-h-96 overflow-y-auto">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
+                <Loader2 className="h-6 w-6 text-gold-500 animate-spin" />
               </div>
             ) : notifications.length === 0 ? (
               <div className="py-12 text-center">
-                <Bell className="h-12 w-12 text-gray-600 mx-auto mb-3" />
-                <p className="text-gray-400">No notifications yet</p>
+                <Bell className="h-12 w-12 text-ink-faint mx-auto mb-3" />
+                <p className="text-ink-muted">No notifications yet</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-700/50">
+              <div className="divide-y divide-border/50">
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`p-4 hover:bg-gray-700/30 transition-colors cursor-pointer ${
-                      !notification.read ? 'bg-blue-500/5' : ''
+                    className={`p-4 hover:bg-surface-overlay/30 transition-colors cursor-pointer ${
+                      !notification.read ? 'bg-gold-500/5' : ''
                     }`}
                     onClick={() => {
                       if (!notification.read) {
@@ -242,24 +242,24 @@ export default function NotificationCenter() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between">
-                          <p className={`text-sm font-medium ${notification.read ? 'text-gray-300' : 'text-white'}`}>
+                          <p className={`text-sm font-medium ${notification.read ? 'text-ink-muted' : 'text-ink'}`}>
                             {notification.title}
                           </p>
                           {!notification.read && (
-                            <span className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0 mt-1.5" />
+                            <span className="w-2 h-2 bg-gold-500 rounded-full flex-shrink-0 mt-1.5" />
                           )}
                         </div>
-                        <p className="text-sm text-gray-400 mt-0.5 line-clamp-2">
+                        <p className="text-sm text-ink-muted mt-0.5 line-clamp-2">
                           {notification.message}
                         </p>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-ink-faint">
                             {formatTime(notification.createdAt)}
                           </span>
                           {notification.dealReference && (
                             <>
-                              <span className="text-gray-600">•</span>
-                              <span className="text-xs text-gray-500">
+                              <span className="text-ink-faint">•</span>
+                              <span className="text-xs text-ink-faint">
                                 {notification.dealReference}
                               </span>
                             </>
@@ -274,9 +274,9 @@ export default function NotificationCenter() {
           </div>
 
           {/* Footer */}
-          <div className="p-3 border-t border-gray-700 bg-gray-800/50">
+          <div className="p-3 border-t border-border bg-surface/50">
             <Link href="/notifications">
-              <button className="w-full py-2 text-sm text-blue-400 hover:text-blue-300 transition-colors flex items-center justify-center">
+              <button className="w-full py-2 text-sm text-gold-400 hover:text-gold-300 transition-colors flex items-center justify-center">
                 View All Notifications
                 <ChevronRight className="h-4 w-4 ml-1" />
               </button>

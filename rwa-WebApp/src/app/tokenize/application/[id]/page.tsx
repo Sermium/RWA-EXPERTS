@@ -54,7 +54,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   },
   completed: { 
     label: 'Deployed', 
-    color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', 
+    color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', 
     icon: <CheckCircle2 className="w-4 h-4" />,
     description: 'Your token has been successfully deployed.'
   },
@@ -321,7 +321,7 @@ export default function ApplicationDetailPage() {
                   key={chain.id}
                   onClick={() => handleSwitchNetwork(chain.id as SupportedChainId)}
                   disabled={isSwitching}
-                  className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+                  className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
                 >
                   {isSwitching ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -355,7 +355,7 @@ export default function ApplicationDetailPage() {
             <button
               onClick={() => handleSwitchNetwork(chainId)}
               disabled={isSwitching}
-              className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2 mx-auto"
+              className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2 mx-auto"
             >
               {isSwitching ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -372,7 +372,7 @@ export default function ApplicationDetailPage() {
     return (
       <div className="min-h-screen bg-gray-900">
         <div className="flex items-center justify-center h-[60vh]">
-          <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
+          <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
         </div>
       </div>
     );
@@ -388,7 +388,7 @@ export default function ApplicationDetailPage() {
             <p className="text-gray-400 mb-6">{error || 'Application not found'}</p>
             <Link
               href={backUrl}
-              className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300"
+              className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300"
             >
               <ArrowLeft className="w-4 h-4" /> {backLabel}
             </Link>
@@ -458,7 +458,7 @@ export default function ApplicationDetailPage() {
             {application.status === 'approved' && (
               <Link
                 href={`/tokenize/create/${application.id}${fromDashboard ? '?from=dashboard' : ''}`}
-                className="px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg transition inline-flex items-center gap-2"
+                className="px-6 py-2 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-lg transition inline-flex items-center gap-2"
               >
                 <Coins className="w-4 h-4" />
                 Create Token
@@ -494,7 +494,7 @@ export default function ApplicationDetailPage() {
           {/* Asset Info */}
           <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-purple-400" />
+              <FileText className="w-5 h-5 text-gold-400" />
               Asset Details
             </h2>
 
@@ -517,7 +517,7 @@ export default function ApplicationDetailPage() {
           {/* Company Info */}
           <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
             <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Building2 className="w-5 h-5 text-blue-400" />
+              <Building2 className="w-5 h-5 text-gold-400" />
               Company Info
             </h2>
 
@@ -532,7 +532,7 @@ export default function ApplicationDetailPage() {
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-gray-500" />
-                <a href={`mailto:${application.email}`} className="text-blue-400 hover:underline">
+                <a href={`mailto:${application.email}`} className="text-gold-400 hover:underline">
                   {application.email}
                 </a>
               </div>
@@ -545,7 +545,7 @@ export default function ApplicationDetailPage() {
               {application.website && (
                 <div className="flex items-center gap-2">
                   <Globe className="w-4 h-4 text-gray-500" />
-                  <a href={application.website} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+                  <a href={application.website} target="_blank" rel="noopener noreferrer" className="text-gold-400 hover:underline">
                     {application.website}
                   </a>
                 </div>
@@ -693,7 +693,7 @@ export default function ApplicationDetailPage() {
                       href={`${getApplicationExplorerUrl}/address/${application.token_address}`} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-blue-400 hover:text-blue-300 transition"
+                      className="text-gold-400 hover:text-gold-300 transition"
                       title={`View on ${explorerName}`}
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -720,7 +720,7 @@ export default function ApplicationDetailPage() {
                       href={`${getApplicationExplorerUrl}/address/${application.nft_address}`} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-blue-400 hover:text-blue-300 transition"
+                      className="text-gold-400 hover:text-gold-300 transition"
                       title={`View on ${explorerName}`}
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -747,7 +747,7 @@ export default function ApplicationDetailPage() {
                       href={`${getApplicationExplorerUrl}/address/${application.escrow_address}`} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-blue-400 hover:text-blue-300 transition"
+                      className="text-gold-400 hover:text-gold-300 transition"
                       title={`View on ${explorerName}`}
                     >
                       <ExternalLink className="w-4 h-4" />
@@ -764,7 +764,7 @@ export default function ApplicationDetailPage() {
                       href={`${getApplicationExplorerUrl}/tx/${application.deployment_tx_hash}`} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="text-blue-400 hover:text-blue-300 hover:underline inline-flex items-center gap-2"
+                      className="text-gold-400 hover:text-gold-300 hover:underline inline-flex items-center gap-2"
                     >
                       <span className="font-mono text-sm">
                         {application.deployment_tx_hash.slice(0, 10)}...{application.deployment_tx_hash.slice(-8)}

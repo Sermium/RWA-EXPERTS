@@ -99,7 +99,7 @@ export async function notifyDisputeArbitration(data: DisputeNotificationData) {
     const email = await getUserEmail(party);
     if (email) {
       await sendEmail({
-        subject: `⚠️ Arbitration Required - ${data.dealReference}`,
+        subject: `Arbitration Required - ${data.dealReference}`,
         html: generateArbitrationEmail(data, actionUrl),
       }, email);
     }
@@ -252,7 +252,7 @@ function generateMediationEmail(data: DisputeNotificationData, actionUrl: string
     <body>
       <div class="container">
         <div class="header">
-          <h1>⚖️ Mediation Started</h1>
+          <h1>Mediation Started</h1>
         </div>
         <div class="content">
           <p>Your dispute for deal <strong>${data.dealReference}</strong> has moved to mediation.</p>
@@ -299,7 +299,7 @@ function generateArbitrationEmail(data: DisputeNotificationData, actionUrl: stri
     <body>
       <div class="container">
         <div class="header">
-          <h1>⚠️ Arbitration Required</h1>
+          <h1>Arbitration Required</h1>
         </div>
         <div class="content">
           <p>Your dispute for deal <strong>${data.dealReference}</strong> has been escalated to arbitration.</p>

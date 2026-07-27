@@ -95,7 +95,7 @@ function DocumentTypeSelector({ selected, onSelect }: DocumentTypeSelectorProps)
             onClick={() => onSelect(docType.id)}
             className={`p-4 rounded-lg border-2 transition-all text-left ${
               selected === docType.id
-                ? 'border-blue-500 bg-blue-500/10'
+                ? 'border-gold-500 bg-gold-500/10'
                 : 'border-gray-700 bg-gray-800 hover:border-gray-600'
             }`}
           >
@@ -201,7 +201,7 @@ function DocumentCaptureCard({
       onDrop={handleDrop}
       className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
         isDragging
-          ? 'border-blue-500 bg-blue-500/10'
+          ? 'border-gold-500 bg-gold-500/10'
           : 'border-gray-700 hover:border-gray-600'
       }`}
     >
@@ -238,7 +238,7 @@ function DocumentCaptureCard({
           </button>
           <button
             onClick={onWebcamClick}
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm transition-colors"
+            className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg text-sm transition-colors"
           >
             Use Camera
           </button>
@@ -324,7 +324,7 @@ function OcrProgressBar({ progress }: OcrProgressBarProps) {
       </div>
       <div className="w-full bg-gray-700 rounded-full h-2">
         <div 
-          className="h-2 rounded-full bg-blue-500 transition-all duration-300"
+          className="h-2 rounded-full bg-gold-500 transition-all duration-300"
           style={{ width: `${progress.percent}%` }}
         />
       </div>
@@ -465,7 +465,7 @@ export function KYCForm(props: KYCFormProps) {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="As shown on your document"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
           
@@ -479,7 +479,7 @@ export function KYCForm(props: KYCFormProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
           
@@ -492,7 +492,7 @@ export function KYCForm(props: KYCFormProps) {
               type="date"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
           
@@ -504,7 +504,7 @@ export function KYCForm(props: KYCFormProps) {
             <select
               value={countryCode}
               onChange={(e) => setCountryCode(Number(e.target.value))}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             >
               <option value={0}>Select country...</option>
               {countries.map((country) => (
@@ -538,7 +538,7 @@ export function KYCForm(props: KYCFormProps) {
               value={documentNumber}
               onChange={(e) => setDocumentNumber(e.target.value)}
               placeholder="As shown on document"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
           
@@ -550,7 +550,7 @@ export function KYCForm(props: KYCFormProps) {
               type="date"
               value={expiryDate}
               onChange={(e) => setExpiryDate(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -596,7 +596,7 @@ export function KYCForm(props: KYCFormProps) {
             {canValidate ? (
               <button
                 onClick={handleValidateDocument}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -616,7 +616,7 @@ export function KYCForm(props: KYCFormProps) {
         {/* Validating Spinner */}
         {isValidatingId && !ocrProgress && (
           <div className="flex items-center justify-center py-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-500"></div>
             <span className="ml-3 text-gray-400">Validating document...</span>
           </div>
         )}
@@ -671,7 +671,7 @@ export function KYCForm(props: KYCFormProps) {
               </button>
               <button
                 onClick={() => openWebcam('selfie')}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg text-sm"
               >
                 Take Selfie
               </button>
@@ -781,13 +781,13 @@ export function KYCForm(props: KYCFormProps) {
             type="checkbox"
             checked={agreedToTerms}
             onChange={(e) => setAgreedToTerms(e.target.checked)}
-            className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"
+            className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-gold-600 focus:ring-gold-500"
           />
           <span className="text-sm text-gray-300">
             I confirm that all information provided is accurate and I agree to the{' '}
-            <a href="/terms" className="text-blue-400 hover:underline">Terms of Service</a>{' '}
+            <a href="/terms" className="text-gold-400 hover:underline">Terms of Service</a>{' '}
             and{' '}
-            <a href="/privacy" className="text-blue-400 hover:underline">Privacy Policy</a>.
+            <a href="/privacy" className="text-gold-400 hover:underline">Privacy Policy</a>.
           </span>
         </label>
         
@@ -802,7 +802,7 @@ export function KYCForm(props: KYCFormProps) {
           disabled={!canSubmit || isSubmitting}
           className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors flex items-center justify-center gap-2 ${
             canSubmit && !isSubmitting
-              ? 'bg-blue-600 hover:bg-blue-500 text-white'
+              ? 'bg-gold-600 hover:bg-gold-500 text-white'
               : 'bg-gray-700 text-gray-400 cursor-not-allowed'
           }`}
         >

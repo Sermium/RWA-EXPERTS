@@ -17,10 +17,10 @@ export function MarketList({
   onPairSelect,
   onDepositClick,
 }: MarketListProps) {
-  const getTokenIcon = (symbol: string) => TOKEN_ICONS[symbol] || '🪙';
+  const getTokenIcon = (symbol: string) => TOKEN_ICONS[symbol] || '/chains/default.svg';
 
   return (
-    <div className="bg-gray-900 rounded-xl p-4">
+    <div className="bg-surface rounded-xl p-4">
       <h3 className="font-semibold mb-4">Markets</h3>
       <div className="space-y-2 max-h-96 overflow-y-auto">
         {MEXC_CONFIG.supportedPairs.map((pair) => {
@@ -32,8 +32,8 @@ export function MarketList({
               onClick={() => onPairSelect(pair)}
               className={`w-full p-3 rounded-lg transition-colors ${
                 selectedPair === pair
-                  ? 'bg-blue-500/20 border border-blue-500/30'
-                  : 'bg-gray-800 hover:bg-gray-700'
+                  ? 'bg-gold-500/20 border border-gold-500/30'
+                  : 'bg-surface-raised hover:bg-surface-overlay'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -53,8 +53,8 @@ export function MarketList({
                     <div className="font-medium">{formatPrice(ticker.lastPrice)}</div>
                     <div className={`text-xs ${
                       parseFloat(ticker.priceChangePercent) >= 0
-                        ? 'text-green-500'
-                        : 'text-red-500'
+                        ? 'text-success'
+                        : 'text-danger'
                     }`}>
                       {parseFloat(ticker.priceChangePercent) >= 0 ? '+' : ''}
                       {parseFloat(ticker.priceChangePercent).toFixed(2)}%
@@ -68,10 +68,10 @@ export function MarketList({
       </div>
 
       {/* Deposit Button */}
-      <div className="mt-4 pt-4 border-t border-gray-800">
+      <div className="mt-4 pt-4 border-t border-border">
         <button
           onClick={onDepositClick}
-          className="w-full py-2 bg-green-600 hover:bg-green-700 rounded-lg font-medium transition-colors"
+          className="w-full py-2 bg-success hover:bg-success/90 rounded-lg font-medium transition-colors"
         >
           Deposit
         </button>

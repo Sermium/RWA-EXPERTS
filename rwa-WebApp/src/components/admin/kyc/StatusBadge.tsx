@@ -83,11 +83,11 @@ export function UpgradeStatusBadge({ status, size = 'md' }: UpgradeStatusBadgePr
   const name = UPGRADE_STATUS_NAMES[status] || 'Unknown';
   
   const colors = {
-    0: { bg: 'bg-gray-500/20', text: 'text-gray-400', border: 'border-gray-500/30' },
-    1: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
-    2: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
-    3: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' }
-  }[status] || { bg: 'bg-gray-500/20', text: 'text-gray-400', border: 'border-gray-500/30' };
+    0: { bg: 'bg-surface-overlay', text: 'text-ink-muted', border: 'border-border' },
+    1: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' },
+    2: { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' },
+    3: { bg: 'bg-danger/20', text: 'text-danger', border: 'border-danger/30' }
+  }[status] || { bg: 'bg-surface-overlay', text: 'text-ink-muted', border: 'border-border' };
   
   const sizeClasses = {
     sm: 'px-2 py-0.5 text-xs',

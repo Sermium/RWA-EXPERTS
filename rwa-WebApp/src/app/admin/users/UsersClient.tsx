@@ -182,9 +182,9 @@ export default function UsersClient() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="flex items-center justify-center h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold-500"></div>
         </div>
       </div>
     );
@@ -192,11 +192,11 @@ export default function UsersClient() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <ShieldAlert className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-4">Connect Wallet</h1>
-          <p className="text-gray-400">Please connect your wallet to access the admin panel.</p>
+          <ShieldAlert className="w-16 h-16 text-ink-faint mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-ink mb-4">Connect Wallet</h1>
+          <p className="text-ink-muted">Please connect your wallet to access the admin panel.</p>
         </div>
       </div>
     );
@@ -204,12 +204,12 @@ export default function UsersClient() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="max-w-4xl mx-auto px-4 py-16 text-center">
-          <ShieldAlert className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-4">Access Denied</h1>
-          <p className="text-gray-400">You do not have permission to access this page.</p>
-          <Link href="/" className="mt-6 inline-block text-blue-400 hover:text-blue-300">
+          <ShieldAlert className="w-16 h-16 text-danger mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-ink mb-4">Access Denied</h1>
+          <p className="text-ink-muted">You do not have permission to access this page.</p>
+          <Link href="/" className="mt-6 inline-block text-gold-400 hover:text-gold-300">
             Return to Home
           </Link>
         </div>
@@ -218,34 +218,34 @@ export default function UsersClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-sunken">
 
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
-            <Shield className="w-8 h-8 text-blue-400" />
-            <h1 className="text-3xl font-bold text-white">Admin Management</h1>
+            <Shield className="w-8 h-8 text-gold-400" />
+            <h1 className="text-3xl font-bold text-ink">Admin Management</h1>
           </div>
-          <p className="text-gray-400">
+          <p className="text-ink-muted">
             Manage platform administrators and their permissions.
           </p>
         </div>
 
         {/* Current User Info */}
-        <div className="mb-6 p-4 bg-gray-800 border border-gray-700 rounded-xl">
+        <div className="mb-6 p-4 bg-surface border border-border rounded-xl">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {isSuperAdmin ? (
-                <Crown className="w-6 h-6 text-yellow-400" />
+                <Crown className="w-6 h-6 text-gold" />
               ) : (
-                <ShieldCheck className="w-6 h-6 text-blue-400" />
+                <ShieldCheck className="w-6 h-6 text-gold-400" />
               )}
               <div>
-                <div className="text-white font-medium">
+                <div className="text-ink font-medium">
                   {isSuperAdmin ? 'Super Admin' : 'Admin'}
                 </div>
-                <div className="text-gray-500 text-sm font-mono">
+                <div className="text-ink-faint text-sm font-mono">
                   {formatAddress(address || '')}
                 </div>
               </div>
@@ -255,7 +255,7 @@ export default function UsersClient() {
                 refreshAdmins();
                 fetchActivityLog();
               }}
-              className="p-2 text-gray-400 hover:text-white transition-colors"
+              className="p-2 text-ink-muted hover:text-ink transition-colors"
               title="Refresh"
             >
               <RefreshCw className="w-5 h-5" />
@@ -267,8 +267,8 @@ export default function UsersClient() {
         {message && (
           <div className={`mb-6 p-4 rounded-xl flex items-center gap-3 ${
             message.type === 'success' 
-              ? 'bg-green-900/30 border border-green-600 text-green-400'
-              : 'bg-red-900/30 border border-red-600 text-red-400'
+              ? 'bg-success-muted border border-success/40 text-success'
+              : 'bg-danger-muted border border-danger/40 text-danger'
           }`}>
             {message.type === 'success' ? (
               <CheckCircle2 className="w-5 h-5" />
@@ -281,29 +281,29 @@ export default function UsersClient() {
 
         {/* Add New Admin (Super Admin Only) */}
         {isSuperAdmin && (
-          <div className="mb-8 bg-gray-800 border border-gray-700 rounded-xl p-6">
-            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
-              <UserPlus className="w-5 h-5 text-green-400" />
+          <div className="mb-8 bg-surface border border-border rounded-xl p-6">
+            <h2 className="text-xl font-semibold text-ink mb-4 flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-success" />
               Add New Admin
             </h2>
             <form onSubmit={handlePromote} className="space-y-4">
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm text-gray-400 mb-1">Wallet Address</label>
+                  <label className="block text-sm text-ink-muted mb-1">Wallet Address</label>
                   <input
                     type="text"
                     value={newAdminAddress}
                     onChange={(e) => setNewAdminAddress(e.target.value)}
                     placeholder="0x..."
-                    className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none font-mono"
+                    className="w-full px-4 py-2.5 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:border-gold-500 focus:outline-none font-mono"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Role</label>
+                  <label className="block text-sm text-ink-muted mb-1">Role</label>
                   <select
                     value={newAdminRole}
                     onChange={(e) => setNewAdminRole(e.target.value as 'admin' | 'super_admin')}
-                    className="w-full px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2.5 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   >
                     <option value="admin">Admin</option>
                     <option value="super_admin">Super Admin</option>
@@ -313,7 +313,7 @@ export default function UsersClient() {
               <button
                 type="submit"
                 disabled={isPromoting}
-                className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-ink font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {isPromoting ? (
                   <>
@@ -332,27 +332,27 @@ export default function UsersClient() {
         )}
 
         {/* Admin List */}
-        <div className="bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-gray-700 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-              <Shield className="w-5 h-5 text-blue-400" />
+        <div className="bg-surface border border-border rounded-xl overflow-hidden">
+          <div className="p-4 border-b border-border flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-ink flex items-center gap-2">
+              <Shield className="w-5 h-5 text-gold-400" />
               All Admins ({admins.length})
             </h2>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by address..."
-                className="pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none text-sm w-64"
+                className="pl-10 pr-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:border-gold-500 focus:outline-none text-sm w-64"
               />
             </div>
           </div>
 
-          <div className="divide-y divide-gray-700">
+          <div className="divide-y divide-border">
             {filteredAdmins.length === 0 ? (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-ink-faint">
                 No admins found
               </div>
             ) : (
@@ -364,14 +364,14 @@ export default function UsersClient() {
                   <div 
                     key={admin.id} 
                     className={`p-4 flex items-center justify-between ${
-                      isCurrentUser ? 'bg-blue-900/10' : ''
+                      isCurrentUser ? 'bg-gold-900/10' : ''
                     }`}
                   >
                     <div className="flex items-center gap-4">
                       <div className={`p-2 rounded-lg ${
                         isSuperAdminUser 
-                          ? 'bg-yellow-500/10 text-yellow-400' 
-                          : 'bg-blue-500/10 text-blue-400'
+                          ? 'bg-warning/10 text-warning' 
+                          : 'bg-gold-500/10 text-gold-400'
                       }`}>
                         {isSuperAdminUser ? (
                           <Crown className="w-5 h-5" />
@@ -381,17 +381,17 @@ export default function UsersClient() {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-white font-mono">
+                          <span className="text-ink font-mono">
                             {formatAddress(admin.wallet_address)}
                           </span>
                           {isCurrentUser && (
-                            <span className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded">
+                            <span className="text-xs px-2 py-0.5 bg-gold-500/20 text-gold-400 rounded">
                               You
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 text-sm text-gray-500">
-                          <span className={isSuperAdminUser ? 'text-yellow-400' : 'text-blue-400'}>
+                        <div className="flex items-center gap-3 text-sm text-ink-faint">
+                          <span className={isSuperAdminUser ? 'text-gold' : 'text-gold-400'}>
                             {isSuperAdminUser ? 'Super Admin' : 'Admin'}
                           </span>
                           <span>•</span>
@@ -410,14 +410,14 @@ export default function UsersClient() {
                     {isSuperAdmin && !isCurrentUser && (
                       <div className="flex items-center gap-2">
                         {actionLoading === admin.wallet_address ? (
-                          <RefreshCw className="w-5 h-5 text-gray-400 animate-spin" />
+                          <RefreshCw className="w-5 h-5 text-ink-muted animate-spin" />
                         ) : (
                           <>
                             {isSuperAdminUser ? (
                               // Demote super admin to admin
                               <button
                                 onClick={() => handleDemote(admin.wallet_address)}
-                                className="p-2 text-orange-400 hover:bg-orange-500/10 rounded-lg transition-colors"
+                                className="p-2 text-warning hover:bg-warning/10 rounded-lg transition-colors"
                                 title="Demote to Admin"
                               >
                                 <ArrowDownCircle className="w-5 h-5" />
@@ -427,7 +427,7 @@ export default function UsersClient() {
                                 {/* Promote admin to super admin */}
                                 <button
                                   onClick={() => handlePromoteToSuper(admin.wallet_address)}
-                                  className="p-2 text-yellow-400 hover:bg-yellow-500/10 rounded-lg transition-colors"
+                                  className="p-2 text-warning hover:bg-warning/10 rounded-lg transition-colors"
                                   title="Promote to Super Admin"
                                 >
                                   <ArrowUpCircle className="w-5 h-5" />
@@ -435,7 +435,7 @@ export default function UsersClient() {
                                 {/* Remove admin */}
                                 <button
                                   onClick={() => handleRemove(admin.wallet_address)}
-                                  className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                                  className="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors"
                                   title="Remove Admin"
                                 >
                                   <Trash2 className="w-5 h-5" />
@@ -455,26 +455,26 @@ export default function UsersClient() {
 
         {/* Activity Log (Super Admin Only) */}
         {isSuperAdmin && (
-          <div className="mt-8 bg-gray-800 border border-gray-700 rounded-xl overflow-hidden">
+          <div className="mt-8 bg-surface border border-border rounded-xl overflow-hidden">
             <button
               onClick={() => setShowActivityLog(!showActivityLog)}
-              className="w-full p-4 flex items-center justify-between text-left hover:bg-gray-700/50 transition-colors"
+              className="w-full p-4 flex items-center justify-between text-left hover:bg-surface-overlay/50 transition-colors"
             >
-              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <Clock className="w-5 h-5 text-purple-400" />
+              <h2 className="text-xl font-semibold text-ink flex items-center gap-2">
+                <Clock className="w-5 h-5 text-gold-400" />
                 Activity Log
               </h2>
               {showActivityLog ? (
-                <ChevronUp className="w-5 h-5 text-gray-400" />
+                <ChevronUp className="w-5 h-5 text-ink-muted" />
               ) : (
-                <ChevronDown className="w-5 h-5 text-gray-400" />
+                <ChevronDown className="w-5 h-5 text-ink-muted" />
               )}
             </button>
 
             {showActivityLog && (
-              <div className="border-t border-gray-700 divide-y divide-gray-700">
+              <div className="border-t border-border divide-y divide-border">
                 {activityLog.length === 0 ? (
-                  <div className="p-8 text-center text-gray-500">
+                  <div className="p-8 text-center text-ink-faint">
                     No activity recorded
                   </div>
                 ) : (
@@ -482,20 +482,20 @@ export default function UsersClient() {
                     <div key={log.id} className="p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <span className="text-white font-medium">
+                          <span className="text-ink font-medium">
                             {getActionLabel(log.action)}
                           </span>
                           {log.target_address && (
-                            <span className="text-gray-400 ml-2">
+                            <span className="text-ink-muted ml-2">
                               → <span className="font-mono text-sm">{formatAddress(log.target_address)}</span>
                             </span>
                           )}
                         </div>
-                        <span className="text-gray-500 text-sm">
+                        <span className="text-ink-faint text-sm">
                           {formatDate(log.created_at)}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">
+                      <div className="text-sm text-ink-faint mt-1">
                         by <span className="font-mono">{formatAddress(log.actor_address)}</span>
                       </div>
                     </div>

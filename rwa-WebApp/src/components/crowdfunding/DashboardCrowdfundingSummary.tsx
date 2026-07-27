@@ -110,8 +110,8 @@ const statusConfig: Record<string, {
   },
   pending_review: {
     label: 'Under Review',
-    color: 'text-blue-400',
-    bgColor: 'bg-blue-500/20',
+    color: 'text-gold-400',
+    bgColor: 'bg-gold-500/20',
     icon: Clock,
     description: 'Your application is being reviewed',
   },
@@ -131,8 +131,8 @@ const statusConfig: Record<string, {
   },
   funded: {
     label: 'Funded',
-    color: 'text-purple-400',
-    bgColor: 'bg-purple-500/20',
+    color: 'text-gold-400',
+    bgColor: 'bg-gold-500/20',
     icon: TrendingUp,
     description: 'Funding goal reached',
   },
@@ -215,7 +215,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <Link
             href={`/crowdfunding/apply?draft=${application.id}`}
-            className="flex-1 text-center py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
           >
             Continue Editing
           </Link>
@@ -254,7 +254,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
           <div className="flex gap-2 flex-1">
             <Link
               href={`/projects/${application.id}`}
-              className="flex-1 text-center py-2.5 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+              className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
             >
               View Project
             </Link>
@@ -272,7 +272,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <Link
             href={`/projects/${application.id}`}
-            className="flex-1 text-center py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
           >
             View Project
           </Link>
@@ -314,7 +314,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600">
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gold-600 to-gold-light-600">
                 <span className="text-xl font-bold text-white">
                   {application.project_name?.charAt(0) || '?'}
                 </span>
@@ -574,8 +574,8 @@ export default function DashboardCrowdfundingSummary() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-500/20 rounded-lg">
-              <Coins className="w-5 h-5 text-blue-400" />
+            <div className="p-2 bg-gold-500/20 rounded-lg">
+              <Coins className="w-5 h-5 text-gold-400" />
             </div>
             <div>
               <h3 className="text-lg font-semibold text-white">Crowdfunding Applications</h3>
@@ -593,7 +593,7 @@ export default function DashboardCrowdfundingSummary() {
             </button>
             <Link
               href="/crowdfunding/apply"
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
             >
               <Plus className="w-4 h-4" />
               New Application
@@ -606,7 +606,7 @@ export default function DashboardCrowdfundingSummary() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
               <div className="flex items-center gap-2 mb-2">
-                <Target className="w-4 h-4 text-blue-400" />
+                <Target className="w-4 h-4 text-gold-400" />
                 <span className="text-sm text-gray-400">Total Goal</span>
               </div>
               <p className="text-xl font-bold text-white">{formatCurrency(stats.totalFundingGoal)}</p>
@@ -665,7 +665,7 @@ export default function DashboardCrowdfundingSummary() {
             </p>
             <Link
               href="/crowdfunding/apply"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-700 text-white rounded-lg font-medium transition-colors"
             >
               <Plus className="w-5 h-5" />
               Create Application

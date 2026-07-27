@@ -25,10 +25,10 @@ export function NetworkSwitcher({
   if (deployedChains.length <= 1) return null;
 
   return (
-    <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+    <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
       <div className="flex items-center gap-2 mb-3">
-        <ArrowRightLeft className="w-4 h-4 text-gray-400" />
-        <h3 className="text-sm font-medium text-gray-300">Switch Network</h3>
+        <ArrowRightLeft className="w-4 h-4 text-ink-muted" />
+        <h3 className="text-sm font-medium text-ink-muted">Switch Network</h3>
       </div>
       
       <div className="flex flex-wrap gap-2">
@@ -39,8 +39,8 @@ export function NetworkSwitcher({
             disabled={chain.id === currentChainId || isSwitching}
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
               chain.id === currentChainId
-                ? 'bg-blue-600 text-white cursor-default'
-                : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600/50 hover:text-white'
+                ? 'bg-gold-600 text-ink cursor-default'
+                : 'bg-surface-overlay/50 text-ink-muted hover:bg-gray-600/50 hover:text-ink'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {isSwitching && chain.id !== currentChainId && (

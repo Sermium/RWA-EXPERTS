@@ -77,33 +77,33 @@ export function GDPRSettings() {
 
     if (!address) {
         return (
-            <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-bold text-gray-900 mb-2">Data Privacy (GDPR)</h2>
-                <p className="text-gray-600">Connect your wallet to manage your data.</p>
+            <div className="bg-surface rounded-xl shadow-panel p-6">
+                <h2 className="text-xl font-bold text-ink mb-2">Data Privacy (GDPR)</h2>
+                <p className="text-ink-muted">Connect your wallet to manage your data.</p>
             </div>
         );
     }
 
     return (
-        <div className="bg-white rounded-xl shadow-lg p-6">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Data Privacy (GDPR)</h2>
-            <p className="text-gray-600 mb-6">
+        <div className="bg-surface rounded-xl shadow-panel p-6">
+            <h2 className="text-xl font-bold text-ink mb-2">Data Privacy (GDPR)</h2>
+            <p className="text-ink-muted mb-6">
                 Manage your personal data in accordance with GDPR regulations.
             </p>
 
             <div className="space-y-4">
                 {/* Export Data */}
-                <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div>
-                        <h3 className="font-medium text-gray-900">Export My Data</h3>
-                        <p className="text-sm text-gray-500">
+                        <h3 className="font-medium text-ink">Export My Data</h3>
+                        <p className="text-sm text-ink-faint">
                             Download a copy of all your personal data (Article 15 & 20)
                         </p>
                     </div>
                     <button
                         onClick={handleExport}
                         disabled={exporting}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                        className="flex items-center gap-2 px-4 py-2 bg-gold-600 text-ink rounded-lg hover:bg-gold-700 disabled:opacity-50"
                     >
                         {exporting ? (
                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -115,16 +115,16 @@ export function GDPRSettings() {
                 </div>
 
                 {/* Delete Data */}
-                <div className="flex items-center justify-between p-4 border border-red-200 rounded-lg bg-red-50">
+                <div className="flex items-center justify-between p-4 border border-danger/30 rounded-lg bg-danger-muted">
                     <div>
-                        <h3 className="font-medium text-red-900">Delete My Data</h3>
-                        <p className="text-sm text-red-700">
+                        <h3 className="font-medium text-danger">Delete My Data</h3>
+                        <p className="text-sm text-danger/90">
                             Permanently delete your personal data (Article 17)
                         </p>
                     </div>
                     <button
                         onClick={() => setShowDeleteConfirm(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+                        className="flex items-center gap-2 px-4 py-2 bg-red-600 text-ink rounded-lg hover:bg-red-700"
                     >
                         <Trash2 className="w-4 h-4" />
                         Delete
@@ -134,29 +134,29 @@ export function GDPRSettings() {
 
             {/* Delete Confirmation Modal */}
             {showDeleteConfirm && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-white rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+                <div className="fixed inset-0 bg-surface-sunken/50 flex items-center justify-center z-50">
+                    <div className="bg-surface rounded-xl shadow-panel max-w-md w-full mx-4 p-6">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                                <AlertTriangle className="w-6 h-6 text-red-600" />
+                            <div className="w-12 h-12 bg-danger/20 rounded-full flex items-center justify-center">
+                                <AlertTriangle className="w-6 h-6 text-danger" />
                             </div>
                             <div>
-                                <h3 className="text-lg font-bold text-gray-900">Delete All Data?</h3>
-                                <p className="text-sm text-gray-500">This action cannot be undone</p>
+                                <h3 className="text-lg font-bold text-ink">Delete All Data?</h3>
+                                <p className="text-sm text-ink-faint">This action cannot be undone</p>
                             </div>
                         </div>
 
-                        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                            <p className="text-sm text-yellow-800">
+                        <div className="bg-warning-muted border border-warning/30 rounded-lg p-3 mb-4">
+                            <p className="text-sm text-warning">
                                 <strong>Note:</strong> Due to legal requirements (AML/CFT), data may be retained for up to 5 years after your last activity. Minimal audit records are kept for compliance.
                             </p>
                         </div>
 
                         {deleteError && (
-                            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-                                <p className="text-sm text-red-800">{deleteError}</p>
+                            <div className="bg-danger-muted border border-danger/30 rounded-lg p-3 mb-4">
+                                <p className="text-sm text-danger">{deleteError}</p>
                                 {earliestDeletion && (
-                                    <p className="text-sm text-red-600 mt-1">
+                                    <p className="text-sm text-danger/90 mt-1">
                                         Earliest deletion date: {new Date(earliestDeletion).toLocaleDateString()}
                                     </p>
                                 )}
@@ -169,14 +169,14 @@ export function GDPRSettings() {
                                     setShowDeleteConfirm(false);
                                     setDeleteError(null);
                                 }}
-                                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                                className="flex-1 px-4 py-2 border border-border rounded-lg text-ink-muted hover:bg-surface-raised"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleDelete}
                                 disabled={deleting}
-                                className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="flex-1 px-4 py-2 bg-red-600 text-ink rounded-lg hover:bg-red-700 disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {deleting && <Loader2 className="w-4 h-4 animate-spin" />}
                                 Yes, Delete Everything

@@ -417,7 +417,7 @@ export default function CreateProjectPage() {
                 currentStep > step.id
                   ? 'bg-green-600 border-green-600 text-white'
                   : currentStep === step.id
-                  ? 'bg-blue-600 border-blue-600 text-white'
+                  ? 'bg-gold-600 border-gold-600 text-white'
                   : 'bg-gray-700 border-gray-600 text-gray-400'
               }`}
             >
@@ -460,7 +460,7 @@ export default function CreateProjectPage() {
           value={formData.name}
           onChange={(e) => updateFormData('name', e.target.value)}
           placeholder="Enter your project name"
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 ${
+          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
             errors.name ? 'border-red-500' : 'border-gray-600'
           }`}
         />
@@ -472,7 +472,7 @@ export default function CreateProjectPage() {
         <select
           value={formData.category}
           onChange={(e) => updateFormData('category', e.target.value)}
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-blue-500 ${
+          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-gold-500 ${
             errors.category ? 'border-red-500' : 'border-gray-600'
           }`}
         >
@@ -491,7 +491,7 @@ export default function CreateProjectPage() {
           onChange={(e) => updateFormData('description', e.target.value)}
           placeholder="Describe your project in detail (minimum 50 characters)"
           rows={6}
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none ${
+          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 resize-none ${
             errors.description ? 'border-red-500' : 'border-gray-600'
           }`}
         />
@@ -514,7 +514,7 @@ export default function CreateProjectPage() {
           </div>
           {ratesLoading && (
             <div className="flex items-center text-gray-400 text-sm">
-              <div className="animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full mr-2" />
+              <div className="animate-spin w-4 h-4 border-2 border-gold-500 border-t-transparent rounded-full mr-2" />
               Loading rates...
             </div>
           )}
@@ -523,7 +523,7 @@ export default function CreateProjectPage() {
         <select
           value={formData.localCurrency}
           onChange={(e) => updateFormData('localCurrency', e.target.value)}
-          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
         >
           {SUPPORTED_CURRENCIES.map(currency => (
             <option key={currency.code} value={currency.code}>
@@ -552,7 +552,7 @@ export default function CreateProjectPage() {
               value={formData.fundingGoalLocal}
               onChange={(e) => updateFormData('fundingGoalLocal', e.target.value)}
               placeholder="0"
-              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 ${
+              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
                 errors.fundingGoalLocal ? 'border-red-500' : 'border-gray-600'
               }`}
             />
@@ -580,7 +580,7 @@ export default function CreateProjectPage() {
               value={formData.minInvestmentLocal}
               onChange={(e) => updateFormData('minInvestmentLocal', e.target.value)}
               placeholder="0"
-              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 ${
+              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
                 errors.minInvestmentLocal ? 'border-red-500' : 'border-gray-600'
               }`}
             />
@@ -602,7 +602,7 @@ export default function CreateProjectPage() {
               value={formData.maxInvestmentLocal}
               onChange={(e) => updateFormData('maxInvestmentLocal', e.target.value)}
               placeholder="No limit"
-              className="w-full px-4 py-3 pl-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-3 pl-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500"
             />
           </div>
           {formData.localCurrency !== 'USD' && formData.maxInvestmentLocal && (
@@ -621,7 +621,7 @@ export default function CreateProjectPage() {
               key={token.symbol}
               className={`flex items-center p-3 rounded-lg border cursor-pointer transition-colors ${
                 formData.acceptedTokens.includes(token.symbol)
-                  ? 'bg-blue-600/20 border-blue-500'
+                  ? 'bg-gold-600/20 border-gold-500'
                   : 'bg-gray-700 border-gray-600 hover:border-gray-500'
               }`}
             >
@@ -667,7 +667,7 @@ export default function CreateProjectPage() {
               </div>
               <button
                 onClick={addMilestone}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg transition-colors text-sm"
               >
                 + Add Milestone
               </button>
@@ -689,7 +689,7 @@ export default function CreateProjectPage() {
             <p className="text-gray-400 mb-4">No milestones defined yet</p>
             <button
               onClick={addMilestone}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="px-6 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg transition-colors"
             >
               Add Your First Milestone
             </button>
@@ -699,7 +699,7 @@ export default function CreateProjectPage() {
             {formData.milestones.length > 1 && (
               <button
                 onClick={distributeMilestonesEvenly}
-                className="text-blue-400 hover:text-blue-300 text-sm"
+                className="text-gold-400 hover:text-gold-300 text-sm"
               >
                 Distribute percentages evenly
               </button>
@@ -709,7 +709,7 @@ export default function CreateProjectPage() {
               <div key={milestone.id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-600 text-white font-medium text-sm">
+                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold-600 text-white font-medium text-sm">
                       {index + 1}
                     </span>
                     <input
@@ -717,7 +717,7 @@ export default function CreateProjectPage() {
                       value={milestone.title}
                       onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
                       placeholder="Milestone title"
-                      className="bg-transparent text-white text-lg font-medium focus:outline-none border-b border-transparent hover:border-gray-500 focus:border-blue-500"
+                      className="bg-transparent text-white text-lg font-medium focus:outline-none border-b border-transparent hover:border-gray-500 focus:border-gold-500"
                     />
                   </div>
                   <button
@@ -740,7 +740,7 @@ export default function CreateProjectPage() {
                         onChange={(e) => updateMilestone(milestone.id, 'percentage', Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
                         min="0"
                         max="100"
-                        className="w-full px-4 py-2 pr-8 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                        className="w-full px-4 py-2 pr-8 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
                       />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span>
                     </div>
@@ -759,7 +759,7 @@ export default function CreateProjectPage() {
                       type="date"
                       value={milestone.targetDate}
                       onChange={(e) => updateMilestone(milestone.id, 'targetDate', e.target.value)}
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
                     />
                   </div>
                 </div>
@@ -771,7 +771,7 @@ export default function CreateProjectPage() {
                     onChange={(e) => updateMilestone(milestone.id, 'description', e.target.value)}
                     placeholder="Describe what will be accomplished in this milestone"
                     rows={2}
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none"
+                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 resize-none"
                   />
                 </div>
 
@@ -785,7 +785,7 @@ export default function CreateProjectPage() {
                           value={deliverable}
                           onChange={(e) => updateDeliverable(milestone.id, dIndex, e.target.value)}
                           placeholder={`Deliverable ${dIndex + 1}`}
-                          className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 text-sm"
+                          className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 text-sm"
                         />
                         {milestone.deliverables.length > 1 && (
                           <button
@@ -801,7 +801,7 @@ export default function CreateProjectPage() {
                     ))}
                     <button
                       onClick={() => addDeliverable(milestone.id)}
-                      className="text-blue-400 hover:text-blue-300 text-sm"
+                      className="text-gold-400 hover:text-gold-300 text-sm"
                     >
                       + Add deliverable
                     </button>
@@ -847,7 +847,7 @@ export default function CreateProjectPage() {
             value={formData.startDate}
             onChange={(e) => updateFormData('startDate', e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-blue-500 ${
+            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-gold-500 ${
               errors.startDate ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -860,7 +860,7 @@ export default function CreateProjectPage() {
             value={formData.endDate}
             onChange={(e) => updateFormData('endDate', e.target.value)}
             min={formData.startDate || new Date().toISOString().split('T')[0]}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-blue-500 ${
+            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-gold-500 ${
               errors.endDate ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -870,8 +870,8 @@ export default function CreateProjectPage() {
 
       {/* Document Currency Notice */}
       {formData.localCurrency !== 'USD' && (
-        <div className="bg-blue-900/30 border border-blue-600 rounded-lg p-4">
-          <p className="text-blue-300 text-sm">
+        <div className="bg-gold-900/30 border border-gold-600 rounded-lg p-4">
+          <p className="text-gold-300 text-sm">
             <strong>Note:</strong> Your documents can be in {formData.localCurrency}. We&apos;ll display both local currency and USD equivalents to investors.
           </p>
         </div>
@@ -1009,7 +1009,7 @@ export default function CreateProjectPage() {
             value={formData.tokenName}
             onChange={(e) => updateFormData('tokenName', e.target.value)}
             placeholder="e.g., Project Alpha Token"
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 ${
+            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
               errors.tokenName ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -1023,7 +1023,7 @@ export default function CreateProjectPage() {
             onChange={(e) => updateFormData('tokenSymbol', e.target.value.toUpperCase())}
             placeholder="e.g., ALPHA"
             maxLength={6}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 uppercase ${
+            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 uppercase ${
               errors.tokenSymbol ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -1038,7 +1038,7 @@ export default function CreateProjectPage() {
           value={formData.totalSupply}
           onChange={(e) => updateFormData('totalSupply', e.target.value)}
           placeholder="e.g., 1000000"
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 ${
+          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
             errors.totalSupply ? 'border-red-500' : 'border-gray-600'
           }`}
         />
@@ -1058,7 +1058,7 @@ export default function CreateProjectPage() {
               onChange={(e) => updateFormData('pricePerTokenLocal', e.target.value)}
               placeholder="0.00"
               step="0.01"
-              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 ${
+              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
                 errors.pricePerTokenLocal ? 'border-red-500' : 'border-gray-600'
               }`}
             />
@@ -1127,7 +1127,7 @@ export default function CreateProjectPage() {
         {/* Basic Info */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-sm">1</span>
+            <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">1</span>
             Basic Information
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
@@ -1149,7 +1149,7 @@ export default function CreateProjectPage() {
         {/* Funding */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-sm">2</span>
+            <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">2</span>
             Funding Details
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
@@ -1182,7 +1182,7 @@ export default function CreateProjectPage() {
         {/* Milestones */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-sm">3</span>
+            <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">3</span>
             Milestones ({formData.milestones.length})
           </h4>
           <div className="space-y-2">
@@ -1194,7 +1194,7 @@ export default function CreateProjectPage() {
                     <span className="text-gray-400 ml-2">({new Date(m.targetDate).toLocaleDateString()})</span>
                   )}
                 </div>
-                <span className="text-blue-400 font-medium">{m.percentage}%</span>
+                <span className="text-gold-400 font-medium">{m.percentage}%</span>
               </div>
             ))}
             <div className="flex items-center justify-between pt-2 text-sm font-medium">
@@ -1207,7 +1207,7 @@ export default function CreateProjectPage() {
         {/* Timeline & Documents */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-sm">4</span>
+            <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">4</span>
             Timeline & Documents
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
@@ -1242,7 +1242,7 @@ export default function CreateProjectPage() {
         {/* Token */}
         <div className="bg-gray-800 rounded-lg p-4">
           <h4 className="text-white font-medium mb-3 flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-blue-600 flex items-center justify-center text-sm">5</span>
+            <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">5</span>
             Token Details
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
@@ -1323,7 +1323,7 @@ export default function CreateProjectPage() {
           {currentStep < STEPS.length ? (
             <button
               onClick={handleNext}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-white rounded-lg transition-colors"
             >
               Next
             </button>

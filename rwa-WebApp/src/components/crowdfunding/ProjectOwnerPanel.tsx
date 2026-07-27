@@ -71,11 +71,11 @@ const PROJECT_STATE_LABELS: Record<number, string> = {
 };
 
 const PROJECT_STATE_COLORS: Record<number, string> = {
-  0: 'bg-gray-500/20 text-gray-400',
-  1: 'bg-blue-500/20 text-blue-400',
-  2: 'bg-green-500/20 text-green-400',
-  3: 'bg-purple-500/20 text-purple-400',
-  4: 'bg-red-500/20 text-red-400',
+  0: 'bg-border-strong/20 text-ink-muted',
+  1: 'bg-gold-500/20 text-gold-400',
+  2: 'bg-success/10 text-success',
+  3: 'bg-gold-500/20 text-gold-400',
+  4: 'bg-danger/10 text-danger',
   5: 'bg-emerald-500/20 text-emerald-400',
 };
 
@@ -98,12 +98,12 @@ const MILESTONE_STATE_LABELS: Record<number, string> = {
 };
 
 const MILESTONE_STATE_COLORS: Record<number, string> = {
-  0: 'bg-gray-500/20 text-gray-400',
-  1: 'bg-blue-500/20 text-blue-400',
-  2: 'bg-yellow-500/20 text-yellow-400',
-  3: 'bg-green-500/20 text-green-400',
-  4: 'bg-orange-500/20 text-orange-400',
-  5: 'bg-red-500/20 text-red-400',
+  0: 'bg-border-strong/20 text-ink-muted',
+  1: 'bg-gold-500/20 text-gold-400',
+  2: 'bg-warning/10 text-warning',
+  3: 'bg-success/10 text-success',
+  4: 'bg-warning/10 text-warning',
+  5: 'bg-danger/10 text-danger',
 };
 
 // ============================================================================
@@ -195,37 +195,37 @@ function SubmitProofModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-white">Submit Milestone Proof</h3>
-            <p className="text-sm text-gray-400 mt-1">
+            <h3 className="text-xl font-bold text-ink">Submit Milestone Proof</h3>
+            <p className="text-sm text-ink-muted mt-1">
               Milestone {milestoneIndex + 1}: {milestone.description || 'Untitled'}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-ink-muted" />
           </button>
         </div>
 
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Milestone Info */}
-          <div className="bg-gray-700/50 rounded-xl p-4">
+          <div className="bg-surface-overlay/50 rounded-xl p-4">
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <span className="text-gray-400">Amount to Release:</span>
-                <span className="text-white font-semibold ml-2">{formatUSD(milestone.amount)}</span>
+                <span className="text-ink-muted">Amount to Release:</span>
+                <span className="text-ink font-semibold ml-2">{formatUSD(milestone.amount)}</span>
               </div>
               {milestone.deadline > 0n && (
                 <div>
-                  <span className="text-gray-400">Deadline:</span>
-                  <span className="text-white ml-2">
+                  <span className="text-ink-muted">Deadline:</span>
+                  <span className="text-ink ml-2">
                     {new Date(Number(milestone.deadline) * 1000).toLocaleDateString()}
                   </span>
                 </div>
@@ -235,15 +235,15 @@ function SubmitProofModal({
 
           {/* Error */}
           {error && (
-            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-              <p className="text-red-400 text-sm">{error}</p>
+            <div className="p-4 bg-danger/10 border border-danger/30 rounded-lg flex items-center gap-3">
+              <AlertCircle className="w-5 h-5 text-danger flex-shrink-0" />
+              <p className="text-danger text-sm">{error}</p>
             </div>
           )}
 
           {/* Title */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               Submission Title *
             </label>
             <input
@@ -251,13 +251,13 @@ function SubmitProofModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., Phase 1 Completion - Development Done"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               Description of Completed Work *
             </label>
             <textarea
@@ -265,19 +265,19 @@ function SubmitProofModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe what was accomplished, KPIs met, deliverables completed..."
               rows={4}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 resize-none"
             />
           </div>
 
           {/* Documents */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-ink-muted">
                 Documents (IPFS/URL)
               </label>
               <button
                 onClick={handleAddDocument}
-                className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                className="text-sm text-gold-400 hover:text-gold-300 flex items-center gap-1"
               >
                 <Plus className="w-4 h-4" /> Add Document
               </button>
@@ -286,7 +286,7 @@ function SubmitProofModal({
               {documents.map((doc, index) => (
                 <div key={index} className="flex gap-2">
                   <div className="flex-1 relative">
-                    <Upload className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <Upload className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
                     <input
                       type="text"
                       value={doc}
@@ -296,21 +296,21 @@ function SubmitProofModal({
                         setDocuments(newDocs);
                       }}
                       placeholder="ipfs://... or https://..."
-                      className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-sm"
+                      className="w-full pl-10 pr-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 text-sm"
                     />
                   </div>
                   {documents.length > 1 && (
                     <button
                       onClick={() => handleRemoveDocument(index)}
-                      className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+                      className="p-2 hover:bg-danger/10 rounded-lg transition-colors"
                     >
-                      <Trash2 className="w-4 h-4 text-red-400" />
+                      <Trash2 className="w-4 h-4 text-danger" />
                     </button>
                   )}
                 </div>
               ))}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-ink-faint mt-1">
               Upload reports, invoices, receipts, or other proof documents
             </p>
           </div>
@@ -318,12 +318,12 @@ function SubmitProofModal({
           {/* Links */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-ink-muted">
                 Reference Links
               </label>
               <button
                 onClick={handleAddLink}
-                className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                className="text-sm text-gold-400 hover:text-gold-300 flex items-center gap-1"
               >
                 <Plus className="w-4 h-4" /> Add Link
               </button>
@@ -332,7 +332,7 @@ function SubmitProofModal({
               {links.map((link, index) => (
                 <div key={index} className="flex gap-2">
                   <div className="flex-1 relative">
-                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                    <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
                     <input
                       type="text"
                       value={link}
@@ -342,38 +342,38 @@ function SubmitProofModal({
                         setLinks(newLinks);
                       }}
                       placeholder="https://..."
-                      className="w-full pl-10 pr-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-sm"
+                      className="w-full pl-10 pr-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 text-sm"
                     />
                   </div>
                   {links.length > 1 && (
                     <button
                       onClick={() => handleRemoveLink(index)}
-                      className="p-2 hover:bg-red-500/20 rounded-lg transition-colors"
+                      className="p-2 hover:bg-danger/10 rounded-lg transition-colors"
                     >
-                      <Trash2 className="w-4 h-4 text-red-400" />
+                      <Trash2 className="w-4 h-4 text-danger" />
                     </button>
                   )}
                 </div>
               ))}
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-ink-faint mt-1">
               GitHub repos, demo sites, news articles, or other relevant links
             </p>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-700 flex gap-3">
+        <div className="p-6 border-t border-border flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-colors"
+            className="flex-1 py-3 bg-surface-overlay hover:bg-border-strong text-ink font-medium rounded-xl transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
@@ -408,20 +408,20 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'approved': return 'bg-green-500/20 text-green-400';
-      case 'rejected': return 'bg-red-500/20 text-red-400';
-      default: return 'bg-blue-500/20 text-blue-400';
+      case 'approved': return 'bg-success/10 text-success';
+      case 'rejected': return 'bg-danger/10 text-danger';
+      default: return 'bg-gold-500/20 text-gold-400';
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
+      <div className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-white">{proof.title}</h3>
-            <p className="text-sm text-gray-400 mt-1">
+            <h3 className="text-xl font-bold text-ink">{proof.title}</h3>
+            <p className="text-sm text-ink-muted mt-1">
               Submitted {new Date(proof.submittedAt).toLocaleDateString()}
             </p>
           </div>
@@ -431,9 +431,9 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
             </span>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-gray-400" />
+              <X className="w-5 h-5 text-ink-muted" />
             </button>
           </div>
         </div>
@@ -441,29 +441,29 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
         {/* Content */}
         <div className="p-6 space-y-6">
           {/* Milestone Info */}
-          <div className="bg-gray-700/50 rounded-xl p-4">
-            <p className="text-sm text-gray-400 mb-1">Milestone Amount</p>
-            <p className="text-xl font-bold text-white">{formatUSD(milestone.amount)}</p>
+          <div className="bg-surface-overlay/50 rounded-xl p-4">
+            <p className="text-sm text-ink-muted mb-1">Milestone Amount</p>
+            <p className="text-xl font-bold text-ink">{formatUSD(milestone.amount)}</p>
           </div>
 
           {/* Admin Notes (if rejected) */}
           {proof.status === 'rejected' && proof.adminNotes && (
-            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-sm font-medium text-red-400 mb-1">Rejection Reason:</p>
-              <p className="text-red-300">{proof.adminNotes}</p>
+            <div className="p-4 bg-danger/10 border border-danger/30 rounded-lg">
+              <p className="text-sm font-medium text-danger mb-1">Rejection Reason:</p>
+              <p className="text-danger/80">{proof.adminNotes}</p>
             </div>
           )}
 
           {/* Description */}
           <div>
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Description</h4>
-            <p className="text-gray-400 whitespace-pre-wrap">{proof.description}</p>
+            <h4 className="text-sm font-medium text-ink-muted mb-2">Description</h4>
+            <p className="text-ink-muted whitespace-pre-wrap">{proof.description}</p>
           </div>
 
           {/* Documents */}
           {proof.documents.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium text-gray-300 mb-2">Documents</h4>
+              <h4 className="text-sm font-medium text-ink-muted mb-2">Documents</h4>
               <div className="space-y-2">
                 {proof.documents.map((doc, index) => (
                   <a
@@ -471,11 +471,11 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
                     href={doc.startsWith('ipfs://') ? `https://gateway.pinata.cloud/ipfs/${doc.replace('ipfs://', '')}` : doc}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors"
+                    className="flex items-center gap-2 p-3 bg-surface-overlay/50 rounded-lg hover:bg-surface-overlay transition-colors"
                   >
-                    <FileText className="w-4 h-4 text-blue-400" />
-                    <span className="text-blue-400 text-sm truncate flex-1">{doc}</span>
-                    <ExternalLink className="w-4 h-4 text-gray-500" />
+                    <FileText className="w-4 h-4 text-gold-400" />
+                    <span className="text-gold-400 text-sm truncate flex-1">{doc}</span>
+                    <ExternalLink className="w-4 h-4 text-ink-faint" />
                   </a>
                 ))}
               </div>
@@ -485,7 +485,7 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
           {/* Links */}
           {proof.links.length > 0 && (
             <div>
-              <h4 className="text-sm font-medium text-gray-300 mb-2">Reference Links</h4>
+              <h4 className="text-sm font-medium text-ink-muted mb-2">Reference Links</h4>
               <div className="space-y-2">
                 {proof.links.map((link, index) => (
                   <a
@@ -493,11 +493,11 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition-colors"
+                    className="flex items-center gap-2 p-3 bg-surface-overlay/50 rounded-lg hover:bg-surface-overlay transition-colors"
                   >
-                    <LinkIcon className="w-4 h-4 text-purple-400" />
-                    <span className="text-purple-400 text-sm truncate flex-1">{link}</span>
-                    <ExternalLink className="w-4 h-4 text-gray-500" />
+                    <LinkIcon className="w-4 h-4 text-gold-400" />
+                    <span className="text-gold-400 text-sm truncate flex-1">{link}</span>
+                    <ExternalLink className="w-4 h-4 text-ink-faint" />
                   </a>
                 ))}
               </div>
@@ -506,10 +506,10 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-gray-700">
+        <div className="p-6 border-t border-border">
           <button
             onClick={onClose}
-            className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-colors"
+            className="w-full py-3 bg-surface-overlay hover:bg-border-strong text-ink font-medium rounded-xl transition-colors"
           >
             Close
           </button>
@@ -686,17 +686,17 @@ export default function ProjectOwnerPanel({
   // ============================================================================
 
   return (
-    <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden">
+    <div className="bg-surface rounded-2xl border border-border overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-gray-700">
+      <div className="p-6 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <FileText className="w-5 h-5 text-purple-400" />
+            <div className="p-2 bg-gold-500/20 rounded-lg">
+              <FileText className="w-5 h-5 text-gold-400" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-white">Project Owner Dashboard</h2>
-              <p className="text-sm text-gray-400">Manage your crowdfunding project</p>
+              <h2 className="text-xl font-bold text-ink">Project Owner Dashboard</h2>
+              <p className="text-sm text-ink-muted">Manage your crowdfunding project</p>
             </div>
           </div>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${PROJECT_STATE_COLORS[projectState]}`}>
@@ -707,70 +707,70 @@ export default function ProjectOwnerPanel({
 
       {/* Alerts */}
       {error && (
-        <div className="mx-6 mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3">
-          <XCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-          <p className="text-red-400">{error}</p>
+        <div className="mx-6 mt-4 p-4 bg-danger/10 border border-danger/30 rounded-lg flex items-center gap-3">
+          <XCircle className="w-5 h-5 text-danger flex-shrink-0" />
+          <p className="text-danger">{error}</p>
           <button onClick={() => setError(null)} className="ml-auto">
-            <X className="w-4 h-4 text-red-400" />
+            <X className="w-4 h-4 text-danger" />
           </button>
         </div>
       )}
 
       {success && (
-        <div className="mx-6 mt-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg flex items-center gap-3">
-          <CheckCircle className="w-5 h-5 text-green-400 flex-shrink-0" />
-          <p className="text-green-400">{success}</p>
+        <div className="mx-6 mt-4 p-4 bg-success/10 border border-success/30 rounded-lg flex items-center gap-3">
+          <CheckCircle className="w-5 h-5 text-success flex-shrink-0" />
+          <p className="text-success">{success}</p>
           <button onClick={() => setSuccess(null)} className="ml-auto">
-            <X className="w-4 h-4 text-green-400" />
+            <X className="w-4 h-4 text-success" />
           </button>
         </div>
       )}
 
       {/* Stats */}
       <div className="p-6 grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-gray-700/50 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+        <div className="bg-surface-overlay/50 rounded-xl p-4">
+          <div className="flex items-center gap-2 text-ink-muted text-sm mb-1">
             <Target className="w-4 h-4" />
             Funding Goal
           </div>
-          <p className="text-xl font-bold text-white">{formatUSD(fundingGoal)}</p>
+          <p className="text-xl font-bold text-ink">{formatUSD(fundingGoal)}</p>
         </div>
 
-        <div className="bg-gray-700/50 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+        <div className="bg-surface-overlay/50 rounded-xl p-4">
+          <div className="flex items-center gap-2 text-ink-muted text-sm mb-1">
             <DollarSign className="w-4 h-4" />
             Total Raised
           </div>
-          <p className="text-xl font-bold text-green-400">{formatUSD(totalRaised)}</p>
-          <p className="text-xs text-gray-500 mt-1">{progressPercent.toFixed(1)}% of goal</p>
+          <p className="text-xl font-bold text-success">{formatUSD(totalRaised)}</p>
+          <p className="text-xs text-ink-faint mt-1">{progressPercent.toFixed(1)}% of goal</p>
         </div>
 
-        <div className="bg-gray-700/50 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+        <div className="bg-surface-overlay/50 rounded-xl p-4">
+          <div className="flex items-center gap-2 text-ink-muted text-sm mb-1">
             <TrendingUp className="w-4 h-4" />
             Released to You
           </div>
-          <p className="text-xl font-bold text-purple-400">{formatUSD(releasedFunds)}</p>
-          <p className="text-xs text-gray-500 mt-1">Via milestones</p>
+          <p className="text-xl font-bold text-gold-400">{formatUSD(releasedFunds)}</p>
+          <p className="text-xs text-ink-faint mt-1">Via milestones</p>
         </div>
 
-        <div className="bg-gray-700/50 rounded-xl p-4">
-          <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+        <div className="bg-surface-overlay/50 rounded-xl p-4">
+          <div className="flex items-center gap-2 text-ink-muted text-sm mb-1">
             <Clock className="w-4 h-4" />
             Pending Release
           </div>
-          <p className="text-xl font-bold text-yellow-400">{formatUSD(totalRaised - releasedFunds)}</p>
-          <p className="text-xs text-gray-500 mt-1">Locked in escrow</p>
+          <p className="text-xl font-bold text-warning">{formatUSD(totalRaised - releasedFunds)}</p>
+          <p className="text-xs text-ink-faint mt-1">Locked in escrow</p>
         </div>
       </div>
 
       {/* Info Banner */}
-      <div className="mx-6 mb-4 p-4 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+      <div className="mx-6 mb-4 p-4 bg-gold-500/10 border border-gold-500/30 rounded-lg">
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-blue-300">
+          <Info className="w-5 h-5 text-gold-400 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-gold-300">
             <p className="font-medium mb-1">How to release funds:</p>
-            <ol className="list-decimal list-inside text-blue-400/80 space-y-1">
+            <ol className="list-decimal list-inside text-gold-400/80 space-y-1">
               <li>Complete the work for a milestone</li>
               <li>Click "Submit Proof" and provide documents/links as evidence</li>
               <li>Platform admin reviews your submission</li>
@@ -786,7 +786,7 @@ export default function ProjectOwnerPanel({
           <button
             onClick={handleActivateProject}
             disabled={isLoading}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <><Loader2 className="w-5 h-5 animate-spin" /> Activating...</>
@@ -798,17 +798,17 @@ export default function ProjectOwnerPanel({
       )}
 
       {/* Milestones */}
-      <div className="p-6 border-t border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Clock className="w-5 h-5 text-blue-400" />
+      <div className="p-6 border-t border-border">
+        <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+          <Clock className="w-5 h-5 text-gold-400" />
           Milestones
-          <span className="text-sm font-normal text-gray-400">
+          <span className="text-sm font-normal text-ink-muted">
             ({milestones.filter(m => m.state === MILESTONE_STATE.RELEASED).length}/{milestones.length} released)
           </span>
         </h3>
 
         {milestones.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-ink-faint">
             <Clock className="w-10 h-10 mx-auto mb-2 opacity-50" />
             <p>No milestones configured</p>
           </div>
@@ -823,36 +823,36 @@ export default function ProjectOwnerPanel({
                   key={index}
                   className={`p-4 rounded-xl border transition-colors ${
                     milestone.state === MILESTONE_STATE.RELEASED
-                      ? 'bg-green-500/10 border-green-500/30'
+                      ? 'bg-success/10 border-success/30'
                       : milestone.state === MILESTONE_STATE.APPROVED
-                      ? 'bg-yellow-500/10 border-yellow-500/30'
+                      ? 'bg-warning/10 border-warning/30'
                       : proof?.status === 'pending'
-                      ? 'bg-blue-500/10 border-blue-500/30'
+                      ? 'bg-gold-500/10 border-gold-500/30'
                       : proof?.status === 'rejected'
-                      ? 'bg-red-500/10 border-red-500/30'
-                      : 'bg-gray-700/50 border-gray-600'
+                      ? 'bg-danger/10 border-danger/30'
+                      : 'bg-surface-overlay/50 border-border-strong'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex items-start gap-3 flex-1">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${
                         milestone.state === MILESTONE_STATE.RELEASED
-                          ? 'bg-green-600 text-white'
+                          ? 'bg-success text-ink'
                           : milestone.state === MILESTONE_STATE.APPROVED
-                          ? 'bg-yellow-600 text-white'
-                          : 'bg-gray-600 text-gray-300'
+                          ? 'bg-warning text-ink'
+                          : 'bg-border-strong text-ink-muted'
                       }`}>
                         {milestone.state === MILESTONE_STATE.RELEASED ? '✓' : index + 1}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-white font-medium">
+                        <p className="text-ink font-medium">
                           {milestone.description || `Milestone ${index + 1}`}
                         </p>
-                        <p className="text-sm text-gray-400 mt-1">
+                        <p className="text-sm text-ink-muted mt-1">
                           Amount: {formatUSD(milestone.amount)}
                         </p>
                         {milestone.deadline > 0n && (
-                          <p className="text-xs text-gray-500 mt-1">
+                          <p className="text-xs text-ink-faint mt-1">
                             Deadline: {new Date(Number(milestone.deadline) * 1000).toLocaleDateString()}
                           </p>
                         )}
@@ -861,15 +861,15 @@ export default function ProjectOwnerPanel({
                         {proof && (
                           <div className="mt-2 flex items-center gap-2">
                             <span className={`text-xs px-2 py-0.5 rounded-full ${
-                              proof.status === 'approved' ? 'bg-green-500/20 text-green-400' :
-                              proof.status === 'rejected' ? 'bg-red-500/20 text-red-400' :
-                              'bg-blue-500/20 text-blue-400'
+                              proof.status === 'approved' ? 'bg-success/10 text-success' :
+                              proof.status === 'rejected' ? 'bg-danger/10 text-danger' :
+                              'bg-gold-500/20 text-gold-400'
                             }`}>
                               Proof: {proof.status}
                             </span>
                             <button
                               onClick={() => setViewProofModal({ proof, milestone })}
-                              className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                              className="text-xs text-gold-400 hover:text-gold-300 flex items-center gap-1"
                             >
                               <Eye className="w-3 h-3" /> View
                             </button>
@@ -887,7 +887,7 @@ export default function ProjectOwnerPanel({
                       {canSubmit && (
                         <button
                           onClick={() => setSubmitProofModal({ milestone, index })}
-                          className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
+                          className="px-3 py-1.5 bg-gold-600 hover:bg-gold-700 text-ink text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
                         >
                           <Upload className="w-3 h-3" />
                           {proof?.status === 'rejected' ? 'Resubmit' : 'Submit Proof'}
@@ -896,7 +896,7 @@ export default function ProjectOwnerPanel({
 
                       {/* Released info */}
                       {milestone.state === MILESTONE_STATE.RELEASED && milestone.releasedAt > 0n && (
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-ink-faint">
                           {new Date(Number(milestone.releasedAt) * 1000).toLocaleDateString()}
                         </span>
                       )}
@@ -910,14 +910,14 @@ export default function ProjectOwnerPanel({
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-4 border-t border-gray-700 bg-gray-900/50">
+      <div className="px-6 py-4 border-t border-border bg-surface/50">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-gray-500">Escrow Contract</span>
+          <span className="text-ink-faint">Escrow Contract</span>
           <a
             href={`${explorerUrl}/address/${escrowAddress}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
+            className="text-gold-400 hover:text-gold-300 flex items-center gap-1"
           >
             {escrowAddress.slice(0, 6)}...{escrowAddress.slice(-4)}
             <ExternalLink className="w-3 h-3" />

@@ -167,10 +167,10 @@ export default function TokenizePage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="bg-gray-800 border border-gray-700 rounded-2xl p-8 max-w-md w-full text-center">
-          <h2 className="text-2xl font-bold text-white mb-4">Connect Your Wallet</h2>
-          <p className="text-gray-400 mb-6">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-4">
+        <div className="bg-surface-raised border border-border rounded-2xl p-8 max-w-md w-full text-center">
+          <h2 className="text-2xl font-bold text-ink mb-4">Connect Your Wallet</h2>
+          <p className="text-ink-muted mb-6">
             Please connect your wallet to submit a tokenization application.
           </p>
         </div>
@@ -179,18 +179,18 @@ export default function TokenizePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-surface-sunken py-8 px-4">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Tokenize Your Asset</h1>
-          <p className="text-gray-400">
+          <h1 className="text-3xl font-bold text-ink mb-2">Tokenize Your Asset</h1>
+          <p className="text-ink-muted">
             Complete the form below to submit your asset for tokenization
           </p>
         </div>
 
         <ProgressSteps currentStep={currentStep} onStepClick={goToStep} />
 
-        <div className="bg-gray-800/50 border border-gray-700 rounded-2xl p-6 md:p-8">
+        <div className="bg-surface/50 border border-border rounded-2xl p-6 md:p-8">
           {/* Step 1: Asset Info */}
           {currentStep === 1 && (
             <Step1AssetInfo
@@ -249,12 +249,12 @@ export default function TokenizePage() {
 
           {submitError && (
             <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-              <p className="text-red-400">{submitError}</p>
+              <p className="text-danger">{submitError}</p>
             </div>
           )}
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between mt-8 pt-6 border-t border-gray-700">
+          <div className="flex justify-between mt-8 pt-6 border-t border-border">
             <button
               type="button"
               onClick={prevStep}
@@ -262,8 +262,8 @@ export default function TokenizePage() {
               className={`
                 flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors
                 ${currentStep === 1
-                  ? 'bg-gray-700 text-gray-500 cursor-not-allowed'
-                  : 'bg-gray-700 text-white hover:bg-gray-600'
+                  ? 'bg-surface-overlay text-ink-faint cursor-not-allowed'
+                  : 'bg-surface-overlay text-ink hover:bg-gray-600'
                 }
               `}
             >
@@ -275,7 +275,7 @@ export default function TokenizePage() {
               <button
                 type="button"
                 onClick={nextStep}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-xl transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-gold-500 hover:bg-gold-600 text-ink font-medium rounded-xl transition-colors"
               >
                 Continue
                 <ChevronRight className="w-5 h-5" />
@@ -287,8 +287,8 @@ export default function TokenizePage() {
                 disabled={isSubmitting || !paymentInfo}
                 className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-colors ${
                   paymentInfo
-                    ? 'bg-green-500 hover:bg-green-600 text-white'
-                    : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                    ? 'bg-green-500 hover:bg-green-600 text-ink'
+                    : 'bg-surface-overlay text-ink-faint cursor-not-allowed'
                 }`}
               >
                 {isSubmitting ? (

@@ -17,9 +17,9 @@ export default function ContractRow({ label, address, type, explorerUrl }: Contr
   const isValid = address && address !== ZERO_ADDRESS;
 
   const typeColors = {
-    core: 'bg-blue-500/20 text-blue-400',
+    core: 'bg-gold-500/20 text-gold-400',
     registry: 'bg-green-500/20 text-green-400',
-    implementation: 'bg-purple-500/20 text-purple-400',
+    implementation: 'bg-gold-500/20 text-gold-400',
     module: 'bg-orange-500/20 text-orange-400',
     token: 'bg-cyan-500/20 text-cyan-400',
   };
@@ -40,12 +40,12 @@ export default function ContractRow({ label, address, type, explorerUrl }: Contr
   };
 
   return (
-    <div className="flex items-center justify-between p-3 bg-gray-700/30 rounded-lg hover:bg-gray-700/50 transition-colors">
+    <div className="flex items-center justify-between p-3 bg-surface-overlay/30 rounded-lg hover:bg-surface-overlay/50 transition-colors">
       <div className="flex items-center gap-3">
         <span className={`px-2 py-1 rounded text-xs font-medium ${typeColors[type]}`}>
           {type.toUpperCase()}
         </span>
-        <span className="text-gray-300">{label}</span>
+        <span className="text-ink-muted">{label}</span>
       </div>
       
       <div className="flex items-center gap-2">
@@ -55,7 +55,7 @@ export default function ContractRow({ label, address, type, explorerUrl }: Contr
               href={`${explorerUrl}/address/${address}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-400 font-mono text-sm hover:underline"
+              className="text-gold-400 font-mono text-sm hover:underline"
             >
               {truncateAddress(address)}
             </a>
@@ -65,18 +65,18 @@ export default function ContractRow({ label, address, type, explorerUrl }: Contr
               title={copied ? 'Copied!' : 'Copy address'}
             >
               {copied ? (
-                <svg className="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               ) : (
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-ink-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
               )}
             </button>
           </>
         ) : (
-          <span className="text-gray-500 text-sm italic">Not deployed</span>
+          <span className="text-ink-faint text-sm italic">Not deployed</span>
         )}
       </div>
     </div>

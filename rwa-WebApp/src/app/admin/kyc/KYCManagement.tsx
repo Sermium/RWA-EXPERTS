@@ -470,11 +470,11 @@ function StatCard({
   color?: string;
 }) {
   const colorClasses: Record<string, string> = {
-    blue: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    blue: "bg-gold-500/10 text-gold-500 border-gold-500/20",
     green: "bg-green-500/10 text-green-500 border-green-500/20",
     yellow: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
     red: "bg-red-500/10 text-red-500 border-red-500/20",
-    purple: "bg-purple-500/10 text-purple-500 border-purple-500/20",
+    purple: "bg-gold-500/10 text-gold-500 border-gold-500/20",
     amber: "bg-amber-500/10 text-amber-500 border-amber-500/20",
     cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
   };
@@ -931,7 +931,7 @@ function DetailsModal({
               e.stopPropagation();
               window.open(docData.url, '_blank');
             }}
-            className="text-xs text-blue-400 hover:text-blue-300 mt-1"
+            className="text-xs text-gold-400 hover:text-gold-300 mt-1"
           >
             Open Full Size ↗️
           </button>
@@ -981,7 +981,7 @@ function DetailsModal({
           {/* Open in new tab button */}
           <button
             onClick={() => window.open(lightboxImage, '_blank')}
-            className="absolute bottom-4 right-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="absolute bottom-4 right-4 bg-gold-600 hover:bg-gold-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
             Download / Open ↗️
           </button>
@@ -1122,7 +1122,7 @@ function DetailsModal({
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm text-gray-400">Documents</h3>
                 {loadingDocs && (
-                  <span className="text-xs text-blue-400 animate-pulse">Loading thumbnails...</span>
+                  <span className="text-xs text-gold-400 animate-pulse">Loading thumbnails...</span>
                 )}
               </div>
               <div className="grid grid-cols-3 gap-3">
@@ -1252,13 +1252,13 @@ function SettingsPanel({
                 type="text"
                 value={newFee}
                 onChange={(e) => setNewFee(e.target.value)}
-                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
                 placeholder="0.05"
               />
               <button
                 onClick={() => onUpdateFee(newFee)}
                 disabled={isProcessing}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition-colors disabled:opacity-50"
               >
                 Update
               </button>
@@ -1272,13 +1272,13 @@ function SettingsPanel({
                 type="text"
                 value={newRecipient}
                 onChange={(e) => setNewRecipient(e.target.value)}
-                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-blue-500"
+                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-gold-500"
                 placeholder="0x..."
               />
               <button
                 onClick={() => onUpdateRecipient(newRecipient)}
                 disabled={isProcessing || !isAddress(newRecipient)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition-colors disabled:opacity-50"
               >
                 Update
               </button>
@@ -1339,7 +1339,7 @@ function SettingsPanel({
               }}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-600"></div>
           </label>
         </div>
 
@@ -1355,7 +1355,7 @@ function SettingsPanel({
                 setAutoApprovalMaxLevel(level);
                 onUpdateAutoApproval(autoApprovalEnabled, level);
               }}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
             >
               <option value="1">🥉 Bronze - auto-approve basic tier only</option>
               <option value="2">🥈 Silver - auto-approve up to Silver</option>
@@ -1396,7 +1396,7 @@ function SettingsPanel({
             type="text"
             value={newCountryCode}
             onChange={(e) => setNewCountryCode(e.target.value)}
-            className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-blue-500"
+            className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
             placeholder="Enter ISO 3166-1 numeric country code"
           />
           <button
@@ -1760,7 +1760,7 @@ export function KYCManagement() {
             onClick={() => setActiveTab("applications")}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "applications"
-                ? "bg-blue-600 text-white"
+                ? "bg-gold-600 text-white"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
@@ -1770,7 +1770,7 @@ export function KYCManagement() {
             onClick={() => setActiveTab("settings")}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "settings"
-                ? "bg-blue-600 text-white"
+                ? "bg-gold-600 text-white"
                 : "bg-gray-800 text-gray-400 hover:bg-gray-700"
             }`}
           >
@@ -1786,7 +1786,7 @@ export function KYCManagement() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-gold-500"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -1800,7 +1800,7 @@ export function KYCManagement() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name, email, or wallet..."
-                className="flex-1 min-w-[200px] px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                className="flex-1 min-w-[200px] px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
               />
             </div>
 

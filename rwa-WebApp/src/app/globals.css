@@ -3,31 +3,60 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --background: #0B0C0F;
+  --foreground: #F5F3EE;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+* {
+  border-color: theme('colors.border.DEFAULT');
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+/* Visible keyboard focus everywhere - never suppressed */
+:focus-visible {
+  outline: 2px solid theme('colors.gold.DEFAULT');
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background-color: rgba(212, 175, 55, 0.25);
+  color: theme('colors.ink.DEFAULT');
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  .text-gradient-gold {
+    background-image: linear-gradient(90deg, #BF953F 0%, #F0D77B 45%, #B38728 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .bg-grain {
+    background-image: radial-gradient(circle at 1px 1px, rgba(245, 243, 238, 0.04) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

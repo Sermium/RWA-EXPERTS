@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { X, AlertTriangle } from 'lucide-react';
 import { DepositAddress } from '../../types';
 import { copyToClipboard } from '../../utils';
 
@@ -81,14 +82,15 @@ export function DepositModal({
       <div className="bg-gray-900 rounded-xl p-6 max-w-md w-full">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold">Deposit Funds</h3>
-          <button onClick={onClose} className="text-gray-400 hover:text-white">✕</button>
+          <button onClick={onClose} className="text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
         </div>
 
         {/* Testnet Warning */}
         {isTestnet && (
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-4">
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-4 flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-yellow-400">
-              ⚠️ You&apos;re on a testnet. MEXC deposits are only available on mainnet networks.
+              You&apos;re on a testnet. MEXC deposits are only available on mainnet networks.
             </p>
           </div>
         )}
@@ -100,7 +102,7 @@ export function DepositModal({
             <button
               onClick={() => setDepositToken('native')}
               className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
-                depositToken === 'native' ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-400'
+                depositToken === 'native' ? 'bg-gold-500 text-white' : 'bg-gray-800 text-gray-400'
               }`}
             >
               {nativeCurrency || 'NATIVE'}
@@ -109,7 +111,7 @@ export function DepositModal({
               <button
                 onClick={() => setDepositToken('USDT')}
                 className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
-                  depositToken === 'USDT' ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-400'
+                  depositToken === 'USDT' ? 'bg-gold-500 text-white' : 'bg-gray-800 text-gray-400'
                 }`}
               >
                 USDT
@@ -119,7 +121,7 @@ export function DepositModal({
               <button
                 onClick={() => setDepositToken('USDC')}
                 className={`flex-1 py-2 rounded-lg font-medium transition-colors ${
-                  depositToken === 'USDC' ? 'bg-blue-500 text-white' : 'bg-gray-800 text-gray-400'
+                  depositToken === 'USDC' ? 'bg-gold-500 text-white' : 'bg-gray-800 text-gray-400'
                 }`}
               >
                 USDC
@@ -136,13 +138,13 @@ export function DepositModal({
 
           {isLoading ? (
             <div className="bg-gray-800 rounded-lg p-4 flex items-center justify-center">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-500 mr-2"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-gold-500 mr-2"></div>
               <span className="text-gray-400">Loading address...</span>
             </div>
           ) : error ? (
             <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4">
               <p className="text-sm text-red-400">{error}</p>
-              <button onClick={fetchDepositAddress} className="mt-2 text-sm text-blue-400 hover:text-blue-300">
+              <button onClick={fetchDepositAddress} className="mt-2 text-sm text-gold-400 hover:text-gold-300">
                 Try again
               </button>
             </div>
@@ -152,7 +154,7 @@ export function DepositModal({
                 <code className="text-sm text-green-400 break-all flex-1">{depositAddress.address}</code>
                 <button
                   onClick={() => copyToClipboard(depositAddress.address)}
-                  className="text-blue-400 hover:text-blue-300 text-sm whitespace-nowrap"
+                  className="text-gold-400 hover:text-gold-300 text-sm whitespace-nowrap"
                 >
                   Copy
                 </button>
@@ -160,12 +162,14 @@ export function DepositModal({
 
               {(depositAddress.memo || depositAddress.tag) && (
                 <div className="mt-3 pt-3 border-t border-gray-700">
-                  <div className="text-sm text-yellow-400 mb-1">⚠️ Memo/Tag Required:</div>
+                  <div className="text-sm text-yellow-400 mb-1 flex items-center gap-1.5">
+                    <AlertTriangle className="w-3.5 h-3.5" /> Memo/Tag Required:
+                  </div>
                   <div className="flex items-center justify-between">
                     <code className="text-sm text-yellow-300">{depositAddress.memo || depositAddress.tag}</code>
                     <button
                       onClick={() => copyToClipboard(depositAddress.memo || depositAddress.tag || '')}
-                      className="ml-2 text-blue-400 hover:text-blue-300 text-sm"
+                      className="ml-2 text-gold-400 hover:text-gold-300 text-sm"
                     >
                       Copy
                     </button>
@@ -183,9 +187,10 @@ export function DepositModal({
         </div>
 
         {/* Warning */}
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-4">
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-4 flex items-start gap-2">
+          <AlertTriangle className="w-4 h-4 text-yellow-400 flex-shrink-0 mt-0.5" />
           <p className="text-sm text-yellow-400">
-            ⚠️ Only send <strong>{getDepositCoin()}</strong> on the <strong>{chainName}</strong> network.
+            Only send <strong>{getDepositCoin()}</strong> on the <strong>{chainName}</strong> network.
             Sending other tokens or using the wrong network may result in permanent loss.
           </p>
         </div>

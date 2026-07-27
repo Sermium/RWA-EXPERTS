@@ -795,7 +795,7 @@ export default function TokenCreatePage() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-purple-500 mx-auto mb-4" />
+          <Loader2 className="h-12 w-12 animate-spin text-gold-500 mx-auto mb-4" />
           <p className="text-gray-400">Loading application...</p>
         </div>
       </div>
@@ -807,7 +807,7 @@ export default function TokenCreatePage() {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="bg-gray-800 rounded-2xl p-8 max-w-md text-center">
-          <Wallet className="h-16 w-16 text-purple-500 mx-auto mb-4" />
+          <Wallet className="h-16 w-16 text-gold-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Connect Wallet</h2>
           <p className="text-gray-400 mb-6">Please connect your wallet to create tokens.</p>
         </div>
@@ -829,7 +829,7 @@ export default function TokenCreatePage() {
                 key={chainInfo.chain.id}
                 onClick={() => handleSwitchNetwork(chainInfo.chain.id)}
                 disabled={isSwitching}
-                className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
               >
                 {isSwitching && <Loader2 className="h-4 w-4 animate-spin" />}
                 Switch to {chainInfo.name}
@@ -855,7 +855,7 @@ export default function TokenCreatePage() {
           <button
             onClick={() => handleSwitchNetwork(chainId)}
             disabled={isSwitching}
-            className="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isSwitching && <Loader2 className="h-4 w-4 animate-spin" />}
             Switch to {chainName}
@@ -873,7 +873,7 @@ export default function TokenCreatePage() {
           <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-white mb-2">Error</h2>
           <p className="text-gray-400 mb-6">{error}</p>
-          <Link href={backUrl} className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300">
+          <Link href={backUrl} className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300">
             <ArrowLeft className="h-4 w-4" /> {backLabel}
           </Link>
         </div>
@@ -912,7 +912,7 @@ export default function TokenCreatePage() {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400">NFT Contract</span>
                     <a href={getAddressUrl(deployedContracts.nftContract)} target="_blank" rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 flex items-center gap-1 font-mono text-sm">
+                      className="text-gold-400 hover:text-gold-300 flex items-center gap-1 font-mono text-sm">
                       {deployedContracts.nftContract.slice(0, 8)}...{deployedContracts.nftContract.slice(-6)}
                       <ExternalLink className="h-3 w-3" />
                     </a>
@@ -923,7 +923,7 @@ export default function TokenCreatePage() {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400">Token Contract</span>
                     <a href={getAddressUrl(deployedContracts.tokenContract)} target="_blank" rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 flex items-center gap-1 font-mono text-sm">
+                      className="text-gold-400 hover:text-gold-300 flex items-center gap-1 font-mono text-sm">
                       {deployedContracts.tokenContract.slice(0, 8)}...{deployedContracts.tokenContract.slice(-6)}
                       <ExternalLink className="h-3 w-3" />
                     </a>
@@ -934,7 +934,7 @@ export default function TokenCreatePage() {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400">Escrow Contract</span>
                     <a href={getAddressUrl(deployedContracts.escrowContract)} target="_blank" rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 flex items-center gap-1 font-mono text-sm">
+                      className="text-gold-400 hover:text-gold-300 flex items-center gap-1 font-mono text-sm">
                       {deployedContracts.escrowContract.slice(0, 8)}...{deployedContracts.escrowContract.slice(-6)}
                       <ExternalLink className="h-3 w-3" />
                     </a>
@@ -947,7 +947,7 @@ export default function TokenCreatePage() {
                   <div className="flex items-center justify-between">
                     <span className="text-gray-400">Transaction</span>
                     <a href={getTxUrl(txHash)} target="_blank" rel="noopener noreferrer"
-                      className="text-purple-400 hover:text-purple-300 flex items-center gap-1 font-mono text-sm">
+                      className="text-gold-400 hover:text-gold-300 flex items-center gap-1 font-mono text-sm">
                       {txHash.slice(0, 10)}...{txHash.slice(-8)}
                       <ExternalLink className="h-3 w-3" />
                     </a>
@@ -957,7 +957,7 @@ export default function TokenCreatePage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href={backUrl} className="flex-1 py-3 px-6 bg-purple-600 hover:bg-purple-700 rounded-lg text-white font-medium transition-colors text-center">
+              <Link href={backUrl} className="flex-1 py-3 px-6 bg-gold-600 hover:bg-gold-700 rounded-lg text-white font-medium transition-colors text-center">
                 Back to Dashboard
               </Link>
               {deployedContracts?.tokenContract && deployedContracts.tokenContract !== zeroAddress && (
@@ -1013,7 +1013,7 @@ export default function TokenCreatePage() {
                   onClick={() => setCurrentStep(step.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                     currentStep === step.id
-                      ? 'bg-purple-600 text-white'
+                      ? 'bg-gold-600 text-white'
                       : currentStep > step.id
                       ? 'bg-green-600/20 text-green-400'
                       : 'bg-gray-800 text-gray-400'
@@ -1054,7 +1054,7 @@ export default function TokenCreatePage() {
                     value={formData.tokenName}
                     onChange={(e) => handleInputChange('tokenName', e.target.value)}
                     placeholder="e.g., Real Estate Token"
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
                   />
                 </div>
                 
@@ -1066,7 +1066,7 @@ export default function TokenCreatePage() {
                     onChange={(e) => handleInputChange('tokenSymbol', e.target.value.toUpperCase())}
                     placeholder="e.g., RET"
                     maxLength={8}
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
                   />
                 </div>
                 
@@ -1080,7 +1080,7 @@ export default function TokenCreatePage() {
                       handleInputChange('totalSupply', rawValue);
                     }}
                     placeholder="1,000,000"
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
                   />
                 </div>
                 
@@ -1094,7 +1094,7 @@ export default function TokenCreatePage() {
                       handleInputChange('pricePerToken', rawValue);
                     }}
                     placeholder="1.00"
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
                   />
                 </div>
               </div>
@@ -1106,7 +1106,7 @@ export default function TokenCreatePage() {
                   onChange={(e) => handleInputChange('description', e.target.value)}
                   placeholder="Describe your tokenized asset..."
                   rows={4}
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 resize-none"
                 />
               </div>
 
@@ -1114,10 +1114,10 @@ export default function TokenCreatePage() {
                 <h3 className="text-sm font-medium text-gray-400 mb-3">Selected Features (from application)</h3>
                 <div className="flex flex-wrap gap-2">
                   {formData.useEscrow && (
-                    <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm">Escrow Enabled</span>
+                    <span className="px-3 py-1 bg-gold-500/20 text-gold-400 rounded-full text-sm">Escrow Enabled</span>
                   )}
                   {formData.addDividends && (
-                    <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">Dividends Enabled</span>
+                    <span className="px-3 py-1 bg-gold-500/20 text-gold-400 rounded-full text-sm">Dividends Enabled</span>
                   )}
                   {!formData.useEscrow && !formData.addDividends && (
                     <span className="px-3 py-1 bg-gray-500/20 text-gray-400 rounded-full text-sm">Standard Token</span>
@@ -1147,7 +1147,7 @@ export default function TokenCreatePage() {
                   ) : (
                     <div className="text-center p-4">
                       {uploadingImage ? (
-                        <Loader2 className="h-8 w-8 text-purple-500 mx-auto animate-spin" />
+                        <Loader2 className="h-8 w-8 text-gold-500 mx-auto animate-spin" />
                       ) : (
                         <>
                           <ImageIcon className="h-8 w-8 text-gray-500 mx-auto mb-2" />
@@ -1194,7 +1194,7 @@ export default function TokenCreatePage() {
                   ) : (
                     <div className="text-center p-4">
                       {uploadingBanner ? (
-                        <Loader2 className="h-8 w-8 text-purple-500 mx-auto animate-spin" />
+                        <Loader2 className="h-8 w-8 text-gold-500 mx-auto animate-spin" />
                       ) : (
                         <>
                           <ImageIcon className="h-8 w-8 text-gray-500 mx-auto mb-2" />
@@ -1244,11 +1244,11 @@ export default function TokenCreatePage() {
                     <div className="space-y-3">
                       {existingDocuments.map((doc, idx) => (
                         <div key={idx} className="flex items-center gap-4 p-3 bg-gray-700/50 rounded-lg">
-                          <FileText className="w-5 h-5 text-purple-400 flex-shrink-0" />
+                          <FileText className="w-5 h-5 text-gold-400 flex-shrink-0" />
                           <div className="flex-1 min-w-0">
                             <p className="text-white text-sm truncate">{doc.name}</p>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs text-purple-400 bg-purple-500/20 px-2 py-0.5 rounded">
+                              <span className="text-xs text-gold-400 bg-gold-500/20 px-2 py-0.5 rounded">
                                 {formatDocumentType(doc.type)}
                               </span>
                               {doc.size && (
@@ -1263,7 +1263,7 @@ export default function TokenCreatePage() {
                             href={doc.url} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-blue-400 hover:text-blue-300 transition"
+                            className="text-gold-400 hover:text-gold-300 transition"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
@@ -1278,8 +1278,8 @@ export default function TokenCreatePage() {
                     <p className="text-gray-500 text-center py-4">No documents from application</p>
                   )}
                   
-                  <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                    <p className="text-blue-300 text-sm flex items-center gap-2">
+                  <div className="mt-4 p-3 bg-gold-500/10 border border-gold-500/30 rounded-lg">
+                    <p className="text-gold-300 text-sm flex items-center gap-2">
                       <Info className="w-4 h-4" />
                       These documents will be permanently linked to your NFT certificate
                     </p>
@@ -1291,7 +1291,7 @@ export default function TokenCreatePage() {
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-lg font-medium text-white flex items-center gap-2">
-                    <Plus className="w-5 h-5 text-purple-400" />
+                    <Plus className="w-5 h-5 text-gold-400" />
                     Additional Legal Documents
                   </h3>
                   <span className="text-sm text-gray-400">
@@ -1305,7 +1305,7 @@ export default function TokenCreatePage() {
                     {newDocuments.map((doc, idx) => (
                       <div key={idx} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
                         <div className="flex items-center gap-3">
-                          <FileText className="w-5 h-5 text-purple-400" />
+                          <FileText className="w-5 h-5 text-gold-400" />
                           <div>
                             <p className="text-white text-sm">{doc.name}</p>
                             <p className="text-gray-500 text-xs capitalize">
@@ -1314,9 +1314,9 @@ export default function TokenCreatePage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-purple-400 bg-purple-500/20 px-2 py-1 rounded">New</span>
+                          <span className="text-xs text-gold-400 bg-gold-500/20 px-2 py-1 rounded">New</span>
                           <a href={doc.url} target="_blank" rel="noopener noreferrer"
-                            className="text-purple-400 hover:text-purple-300">
+                            className="text-gold-400 hover:text-gold-300">
                             <ExternalLink className="w-4 h-4" />
                           </a>
                           <button onClick={() => removeNewDocument(idx)} className="text-red-400 hover:text-red-300">
@@ -1335,7 +1335,7 @@ export default function TokenCreatePage() {
                       <select
                         value={selectedDocCategory}
                         onChange={(e) => setSelectedDocCategory(e.target.value)}
-                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-purple-500"
+                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold-500"
                       >
                         <option value="">Select document type...</option>
                         {DOCUMENT_CATEGORIES.map(cat => (
@@ -1345,7 +1345,7 @@ export default function TokenCreatePage() {
                     </div>
                     <label className={`cursor-pointer px-6 py-3 rounded-lg text-white font-medium transition-colors flex items-center gap-2 ${
                       selectedDocCategory 
-                        ? 'bg-purple-600 hover:bg-purple-700' 
+                        ? 'bg-gold-600 hover:bg-gold-700' 
                         : 'bg-gray-600 cursor-not-allowed'
                     }`}>
                       {uploadingDoc ? (
@@ -1375,11 +1375,11 @@ export default function TokenCreatePage() {
               </div>
 
               {/* Info Box */}
-              <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+              <div className="bg-gold-500/10 border border-gold-500/30 rounded-xl p-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-gold-400 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-blue-400 font-medium">Document Storage</p>
-                  <p className="text-blue-400/70 text-sm">
+                  <p className="text-gold-400 font-medium">Document Storage</p>
+                  <p className="text-gold-400/70 text-sm">
                     All documents are stored on IPFS and their links will be permanently embedded in the NFT metadata, 
                     ensuring transparency and immutability of your asset's legal documentation.
                   </p>
@@ -1491,7 +1491,7 @@ export default function TokenCreatePage() {
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       {deploymentStatus === 'uploading' ? (
-                        <Loader2 className="h-5 w-5 text-purple-500 animate-spin" />
+                        <Loader2 className="h-5 w-5 text-gold-500 animate-spin" />
                       ) : deploymentStatus !== 'idle' ? (
                         <CheckCircle2 className="h-5 w-5 text-green-500" />
                       ) : (
@@ -1504,7 +1504,7 @@ export default function TokenCreatePage() {
                     
                     <div className="flex items-center gap-3">
                       {deploymentStatus === 'deploying' || isConfirming ? (
-                        <Loader2 className="h-5 w-5 text-purple-500 animate-spin" />
+                        <Loader2 className="h-5 w-5 text-gold-500 animate-spin" />
                       ) : deploymentStatus === 'success' ? (
                         <CheckCircle2 className="h-5 w-5 text-green-500" />
                       ) : (
@@ -1519,7 +1519,7 @@ export default function TokenCreatePage() {
                   {txHash && (
                     <div className="mt-4 pt-4 border-t border-gray-700">
                       <a href={getTxUrl(txHash)} target="_blank" rel="noopener noreferrer"
-                        className="text-purple-400 hover:text-purple-300 flex items-center gap-2 text-sm">
+                        className="text-gold-400 hover:text-gold-300 flex items-center gap-2 text-sm">
                         View transaction on Explorer
                         <ExternalLink className="h-4 w-4" />
                       </a>
@@ -1548,7 +1548,7 @@ export default function TokenCreatePage() {
                   setCurrentStep(prev => Math.min(3, prev + 1));
                 }}
                 disabled={!isStepValid(currentStep)}
-                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg text-white font-medium transition-colors"
+                className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg text-white font-medium transition-colors"
               >
                 Next
               </button>
@@ -1556,7 +1556,7 @@ export default function TokenCreatePage() {
               <button
                 onClick={handleDeploy}
                 disabled={isDeploying || !isStepValid(3)}
-                className="px-8 py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg text-white font-medium transition-colors flex items-center gap-2"
+                className="px-8 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg text-white font-medium transition-colors flex items-center gap-2"
               >
                 {isDeploying || isWritePending || isConfirming ? (
                   <>

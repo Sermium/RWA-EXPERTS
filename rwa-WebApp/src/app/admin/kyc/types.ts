@@ -16,17 +16,17 @@ export const TIER_NAMES: Record<number, string> = {
 export const TIER_COLORS: Record<number, string> = {
   0: 'bg-gray-500',
   1: 'bg-blue-500',
-  2: 'bg-green-500',
+  2: 'bg-success',
   3: 'bg-purple-500',
-  4: 'bg-yellow-500'
+  4: 'bg-warning'
 };
 
 export const TIER_BADGE_COLORS: Record<number, { bg: string; text: string; border: string }> = {
-  0: { bg: 'bg-gray-500/20', text: 'text-gray-400', border: 'border-gray-500/30' },
+  0: { bg: 'bg-gray-500/20', text: 'text-ink-muted', border: 'border-gray-500/30' },
   1: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
-  2: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
+  2: { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' },
   3: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' },
-  4: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' }
+  4: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' }
 };
 
 export const STATUS_NAMES: Record<number, string> = {
@@ -38,19 +38,19 @@ export const STATUS_NAMES: Record<number, string> = {
 };
 
 export const STATUS_COLORS: Record<number, string> = {
-  0: 'text-gray-400',
-  1: 'text-yellow-400',
-  2: 'text-green-400',
-  3: 'text-red-400',
-  4: 'text-orange-400'
+  0: 'text-ink-muted',
+  1: 'text-warning',
+  2: 'text-success',
+  3: 'text-danger',
+  4: 'text-warning'
 };
 
 export const STATUS_BADGE_COLORS: Record<number, { bg: string; text: string; border: string }> = {
-  0: { bg: 'bg-gray-500/20', text: 'text-gray-400', border: 'border-gray-500/30' },
-  1: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
-  2: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
-  3: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
-  4: { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500/30' }
+  0: { bg: 'bg-gray-500/20', text: 'text-ink-muted', border: 'border-gray-500/30' },
+  1: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' },
+  2: { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' },
+  3: { bg: 'bg-danger/20', text: 'text-danger', border: 'border-danger/30' },
+  4: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' }
 };
 
 export const MAX_UINT256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');

@@ -230,7 +230,7 @@ function StatCard({ icon: Icon, label, value, subValue }: { icon: React.ElementT
 
 // Milestone card
 function MilestoneCard({ milestone, index }: { milestone: ProjectData['milestones'][0]; index: number }) {
-  const statusColors: Record<string, string> = { completed: 'bg-green-500', in_progress: 'bg-blue-500', pending: 'bg-slate-500' };
+  const statusColors: Record<string, string> = { completed: 'bg-green-500', in_progress: 'bg-gold-500', pending: 'bg-slate-500' };
   return (
     <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
       <div className="flex items-start gap-4">
@@ -253,7 +253,7 @@ function DocumentItem({ doc }: { doc: { name?: string; url: string; type?: strin
   const docType = doc.type || inferDocType(doc.url, doc.name);
   return (
     <a href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-slate-600 transition-colors">
-      <FileText className="w-8 h-8 text-blue-400 flex-shrink-0" />
+      <FileText className="w-8 h-8 text-gold-400 flex-shrink-0" />
       <div className="flex-1 min-w-0">
         <p className="text-white font-medium">{docType}</p>
         <p className="text-slate-400 text-sm truncate">{doc.url.split('/').pop()?.split('?')[0]}</p>
@@ -323,7 +323,7 @@ function StripeInlineForm({
         <button
           type="submit"
           disabled={!stripe || !isReady || isProcessing}
-          className="flex-1 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+          className="flex-1 py-3 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2"
         >
           {isProcessing ? (
             <><Loader2 className="w-5 h-5 animate-spin" />Processing...</>
@@ -609,7 +609,7 @@ function InvestmentCard({
             <span className="font-bold text-white">{tokensToReceive.toLocaleString(undefined, { maximumFractionDigits: 2 })} {project.tokenSymbol}</span>
           </p>
           {txHash && chainInfo.explorer && (
-            <a href={`${chainInfo.explorer}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm mb-4">
+            <a href={`${chainInfo.explorer}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 text-sm mb-4">
               View Transaction <ExternalLink className="w-4 h-4" />
             </a>
           )}
@@ -637,7 +637,7 @@ function InvestmentCard({
           <span className="text-white font-medium">{formatCurrency(project.totalRaised)} / {formatCurrency(project.fundingGoal)}</span>
         </div>
         <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
-          <div className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all duration-500" style={{ width: `${fundingProgress}%` }} />
+          <div className="h-full bg-gradient-to-r from-gold-500 to-gold-light-500 rounded-full transition-all duration-500" style={{ width: `${fundingProgress}%` }} />
         </div>
         <div className="flex justify-between text-xs mt-2">
           <span className="text-slate-500">{fundingProgress.toFixed(1)}% funded</span>
@@ -658,7 +658,7 @@ function InvestmentCard({
                   value={amount}
                   onChange={(e) => { setAmount(e.target.value); setError(''); }}
                   placeholder={`Min ${project.minInvestment}`}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
                   min={project.minInvestment}
                   max={project.maxInvestment}
                 />
@@ -698,18 +698,18 @@ function InvestmentCard({
             {/* Card Payment - Always available */}
             <button
               onClick={createStripeIntent}
-              className="w-full flex items-center justify-between p-4 bg-slate-900/50 border-2 border-slate-600 rounded-xl hover:border-blue-500 hover:bg-slate-900 transition-all group"
+              className="w-full flex items-center justify-between p-4 bg-slate-900/50 border-2 border-slate-600 rounded-xl hover:border-gold-500 hover:bg-slate-900 transition-all group"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-blue-400" />
+                <div className="w-10 h-10 bg-gold-500/20 rounded-lg flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-gold-400" />
                 </div>
                 <div className="text-left">
                   <p className="font-medium text-white">Credit / Debit Card</p>
                   <p className="text-xs text-slate-500">Visa, Mastercard, Amex</p>
                 </div>
               </div>
-              <ChevronDown className="w-5 h-5 text-slate-500 -rotate-90 group-hover:text-blue-400" />
+              <ChevronDown className="w-5 h-5 text-slate-500 -rotate-90 group-hover:text-gold-400" />
             </button>
 
             {/* USDC Payment - Requires escrow */}
@@ -807,11 +807,11 @@ function InvestmentCard({
         {/* Processing State */}
         {isProcessing && !stripeReady && (
           <div className="text-center py-8">
-            <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
+            <Loader2 className="w-12 h-12 text-gold-500 animate-spin mx-auto mb-4" />
             <p className="text-white font-medium mb-1">{isConfirming ? 'Confirming Transaction...' : 'Processing...'}</p>
             <p className="text-slate-400 text-sm">{isConfirming ? 'Waiting for blockchain confirmation' : 'Please wait'}</p>
             {txHash && chainInfo.explorer && (
-              <a href={`${chainInfo.explorer}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm mt-4">
+              <a href={`${chainInfo.explorer}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 text-sm mt-4">
                 View on Explorer <ExternalLink className="w-4 h-4" />
               </a>
             )}
@@ -1045,7 +1045,7 @@ function ProjectPageContent() {
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
+        <Loader2 className="w-12 h-12 text-gold-500 animate-spin" />
       </div>
     );
   }
@@ -1057,7 +1057,7 @@ function ProjectPageContent() {
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-white mb-2">Project Not Found</h1>
           <p className="text-slate-400 mb-6">{error || 'The project does not exist.'}</p>
-          <button onClick={() => router.push('/projects')} className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg">Browse Projects</button>
+          <button onClick={() => router.push('/projects')} className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-white rounded-lg">Browse Projects</button>
         </div>
       </div>
     );
@@ -1093,7 +1093,7 @@ function ProjectPageContent() {
               {project.logoUrl ? (
                 <img src={project.logoUrl} alt={project.name} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-600 to-purple-600">
+                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gold-600 to-gold-light-600">
                   <span className="text-3xl md:text-4xl font-bold text-white">{project.name.charAt(0).toUpperCase()}</span>
                 </div>
               )}
@@ -1108,7 +1108,7 @@ function ProjectPageContent() {
                 <div className="flex items-center gap-2 text-slate-300"><Globe className="w-4 h-4" />{chainInfo.name}</div>
                 {project.companyName && <div className="flex items-center gap-2 text-slate-300"><Building2 className="w-4 h-4" />{project.companyName}</div>}
                 {project.jurisdiction && <div className="flex items-center gap-2 text-slate-300"><MapPin className="w-4 h-4" />{project.jurisdiction}</div>}
-                {project.website && <a href={project.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300"><ExternalLink className="w-4 h-4" />Website</a>}
+                {project.website && <a href={project.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gold-400 hover:text-gold-300"><ExternalLink className="w-4 h-4" />Website</a>}
               </div>
             </div>
           </div>
@@ -1148,8 +1148,8 @@ function ProjectPageContent() {
         {/* Video Link */}
         {project.videoUrl && (
           <div className="mb-8">
-            <a href={project.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-blue-500/50">
-              <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center"><Play className="w-6 h-6 text-white" /></div>
+            <a href={project.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-gold-500/50">
+              <div className="w-12 h-12 rounded-full bg-gold-600 flex items-center justify-center"><Play className="w-6 h-6 text-white" /></div>
               <div><p className="text-white font-medium">Watch Project Video</p><p className="text-slate-400 text-sm">Learn more about this project</p></div>
             </a>
           </div>
@@ -1166,7 +1166,7 @@ function ProjectPageContent() {
           <div className="lg:col-span-2">
             <div className="flex gap-2 mb-6 border-b border-slate-700 overflow-x-auto">
               {['overview', 'milestones', 'documents', 'company'].map((tab) => (
-                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-3 font-medium capitalize whitespace-nowrap ${activeTab === tab ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-400 hover:text-white'}`}>{tab}</button>
+                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-3 font-medium capitalize whitespace-nowrap ${activeTab === tab ? 'text-gold-400 border-b-2 border-gold-400' : 'text-slate-400 hover:text-white'}`}>{tab}</button>
               ))}
             </div>
 
@@ -1243,7 +1243,7 @@ function ProjectPageContent() {
                     {project.companyName && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Company Name</p><p className="text-white font-medium">{project.companyName}</p></div>}
                     {project.jurisdiction && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Jurisdiction</p><p className="text-white font-medium">{project.jurisdiction}</p></div>}
                     {project.registrationNumber && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Registration Number</p><p className="text-white font-medium">{project.registrationNumber}</p></div>}
-                    {project.email && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Contact Email</p><a href={`mailto:${project.email}`} className="text-blue-400 hover:text-blue-300">{project.email}</a></div>}
+                    {project.email && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Contact Email</p><a href={`mailto:${project.email}`} className="text-gold-400 hover:text-gold-300">{project.email}</a></div>}
                   </div>
                   {project.teamMembers.length > 0 && (
                     <div>
@@ -1255,7 +1255,7 @@ function ProjectPageContent() {
                               {member.image ? <img src={member.image} alt={member.name} className="w-full h-full object-cover" /> : <span className="text-lg font-bold text-white">{member.name.charAt(0).toUpperCase()}</span>}
                             </div>
                             <div><p className="text-white font-medium">{member.name}</p><p className="text-slate-400 text-sm">{member.role}</p></div>
-                            {member.linkedin && <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="ml-auto text-blue-400 hover:text-blue-300"><ExternalLink className="w-4 h-4" /></a>}
+                            {member.linkedin && <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="ml-auto text-gold-400 hover:text-gold-300"><ExternalLink className="w-4 h-4" /></a>}
                           </div>
                         ))}
                       </div>
@@ -1288,7 +1288,7 @@ function ProjectPageContent() {
 
 export default function ProjectPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center"><Loader2 className="w-12 h-12 text-blue-500 animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center"><Loader2 className="w-12 h-12 text-gold-500 animate-spin" /></div>}>
       <ProjectPageContent />
     </Suspense>
   );

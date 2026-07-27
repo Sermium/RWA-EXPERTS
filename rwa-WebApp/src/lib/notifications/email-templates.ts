@@ -316,7 +316,7 @@ export const emailTemplates = {
   }) => ({
     subject: `Milestone Completed: ${data.milestoneName}`,
     html: baseTemplate(`
-      <h1 class="title">Milestone Completed! 🎉</h1>
+      <h1 class="title">Milestone Completed!</h1>
       <p class="text">Hi ${data.recipientName},</p>
       <p class="text">
         A milestone has been completed in your trade deal.
@@ -363,7 +363,7 @@ export const emailTemplates = {
   }) => ({
     subject: `Payment Received: ${data.amount} ${data.currency}`,
     html: baseTemplate(`
-      <h1 class="title">Payment Received! 💰</h1>
+      <h1 class="title">Payment Received!</h1>
       <p class="text">Hi ${data.recipientName},</p>
       <p class="text">
         You have received a payment in your escrow account.
@@ -488,7 +488,7 @@ export const emailTemplates = {
   }) => ({
     subject: `Document Verified: ${data.documentName}`,
     html: baseTemplate(`
-      <h1 class="title">Document Verified ✓</h1>
+      <h1 class="title">Document Verified</h1>
       <p class="text">Hi ${data.recipientName},</p>
       <p class="text">
         Your document has been verified and approved.
@@ -501,7 +501,7 @@ export const emailTemplates = {
         </div>
         <div class="card-row">
           <span class="card-label">Status</span>
-          <span class="card-value success">✓ Verified</span>
+          <span class="card-value success">Verified</span>
         </div>
         <div class="card-row">
           <span class="card-label">Deal Reference</span>
@@ -526,7 +526,7 @@ export const emailTemplates = {
     openedBy: string;
     actionUrl: string;
   }) => ({
-    subject: `⚠️ Dispute Opened: ${data.dealReference}`,
+    subject: `Dispute Opened: ${data.dealReference}`,
     html: baseTemplate(`
       <h1 class="title" style="color: #ef4444;">Dispute Opened</h1>
       <p class="text">Hi ${data.recipientName},</p>
@@ -625,7 +625,7 @@ export const emailTemplates = {
   }) => ({
     subject: `KYC Approved: ${data.kycLevel} Level`,
     html: baseTemplate(`
-      <h1 class="title">KYC Verification Approved! 🎉</h1>
+      <h1 class="title">KYC Verification Approved!</h1>
       <p class="text">Hi ${data.recipientName},</p>
       <p class="text">
         Congratulations! Your KYC verification has been approved.
@@ -987,9 +987,9 @@ export async function verifyEmailConnection(): Promise<{
 
 export async function sendTestEmail(to: string): Promise<EmailResult> {
   const template = {
-    subject: '✅ RWA Platform - Email Configuration Test',
+    subject: 'RWA Platform - Email Configuration Test',
     html: baseTemplate(`
-      <h1 class="title">Email Test Successful! ✅</h1>
+      <h1 class="title">Email Test Successful!</h1>
       <p class="text">Hi there,</p>
       <p class="text">
         This is a test email from your RWA Platform. If you're reading this, your SMTP email configuration is working correctly!

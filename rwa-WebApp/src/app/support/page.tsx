@@ -81,7 +81,7 @@ export default function SupportPage() {
         {/* Header */}
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            How can we <span className="text-purple-400">help</span>?
+            How can we <span className="text-gold-400">help</span>?
           </h1>
           <p className="text-gray-400 text-lg max-w-2xl mx-auto">
             Our support team is here to assist you with any questions or issues you may have.
@@ -96,14 +96,14 @@ export default function SupportPage() {
               href={option.link}
               target={option.external ? '_blank' : undefined}
               rel={option.external ? 'noopener noreferrer' : undefined}
-              className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-6 hover:border-purple-500/50 transition-all group"
+              className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-6 hover:border-gold-500/50 transition-all group"
             >
-              <option.icon className="w-10 h-10 text-purple-400 mb-4" />
-              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-purple-300 transition-colors">
+              <option.icon className="w-10 h-10 text-gold-400 mb-4" />
+              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-gold-300 transition-colors">
                 {option.title}
               </h3>
               <p className="text-gray-400 text-sm mb-4">{option.description}</p>
-              <span className="text-purple-400 text-sm font-medium">
+              <span className="text-gold-400 text-sm font-medium">
                 {option.linkText} {option.external ? '↗' : '→'}
               </span>
             </a>
@@ -120,7 +120,7 @@ export default function SupportPage() {
                 href={issue.link}
                 className="flex items-center gap-3 bg-gray-800/30 rounded-lg p-4 hover:bg-gray-800/50 transition-colors group"
               >
-                <div className="w-2 h-2 bg-purple-400 rounded-full" />
+                <div className="w-2 h-2 bg-gold-400 rounded-full" />
                 <span className="text-gray-300 group-hover:text-white transition-colors">
                   {issue.title}
                 </span>
@@ -163,7 +163,7 @@ export default function SupportPage() {
                       message: ''
                     });
                   }}
-                  className="mt-6 text-purple-400 hover:text-purple-300 font-medium"
+                  className="mt-6 text-gold-400 hover:text-gold-300 font-medium"
                 >
                   Submit Another Request
                 </button>
@@ -180,7 +180,7 @@ export default function SupportPage() {
                       required
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-gold-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                       placeholder="John Doe"
                     />
                   </div>
@@ -193,7 +193,7 @@ export default function SupportPage() {
                       required
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                      className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-gold-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                       placeholder="john@example.com"
                     />
                   </div>
@@ -206,7 +206,7 @@ export default function SupportPage() {
                   <select
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-gold-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                   >
                     <option value="general">General Inquiry</option>
                     <option value="kyc">KYC / Verification Issue</option>
@@ -227,7 +227,7 @@ export default function SupportPage() {
                     type="text"
                     value={formData.walletAddress}
                     onChange={(e) => setFormData({ ...formData, walletAddress: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors font-mono text-sm"
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-gold-500 focus:ring-1 focus:ring-purple-500 transition-colors font-mono text-sm"
                     placeholder="0x..."
                   />
                   <p className="text-xs text-gray-500 mt-1">
@@ -244,7 +244,7 @@ export default function SupportPage() {
                     required
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-gold-500 focus:ring-1 focus:ring-purple-500 transition-colors"
                     placeholder="Brief description of your issue"
                   />
                 </div>
@@ -258,7 +258,7 @@ export default function SupportPage() {
                     rows={5}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors resize-none"
+                    className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-gold-500 focus:ring-1 focus:ring-purple-500 transition-colors resize-none"
                     placeholder="Please describe your question or issue in detail. Include any relevant transaction hashes, error messages, or steps to reproduce the problem."
                   />
                 </div>
@@ -266,7 +266,7 @@ export default function SupportPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 bg-purple-600 hover:bg-purple-700 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gold-600/50 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <>

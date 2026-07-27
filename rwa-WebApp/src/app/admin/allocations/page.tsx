@@ -193,7 +193,7 @@ export default function AdminAllocationsPage() {
     const styles: Record<string, { bg: string; text: string; icon: any }> = {
       pending: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: Clock },
       confirmed: { bg: 'bg-green-500/20', text: 'text-green-400', icon: CheckCircle },
-      distributed: { bg: 'bg-blue-500/20', text: 'text-blue-400', icon: Send },
+      distributed: { bg: 'bg-gold-500/20', text: 'text-gold-400', icon: Send },
       cancelled: { bg: 'bg-red-500/20', text: 'text-red-400', icon: XCircle },
     };
     const style = styles[status] || styles.pending;
@@ -208,9 +208,9 @@ export default function AdminAllocationsPage() {
 
   const getTypeBadge = (type: string) => {
     const styles: Record<string, string> = {
-      purchase: 'bg-blue-500/20 text-blue-400',
+      purchase: 'bg-gold-500/20 text-gold-400',
       referral_bonus: 'bg-green-500/20 text-green-400',
-      platform_bonus: 'bg-purple-500/20 text-purple-400',
+      platform_bonus: 'bg-gold-500/20 text-gold-400',
     };
     const labels: Record<string, string> = {
       purchase: 'Purchase',
@@ -226,25 +226,25 @@ export default function AdminAllocationsPage() {
 
   if (adminLoading || !isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-gold-500" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
+    <div className="min-h-screen bg-surface-sunken text-ink p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold">Token Allocations</h1>
-            <p className="text-gray-400 mt-1">Manage and distribute token allocations</p>
+            <p className="text-ink-muted mt-1">Manage and distribute token allocations</p>
           </div>
           <div className="flex gap-2">
             <button
               onClick={() => fetchAllocations()}
-              className="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center gap-2"
+              className="px-4 py-2 bg-surface hover:bg-surface-overlay rounded-lg flex items-center gap-2"
             >
               <RefreshCw className="w-4 h-4" />
               Refresh
@@ -269,46 +269,46 @@ export default function AdminAllocationsPage() {
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface rounded-xl p-4 border border-border">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-purple-500/20 rounded-lg">
-                  <Coins className="w-5 h-5 text-purple-400" />
+                <div className="p-2 bg-gold-500/20 rounded-lg">
+                  <Coins className="w-5 h-5 text-gold-400" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Total Tokens</p>
+                  <p className="text-ink-muted text-sm">Total Tokens</p>
                   <p className="text-xl font-bold">{formatNumber(stats.totalTokens)}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface rounded-xl p-4 border border-border">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-500/20 rounded-lg">
                   <DollarSign className="w-5 h-5 text-green-400" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Total Value</p>
+                  <p className="text-ink-muted text-sm">Total Value</p>
                   <p className="text-xl font-bold">{formatCurrency(stats.totalValue)}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface rounded-xl p-4 border border-border">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-blue-500/20 rounded-lg">
-                  <Users className="w-5 h-5 text-blue-400" />
+                <div className="p-2 bg-gold-500/20 rounded-lg">
+                  <Users className="w-5 h-5 text-gold-400" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Confirmed</p>
+                  <p className="text-ink-muted text-sm">Confirmed</p>
                   <p className="text-xl font-bold">{formatNumber(stats.byStatus.confirmed.tokens)}</p>
                 </div>
               </div>
             </div>
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface rounded-xl p-4 border border-border">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-yellow-500/20 rounded-lg">
                   <Clock className="w-5 h-5 text-yellow-400" />
                 </div>
                 <div>
-                  <p className="text-gray-400 text-sm">Pending</p>
+                  <p className="text-ink-muted text-sm">Pending</p>
                   <p className="text-xl font-bold">{formatNumber(stats.byStatus.pending.tokens)}</p>
                 </div>
               </div>
@@ -317,13 +317,13 @@ export default function AdminAllocationsPage() {
         )}
 
         {/* Filters & Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-4 bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="flex flex-wrap items-center justify-between gap-4 bg-surface rounded-xl p-4 border border-border">
           <div className="flex flex-wrap gap-3">
             {/* Status Filter */}
             <select
               value={statusFilter}
               onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-purple-500"
+              className="px-3 py-2 bg-surface-sunken border border-border rounded-lg text-sm focus:outline-none focus:border-gold-500"
             >
               <option value="all">All Status</option>
               <option value="pending">Pending</option>
@@ -336,7 +336,7 @@ export default function AdminAllocationsPage() {
             <select
               value={typeFilter}
               onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
-              className="px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-purple-500"
+              className="px-3 py-2 bg-surface-sunken border border-border rounded-lg text-sm focus:outline-none focus:border-gold-500"
             >
               <option value="all">All Types</option>
               <option value="purchase">Purchase</option>
@@ -348,27 +348,27 @@ export default function AdminAllocationsPage() {
           <div className="flex gap-2">
             {/* Export Buttons */}
             <div className="relative group">
-              <button className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center gap-2">
+              <button className="px-4 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg flex items-center gap-2">
                 <Download className="w-4 h-4" />
                 Export
                 <ChevronDown className="w-4 h-4" />
               </button>
-              <div className="absolute right-0 mt-2 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-xl hidden group-hover:block z-10">
+              <div className="absolute right-0 mt-2 w-48 bg-surface border border-border rounded-lg shadow-xl hidden group-hover:block z-10">
                 <button
                   onClick={() => handleExport('csv')}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-700 rounded-t-lg text-sm"
+                  className="w-full px-4 py-2 text-left hover:bg-surface-overlay rounded-t-lg text-sm"
                 >
                   Export as CSV
                 </button>
                 <button
                   onClick={() => handleExport('json')}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-700 text-sm"
+                  className="w-full px-4 py-2 text-left hover:bg-surface-overlay text-sm"
                 >
                   Export as JSON
                 </button>
                 <button
                   onClick={() => handleExport('airdrop')}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-700 rounded-b-lg text-sm"
+                  className="w-full px-4 py-2 text-left hover:bg-surface-overlay rounded-b-lg text-sm"
                 >
                   Airdrop Format
                 </button>
@@ -379,7 +379,7 @@ export default function AdminAllocationsPage() {
             {selectedIds.length > 0 && (
               <button
                 onClick={() => setShowDistributeModal(true)}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg flex items-center gap-2"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-500 rounded-lg flex items-center gap-2"
               >
                 <Send className="w-4 h-4" />
                 Mark Distributed ({selectedIds.length})
@@ -389,27 +389,27 @@ export default function AdminAllocationsPage() {
         </div>
 
         {/* Allocations Table */}
-        <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+        <div className="bg-surface rounded-xl border border-border overflow-hidden">
           {loading ? (
             <div className="p-12 flex justify-center">
-              <Loader2 className="w-8 h-8 animate-spin text-gray-500" />
+              <Loader2 className="w-8 h-8 animate-spin text-ink-faint" />
             </div>
           ) : allocations.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
+            <div className="p-12 text-center text-ink-faint">
               <Coins className="w-12 h-12 mx-auto mb-3 opacity-50" />
               <p>No allocations found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-gray-900/50">
-                  <tr className="text-left text-xs text-gray-400 uppercase">
+                <thead className="bg-surface-sunken/50">
+                  <tr className="text-left text-xs text-ink-muted uppercase">
                     <th className="p-4">
                       <input
                         type="checkbox"
                         checked={selectedIds.length === allocations.length}
                         onChange={handleSelectAll}
-                        className="rounded bg-gray-700 border-gray-600"
+                        className="rounded bg-surface-overlay border-border-strong"
                       />
                     </th>
                     <th className="p-4">Wallet</th>
@@ -422,7 +422,7 @@ export default function AdminAllocationsPage() {
                     <th className="p-4">TX</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-700">
+                <tbody className="divide-y divide-border">
                   {allocations.map((alloc) => (
                     <tr key={alloc.id} className="hover:bg-gray-750">
                       <td className="p-4">
@@ -430,7 +430,7 @@ export default function AdminAllocationsPage() {
                           type="checkbox"
                           checked={selectedIds.includes(alloc.id)}
                           onChange={() => handleSelect(alloc.id)}
-                          className="rounded bg-gray-700 border-gray-600"
+                          className="rounded bg-surface-overlay border-border-strong"
                         />
                       </td>
                       <td className="p-4">
@@ -438,13 +438,13 @@ export default function AdminAllocationsPage() {
                           <span className="font-mono text-sm">{formatAddress(alloc.wallet_address)}</span>
                           <button
                             onClick={() => navigator.clipboard.writeText(alloc.wallet_address)}
-                            className="p-1 hover:bg-gray-700 rounded"
+                            className="p-1 hover:bg-surface-overlay rounded"
                           >
-                            <Copy className="w-3 h-3 text-gray-500" />
+                            <Copy className="w-3 h-3 text-ink-faint" />
                           </button>
                         </div>
                         {alloc.referral_code && (
-                          <div className="text-xs text-gray-500 mt-1">
+                          <div className="text-xs text-ink-faint mt-1">
                             Ref: {alloc.referral_code}
                           </div>
                         )}
@@ -456,11 +456,11 @@ export default function AdminAllocationsPage() {
                       <td className="p-4 font-medium">
                         {formatNumber(parseFloat(alloc.tokens_amount))} RWA
                       </td>
-                      <td className="p-4 text-sm text-gray-400">
+                      <td className="p-4 text-sm text-ink-muted">
                         {formatCurrency(parseFloat(alloc.tokens_usd_value || '0'))}
                       </td>
                       <td className="p-4">{getStatusBadge(alloc.status)}</td>
-                      <td className="p-4 text-sm text-gray-400">
+                      <td className="p-4 text-sm text-ink-muted">
                         {new Date(alloc.created_at).toLocaleDateString()}
                       </td>
                       <td className="p-4">
@@ -469,12 +469,12 @@ export default function AdminAllocationsPage() {
                             href={`https://snowtrace.io/tx/${alloc.distribution_tx_hash}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                            className="text-gold-400 hover:text-gold-300 flex items-center gap-1"
                           >
                             <ExternalLink className="w-3 h-3" />
                           </a>
                         ) : (
-                          <span className="text-gray-600">-</span>
+                          <span className="text-ink-faint">-</span>
                         )}
                       </td>
                     </tr>
@@ -486,22 +486,22 @@ export default function AdminAllocationsPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="p-4 border-t border-gray-700 flex items-center justify-between">
-              <span className="text-sm text-gray-400">
+            <div className="p-4 border-t border-border flex items-center justify-between">
+              <span className="text-sm text-ink-muted">
                 Page {page} of {totalPages}
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={() => setPage(p => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                  className="px-3 py-1 bg-surface-overlay hover:bg-border-strong disabled:opacity-50 disabled:cursor-not-allowed rounded"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="px-3 py-1 bg-gray-700 hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed rounded"
+                  className="px-3 py-1 bg-surface-overlay hover:bg-border-strong disabled:opacity-50 disabled:cursor-not-allowed rounded"
                 >
                   Next
                 </button>
@@ -512,18 +512,18 @@ export default function AdminAllocationsPage() {
 
         {/* Distribution Modal */}
         {showDistributeModal && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-            <div className="bg-gray-900 rounded-xl border border-gray-700 w-full max-w-md">
-              <div className="p-6 border-b border-gray-700">
+          <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
+            <div className="bg-surface-sunken rounded-xl border border-border w-full max-w-md">
+              <div className="p-6 border-b border-border">
                 <h2 className="text-xl font-bold">Mark as Distributed</h2>
-                <p className="text-gray-400 text-sm mt-1">
+                <p className="text-ink-muted text-sm mt-1">
                   Mark {selectedIds.length} allocation(s) as distributed
                 </p>
               </div>
 
               <div className="p-6 space-y-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">
+                  <label className="block text-sm text-ink-muted mb-1">
                     Distribution TX Hash (optional)
                   </label>
                   <input
@@ -531,12 +531,12 @@ export default function AdminAllocationsPage() {
                     value={distributeTxHash}
                     onChange={(e) => setDistributeTxHash(e.target.value)}
                     placeholder="0x..."
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-purple-500 font-mono text-sm"
+                    className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:border-gold-500 font-mono text-sm"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">
+                  <label className="block text-sm text-ink-muted mb-1">
                     Notes (optional)
                   </label>
                   <textarea
@@ -544,22 +544,22 @@ export default function AdminAllocationsPage() {
                     onChange={(e) => setDistributeNotes(e.target.value)}
                     placeholder="Distribution batch #1, etc."
                     rows={2}
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:outline-none focus:border-purple-500 text-sm"
+                    className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:outline-none focus:border-gold-500 text-sm"
                   />
                 </div>
               </div>
 
-              <div className="p-6 border-t border-gray-700 flex justify-end gap-3">
+              <div className="p-6 border-t border-border flex justify-end gap-3">
                 <button
                   onClick={() => setShowDistributeModal(false)}
-                  className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg"
+                  className="px-4 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleMarkDistributed}
                   disabled={updating}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 rounded-lg flex items-center gap-2"
+                  className="px-4 py-2 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong rounded-lg flex items-center gap-2"
                 >
                   {updating ? (
                     <><Loader2 className="w-4 h-4 animate-spin" /> Processing...</>

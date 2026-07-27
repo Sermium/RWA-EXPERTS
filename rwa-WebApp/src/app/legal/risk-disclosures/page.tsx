@@ -10,17 +10,17 @@ export default function RiskDisclosuresPage() {
   return (
     <article className="max-w-4xl prose prose-invert prose-cyan">
       <div className="mb-8 not-prose">
-        <h1 className="text-4xl font-bold text-white mb-2">Risk Disclosures</h1>
-        <p className="text-gray-400">Last Updated: March 2026</p>
+        <h1 className="text-4xl font-display font-bold text-ink mb-2">Risk Disclosures</h1>
+        <p className="text-ink-muted">Last Updated: March 2026</p>
       </div>
 
       {/* Important Warning Box */}
       <div className="not-prose mb-8 bg-red-500/10 border border-red-500/30 rounded-xl p-6">
         <div className="flex items-start gap-4">
-          <AlertTriangle className="w-8 h-8 text-red-400 flex-shrink-0" />
+          <AlertTriangle className="w-8 h-8 text-danger flex-shrink-0" />
           <div>
-            <h2 className="text-xl font-bold text-red-400 mb-2">Important Warning</h2>
-            <p className="text-gray-300">
+            <h2 className="text-xl font-bold text-danger mb-2">Important Warning</h2>
+            <p className="text-ink-muted">
               Tokenized real-world assets are speculative investments. You may lose some or all 
               of your invested capital. Only invest money you can afford to lose. Past performance 
               does not guarantee future results.

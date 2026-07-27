@@ -62,9 +62,9 @@ export function SearchSection({
   };
 
   return (
-    <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700/50 mb-6">
-      <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-        <Search className="w-5 h-5 text-blue-400" />
+    <div className="bg-surface/50 rounded-xl p-6 border border-border/50 mb-6">
+      <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+        <Search className="w-5 h-5 text-gold-400" />
         Search KYC Submission
       </h2>
       
@@ -76,12 +76,12 @@ export function SearchSection({
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             placeholder="Enter wallet address (0x...)"
-            className="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-3 bg-surface-sunken/50 border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
           />
           {searchQuery && (
             <button
               onClick={clearSearch}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink"
             >
               <X className="w-4 h-4" />
             </button>
@@ -90,7 +90,7 @@ export function SearchSection({
         <button
           onClick={handleSearch}
           disabled={isLoading || !searchQuery.trim()}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+          className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-surface-overlay disabled:cursor-not-allowed text-ink font-medium rounded-lg transition-colors flex items-center gap-2"
         >
           {isLoading ? (
             <Loader2 className="w-4 h-4 animate-spin" />
@@ -102,7 +102,7 @@ export function SearchSection({
       </div>
 
       {searchError && (
-        <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-3 text-red-400 text-sm">
+        <div className="bg-danger/20 border border-danger/30 rounded-lg p-3 text-danger text-sm">
           {searchError}
         </div>
       )}

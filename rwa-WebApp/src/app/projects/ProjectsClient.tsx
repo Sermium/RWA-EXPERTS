@@ -101,24 +101,24 @@ const DB_STATUS_CONFIG: Record<string, { label: string; color: string; priority:
   },
   'in_progress': { 
     label: 'In Progress', 
-    color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', 
+    color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', 
     priority: 2,
     investorLabel: 'Project Running'
   },
   'completed': { 
     label: 'Completed', 
-    color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', 
+    color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', 
     priority: 3,
     investorLabel: 'Milestones in Review'
   },
   'archived': { 
     label: 'Archived', 
-    color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', 
+    color: 'bg-ink-muted/10 text-ink-muted border-ink-muted/20', 
     priority: 10,
     investorLabel: 'Archived'
   },
   // These should NOT appear on the projects page but keeping for reference
-  'draft': { label: 'Draft', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', priority: 99 },
+  'draft': { label: 'Draft', color: 'bg-ink-muted/10 text-ink-muted border-ink-muted/20', priority: 99 },
   'pending_review': { label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', priority: 99 },
   'pending_payment': { label: 'Pending Payment', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30', priority: 99 },
   'approved': { label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30', priority: 99 },
@@ -128,7 +128,7 @@ const DB_STATUS_CONFIG: Record<string, { label: string; color: string; priority:
 };
 
 const getStatusConfig = (status: string) => {
-  return DB_STATUS_CONFIG[status] || { label: status, color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', priority: 99 };
+  return DB_STATUS_CONFIG[status] || { label: status, color: 'bg-ink-muted/10 text-ink-muted border-ink-muted/20', priority: 99 };
 };
 
 // ============================================================================
@@ -349,16 +349,16 @@ function SortDropdown({ value, onChange }: SortDropdownProps) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white hover:bg-gray-600 transition-colors min-w-[180px]"
+        className="flex items-center gap-2 px-4 py-2.5 bg-surface-overlay border border-border-strong rounded-lg text-ink hover:bg-border-strong transition-colors min-w-[180px]"
       >
-        <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg className="w-4 h-4 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
         </svg>
         <span className="flex-1 text-left text-sm">
           {currentOption.icon} {currentOption.label}
         </span>
         <svg 
-          className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
+          className={`w-4 h-4 text-ink-faint transition-transform ${isOpen ? 'rotate-180' : ''}`} 
           fill="none" 
           viewBox="0 0 24 24" 
           stroke="currentColor"
@@ -368,7 +368,7 @@ function SortDropdown({ value, onChange }: SortDropdownProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl z-50 overflow-hidden">
+        <div className="absolute top-full left-0 mt-2 w-full bg-surface border border-border rounded-lg shadow-xl z-50 overflow-hidden">
           {SORT_OPTIONS.map((option) => (
             <button
               key={option.value}
@@ -378,8 +378,8 @@ function SortDropdown({ value, onChange }: SortDropdownProps) {
               }}
               className={`w-full flex items-center gap-2 px-4 py-2.5 text-left text-sm transition-colors ${
                 value === option.value
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-300 hover:bg-gray-700'
+                  ? 'bg-gold text-surface-sunken'
+                  : 'text-ink-muted hover:bg-surface-overlay'
               }`}
             >
               <span>{option.icon}</span>
@@ -438,7 +438,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="flex items-center gap-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="flex items-center gap-1 px-4 py-2 bg-surface border border-border rounded-lg text-ink-muted hover:text-ink hover:bg-surface-overlay disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -449,15 +449,15 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
       <div className="flex items-center gap-1">
         {getPageNumbers().map((page, index) => (
           page === 'ellipsis' ? (
-            <span key={`ellipsis-${index}`} className="px-3 py-2 text-gray-500">...</span>
+            <span key={`ellipsis-${index}`} className="px-3 py-2 text-ink-faint">...</span>
           ) : (
             <button
               key={page}
               onClick={() => onPageChange(page)}
               className={`min-w-[40px] px-3 py-2 rounded-lg font-medium transition-colors ${
                 currentPage === page
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-800 border border-gray-700 text-gray-400 hover:text-white hover:bg-gray-700'
+                  ? 'bg-gold text-surface-sunken'
+                  : 'bg-surface border border-border text-ink-muted hover:text-ink hover:bg-surface-overlay'
               }`}
             >
               {page}
@@ -469,7 +469,7 @@ function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) 
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="flex items-center gap-1 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 hover:text-white hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        className="flex items-center gap-1 px-4 py-2 bg-surface border border-border rounded-lg text-ink-muted hover:text-ink hover:bg-surface-overlay disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       >
         <span className="hidden sm:inline">Next</span>
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -536,9 +536,9 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
 
   return (
     <Link href={`/projects/${project.id}`}>
-      <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden transition-all group h-full hover:border-gray-600 hover:shadow-lg hover:shadow-blue-500/10">
+      <div className="bg-surface rounded-xl border border-border overflow-hidden transition-all group h-full hover:border-border-strong hover:shadow-panel">
         {/* Image Header */}
-        <div className="h-40 bg-gradient-to-br from-blue-600/20 to-purple-600/20 relative">
+        <div className="h-40 bg-gradient-to-br from-gold-600/20 to-gold-light-600/20 relative">
           {displayImage && isValidIPFSHash(displayImage) ? (
             <Image
               src={displayImage.startsWith('ipfs://') 
@@ -551,7 +551,7 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-6xl font-bold text-gray-700 group-hover:text-gray-600 transition-colors">
+              <span className="text-6xl font-bold text-border-strong group-hover:text-border transition-colors">
                 {displayName.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -578,7 +578,7 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
           {/* Urgent badge for ending soon */}
           {project.status === 'active' && daysLeft !== null && daysLeft <= 3 && daysLeft > 0 && (
             <div className="absolute bottom-3 right-3">
-              <span className="px-2 py-1 text-xs font-bold rounded bg-red-500 text-white animate-pulse">
+              <span className="px-2 py-1 text-xs font-bold rounded bg-danger text-ink animate-pulse">
                 🔥 Ending Soon!
               </span>
             </div>
@@ -588,15 +588,15 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
         <div className="p-5">
           {/* Title & Category */}
           <div className="mb-3">
-            <h3 className="text-lg font-semibold text-white group-hover:text-blue-400 transition-colors truncate">
+            <h3 className="text-lg font-semibold text-ink group-hover:text-gold transition-colors truncate">
               {displayName}
             </h3>
             <div className="flex items-center gap-2 mt-1">
               {project.tokenSymbol && (
-                <span className="text-sm text-gray-500">${project.tokenSymbol}</span>
+                <span className="text-sm text-ink-faint">${project.tokenSymbol}</span>
               )}
               {displayCategory && (
-                <span className="px-2 py-0.5 bg-gray-700 text-gray-400 text-xs rounded">
+                <span className="px-2 py-0.5 bg-surface-overlay text-ink-muted text-xs rounded">
                   {displayCategory}
                 </span>
               )}
@@ -604,7 +604,7 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
           </div>
 
           {/* Description */}
-          <p className="text-gray-400 text-sm mb-4 line-clamp-2">
+          <p className="text-ink-muted text-sm mb-4 line-clamp-2">
             {project.metadata?.description || 'Tokenized real-world asset investment opportunity'}
           </p>
 
@@ -628,9 +628,9 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
                 </div>
               )}
               {project.dividendYield && project.dividendYield > 0 && (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-lg">
-                  <Percent className="w-3.5 h-3.5 text-purple-400" />
-                  <span className="text-sm text-purple-400 font-medium">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gold-500/10 border border-gold-500/20 rounded-lg">
+                  <Percent className="w-3.5 h-3.5 text-gold-400" />
+                  <span className="text-sm text-gold-400 font-medium">
                     {project.dividendYield}% yield
                   </span>
                 </div>
@@ -641,43 +641,43 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
           {/* Funding Progress */}
           <div className="mb-4">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-gray-400">
+              <span className="text-ink-muted">
                 {project.status === 'active' ? 'Raised' : 'Total Raised'}
               </span>
-              <span className="font-medium text-white">
+              <span className="font-medium text-ink">
                 {formatUSDC(project.totalRaised)} 
-                <span className="text-gray-500"> / {formatUSD(project.fundingGoal)}</span>
+                <span className="text-ink-faint"> / {formatUSD(project.fundingGoal)}</span>
               </span>
             </div>
-            <div className="w-full bg-gray-700 rounded-full h-2">
+            <div className="w-full bg-surface-overlay rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all ${
                   progress >= 100 
                     ? 'bg-gradient-to-r from-green-500 to-emerald-400' 
-                    : 'bg-gradient-to-r from-blue-500 to-blue-400'
+                    : 'bg-gradient-to-r from-gold-dark to-gold'
                 }`}
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
-            <div className="text-right text-xs text-gray-500 mt-1">
+            <div className="text-right text-xs text-ink-faint mt-1">
               {progress >= 100 ? '✓ Goal Reached' : `${progress.toFixed(1)}% funded`}
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex justify-between items-center pt-4 border-t border-gray-700">
-            <div className="text-gray-400 text-sm">
+          <div className="flex justify-between items-center pt-4 border-t border-border">
+            <div className="text-ink-muted text-sm">
               {project.status === 'active' && 'Invest Now'}
               {project.status === 'funded' && 'Fully Funded'}
               {project.status === 'in_progress' && 'In Progress'}
               {project.status === 'completed' && 'Review Phase'}
             </div>
             <div className={`text-sm ${
-              project.status !== 'active' ? 'text-gray-400' :
-              !endDate ? 'text-gray-400' :
-              isExpired ? 'text-orange-400' : 
-              daysLeft !== null && daysLeft <= 7 ? 'text-yellow-400' :
-              'text-gray-400'
+              project.status !== 'active' ? 'text-ink-muted' :
+              !endDate ? 'text-ink-muted' :
+              isExpired ? 'text-warning' :
+              daysLeft !== null && daysLeft <= 7 ? 'text-warning' :
+              'text-ink-muted'
             }`}>
               {project.status === 'active' ? (
                 !endDate ? 'No deadline' :
@@ -889,14 +889,14 @@ export default function ProjectsClient() {
   // Network not supported
   if (!isDeployed) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <main className="max-w-6xl mx-auto px-4 py-8">
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-12 text-center">
-            <div className="w-20 h-20 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="bg-surface rounded-xl border border-border p-12 text-center">
+            <div className="w-20 h-20 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <span className="text-4xl">🌐</span>
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Network Not Supported</h2>
-            <p className="text-gray-400 mb-6">
+            <h2 className="text-2xl font-display font-medium text-ink mb-2">Network Not Supported</h2>
+            <p className="text-ink-muted mb-6">
               Projects are not available on {chainName}. Please switch to a supported network.
             </p>
             <div className="flex flex-wrap gap-3 justify-center">
@@ -905,7 +905,7 @@ export default function ProjectsClient() {
                   key={chain.id}
                   onClick={() => handleSwitchNetwork(chain.id)}
                   disabled={isSwitching}
-                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors"
+                  className="px-6 py-3 bg-gold hover:bg-gold-light disabled:bg-border rounded-lg text-surface-sunken font-medium transition-colors"
                 >
                   {chain.name}
                 </button>
@@ -918,7 +918,7 @@ export default function ProjectsClient() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-sunken">
       {/* Network Banner */}
       <div className={`border-b ${isTestnet ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-green-500/10 border-green-500/30'}`}>
         <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
@@ -933,7 +933,7 @@ export default function ProjectsClient() {
               href={`${explorerUrl}/address/${contracts.RWAProjectNFT}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-gray-400 hover:text-white text-sm transition flex items-center gap-1"
+              className="text-ink-muted hover:text-ink text-sm transition flex items-center gap-1"
             >
               View Contract
               <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -952,7 +952,7 @@ export default function ProjectsClient() {
             <button
               onClick={() => handleSwitchNetwork(chainId)}
               disabled={isSwitching}
-              className="px-4 py-1.5 bg-orange-600 hover:bg-orange-700 rounded-lg text-white text-sm font-medium"
+              className="px-4 py-1.5 bg-warning hover:bg-warning/80 rounded-lg text-surface-sunken text-sm font-medium"
             >
               Switch to {chainName}
             </button>
@@ -964,8 +964,8 @@ export default function ProjectsClient() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Investment Opportunities</h1>
-            <p className="text-gray-400">
+            <h1 className="text-3xl font-display font-medium text-ink mb-2">Investment Opportunities</h1>
+            <p className="text-ink-muted">
               {statusCounts.active} active raises • {statusCounts.funded} funded • {statusCounts.in_progress} in progress
             </p>
           </div>
@@ -973,7 +973,7 @@ export default function ProjectsClient() {
             <button
               onClick={handleRefresh}
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 text-white rounded-lg font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-surface-overlay hover:bg-border-strong disabled:bg-surface text-ink rounded-lg font-medium transition-colors"
               title={lastRefresh ? `Last updated: ${formatLastRefresh()}` : 'Refresh'}
             >
               <svg 
@@ -984,11 +984,11 @@ export default function ProjectsClient() {
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-              {lastRefresh && <span className="text-xs text-gray-400">{formatLastRefresh()}</span>}
+              {lastRefresh && <span className="text-xs text-ink-muted">{formatLastRefresh()}</span>}
             </button>
             <Link
               href="/crowdfunding/apply"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold hover:bg-gold-light text-surface-sunken rounded-lg font-medium transition-colors"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -999,11 +999,11 @@ export default function ProjectsClient() {
         </div>
 
         {/* Filters */}
-        <div className="bg-gray-800 rounded-xl border border-gray-700 p-4 mb-8">
+        <div className="bg-surface rounded-xl border border-border p-4 mb-8">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input
@@ -1011,14 +1011,14 @@ export default function ProjectsClient() {
                   placeholder="Search by name, symbol, or category..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full pl-10 pr-4 py-2.5 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold"
                 />
               </div>
               <SortDropdown value={sortBy} onChange={setSortBy} />
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-gray-500 text-sm mr-2">Show:</span>
+              <span className="text-ink-faint text-sm mr-2">Show:</span>
               {([
                 { key: 'all', label: 'All Projects', count: statusCounts.all },
                 { key: 'active', label: 'Open for Investment', count: statusCounts.active },
@@ -1030,14 +1030,14 @@ export default function ProjectsClient() {
                   onClick={() => setFilter(f.key)}
                   className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
                     filter === f.key 
-                      ? 'bg-blue-600 text-white' 
-                      : 'bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-white'
+                      ? 'bg-gold text-surface-sunken' 
+                      : 'bg-surface-overlay text-ink-muted hover:bg-border-strong hover:text-ink'
                   }`}
                 >
                   {f.label}
                   {f.count > 0 && (
                     <span className={`ml-2 px-1.5 py-0.5 rounded text-xs ${
-                      filter === f.key ? 'bg-blue-500' : 'bg-gray-600'
+                      filter === f.key ? 'bg-gold/80' : 'bg-border-strong'
                     }`}>
                       {f.count}
                     </span>
@@ -1050,33 +1050,33 @@ export default function ProjectsClient() {
 
         {/* Results Count */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-          <p className="text-gray-400">
+          <p className="text-ink-muted">
             {filteredProjects.length > PROJECTS_PER_PAGE ? (
               <>Showing {((currentPage - 1) * PROJECTS_PER_PAGE) + 1}-{Math.min(currentPage * PROJECTS_PER_PAGE, filteredProjects.length)} of {filteredProjects.length} projects</>
             ) : (
               <>Found {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}</>
             )}
           </p>
-          {totalPages > 1 && <p className="text-gray-500 text-sm">Page {currentPage} of {totalPages}</p>}
+          {totalPages > 1 && <p className="text-ink-faint text-sm">Page {currentPage} of {totalPages}</p>}
         </div>
 
         {/* Loading */}
         {loading && projects.length === 0 && (
           <div className="flex items-center justify-center py-20">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto" />
-              <p className="mt-4 text-gray-400">Loading investment opportunities...</p>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gold mx-auto" />
+              <p className="mt-4 text-ink-muted">Loading investment opportunities...</p>
             </div>
           </div>
         )}
 
         {/* Error */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-8 text-center">
-            <div className="text-red-400 text-5xl mb-4">⚠️</div>
-            <h2 className="text-xl font-bold text-white mb-2">Error Loading Projects</h2>
-            <p className="text-gray-400 mb-4">{error}</p>
-            <button onClick={handleRefresh} className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">
+          <div className="bg-danger-muted border border-danger/30 rounded-xl p-8 text-center">
+            <div className="text-danger text-5xl mb-4">⚠️</div>
+            <h2 className="text-xl font-semibold text-ink mb-2">Error Loading Projects</h2>
+            <p className="text-ink-muted mb-4">{error}</p>
+            <button onClick={handleRefresh} className="px-4 py-2 bg-danger hover:bg-danger/80 text-ink rounded-lg">
               Retry
             </button>
           </div>
@@ -1084,10 +1084,10 @@ export default function ProjectsClient() {
 
         {/* Empty */}
         {!loading && !error && filteredProjects.length === 0 && (
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-12 text-center">
+          <div className="bg-surface border border-border rounded-xl p-12 text-center">
             <div className="text-5xl mb-4">🔍</div>
-            <h2 className="text-xl font-bold text-white mb-2">No Projects Found</h2>
-            <p className="text-gray-400 mb-6">
+            <h2 className="text-xl font-semibold text-ink mb-2">No Projects Found</h2>
+            <p className="text-ink-muted mb-6">
               {projects.length === 0 
                 ? 'No active investment opportunities right now. Check back soon!' 
                 : 'Try adjusting your filters or search terms.'}
@@ -1095,7 +1095,7 @@ export default function ProjectsClient() {
             {filter !== 'all' && (
               <button
                 onClick={() => setFilter('all')}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
+                className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken rounded-lg font-medium"
               >
                 Show All Projects
               </button>

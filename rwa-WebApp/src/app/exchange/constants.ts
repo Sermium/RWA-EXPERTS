@@ -1,4 +1,5 @@
 import { RWASecurityExchangeABI } from '@/config/abis';
+import { Layers, Home, Factory, Palette, Briefcase, TrendingUp, Package, type LucideIcon } from 'lucide-react';
 
 // Tradable statuses for security tokens
 export const TRADABLE_STATUSES = [2, 3, 4]; // Funded, Distributing, Active
@@ -13,15 +14,15 @@ export const MEXC_CONFIG = {
 };
 
 // Token category filters - matches database constraint
-export const TOKEN_CATEGORIES = [
-  { value: 'all', label: 'All', icon: '🔷' },
-  { value: 'real_estate', label: 'Real Estate', icon: '🏠' },
-  { value: 'infrastructure', label: 'Infrastructure', icon: '🏗️' },
-  { value: 'art_collectibles', label: 'Art & Collectibles', icon: '🎨' },
-  { value: 'business_equity', label: 'Business Equity', icon: '🏢' },
-  { value: 'revenue_based', label: 'Revenue', icon: '💰' },
-  { value: 'commodities', label: 'Commodities', icon: '📦' },
-  { value: 'other', label: 'Other', icon: '🔷' },
+export const TOKEN_CATEGORIES: { value: string; label: string; icon: LucideIcon }[] = [
+  { value: 'all', label: 'All', icon: Layers },
+  { value: 'real_estate', label: 'Real Estate', icon: Home },
+  { value: 'infrastructure', label: 'Infrastructure', icon: Factory },
+  { value: 'art_collectibles', label: 'Art & Collectibles', icon: Palette },
+  { value: 'business_equity', label: 'Business Equity', icon: Briefcase },
+  { value: 'revenue_based', label: 'Revenue', icon: TrendingUp },
+  { value: 'commodities', label: 'Commodities', icon: Package },
+  { value: 'other', label: 'Other', icon: Layers },
 ];
 
 // Token icons mapping

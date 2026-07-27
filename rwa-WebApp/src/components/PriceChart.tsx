@@ -218,8 +218,8 @@ export default function PriceChart({ symbol, type, tokenAddress, currentPrice, h
   }, [symbol, tokenAddress, type, intervalState, chartType, height, currentPrice]);
 
   return (
-    <div className="bg-[#1a1a2e] rounded-xl border border-gray-800 overflow-hidden">
-      <div className="flex items-center justify-between p-2 border-b border-gray-800">
+    <div className="bg-[#1a1a2e] rounded-xl border border-border overflow-hidden">
+      <div className="flex items-center justify-between p-2 border-b border-border">
         <div className="flex items-center gap-1">
           {intervals.map((int) => (
             <button
@@ -228,9 +228,9 @@ export default function PriceChart({ symbol, type, tokenAddress, currentPrice, h
               className={`px-2 py-1 text-xs rounded transition-colors ${
                 intervalState === int.value
                   ? type === 'crypto'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-purple-600 text-white'
-                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+                    ? 'bg-gold-600 text-ink'
+                    : 'bg-gold-600 text-ink'
+                  : 'text-ink-muted hover:text-ink hover:bg-white/5'
               }`}
             >
               {int.label}
@@ -239,7 +239,7 @@ export default function PriceChart({ symbol, type, tokenAddress, currentPrice, h
         </div>
         <div className="flex items-center gap-2">
           {isSimulated && (
-            <span className="px-2 py-0.5 text-[10px] bg-yellow-500/20 text-yellow-400 rounded">
+            <span className="px-2 py-0.5 text-[10px] bg-warning/20 text-warning rounded">
               Simulated
             </span>
           )}
@@ -249,8 +249,8 @@ export default function PriceChart({ symbol, type, tokenAddress, currentPrice, h
               disabled={isSimulated}
               className={`px-2 py-1 text-xs rounded transition-colors ${
                 chartType === 'candle' && !isSimulated
-                  ? 'bg-gray-700 text-white'
-                  : 'text-gray-400 hover:text-white disabled:opacity-50'
+                  ? 'bg-surface-overlay text-ink'
+                  : 'text-ink-muted hover:text-ink disabled:opacity-50'
               }`}
             >
               Candles
@@ -258,7 +258,7 @@ export default function PriceChart({ symbol, type, tokenAddress, currentPrice, h
             <button
               onClick={() => setChartType('line')}
               className={`px-2 py-1 text-xs rounded transition-colors ${
-                chartType === 'line' ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white'
+                chartType === 'line' ? 'bg-surface-overlay text-ink' : 'text-ink-muted hover:text-ink'
               }`}
             >
               Line
@@ -269,12 +269,12 @@ export default function PriceChart({ symbol, type, tokenAddress, currentPrice, h
       <div className="relative">
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#0d0d1a]/80 z-10">
-            <div className="text-gray-400 text-sm">Loading chart...</div>
+            <div className="text-ink-muted text-sm">Loading chart...</div>
           </div>
         )}
         {error && !loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-[#0d0d1a]/80 z-10">
-            <div className="text-gray-500 text-sm">{error}</div>
+            <div className="text-ink-faint text-sm">{error}</div>
           </div>
         )}
         <div ref={chartContainerRef} style={{ height: height }} />

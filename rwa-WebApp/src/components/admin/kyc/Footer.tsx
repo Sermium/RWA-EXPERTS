@@ -22,8 +22,8 @@ export function Footer({
   isTestnet
 }: FooterProps) {
   return (
-    <footer className="mt-8 pt-6 border-t border-gray-700/50">
-      <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-gray-400">
+    <footer className="mt-8 pt-6 border-t border-border/50">
+      <div className="flex flex-wrap items-center justify-between gap-4 text-sm text-ink-muted">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <Shield className="w-4 h-4" />
@@ -31,10 +31,10 @@ export function Footer({
           </div>
           
           <div className="flex items-center gap-2">
-            <span className="text-gray-500">|</span>
+            <span className="text-ink-faint">|</span>
             <span>{chainName}</span>
             {isTestnet && (
-              <span className="px-1.5 py-0.5 text-xs bg-yellow-500/20 text-yellow-400 rounded">
+              <span className="px-1.5 py-0.5 text-xs bg-yellow-500/20 text-warning rounded">
                 Testnet
               </span>
             )}
@@ -42,13 +42,13 @@ export function Footer({
           
           {chainId && (
             <div className="flex items-center gap-2">
-              <span className="text-gray-500">|</span>
+              <span className="text-ink-faint">|</span>
               <span>Chain ID: {chainId}</span>
             </div>
           )}
           
           <div className="flex items-center gap-2">
-            <span className="text-gray-500">|</span>
+            <span className="text-ink-faint">|</span>
             <span>Currency: {currencySymbol}</span>
           </div>
         </div>
@@ -60,7 +60,7 @@ export function Footer({
               href={`${explorerUrl}/address/${contractAddress}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-blue-400 hover:text-blue-300 flex items-center gap-1"
+              className="font-mono text-gold-400 hover:text-gold-300 flex items-center gap-1"
             >
               {formatAddress(contractAddress)}
               <ExternalLink className="w-3 h-3" />

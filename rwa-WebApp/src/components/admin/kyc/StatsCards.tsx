@@ -32,33 +32,33 @@ export function StatsCards({
       label: 'Pending Submissions',
       value: pendingSubmissions.length,
       icon: Clock,
-      color: 'text-yellow-400',
-      bg: 'bg-yellow-500/20',
-      border: 'border-yellow-500/30'
+      color: 'text-warning',
+      bg: 'bg-warning/20',
+      border: 'border-warning/30'
     },
     {
       label: 'Pending Upgrades',
       value: pendingUpgrades.length,
       icon: TrendingUp,
-      color: 'text-blue-400',
-      bg: 'bg-blue-500/20',
-      border: 'border-blue-500/30'
+      color: 'text-gold-400',
+      bg: 'bg-gold-500/20',
+      border: 'border-gold-500/30'
     },
     {
       label: 'KYC Fee',
       value: settings ? formatNativeCurrency(settings.kycFee, currencySymbol) : '-',
       icon: DollarSign,
-      color: 'text-green-400',
-      bg: 'bg-green-500/20',
-      border: 'border-green-500/30'
+      color: 'text-success',
+      bg: 'bg-success/20',
+      border: 'border-success/30'
     },
     {
       label: 'Contract Status',
       value: settings?.isPaused ? 'Paused' : 'Active',
       icon: settings?.isPaused ? AlertTriangle : Shield,
-      color: settings?.isPaused ? 'text-red-400' : 'text-green-400',
-      bg: settings?.isPaused ? 'bg-red-500/20' : 'bg-green-500/20',
-      border: settings?.isPaused ? 'border-red-500/30' : 'border-green-500/30'
+      color: settings?.isPaused ? 'text-danger' : 'text-success',
+      bg: settings?.isPaused ? 'bg-danger/20' : 'bg-success/20',
+      border: settings?.isPaused ? 'border-danger/30' : 'border-success/30'
     }
   ];
 
@@ -70,7 +70,7 @@ export function StatsCards({
           className={`${stat.bg} ${stat.border} border rounded-xl p-4`}
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm text-gray-400">{stat.label}</span>
+            <span className="text-sm text-ink-muted">{stat.label}</span>
             <stat.icon className={`w-5 h-5 ${stat.color}`} />
           </div>
           <p className={`text-2xl font-bold ${stat.color}`}>

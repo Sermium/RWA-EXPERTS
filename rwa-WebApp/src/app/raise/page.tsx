@@ -76,8 +76,8 @@ const calculateROI = (tokenPrice: number): number => TGE_TOKEN_PRICE / tokenPric
 
 // Token Icon Component
 function TokenIcon({ token, className = "w-5 h-5" }: { token: 'USDC' | 'USDT'; className?: string }) {
-  const colors = { USDC: 'bg-blue-500', USDT: 'bg-green-500' };
-  return <div className={`${className} ${colors[token]} rounded-full flex items-center justify-center text-white text-xs font-bold`}>{token === 'USDC' ? '$' : '₮'}</div>;
+  const colors = { USDC: 'bg-gold-500', USDT: 'bg-green-500' };
+  return <div className={`${className} ${colors[token]} rounded-full flex items-center justify-center text-ink text-xs font-bold`}>{token === 'USDC' ? '$' : '₮'}</div>;
 }
 
 // Stripe Payment Form
@@ -119,7 +119,7 @@ function StripePaymentForm({ clientSecret, onSuccess, onError, amount, investmen
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
+      <div className="bg-surface/50 rounded-lg p-4 border border-border">
         <PaymentElement />
       </div>
       {errorMessage && (
@@ -128,7 +128,7 @@ function StripePaymentForm({ clientSecret, onSuccess, onError, amount, investmen
         </div>
       )}
       <button type="submit" disabled={!stripe || processing} 
-        className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg font-semibold hover:from-purple-500 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+        className="w-full py-3 bg-gradient-to-r from-gold-600 to-gold-light-600 rounded-lg font-semibold hover:from-gold-500 hover:to-gold-light-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
         {processing ? <><Loader2 className="w-5 h-5 animate-spin" />Processing...</> : <><CreditCard className="w-5 h-5" />Pay {formatCurrency(amount)}</>}
       </button>
     </form>
@@ -233,7 +233,7 @@ function CryptoPayment({ amount, selectedToken, onTokenChange, onSuccess, onErro
     <div className="space-y-4">
       {/* Token Selection */}
       <div>
-        <label className="block text-sm text-slate-400 mb-2">Select Stablecoin</label>
+        <label className="block text-sm text-ink-muted mb-2">Select Stablecoin</label>
         <div className="flex gap-2">
           {(['USDC', 'USDT'] as const).map((token) => {
             const available = token === 'USDC' ? usdcAvailable : usdtAvailable;
@@ -245,15 +245,15 @@ function CryptoPayment({ amount, selectedToken, onTokenChange, onSuccess, onErro
                 disabled={!available}
                 className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 
                   ${!available 
-                    ? 'opacity-40 cursor-not-allowed bg-slate-800/50 border border-slate-700' 
+                    ? 'opacity-40 cursor-not-allowed bg-surface/50 border border-border' 
                     : selectedToken === token 
-                      ? 'bg-purple-600 text-white border-2 border-purple-400' 
-                      : 'bg-slate-800 text-slate-300 border border-slate-700 hover:border-slate-500'
+                      ? 'bg-gold-600 text-ink border-2 border-gold-400' 
+                      : 'bg-surface text-ink-muted border border-border hover:border-border-strong'
                   }`}
               >
                 <TokenIcon token={token} />
                 <span>{token}</span>
-                {!available && <span className="text-xs text-slate-500">(N/A)</span>}
+                {!available && <span className="text-xs text-ink-faint">(N/A)</span>}
               </button>
             );
           })}
@@ -263,21 +263,21 @@ function CryptoPayment({ amount, selectedToken, onTokenChange, onSuccess, onErro
       {/* Chain & Balance Info */}
       {hasTokens && tokenAddress ? (
         <>
-          <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700 space-y-2">
+          <div className="bg-surface/50 rounded-lg p-4 border border-border space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-slate-400">Network</span>
+              <span className="text-ink-muted">Network</span>
               <span className="font-medium flex items-center gap-2">
                 {chainInfo?.name || `Chain ${chainId}`}
                 {chainInfo?.testnet && <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">Testnet</span>}
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-400">Your {selectedToken} Balance</span>
+              <span className="text-ink-muted">Your {selectedToken} Balance</span>
               <span className="font-medium">{formattedBalance} {selectedToken}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-slate-400">Receiving Wallet</span>
-              <span className="font-mono text-xs text-slate-500">{feeReceiver.slice(0,6)}...{feeReceiver.slice(-4)}</span>
+              <span className="text-ink-muted">Receiving Wallet</span>
+              <span className="font-mono text-xs text-ink-faint">{feeReceiver.slice(0,6)}...{feeReceiver.slice(-4)}</span>
             </div>
           </div>
 
@@ -296,12 +296,12 @@ function CryptoPayment({ amount, selectedToken, onTokenChange, onSuccess, onErro
 
           {/* Transaction Link */}
           {txHash && (
-            <div className="text-sm text-slate-400 text-center">
+            <div className="text-sm text-ink-muted text-center">
               <a 
                 href={`${chainInfo?.explorerUrl || 'https://snowtrace.io'}/tx/${txHash}`}
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="text-purple-400 hover:text-purple-300 flex items-center justify-center gap-1"
+                className="text-gold-400 hover:text-gold-300 flex items-center justify-center gap-1"
               >
                 View transaction <ExternalLink className="w-3 h-3" />
               </a>
@@ -312,10 +312,10 @@ function CryptoPayment({ amount, selectedToken, onTokenChange, onSuccess, onErro
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 text-center">
           <AlertCircle className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
           <p className="text-yellow-400 font-medium">No stablecoins available on {chainInfo?.name || 'this network'}</p>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-ink-muted mt-1">
             Please switch to a network with USDC/USDT deployed, or use card payment.
           </p>
-          <div className="mt-3 text-xs text-slate-500">
+          <div className="mt-3 text-xs text-ink-faint">
             Supported networks: Avalanche Fuji, Polygon Amoy, BNB Testnet
           </div>
         </div>
@@ -350,9 +350,9 @@ function WalletBalanceDisplay({ chainId, token, address }: { chainId: number; to
   if (!tokenAddress) return null;
 
   return (
-    <div className="mt-3 p-3 bg-slate-900/50 rounded-lg border border-slate-700">
+    <div className="mt-3 p-3 bg-surface/50 rounded-lg border border-border">
       <div className="flex justify-between items-center">
-        <span className="text-sm text-slate-400 flex items-center gap-2">
+        <span className="text-sm text-ink-muted flex items-center gap-2">
           <Wallet className="w-4 h-4" />
           Your {token} Balance
         </span>
@@ -368,8 +368,8 @@ function WalletBalanceDisplay({ chainId, token, address }: { chainId: number; to
         </span>
       </div>
       <div className="flex justify-between items-center mt-2 text-xs">
-        <span className="text-slate-500">Network</span>
-        <span className="text-slate-400 flex items-center gap-1">
+        <span className="text-ink-faint">Network</span>
+        <span className="text-ink-muted flex items-center gap-1">
           {chainInfo?.name || `Chain ${chainId}`}
           {chainInfo?.testnet && <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">Testnet</span>}
         </span>
@@ -502,7 +502,7 @@ export default function RaisePage() {
           name: r.name, 
           target: r.target_amount_usd, 
           raised: r.raised_amount_usd, 
-          color: r.status === 'completed' ? 'bg-blue-500' : 'bg-purple-500', 
+          color: r.status === 'completed' ? 'bg-gold-500' : 'bg-gold-500', 
           status: r.status 
         });
       }
@@ -659,20 +659,20 @@ export default function RaisePage() {
 
   if (!mounted || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-900">
-        <Loader2 className="w-8 h-8 animate-spin text-purple-500" />
+      <div className="min-h-screen flex items-center justify-center bg-surface-sunken">
+        <Loader2 className="w-8 h-8 animate-spin text-gold-500" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white">
+    <div className="min-h-screen bg-surface-sunken text-ink">
       {/* Header */}
-      <div className="bg-gradient-to-r from-purple-900/50 to-blue-900/50 border-b border-slate-700">
+      <div className="bg-gradient-to-r from-gold-900/50 to-gold-light-900/50 border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-2">Invest in RWA Platform</h1>
-            <p className="text-slate-300 text-lg">Join the future of real-world asset tokenization</p>
+            <p className="text-ink-muted text-lg">Join the future of real-world asset tokenization</p>
           </div>
         </div>
       </div>
@@ -684,33 +684,33 @@ export default function RaisePage() {
             <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-green-400">Investment Successful!</h3>
-              <p className="text-slate-300 mt-1">Thank you for your investment. You will receive a confirmation email shortly with details about your token allocation.</p>
+              <p className="text-ink-muted mt-1">Thank you for your investment. You will receive a confirmation email shortly with details about your token allocation.</p>
             </div>
-            <button onClick={() => setSuccess(false)} className="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+            <button onClick={() => setSuccess(false)} className="text-ink-muted hover:text-ink text-2xl leading-none">&times;</button>
           </div>
         )}
 
         {/* Progress Bar */}
-        <div className="mb-8 md:mb-12 bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+        <div className="mb-8 md:mb-12 bg-surface/50 rounded-xl p-6 border border-border">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
             <h2 className="text-xl font-semibold">Fundraising Progress</h2>
-            <span className="text-2xl font-bold text-purple-400">
+            <span className="text-2xl font-bold text-gold-400">
               {formatCurrency(progressData.raised)} / {formatCurrency(progressData.currentTarget)}
             </span>
           </div>
-          <div className="relative h-6 md:h-8 bg-slate-700 rounded-full overflow-hidden mb-4">
+          <div className="relative h-6 md:h-8 bg-surface-overlay rounded-full overflow-hidden mb-4">
             {progressData.segments.map((seg, i) => {
               const prev = progressData.segments.slice(0, i).reduce((a, s) => a + (s.target / progressData.currentTarget) * 100, 0);
               const width = (seg.raised / progressData.currentTarget) * 100;
               return <div key={`seg-${i}`} className={`absolute h-full ${seg.color} transition-all duration-700`} style={{ left: `${prev}%`, width: `${width}%` }} />;
             })}
           </div>
-          <div className="flex flex-wrap gap-4 text-sm text-slate-400">
+          <div className="flex flex-wrap gap-4 text-sm text-ink-muted">
             {progressData.segments.map((seg, i) => (
               <div key={`lbl-${i}`} className="flex items-center gap-2">
                 <div className={`w-3 h-3 rounded-full ${seg.color}`} />
                 <span>{seg.name}</span>
-                {seg.status === 'active' && <span className="px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs rounded-full">Active</span>}
+                {seg.status === 'active' && <span className="px-2 py-0.5 bg-gold-500/20 text-gold-400 text-xs rounded-full">Active</span>}
               </div>
             ))}
           </div>
@@ -720,47 +720,47 @@ export default function RaisePage() {
           {/* Main Investment Form */}
           <div className="lg:col-span-2 space-y-8">
             {activeRound ? (
-              <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+              <div className="bg-surface/50 rounded-xl p-6 border border-border">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
                   <div>
-                    <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium">{activeRound.name}</span>
+                    <span className="px-3 py-1 bg-gold-500/20 text-gold-400 rounded-full text-sm font-medium">{activeRound.name}</span>
                     <h2 className="text-2xl font-bold mt-2">Current Investment Round</h2>
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold text-green-400">{roi.toFixed(2)}x</div>
-                    <div className="text-sm text-slate-400">ROI at TGE</div>
+                    <div className="text-sm text-ink-muted">ROI at TGE</div>
                     <div className="text-lg font-bold text-emerald-400 mt-1">{calculate5YearROI(activeRound.token_price_usd).toFixed(0)}x</div>
-                    <div className="text-xs text-slate-500">5Y Potential</div>
+                    <div className="text-xs text-ink-faint">5Y Potential</div>
                   </div>
                 </div>
 
                 {/* Stats Grid */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
-                  <div className="bg-slate-900/50 rounded-lg p-3 md:p-4">
-                    <div className="text-xs md:text-sm text-slate-400">Token Price</div>
+                  <div className="bg-surface/50 rounded-lg p-3 md:p-4">
+                    <div className="text-xs md:text-sm text-ink-muted">Token Price</div>
                     <div className="text-lg md:text-xl font-bold">${activeRound.token_price_usd}</div>
                   </div>
-                  <div className="bg-slate-900/50 rounded-lg p-3 md:p-4">
-                    <div className="text-xs md:text-sm text-slate-400">Vesting</div>
+                  <div className="bg-surface/50 rounded-lg p-3 md:p-4">
+                    <div className="text-xs md:text-sm text-ink-muted">Vesting</div>
                     <div className="text-lg md:text-xl font-bold">{activeRound.vesting_months}mo</div>
-                    <div className="text-xs text-slate-500">No cliff</div>
+                    <div className="text-xs text-ink-faint">No cliff</div>
                   </div>
-                  <div className="bg-slate-900/50 rounded-lg p-3 md:p-4">
-                    <div className="text-xs md:text-sm text-slate-400">Min Investment</div>
+                  <div className="bg-surface/50 rounded-lg p-3 md:p-4">
+                    <div className="text-xs md:text-sm text-ink-muted">Min Investment</div>
                     <div className="text-lg md:text-xl font-bold">{formatCurrency(activeRound.min_investment_usd)}</div>
                   </div>
-                  <div className="bg-slate-900/50 rounded-lg p-3 md:p-4">
-                    <div className="text-xs md:text-sm text-slate-400">Investors</div>
+                  <div className="bg-surface/50 rounded-lg p-3 md:p-4">
+                    <div className="text-xs md:text-sm text-ink-muted">Investors</div>
                     <div className="text-lg md:text-xl font-bold">{activeRound.investor_count}</div>
                   </div>
                 </div>
 
                 {/* Investment Flow */}
                 {!isConnected ? (
-                  <div className="text-center py-8 bg-slate-900/50 rounded-lg">
-                    <Wallet className="w-12 h-12 mx-auto mb-4 text-slate-500" />
+                  <div className="text-center py-8 bg-surface/50 rounded-lg">
+                    <Wallet className="w-12 h-12 mx-auto mb-4 text-ink-faint" />
                     <h3 className="text-lg font-semibold mb-2">Connect Your Wallet</h3>
-                    <p className="text-slate-400">Connect your wallet using the button in the header to start investing</p>
+                    <p className="text-ink-muted">Connect your wallet using the button in the header to start investing</p>
                   </div>
                 ) : clientSecret && investmentId ? (
                   
@@ -771,7 +771,7 @@ export default function RaisePage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold">Complete Card Payment</h3>
-                      <button onClick={resetPayment} className="text-sm text-slate-400 hover:text-white">← Back</button>
+                      <button onClick={resetPayment} className="text-sm text-ink-muted hover:text-ink">← Back</button>
                     </div>
                     <Elements stripe={stripePromise} options={{ clientSecret }}>
                       <StripePaymentForm 
@@ -791,7 +791,7 @@ export default function RaisePage() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <h3 className="font-semibold">Complete Crypto Payment</h3>
-                      <button onClick={resetPayment} className="text-sm text-slate-400 hover:text-white">← Back</button>
+                      <button onClick={resetPayment} className="text-sm text-ink-muted hover:text-ink">← Back</button>
                     </div>
                     <CryptoPayment 
                       amount={amount} 
@@ -807,13 +807,13 @@ export default function RaisePage() {
                     {/* Referral Code - MOVED TO TOP */}
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <label className="block text-sm text-slate-400">Referral Code (Optional)</label>
+                        <label className="block text-sm text-ink-muted">Referral Code (Optional)</label>
                         <div className="relative group">
-                          <Info className="w-4 h-4 text-slate-500 cursor-help" />
-                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 border border-slate-700 rounded-lg text-xs text-slate-300 w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 shadow-xl">
-                            <div className="font-medium text-white mb-1">How referrals work</div>
+                          <Info className="w-4 h-4 text-ink-faint cursor-help" />
+                          <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-surface-sunken border border-border rounded-lg text-xs text-ink-muted w-64 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 shadow-xl">
+                            <div className="font-medium text-ink mb-1">How referrals work</div>
                             Every investment includes a 5% token bonus. If you use a referral code, the bonus goes to your referrer. Gold and Diamond tier users can generate referral codes to share.
-                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-700"></div>
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-border"></div>
                           </div>
                         </div>
                       </div>
@@ -829,12 +829,12 @@ export default function RaisePage() {
                             }} 
                             placeholder="Enter referral code"
                             disabled={!!appliedReferral}
-                            className={`w-full px-4 py-3 bg-slate-900 border rounded-lg focus:outline-none transition-colors ${
+                            className={`w-full px-4 py-3 bg-surface-sunken border rounded-lg focus:outline-none transition-colors ${
                               appliedReferral 
                                 ? 'border-green-500 bg-green-500/10' 
                                 : referralError 
                                   ? 'border-red-500' 
-                                  : 'border-slate-700 focus:border-purple-500'
+                                  : 'border-border focus:border-gold-500'
                             }`}
                           />
                           {appliedReferral && (
@@ -846,7 +846,7 @@ export default function RaisePage() {
                             type="button"
                             onClick={() => validateReferralCode(referralCode)}
                             disabled={!referralCode.trim() || checkingReferral}
-                            className="px-4 py-3 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-700 disabled:cursor-not-allowed rounded-lg font-medium transition-colors flex items-center gap-2"
+                            className="px-4 py-3 bg-gold-600 hover:bg-gold-500 disabled:bg-surface-overlay disabled:cursor-not-allowed rounded-lg font-medium transition-colors flex items-center gap-2"
                           >
                             {checkingReferral ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -862,7 +862,7 @@ export default function RaisePage() {
                               setAppliedReferral(null);
                               setReferralError(null);
                             }}
-                            className="px-4 py-3 bg-slate-700 hover:bg-slate-600 rounded-lg font-medium transition-colors"
+                            className="px-4 py-3 bg-surface-overlay hover:bg-border-strong rounded-lg font-medium transition-colors"
                           >
                             Clear
                           </button>
@@ -880,25 +880,25 @@ export default function RaisePage() {
                           Referral applied! Your referrer will receive 5% bonus tokens.
                         </p>
                       )}
-                      <p className="text-xs text-slate-500 mt-2">
+                      <p className="text-xs text-ink-faint mt-2">
                         Apply your referrer&apos;s code to give them a 5% token bonus. You cannot use your own code or codes from your linked wallets.
                       </p>
                     </div>
 
                     {/* Payment Method */}
                     <div>
-                      <label className="block text-sm text-slate-400 mb-2">Payment Method</label>
+                      <label className="block text-sm text-ink-muted mb-2">Payment Method</label>
                       <div className="grid grid-cols-2 gap-3 md:gap-4">
                         <button onClick={() => setPaymentMethod('crypto')} 
-                          className={`p-4 rounded-lg border-2 transition-all flex items-center gap-3 ${paymentMethod === 'crypto' ? 'border-purple-500 bg-purple-500/10' : 'border-slate-700 bg-slate-800 hover:border-slate-600'}`}>
+                          className={`p-4 rounded-lg border-2 transition-all flex items-center gap-3 ${paymentMethod === 'crypto' ? 'border-gold-500 bg-gold-500/10' : 'border-border bg-surface hover:border-border-strong'}`}>
                           <Wallet className="w-6 h-6" />
                           <div className="text-left">
                             <div className="font-medium">Crypto</div>
-                            <div className="text-xs text-slate-400">USDC / USDT</div>
+                            <div className="text-xs text-ink-muted">USDC / USDT</div>
                           </div>
                         </button>
                         <button onClick={() => setPaymentMethod('fiat')} 
-                          className={`p-4 rounded-lg border-2 transition-all flex items-center gap-3 ${paymentMethod === 'fiat' ? 'border-purple-500 bg-purple-500/10' : 'border-slate-700 bg-slate-800 hover:border-slate-600'}`}>
+                          className={`p-4 rounded-lg border-2 transition-all flex items-center gap-3 ${paymentMethod === 'fiat' ? 'border-gold-500 bg-gold-500/10' : 'border-border bg-surface hover:border-border-strong'}`}>
                           <CreditCard className="w-6 h-6" />
                           <div className="text-left">
                             <div className="font-medium">Card</div>
@@ -911,14 +911,14 @@ export default function RaisePage() {
                     {/* Crypto Token Selection */}
                     {paymentMethod === 'crypto' && (
                       <div>
-                        <label className="block text-sm text-slate-400 mb-2">Select Token</label>
+                        <label className="block text-sm text-ink-muted mb-2">Select Token</label>
                         <div className="flex gap-2">
                           {(['USDC', 'USDT'] as const).map(token => {
                             const available = chain?.id ? !!getTokenAddress(chain.id, token) : false;
                             return (
                               <button key={token} onClick={() => available && setSelectedToken(token)} disabled={!available}
                                 className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all flex items-center justify-center gap-2 
-                                  ${!available ? 'opacity-40 cursor-not-allowed bg-slate-800/50' : selectedToken === token ? 'bg-purple-600 text-white' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'}`}>
+                                  ${!available ? 'opacity-40 cursor-not-allowed bg-surface/50' : selectedToken === token ? 'bg-gold-600 text-ink' : 'bg-surface text-ink-muted hover:bg-surface-overlay'}`}>
                                 <TokenIcon token={token} />{token}
                               </button>
                             );
@@ -937,9 +937,9 @@ export default function RaisePage() {
 
                     {/* Amount Input */}
                     <div>
-                      <label className="block text-sm text-slate-400 mb-2">Investment Amount (USD)</label>
+                      <label className="block text-sm text-ink-muted mb-2">Investment Amount (USD)</label>
                       <div className="relative">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-lg">$</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted text-lg">$</span>
                         <input 
                           type="number" 
                           value={investmentAmount} 
@@ -947,13 +947,13 @@ export default function RaisePage() {
                           placeholder="0.00" 
                           min={activeRound.min_investment_usd} 
                           max={activeRound.max_investment_usd}
-                          className="w-full pl-8 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-lg text-xl focus:outline-none focus:border-purple-500 transition-colors" 
+                          className="w-full pl-8 pr-4 py-3 bg-surface-sunken border border-border rounded-lg text-xl focus:outline-none focus:border-gold-500 transition-colors" 
                         />
                       </div>
                       <div className="flex flex-wrap gap-2 mt-3">
                         {quickAmounts.map((amt, i) => (
                           <button key={`q-${i}`} onClick={() => setInvestmentAmount(amt.toString())} 
-                            className="px-3 py-1.5 bg-slate-700 rounded-lg text-sm hover:bg-slate-600 transition-colors">
+                            className="px-3 py-1.5 bg-surface-overlay rounded-lg text-sm hover:bg-border-strong transition-colors">
                             {formatCurrency(amt)}
                           </button>
                         ))}
@@ -962,52 +962,52 @@ export default function RaisePage() {
 
                     {/* Summary */}
                     {amount > 0 && (
-                      <div className="bg-slate-900/50 rounded-lg p-4 space-y-3">
-                        <div className="flex justify-between"><span className="text-slate-400">Investment</span><span>{formatCurrency(amount)}</span></div>
+                      <div className="bg-surface/50 rounded-lg p-4 space-y-3">
+                        <div className="flex justify-between"><span className="text-ink-muted">Investment</span><span>{formatCurrency(amount)}</span></div>
                         {paymentMethod === 'fiat' && (
                           <div className="flex justify-between text-yellow-400">
                             <span className="flex items-center gap-1"><Info className="w-4 h-4" />Stripe Fee (4%)</span>
                             <span>+{formatCurrency(stripeFee)}</span>
                           </div>
                         )}
-                        <div className="border-t border-slate-700 pt-3 flex justify-between font-semibold">
+                        <div className="border-t border-border pt-3 flex justify-between font-semibold">
                           <span>Total</span><span>{formatCurrency(totalCharge)}</span>
                         </div>
-                        <div className="border-t border-slate-700 pt-3 space-y-2">
+                        <div className="border-t border-border pt-3 space-y-2">
                           <div className="flex justify-between">
-                            <span className="text-slate-400">Base Tokens</span>
-                            <span className="text-purple-400 font-semibold">{formatNumber(tokensToReceive)} RWA</span>
+                            <span className="text-ink-muted">Base Tokens</span>
+                            <span className="text-gold-400 font-semibold">{formatNumber(tokensToReceive)} RWA</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-400 flex items-center gap-1">
+                            <span className="text-ink-muted flex items-center gap-1">
                               <Gift className="w-4 h-4 text-green-400" /> 
                               {appliedReferral ? 'Referral Bonus (5%)' : 'Investor Bonus (5%)'}
                             </span>
                             <span className="text-green-400 font-semibold">+{formatNumber(bonusTokens)} RWA</span>
                           </div>
                           <div className="flex justify-between font-semibold">
-                            <span className="text-slate-300">Total Tokens</span>
-                            <span className="text-purple-400">{formatNumber(totalTokens)} RWA</span>
+                            <span className="text-ink-muted">Total Tokens</span>
+                            <span className="text-gold-400">{formatNumber(totalTokens)} RWA</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-400">Value at TGE</span>
+                            <span className="text-ink-muted">Value at TGE</span>
                             <span className="text-green-400 font-semibold">{formatCurrency(valueAtTGE)}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-400">ROI at TGE</span>
+                            <span className="text-ink-muted">ROI at TGE</span>
                             <span className="text-green-400 font-semibold">+{((roi - 1) * 100).toFixed(0)}%</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-400">5Y Potential ROI</span>
+                            <span className="text-ink-muted">5Y Potential ROI</span>
                             <span className="text-emerald-400 font-semibold">+{((calculate5YearROI(activeRound.token_price_usd) - 1) * 100).toFixed(0)}%</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-slate-400">5Y Token Value</span>
+                            <span className="text-ink-muted">5Y Token Value</span>
                             <span className="text-emerald-400 font-semibold">{formatCurrency(totalTokens * yearlyProjections.year5.tokenValue)}</span>
                           </div>
                         </div>
                         {!appliedReferral && (
-                          <div className="text-xs text-slate-500 pt-2 border-t border-slate-700">
+                          <div className="text-xs text-ink-faint pt-2 border-t border-border">
                             <Info className="w-3 h-3 inline mr-1" />
                             Have a referral code? Apply it above to give the 5% bonus to your referrer instead of the platform.
                           </div>
@@ -1025,22 +1025,22 @@ export default function RaisePage() {
 
                     {/* Submit */}
                     <button onClick={handleInvest} disabled={!amount || amount < activeRound.min_investment_usd || processingPayment}
-                      className="w-full py-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg font-semibold text-lg hover:from-purple-500 hover:to-blue-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                      className="w-full py-4 bg-gradient-to-r from-gold-600 to-gold-light-600 rounded-lg font-semibold text-lg hover:from-gold-500 hover:to-gold-light-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
                       {processingPayment ? <><Loader2 className="w-5 h-5 animate-spin" />Processing...</> : <>Invest Now<ArrowRight className="w-5 h-5" /></>}
                     </button>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="bg-slate-800/50 rounded-xl p-8 border border-slate-700 text-center">
-                <Clock className="w-16 h-16 mx-auto mb-4 text-slate-500" />
+              <div className="bg-surface/50 rounded-xl p-8 border border-border text-center">
+                <Clock className="w-16 h-16 mx-auto mb-4 text-ink-faint" />
                 <h2 className="text-2xl font-bold mb-2">No Active Round</h2>
-                <p className="text-slate-400">Check back soon for investment opportunities.</p>
+                <p className="text-ink-muted">Check back soon for investment opportunities.</p>
               </div>
             )}
 
             {/* Investment Rounds - Unified Section */}
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
               <h2 className="text-xl font-semibold mb-6">Investment Rounds</h2>
               
               <div className="space-y-4">
@@ -1066,76 +1066,76 @@ export default function RaisePage() {
                   // Active round - fully expanded
                   if (isActive) {
                     return (
-                      <div key={round.id} className="p-6 rounded-xl border-2 border-purple-500 bg-purple-500/10 relative overflow-hidden">
+                      <div key={round.id} className="p-6 rounded-xl border-2 border-gold-500 bg-gold-500/10 relative overflow-hidden">
                         {/* Active badge */}
-                        <div className="absolute top-0 right-0 bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                        <div className="absolute top-0 right-0 bg-gold-500 text-ink text-xs font-bold px-3 py-1 rounded-bl-lg">
                           NOW OPEN
                         </div>
                         
                         <div className="flex items-start justify-between mb-4">
                           <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-purple-500 flex items-center justify-center font-bold">
+                            <div className="w-10 h-10 rounded-full bg-gold-500 flex items-center justify-center font-bold">
                               {idx + 1}
                             </div>
                             <div>
                               <h3 className="text-xl font-bold">{round.display_name || round.name}</h3>
-                              <span className="text-sm text-purple-300">{round.timeline || 'Current Round'}</span>
+                              <span className="text-sm text-gold-300">{round.timeline || 'Current Round'}</span>
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-2xl font-bold text-purple-400">${round.token_price_usd}</div>
-                            <div className="text-sm text-slate-400">per token</div>
+                            <div className="text-2xl font-bold text-gold-400">${round.token_price_usd}</div>
+                            <div className="text-sm text-ink-muted">per token</div>
                           </div>
                         </div>
                         
                         {/* Progress bar */}
                         <div className="mb-4">
                           <div className="flex justify-between text-sm mb-1">
-                            <span className="text-slate-400">Raised</span>
-                            <span className="text-purple-300">
+                            <span className="text-ink-muted">Raised</span>
+                            <span className="text-gold-300">
                               {formatCurrency(round.raised_amount_usd || 0)} / {formatCurrency(round.target_amount_usd)}
                             </span>
                           </div>
-                          <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+                          <div className="h-3 bg-surface-overlay rounded-full overflow-hidden">
                             <div 
-                              className="h-full bg-gradient-to-r from-purple-500 to-purple-400 rounded-full transition-all"
+                              className="h-full bg-gradient-to-r from-gold-500 to-gold-light-400 rounded-full transition-all"
                               style={{ width: `${Math.min(100, ((round.raised_amount_usd || 0) / round.target_amount_usd) * 100)}%` }}
                             />
                           </div>
-                          <div className="flex justify-between text-xs mt-1 text-slate-500">
+                          <div className="flex justify-between text-xs mt-1 text-ink-faint">
                             <span>{round.investor_count || 0} investors</span>
                             <span>{((round.raised_amount_usd || 0) / round.target_amount_usd * 100).toFixed(1)}% funded</span>
                           </div>
                         </div>
                         
                         {/* Investment limits */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-slate-900/50 rounded-lg">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 p-3 bg-surface/50 rounded-lg">
                           <div>
-                            <span className="text-xs text-slate-500">Min Investment</span>
+                            <span className="text-xs text-ink-faint">Min Investment</span>
                             <div className="font-semibold">{formatCurrency(round.min_investment_usd)}</div>
                           </div>
                           <div>
-                            <span className="text-xs text-slate-500">Max Investment</span>
+                            <span className="text-xs text-ink-faint">Max Investment</span>
                             <div className="font-semibold">{formatCurrency(round.max_investment_usd)}</div>
                           </div>
                           <div>
-                            <span className="text-xs text-slate-500">Allocation</span>
+                            <span className="text-xs text-ink-faint">Allocation</span>
                             <div className="font-semibold">{round.token_allocation_percent}%</div>
                           </div>
                           <div>
-                            <span className="text-xs text-slate-500">Vesting</span>
-                            <div className="font-semibold">{round.vesting_months}mo <span className="text-xs text-slate-500">(no cliff)</span></div>
+                            <span className="text-xs text-ink-faint">Vesting</span>
+                            <div className="font-semibold">{round.vesting_months}mo <span className="text-xs text-ink-faint">(no cliff)</span></div>
                           </div>
                         </div>
                         
                         {/* ROI */}
                         <div className="flex gap-4 mb-4 p-3 bg-green-500/10 rounded-lg border border-green-500/20">
                           <div className="flex-1 text-center">
-                            <div className="text-xs text-slate-400">TGE ROI</div>
+                            <div className="text-xs text-ink-muted">TGE ROI</div>
                             <div className="text-lg font-bold text-green-400">{calculateROI(round.token_price_usd).toFixed(2)}x</div>
                           </div>
-                          <div className="flex-1 text-center border-l border-slate-700">
-                            <div className="text-xs text-slate-400">5Y Potential</div>
+                          <div className="flex-1 text-center border-l border-border">
+                            <div className="text-xs text-ink-muted">5Y Potential</div>
                             <div className="text-lg font-bold text-emerald-400">{calculate5YearROI(round.token_price_usd).toFixed(0)}x</div>
                           </div>
                         </div>
@@ -1143,12 +1143,12 @@ export default function RaisePage() {
                         {/* Deliverables */}
                         {deliverables.length > 0 && (
                           <div>
-                            <h4 className="text-sm font-medium text-slate-300 mb-2">Milestones & Deliverables</h4>
+                            <h4 className="text-sm font-medium text-ink-muted mb-2">Milestones & Deliverables</h4>
                             <div className="grid md:grid-cols-2 gap-2">
                               {deliverables.map((item, i) => (
                                 <div key={i} className="flex items-center gap-2 text-sm">
-                                  <CheckCircle className="w-4 h-4 flex-shrink-0 text-purple-400" />
-                                  <span className="text-slate-300">{item}</span>
+                                  <CheckCircle className="w-4 h-4 flex-shrink-0 text-gold-400" />
+                                  <span className="text-ink-muted">{item}</span>
                                 </div>
                               ))}
                             </div>
@@ -1165,17 +1165,17 @@ export default function RaisePage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                              <CheckCircle className="w-5 h-5 text-white" />
+                              <CheckCircle className="w-5 h-5 text-ink" />
                             </div>
                             <div>
                               <h3 className="font-semibold text-green-400">{round.display_name || round.name}</h3>
-                              <span className="text-xs text-slate-500">{round.timeline || 'Completed'}</span>
+                              <span className="text-xs text-ink-faint">{round.timeline || 'Completed'}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
                             <div className="text-right hidden sm:block">
                               <div className="text-sm font-medium text-green-400">{formatCurrency(round.raised_amount_usd || 0)} raised</div>
-                              <div className="text-xs text-slate-500">{round.investor_count || 0} investors • ${round.token_price_usd}/token</div>
+                              <div className="text-xs text-ink-faint">{round.investor_count || 0} investors • ${round.token_price_usd}/token</div>
                             </div>
                             <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full font-medium">Completed</span>
                           </div>
@@ -1187,23 +1187,23 @@ export default function RaisePage() {
                   // Upcoming round - collapsed, locked appearance
                   if (isUpcoming) {
                     return (
-                      <div key={round.id} className="p-4 rounded-lg border border-slate-700 bg-slate-900/30 opacity-70">
+                      <div key={round.id} className="p-4 rounded-lg border border-border bg-surface-sunken/30 opacity-70">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center">
-                              <Clock className="w-4 h-4 text-slate-500" />
+                            <div className="w-8 h-8 rounded-full bg-surface-overlay flex items-center justify-center">
+                              <Clock className="w-4 h-4 text-ink-faint" />
                             </div>
                             <div>
-                              <h3 className="font-semibold text-slate-400">{round.display_name || round.name}</h3>
+                              <h3 className="font-semibold text-ink-muted">{round.display_name || round.name}</h3>
                               <span className="text-xs text-slate-600">{round.timeline || 'Coming Soon'}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
                             <div className="text-right hidden sm:block">
-                              <div className="text-sm font-medium text-slate-500">${round.token_price_usd}/token</div>
+                              <div className="text-sm font-medium text-ink-faint">${round.token_price_usd}/token</div>
                               <div className="text-xs text-slate-600">Target: {formatCurrency(round.target_amount_usd)}</div>
                             </div>
-                            <span className="px-2 py-1 bg-slate-700 text-slate-500 text-xs rounded-full font-medium">Upcoming</span>
+                            <span className="px-2 py-1 bg-surface-overlay text-ink-faint text-xs rounded-full font-medium">Upcoming</span>
                           </div>
                         </div>
                       </div>
@@ -1216,7 +1216,7 @@ export default function RaisePage() {
               
               {/* No rounds message */}
               {rounds.length === 0 && (
-                <div className="text-center py-8 text-slate-400">
+                <div className="text-center py-8 text-ink-muted">
                   <Clock className="w-12 h-12 mx-auto mb-3 text-slate-600" />
                   <p className="text-lg font-medium">No investment rounds available</p>
                   <p className="text-sm">Check back soon for opportunities</p>
@@ -1224,28 +1224,28 @@ export default function RaisePage() {
               )}
             </div>
             {/* 5-Year Projections */}
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
               <h2 className="text-xl font-semibold mb-4">5-Year Financial Projections</h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-slate-700">
-                      <th className="text-left py-2 text-slate-400 font-medium">Year</th>
-                      <th className="text-right py-2 text-slate-400 font-medium">Revenue</th>
-                      <th className="text-right py-2 text-slate-400 font-medium">EBITDA</th>
-                      <th className="text-right py-2 text-slate-400 font-medium">Token Value</th>
-                      <th className="text-right py-2 text-slate-400 font-medium">Your Value*</th>
+                    <tr className="border-b border-border">
+                      <th className="text-left py-2 text-ink-muted font-medium">Year</th>
+                      <th className="text-right py-2 text-ink-muted font-medium">Revenue</th>
+                      <th className="text-right py-2 text-ink-muted font-medium">EBITDA</th>
+                      <th className="text-right py-2 text-ink-muted font-medium">Token Value</th>
+                      <th className="text-right py-2 text-ink-muted font-medium">Your Value*</th>
                     </tr>
                   </thead>
                   <tbody>
                     {Object.entries(yearlyProjections).map(([year, data], idx) => (
-                      <tr key={year} className="border-b border-slate-700/50">
+                      <tr key={year} className="border-b border-border/50">
                         <td className="py-2 font-medium">Year {idx + 1}</td>
                         <td className="py-2 text-right">{formatCurrency(data.revenue)}</td>
                         <td className={`py-2 text-right ${data.ebitda < 0 ? 'text-red-400' : 'text-green-400'}`}>
                           {formatCurrency(data.ebitda)}
                         </td>
-                        <td className="py-2 text-right text-purple-400">${data.tokenValue}</td>
+                        <td className="py-2 text-right text-gold-400">${data.tokenValue}</td>
                         <td className="py-2 text-right text-emerald-400">
                           {amount > 0 && activeRound ? formatCurrency(totalTokens * data.tokenValue) : '-'}
                         </td>
@@ -1254,24 +1254,24 @@ export default function RaisePage() {
                   </tbody>
                 </table>
               </div>
-              <p className="text-xs text-slate-500 mt-3">*Based on your current investment amount. Projections are estimates and not guaranteed.</p>
+              <p className="text-xs text-ink-faint mt-3">*Based on your current investment amount. Projections are estimates and not guaranteed.</p>
             </div>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Referral Program */}
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
               <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                <Gift className="w-5 h-5 text-purple-400" /> Referral Program
+                <Gift className="w-5 h-5 text-gold-400" /> Referral Program
               </h2>
               <div className="space-y-4">
-                <div className="bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-lg p-4 border border-purple-500/30">
-                  <div className="text-2xl font-bold text-purple-400 mb-1">5% Bonus</div>
-                  <div className="text-sm text-slate-400">On every investment</div>
+                <div className="bg-gradient-to-r from-gold-500/10 to-gold-light-500/10 rounded-lg p-4 border border-gold-500/30">
+                  <div className="text-2xl font-bold text-gold-400 mb-1">5% Bonus</div>
+                  <div className="text-sm text-ink-muted">On every investment</div>
                 </div>
                 
-                <div className="bg-slate-900/50 rounded-lg p-3 text-sm">
+                <div className="bg-surface/50 rounded-lg p-3 text-sm">
                   <div className="flex items-center gap-2 mb-2">
                     <CheckCircle className="w-4 h-4 text-green-400" />
                     With referral → Bonus goes to referrer
@@ -1281,24 +1281,24 @@ export default function RaisePage() {
 
                 <div className="space-y-3 text-sm">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-xs flex-shrink-0">1</div>
+                    <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center text-gold-400 font-bold text-xs flex-shrink-0">1</div>
                     <div>
                       <div className="font-medium">Get Your Code</div>
-                      <div className="text-slate-400">Gold & Diamond KYC tiers can generate referral codes</div>
+                      <div className="text-ink-muted">Gold & Diamond KYC tiers can generate referral codes</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-xs flex-shrink-0">2</div>
+                    <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center text-gold-400 font-bold text-xs flex-shrink-0">2</div>
                     <div>
                       <div className="font-medium">Share & Earn</div>
-                      <div className="text-slate-400">Share your code with friends and network</div>
+                      <div className="text-ink-muted">Share your code with friends and network</div>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 font-bold text-xs flex-shrink-0">3</div>
+                    <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center text-gold-400 font-bold text-xs flex-shrink-0">3</div>
                     <div>
                       <div className="font-medium">Earn 5% Tokens</div>
-                      <div className="text-slate-400">Receive 5% of tokens bought using your code</div>
+                      <div className="text-ink-muted">Receive 5% of tokens bought using your code</div>
                     </div>
                   </div>
                 </div>
@@ -1306,60 +1306,60 @@ export default function RaisePage() {
             </div>
 
             {/* Why Invest */}
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
               <h2 className="text-xl font-semibold mb-4">Why Invest?</h2>
               <div className="space-y-4">
                 {[
                   { icon: TrendingUp, color: 'text-green-500', title: 'High ROI', desc: 'Up to 3.75x at TGE' },
-                  { icon: Shield, color: 'text-blue-500', title: 'Regulated', desc: 'Full compliance' },
-                  { icon: Coins, color: 'text-purple-500', title: '80% Revenue Share', desc: 'EBITDA to holders' },
+                  { icon: Shield, color: 'text-gold-500', title: 'Regulated', desc: 'Full compliance' },
+                  { icon: Coins, color: 'text-gold-500', title: '80% Revenue Share', desc: 'EBITDA to holders' },
                   { icon: Users, color: 'text-orange-500', title: '$16T Market', desc: 'RWA by 2030' },
                 ].map(item => (
                   <div key={item.title} className="flex gap-3">
                     <item.icon className={`w-6 h-6 ${item.color} flex-shrink-0`} />
-                    <div><h3 className="font-medium">{item.title}</h3><p className="text-sm text-slate-400">{item.desc}</p></div>
+                    <div><h3 className="font-medium">{item.title}</h3><p className="text-sm text-ink-muted">{item.desc}</p></div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Payment Methods */}
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
               <h2 className="text-xl font-semibold mb-4">Payment Methods</h2>
               <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-surface/50 rounded-lg">
                   <TokenIcon token="USDC" className="w-8 h-8" />
                   <div><div className="font-medium">USDC</div><div className="text-xs text-green-400">No fees</div></div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
+                <div className="flex items-center gap-3 p-3 bg-surface/50 rounded-lg">
                   <TokenIcon token="USDT" className="w-8 h-8" />
                   <div><div className="font-medium">USDT</div><div className="text-xs text-green-400">No fees</div></div>
                 </div>
-                <div className="flex items-center gap-3 p-3 bg-slate-900/50 rounded-lg">
-                  <CreditCard className="w-8 h-8 text-blue-400" />
+                <div className="flex items-center gap-3 p-3 bg-surface/50 rounded-lg">
+                  <CreditCard className="w-8 h-8 text-gold-400" />
                   <div><div className="font-medium">Credit/Debit Card</div><div className="text-xs text-yellow-400">+4% Stripe fee</div></div>
                 </div>
               </div>
             </div>
 
             {/* FAQ */}
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
               <h2 className="text-xl font-semibold mb-4">FAQ</h2>
               <div className="space-y-1">
                 {faqs.map((faq, idx) => (
-                  <div key={idx} className="border-b border-slate-700 last:border-0">
+                  <div key={idx} className="border-b border-border last:border-0">
                     <button onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)} className="w-full py-3 flex justify-between items-center text-left">
                       <span className="font-medium text-sm">{faq.question}</span>
-                      {expandedFaq === idx ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                      {expandedFaq === idx ? <ChevronUp className="w-4 h-4 text-ink-muted" /> : <ChevronDown className="w-4 h-4 text-ink-muted" />}
                     </button>
-                    {expandedFaq === idx && <p className="pb-3 text-slate-400 text-sm">{faq.answer}</p>}
+                    {expandedFaq === idx && <p className="pb-3 text-ink-muted text-sm">{faq.answer}</p>}
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Resources */}
-            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
               <h2 className="text-xl font-semibold mb-4">Resources</h2>
               <div className="space-y-2">
                 {[
@@ -1367,9 +1367,9 @@ export default function RaisePage() {
                   { href: '/docs/tokenomics', label: 'Tokenomics' },
                   { href: '/docs/investor-guide', label: 'Investor Guide' },
                 ].map(link => (
-                  <Link key={link.href} href={link.href} className="flex items-center justify-between p-3 bg-slate-900/50 rounded-lg hover:bg-slate-900 transition-colors">
+                  <Link key={link.href} href={link.href} className="flex items-center justify-between p-3 bg-surface/50 rounded-lg hover:bg-surface-sunken transition-colors">
                     <span>{link.label}</span>
-                    <ExternalLink className="w-4 h-4 text-slate-400" />
+                    <ExternalLink className="w-4 h-4 text-ink-muted" />
                   </Link>
                 ))}
               </div>

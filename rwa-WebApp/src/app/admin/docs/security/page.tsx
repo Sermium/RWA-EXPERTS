@@ -78,7 +78,7 @@ export default function SecurityProceduresPage() {
                 <td className="py-3 px-4">None</td>
               </tr>
               <tr className="border-b border-gray-700/50">
-                <td className="py-3 px-4 font-medium text-blue-400">L2 - User</td>
+                <td className="py-3 px-4 font-medium text-gold-400">L2 - User</td>
                 <td className="py-3 px-4">Platform features, own data</td>
                 <td className="py-3 px-4">Wallet connection, KYC</td>
               </tr>
@@ -98,7 +98,7 @@ export default function SecurityProceduresPage() {
                 <td className="py-3 px-4">DevOps team, VPN, MFA</td>
               </tr>
               <tr>
-                <td className="py-3 px-4 font-medium text-purple-400">L6 - Critical</td>
+                <td className="py-3 px-4 font-medium text-gold-400">L6 - Critical</td>
                 <td className="py-3 px-4">Smart contracts, treasury</td>
                 <td className="py-3 px-4">Multi-sig, time-lock, CEO approval</td>
               </tr>
@@ -222,7 +222,7 @@ export default function SecurityProceduresPage() {
                   <td className="py-2 px-3">No restrictions</td>
                 </tr>
                 <tr className="border-b border-gray-700/50">
-                  <td className="py-2 px-3 text-blue-400">Internal</td>
+                  <td className="py-2 px-3 text-gold-400">Internal</td>
                   <td className="py-2 px-3">Internal policies, procedures</td>
                   <td className="py-2 px-3">Employee access only</td>
                 </tr>

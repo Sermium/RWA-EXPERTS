@@ -68,11 +68,11 @@ interface NetworkBadgeProps {
 function NetworkBadge({ chainName, isTestnet }: NetworkBadgeProps) {
   return (
     <div className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-full text-xs font-medium ${
-      isTestnet 
-        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30'
-        : 'bg-green-500/20 text-green-400 border border-green-500/30'
+      isTestnet
+        ? 'bg-warning/10 text-warning border border-warning/40'
+        : 'bg-success/10 text-success border border-success/40'
     }`}>
-      <div className={`w-1.5 h-1.5 rounded-full ${isTestnet ? 'bg-yellow-400' : 'bg-green-400'}`} />
+      <div className={`w-1.5 h-1.5 rounded-full ${isTestnet ? 'bg-warning' : 'bg-success'}`} />
       {chainName}
       {isTestnet && <span className="opacity-70">(Testnet)</span>}
     </div>
@@ -105,22 +105,22 @@ function ContractRow({ label, address, type, explorerUrl, icon }: ContractRowPro
 
   const typeStyles = {
     core: {
-      bg: 'bg-blue-500/10',
-      border: 'border-blue-500/20',
-      label: 'text-blue-400',
-      badge: 'bg-blue-500/20 text-blue-300'
+      bg: 'bg-gold-500/10',
+      border: 'border-gold-500/20',
+      label: 'text-gold-400',
+      badge: 'bg-gold-500/20 text-gold-300'
     },
     module: {
-      bg: 'bg-purple-500/10',
-      border: 'border-purple-500/20',
-      label: 'text-purple-400',
-      badge: 'bg-purple-500/20 text-purple-300'
+      bg: 'bg-gold-500/10',
+      border: 'border-gold-500/20',
+      label: 'text-gold-400',
+      badge: 'bg-gold-500/20 text-gold-300'
     },
     info: {
       bg: 'bg-gray-500/10',
       border: 'border-gray-500/20',
-      label: 'text-gray-400',
-      badge: 'bg-gray-500/20 text-gray-300'
+      label: 'text-ink-muted',
+      badge: 'bg-gray-500/20 text-ink-muted'
     }
   };
 
@@ -139,10 +139,10 @@ function ContractRow({ label, address, type, explorerUrl, icon }: ContractRowPro
                   {type === 'core' ? 'Core' : 'Module'}
                 </span>
               </div>
-              <p className="text-gray-500 text-sm mt-1">Not deployed</p>
+              <p className="text-ink-faint text-sm mt-1">Not deployed</p>
             </div>
           </div>
-          <AlertTriangle className="w-4 h-4 text-gray-500" />
+          <AlertTriangle className="w-4 h-4 text-ink-faint" />
         </div>
       </div>
     );
@@ -162,30 +162,30 @@ function ContractRow({ label, address, type, explorerUrl, icon }: ContractRowPro
                 {type === 'core' ? 'Core' : 'Module'}
               </span>
             </div>
-            <p className="text-white font-mono text-sm mt-1">{truncatedAddress}</p>
+            <p className="text-ink font-mono text-sm mt-1">{truncatedAddress}</p>
           </div>
         </div>
         
         <div className="flex items-center gap-2">
           <button
             onClick={handleCopy}
-            className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-overlay/50 rounded-lg transition-colors"
             title="Copy address"
           >
             {copied ? (
-              <Check className="w-4 h-4 text-green-400" />
+              <Check className="w-4 h-4 text-success" />
             ) : (
-              <Copy className="w-4 h-4 text-gray-400" />
+              <Copy className="w-4 h-4 text-ink-muted" />
             )}
           </button>
           <a
             href={`${explorerUrl}/address/${address}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-overlay/50 rounded-lg transition-colors"
             title="View on explorer"
           >
-            <ExternalLink className="w-4 h-4 text-gray-400" />
+            <ExternalLink className="w-4 h-4 text-ink-muted" />
           </a>
         </div>
       </div>
@@ -271,29 +271,29 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
 
   return (
     <div 
-      className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-surface-sunken/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
-      <div className="bg-gray-900 rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-700 shadow-2xl">
+      <div className="bg-surface rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-border shadow-panel">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-700 bg-gray-800/50">
+        <div className="px-6 py-4 border-b border-border bg-surface/50">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-1">
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-ink">
                   {project.name || `Project #${project.id}`}
                 </h3>
                 <NetworkBadge chainName={chainName} isTestnet={isTestnet} />
               </div>
-              <p className="text-gray-400 text-sm">
+              <p className="text-ink-muted text-sm">
                 Deployed Contract Addresses on {chainName}
               </p>
             </div>
             <button 
               onClick={onClose} 
-              className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
             >
-              <X className="w-5 h-5 text-gray-400" />
+              <X className="w-5 h-5 text-ink-muted" />
             </button>
           </div>
         </div>
@@ -303,8 +303,8 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
           {/* Loading State */}
           {loading && (
             <div className="flex flex-col items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 text-blue-400 animate-spin mb-4" />
-              <p className="text-gray-400">Loading contracts from {chainName}...</p>
+              <Loader2 className="w-8 h-8 text-gold-400 animate-spin mb-4" />
+              <p className="text-ink-muted">Loading contracts from {chainName}...</p>
             </div>
           )}
 
@@ -312,9 +312,9 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
           {!loading && error && (
             <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="w-5 h-5 text-danger mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-red-400 font-medium">Failed to load deployment</p>
+                  <p className="text-danger font-medium">Failed to load deployment</p>
                   <p className="text-red-300/70 text-sm mt-1">{error}</p>
                 </div>
               </div>
@@ -325,9 +325,9 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
           {!loading && !error && !factoryAddress && (
             <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="w-5 h-5 text-warning mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-yellow-400 font-medium">Factory not deployed</p>
+                  <p className="text-warning font-medium">Factory not deployed</p>
                   <p className="text-yellow-300/70 text-sm mt-1">
                     The RWALaunchpadFactory contract is not deployed on {chainName}.
                   </p>
@@ -341,7 +341,7 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
             <div className="space-y-3">
               {/* Core Contracts */}
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center gap-2">
                   <Shield className="w-4 h-4" />
                   Core Contracts
                 </h4>
@@ -365,7 +365,7 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
 
               {/* Module Contracts */}
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-400 mb-3 flex items-center gap-2">
+                <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center gap-2">
                   <Activity className="w-4 h-4" />
                   Module Contracts
                 </h4>
@@ -403,24 +403,24 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
 
               {/* Deployment Info */}
               {deployment && deployment.deployedAt > 0n && (
-                <div className="mt-6 pt-4 border-t border-gray-700">
-                  <h4 className="text-sm font-medium text-gray-400 mb-4 flex items-center gap-2">
+                <div className="mt-6 pt-4 border-t border-border">
+                  <h4 className="text-sm font-medium text-ink-muted mb-4 flex items-center gap-2">
                     <Info className="w-4 h-4" />
                     Deployment Information
                   </h4>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Deployer */}
-                    <div className="bg-gray-800/50 rounded-lg p-3">
+                    <div className="bg-surface/50 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <User className="w-4 h-4 text-gray-400" />
-                        <p className="text-gray-400 text-sm">Deployed by</p>
+                        <User className="w-4 h-4 text-ink-muted" />
+                        <p className="text-ink-muted text-sm">Deployed by</p>
                       </div>
                       <a 
                         href={`${explorerUrl}/address/${deployment.deployer}`}
                         target="_blank" 
                         rel="noopener noreferrer" 
-                        className="text-blue-400 hover:text-blue-300 font-mono text-sm flex items-center gap-1"
+                        className="text-gold-400 hover:text-gold-300 font-mono text-sm flex items-center gap-1"
                       >
                         {truncateAddress(deployment.deployer)}
                         <ExternalLink className="w-3 h-3" />
@@ -428,40 +428,40 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
                     </div>
 
                     {/* Deployed At */}
-                    <div className="bg-gray-800/50 rounded-lg p-3">
+                    <div className="bg-surface/50 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <Clock className="w-4 h-4 text-gray-400" />
-                        <p className="text-gray-400 text-sm">Deployed at</p>
+                        <Clock className="w-4 h-4 text-ink-muted" />
+                        <p className="text-ink-muted text-sm">Deployed at</p>
                       </div>
-                      <p className="text-white text-sm">{formatDate(deployment.deployedAt)}</p>
+                      <p className="text-ink text-sm">{formatDate(deployment.deployedAt)}</p>
                     </div>
 
                     {/* Status */}
-                    <div className="bg-gray-800/50 rounded-lg p-3">
+                    <div className="bg-surface/50 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <Activity className="w-4 h-4 text-gray-400" />
-                        <p className="text-gray-400 text-sm">Status</p>
+                        <Activity className="w-4 h-4 text-ink-muted" />
+                        <p className="text-ink-muted text-sm">Status</p>
                       </div>
                       <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium ${
                         deployment.active 
                           ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
                           : 'bg-red-500/20 text-red-300 border border-red-500/30'
                       }`}>
-                        <div className={`w-1.5 h-1.5 rounded-full ${deployment.active ? 'bg-green-400' : 'bg-red-400'}`} />
+                        <div className={`w-1.5 h-1.5 rounded-full ${deployment.active ? 'bg-success' : 'bg-danger'}`} />
                         {deployment.active ? 'Active' : 'Inactive'}
                       </span>
                     </div>
 
                     {/* Network */}
-                    <div className="bg-gray-800/50 rounded-lg p-3">
+                    <div className="bg-surface/50 rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-1">
-                        <Activity className="w-4 h-4 text-gray-400" />
-                        <p className="text-gray-400 text-sm">Network</p>
+                        <Activity className="w-4 h-4 text-ink-muted" />
+                        <p className="text-ink-muted text-sm">Network</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-white text-sm">{chainName}</span>
+                        <span className="text-ink text-sm">{chainName}</span>
                         {isTestnet && (
-                          <span className="px-1.5 py-0.5 text-xs bg-yellow-500/20 text-yellow-400 rounded">
+                          <span className="px-1.5 py-0.5 text-xs bg-warning/10 text-warning rounded">
                             Testnet
                           </span>
                         )}
@@ -473,11 +473,11 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
 
               {/* No Deployment Found */}
               {(!deployment || deployment.deployedAt === 0n) && (
-                <div className="mt-6 pt-4 border-t border-gray-700">
-                  <div className="bg-gray-800/50 rounded-lg p-4 text-center">
-                    <AlertTriangle className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-                    <p className="text-gray-300 font-medium">No deployment record found</p>
-                    <p className="text-gray-500 text-sm mt-1">
+                <div className="mt-6 pt-4 border-t border-border">
+                  <div className="bg-surface/50 rounded-lg p-4 text-center">
+                    <AlertTriangle className="w-8 h-8 text-warning mx-auto mb-2" />
+                    <p className="text-ink-muted font-medium">No deployment record found</p>
+                    <p className="text-ink-faint text-sm mt-1">
                       This project may not have been deployed through the factory on {chainName}.
                     </p>
                   </div>
@@ -488,9 +488,9 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-700 bg-gray-800/30">
+        <div className="px-6 py-4 border-t border-border bg-surface/30">
           <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center gap-4 text-gray-400">
+            <div className="flex items-center gap-4 text-ink-muted">
               <span>Chain ID: {chainId}</span>
               <span>â€¢</span>
               <span>Currency: {nativeCurrency?.symbol || 'ETH'}</span>
@@ -500,7 +500,7 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
                 href={`${explorerUrl}/address/${factoryAddress}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                className="text-gold-400 hover:text-gold-300 flex items-center gap-1"
               >
                 Factory: {truncateAddress(factoryAddress)}
                 <ExternalLink className="w-3 h-3" />

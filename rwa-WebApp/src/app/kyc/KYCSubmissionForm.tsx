@@ -73,10 +73,10 @@ const getTierConfig = (limits: Record<KYCTier, number>): TierConfigType => ({
     name: "None",
     icon: "⚪",
     limit: "$0",
-    color: "text-gray-400",
-    bgColor: "bg-gray-800/50",
-    borderColor: "border-gray-700",
-    buttonColor: "bg-gray-600",
+    color: "text-ink-muted",
+    bgColor: "bg-surface/50",
+    borderColor: "border-border",
+    buttonColor: "bg-border-strong",
     requirements: [],
     processingTime: "",
   },
@@ -95,10 +95,10 @@ const getTierConfig = (limits: Record<KYCTier, number>): TierConfigType => ({
     name: "Silver",
     icon: "🥈",
     limit: formatLimitDisplay(limits.Silver),
-    color: "text-gray-300",
-    bgColor: "bg-gray-700/30",
-    borderColor: "border-gray-500/30",
-    buttonColor: "bg-gray-600 hover:bg-gray-500",
+    color: "text-ink-muted",
+    bgColor: "bg-surface-overlay/30",
+    borderColor: "border-border-strong/30",
+    buttonColor: "bg-border-strong hover:bg-surface-overlay",
     requirements: ["Bronze requirements", "Selfie verification"],
     processingTime: "1-3 business days",
   },
@@ -106,10 +106,10 @@ const getTierConfig = (limits: Record<KYCTier, number>): TierConfigType => ({
     name: "Gold",
     icon: "🥇",
     limit: formatLimitDisplay(limits.Gold),
-    color: "text-yellow-400",
-    bgColor: "bg-yellow-900/20",
-    borderColor: "border-yellow-500/30",
-    buttonColor: "bg-yellow-600 hover:bg-yellow-500",
+    color: "text-warning",
+    bgColor: "bg-warning/20",
+    borderColor: "border-warning/30",
+    buttonColor: "bg-warning hover:bg-warning",
     requirements: ["Silver requirements", "Liveness verification", "Proof of address"],
     processingTime: "3-5 business days",
   },
@@ -191,10 +191,10 @@ function ProgressSteps({ currentStep }: { currentStep: FormStep }) {
                 flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-all
                 ${
                   index < currentIndex
-                    ? "bg-green-500 text-white"
+                    ? "bg-success text-ink"
                     : index === currentIndex
-                    ? "bg-purple-600 text-white ring-4 ring-purple-500/30"
-                    : "bg-gray-700 text-gray-400"
+                    ? "bg-gold-600 text-ink ring-4 ring-purple-500/30"
+                    : "bg-surface-overlay text-ink-muted"
                 }
               `}
             >
@@ -202,7 +202,7 @@ function ProgressSteps({ currentStep }: { currentStep: FormStep }) {
             </div>
             <span
               className={`text-xs mt-2 ${
-                index === currentIndex ? "text-purple-400" : "text-gray-500"
+                index === currentIndex ? "text-gold-400" : "text-ink-faint"
               }`}
             >
               {step.label}
@@ -211,7 +211,7 @@ function ProgressSteps({ currentStep }: { currentStep: FormStep }) {
           {index < steps.length - 1 && (
             <div
               className={`w-16 h-0.5 mb-6 ${
-                index < currentIndex ? "bg-green-500" : "bg-gray-700"
+                index < currentIndex ? "bg-success" : "bg-surface-overlay"
               }`}
             />
           )}
@@ -245,17 +245,17 @@ function TierCard({
         relative rounded-2xl p-6 border-2 transition-all flex flex-col
         ${
           isCurrent
-            ? `${config.bgColor} ${config.borderColor} ring-2 ring-green-500/50`
+            ? `${config.bgColor} ${config.borderColor} ring-2 ring-success/50`
             : isCompleted
-            ? "bg-gray-800/50 border-gray-600"
+            ? "bg-surface/50 border-border-strong"
             : canSelect
             ? `${config.bgColor} ${config.borderColor} hover:ring-2 hover:ring-purple-500/50 cursor-pointer`
-            : "bg-gray-800/30 border-gray-700 opacity-50"
+            : "bg-surface/30 border-border opacity-50"
         }
       `}
     >
       {isCurrent && (
-        <span className="absolute -top-3 -right-3 px-3 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
+        <span className="absolute -top-3 -right-3 px-3 py-1 bg-success text-ink text-xs font-bold rounded-full">
           ✓ CURRENT
         </span>
       )}
@@ -263,15 +263,15 @@ function TierCard({
       <div className="text-center mb-4">
         <div className="text-4xl mb-2">{config.icon}</div>
         <h3 className={`text-xl font-bold ${config.color}`}>{config.name}</h3>
-        <p className="text-2xl font-bold text-white mt-2">{config.limit}</p>
-        <p className="text-gray-400 text-sm">investment limit</p>
+        <p className="text-2xl font-bold text-ink mt-2">{config.limit}</p>
+        <p className="text-ink-muted text-sm">investment limit</p>
       </div>
 
       <div className="flex-1">
         <ul className="space-y-2">
           {config.requirements.map((req: string, idx: number) => (
-            <li key={idx} className="flex items-center gap-2 text-sm text-gray-300">
-              <span className={isCompleted || isCurrent ? "text-green-400" : config.color}>
+            <li key={idx} className="flex items-center gap-2 text-sm text-ink-muted">
+              <span className={isCompleted || isCurrent ? "text-success" : config.color}>
                 {isCompleted || isCurrent ? "✓" : "•"}
               </span>
               {req}
@@ -280,27 +280,27 @@ function TierCard({
         </ul>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-gray-700">
+      <div className="mt-6 pt-4 border-t border-border">
         {isCurrent && (
-          <div className="text-center text-green-400 font-medium py-2">✓ Your Current Tier</div>
+          <div className="text-center text-success font-medium py-2">✓ Your Current Tier</div>
         )}
         {isCompleted && (
-          <div className="text-center text-gray-500 font-medium py-2">✓ Completed</div>
+          <div className="text-center text-ink-faint font-medium py-2">✓ Completed</div>
         )}
         {canSelect && (
           <div
-            className={`w-full py-2 rounded-xl font-semibold text-center text-white ${config.buttonColor}`}
+            className={`w-full py-2 rounded-xl font-semibold text-center text-ink ${config.buttonColor}`}
           >
             Select
           </div>
         )}
         {!isCurrent && !isCompleted && !canSelect && (
-          <div className="text-center text-gray-600 font-medium py-2">Locked</div>
+          <div className="text-center text-ink-faint font-medium py-2">Locked</div>
         )}
       </div>
 
       {config.processingTime && (
-        <p className="text-xs text-gray-500 text-center mt-2">
+        <p className="text-xs text-ink-faint text-center mt-2">
           Processing: {config.processingTime}
         </p>
       )}
@@ -313,16 +313,16 @@ function OcrProgressBar({ stage, percent }: { stage: string; percent: number }) 
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <div className="animate-spin h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full" />
-        <span className="text-sm text-gray-400">{stage || 'Processing...'}</span>
+        <div className="animate-spin h-4 w-4 border-2 border-gold-500 border-t-transparent rounded-full" />
+        <span className="text-sm text-ink-muted">{stage || 'Processing...'}</span>
       </div>
-      <div className="w-full bg-gray-700 rounded-full h-2">
+      <div className="w-full bg-surface-overlay rounded-full h-2">
         <div 
-          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+          className="bg-gold-500 h-2 rounded-full transition-all duration-300"
           style={{ width: `${percent}%` }}
         />
       </div>
-      <span className="text-xs text-gray-500">{percent}%</span>
+      <span className="text-xs text-ink-faint">{percent}%</span>
     </div>
   );
 }
@@ -460,7 +460,7 @@ function LivenessCapture({
       
       {isReady && !isRunning && (
         <div className="absolute bottom-4 left-0 right-0 text-center">
-          <p className={`text-sm font-medium ${faceDetected ? 'text-green-400' : 'text-white'}`}>
+          <p className={`text-sm font-medium ${faceDetected ? 'text-success' : 'text-ink'}`}>
             {faceDetected ? '✓ Face positioned correctly' : 'Position your face in the oval'}
           </p>
         </div>
@@ -470,7 +470,7 @@ function LivenessCapture({
 
   return (
     <div className="space-y-4">
-      <div className="relative aspect-video bg-gray-900 rounded-xl overflow-hidden">
+      <div className="relative aspect-video bg-surface-sunken rounded-xl overflow-hidden">
         <video
           ref={videoRef}
           autoPlay
@@ -485,9 +485,9 @@ function LivenessCapture({
         
         {isReady && (
           <div className={`absolute top-4 right-4 px-3 py-1.5 rounded-full text-sm font-medium flex items-center gap-2 ${
-            faceDetected ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'
+            faceDetected ? 'bg-success/90 text-ink' : 'bg-danger/90 text-ink'
           }`}>
-            <span className={`w-2 h-2 rounded-full ${faceDetected ? 'bg-white animate-pulse' : 'bg-white/50'}`} />
+            <span className={`w-2 h-2 rounded-full ${faceDetected ? 'bg-surface animate-pulse' : 'bg-ink/50'}`} />
             {faceDetected ? 'Face detected' : 'No face'}
           </div>
         )}
@@ -496,57 +496,57 @@ function LivenessCapture({
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 pt-12">
             <div className="text-center">
               <div className="text-5xl mb-3 animate-bounce">{currentChallenge.icon}</div>
-              <p className="text-white text-xl font-semibold mb-1">{currentChallenge.instruction}</p>
-              <p className="text-gray-400 text-sm">Step {challengeIndex + 1} of {totalChallenges}</p>
+              <p className="text-ink text-xl font-semibold mb-1">{currentChallenge.instruction}</p>
+              <p className="text-ink-muted text-sm">Step {challengeIndex + 1} of {totalChallenges}</p>
             </div>
           </div>
         )}
         
         {isRunning && (
           <div className="absolute top-4 left-4 right-20">
-            <div className="h-2 bg-gray-700/80 rounded-full overflow-hidden backdrop-blur-sm">
+            <div className="h-2 bg-surface-overlay/80 rounded-full overflow-hidden backdrop-blur-sm">
               <div 
                 className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
-            <p className="text-white/80 text-xs mt-1 text-center">{Math.round(progress)}% complete</p>
+            <p className="text-ink/80 text-xs mt-1 text-center">{Math.round(progress)}% complete</p>
           </div>
         )}
         
         {!isReady && !isRunning && !isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80">
+          <div className="absolute inset-0 flex items-center justify-center bg-surface-sunken/80">
             <div className="text-center p-6">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-purple-600/20 flex items-center justify-center">
-                <svg className="w-10 h-10 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gold-600/20 flex items-center justify-center">
+                <svg className="w-10 h-10 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-white text-lg font-semibold mb-2">Liveness Verification</h3>
-              <p className="text-gray-400 text-sm mb-1">We'll ask you to perform simple actions</p>
-              <p className="text-gray-500 text-xs">Look at camera • Turn head • Blink • Smile</p>
+              <h3 className="text-ink text-lg font-semibold mb-2">Liveness Verification</h3>
+              <p className="text-ink-muted text-sm mb-1">We'll ask you to perform simple actions</p>
+              <p className="text-ink-faint text-xs">Look at camera • Turn head • Blink • Smile</p>
             </div>
           </div>
         )}
         
         {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-gray-900/80">
+          <div className="absolute inset-0 flex items-center justify-center bg-surface-sunken/80">
             <div className="text-center">
-              <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-4" />
-              <p className="text-white">Initializing camera...</p>
-              <p className="text-gray-400 text-sm mt-1">Loading face detection models</p>
+              <div className="w-12 h-12 border-4 border-gold-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-4" />
+              <p className="text-ink">Initializing camera...</p>
+              <p className="text-ink-muted text-sm mt-1">Loading face detection models</p>
             </div>
           </div>
         )}
       </div>
       
       {error && (
-        <div className="p-4 bg-red-900/30 border border-red-500/50 rounded-xl">
+        <div className="p-4 bg-danger/30 border border-danger/50 rounded-xl">
           <div className="flex items-start gap-3">
-            <span className="text-red-400 text-xl">⚠️</span>
+            <span className="text-danger text-xl">⚠️</span>
             <div>
-              <p className="text-red-400 font-medium">Camera Error</p>
-              <p className="text-red-400/80 text-sm mt-1">{error}</p>
+              <p className="text-danger font-medium">Camera Error</p>
+              <p className="text-danger/80 text-sm mt-1">{error}</p>
             </div>
           </div>
         </div>
@@ -558,7 +558,7 @@ function LivenessCapture({
             type="button"
             onClick={handleStart}
             disabled={isLoading}
-            className="flex-1 py-3.5 bg-purple-600 hover:bg-purple-500 disabled:bg-purple-600/50 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 bg-gold-600 hover:bg-gold-500 disabled:bg-gold-600/50 text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
@@ -582,7 +582,7 @@ function LivenessCapture({
               type="button"
               onClick={handleBeginChallenge}
               disabled={!faceDetected}
-              className="flex-1 py-3.5 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3.5 bg-success hover:bg-success disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {faceDetected ? (
                 <>
@@ -599,7 +599,7 @@ function LivenessCapture({
             <button
               type="button"
               onClick={handleCancel}
-              className="px-6 py-3.5 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-colors"
+              className="px-6 py-3.5 bg-surface-overlay hover:bg-border-strong text-ink font-medium rounded-xl transition-colors"
             >
               Cancel
             </button>
@@ -610,7 +610,7 @@ function LivenessCapture({
           <button
             type="button"
             onClick={handleCancel}
-            className="flex-1 py-3.5 bg-red-600 hover:bg-red-500 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 bg-danger hover:bg-danger text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -621,14 +621,14 @@ function LivenessCapture({
       </div>
       
       {isReady && !isRunning && (
-        <div className="p-4 bg-blue-900/20 border border-blue-500/30 rounded-xl">
-          <h4 className="text-blue-400 font-medium mb-2 flex items-center gap-2">
+        <div className="p-4 bg-gold-900/20 border border-gold-500/30 rounded-xl">
+          <h4 className="text-gold-400 font-medium mb-2 flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Tips for best results
           </h4>
-          <ul className="text-blue-300/80 text-sm space-y-1">
+          <ul className="text-gold-300/80 text-sm space-y-1">
             <li>• Ensure good lighting on your face</li>
             <li>• Remove glasses if possible</li>
             <li>• Keep your face centered in the oval</li>
@@ -1155,13 +1155,13 @@ export function KYCSubmissionForm() {
   if (!isConnected) {
     return (
       <div className="max-w-md mx-auto text-center py-16">
-        <div className="w-20 h-20 mx-auto bg-gray-800 rounded-full flex items-center justify-center mb-6">
-          <svg className="w-10 h-10 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="w-20 h-20 mx-auto bg-surface rounded-full flex items-center justify-center mb-6">
+          <svg className="w-10 h-10 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-white mb-4">Connect Your Wallet</h2>
-        <p className="text-gray-400">Please connect your wallet to access KYC verification.</p>
+        <h2 className="text-2xl font-bold text-ink mb-4">Connect Your Wallet</h2>
+        <p className="text-ink-muted">Please connect your wallet to access KYC verification.</p>
       </div>
     );
   }
@@ -1173,11 +1173,11 @@ export function KYCSubmissionForm() {
   if (kycLoading) {
     return (
       <div className="max-w-md mx-auto text-center py-16">
-        <svg className="w-12 h-12 mx-auto text-purple-400 animate-spin mb-6" fill="none" viewBox="0 0 24 24">
+        <svg className="w-12 h-12 mx-auto text-gold-400 animate-spin mb-6" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
         </svg>
-        <p className="text-gray-400">Loading KYC status...</p>
+        <p className="text-ink-muted">Loading KYC status...</p>
       </div>
     );
   }
@@ -1193,15 +1193,15 @@ export function KYCSubmissionForm() {
 
     if (isApplicationPending) {
       return (
-        <div className="bg-yellow-900/30 border border-yellow-500/50 rounded-2xl p-6 mb-8">
+        <div className="bg-warning/30 border border-warning/50 rounded-2xl p-6 mb-8">
           <div className="flex items-center gap-4">
-            <svg className="w-8 h-8 text-yellow-400 animate-spin" fill="none" viewBox="0 0 24 24">
+            <svg className="w-8 h-8 text-warning animate-spin" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
             </svg>
             <div>
-              <h2 className="text-xl font-semibold text-yellow-400">Application Under Review</h2>
-              <p className="text-gray-400 mt-1">Your application is being processed. This usually takes a few minutes to a few days depending on tier.</p>
+              <h2 className="text-xl font-semibold text-warning">Application Under Review</h2>
+              <p className="text-ink-muted mt-1">Your application is being processed. This usually takes a few minutes to a few days depending on tier.</p>
             </div>
           </div>
         </div>
@@ -1217,18 +1217,18 @@ export function KYCSubmissionForm() {
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className={`text-2xl font-bold ${config.color}`}>{config.name} Tier</h2>
-                  <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs font-medium rounded-full">
+                  <span className="px-2 py-1 bg-success/20 text-success text-xs font-medium rounded-full">
                     ✓ Verified
                   </span>
                 </div>
-                <p className="text-gray-400 mt-1">Investment limit: {config.limit}</p>
+                <p className="text-ink-muted mt-1">Investment limit: {config.limit}</p>
               </div>
             </div>
 
             {effectiveTier < 4 && (
               <button
                 onClick={() => handleTierSelect(effectiveTier + 1)}
-                className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-semibold rounded-xl transition-all"
+                className="px-6 py-3 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 text-ink font-semibold rounded-xl transition-all"
               >
                 Upgrade Tier
               </button>
@@ -1248,12 +1248,12 @@ export function KYCSubmissionForm() {
   const renderTierSelection = () => (
     <div>
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-white mb-2">
+        <h2 className="text-2xl font-bold text-ink mb-2">
           {effectiveTier > 0 ? "Upgrade Your Verification" : "Select Verification Tier"}
         </h2>
-        <p className="text-gray-400">
-          One-time registration fee: <span className="text-white font-medium">{getKycFeeFormatted(chainId)} {getNativeToken()}</span>
-          <span className="text-gray-500 text-sm ml-2">(~${kycFeeUsd.toFixed(2)} USD)</span>
+        <p className="text-ink-muted">
+          One-time registration fee: <span className="text-ink font-medium">{getKycFeeFormatted(chainId)} {getNativeToken()}</span>
+          <span className="text-ink-faint text-sm ml-2">(~${kycFeeUsd.toFixed(2)} USD)</span>
         </p>
       </div>
 
@@ -1300,12 +1300,12 @@ export function KYCSubmissionForm() {
             <div className="text-4xl">{tierConfig.icon}</div>
             <div>
               <h2 className={`text-2xl font-bold ${tierConfig.color}`}>{tierConfig.name} Tier</h2>
-              <p className="text-gray-400">Investment limit: {tierConfig.limit}</p>
+              <p className="text-ink-muted">Investment limit: {tierConfig.limit}</p>
             </div>
           </div>
         </div>
 
-        <button onClick={() => setStep("select")} className="flex items-center gap-2 text-gray-400 hover:text-white mb-6">
+        <button onClick={() => setStep("select")} className="flex items-center gap-2 text-ink-muted hover:text-ink mb-6">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
@@ -1313,14 +1313,14 @@ export function KYCSubmissionForm() {
         </button>
 
         {error && (
-          <div className="bg-red-900/30 border border-red-500/50 rounded-xl p-4 mb-6">
-            <p className="text-red-400">{error}</p>
+          <div className="bg-danger/30 border border-danger/50 rounded-xl p-4 mb-6">
+            <p className="text-danger">{error}</p>
           </div>
         )}
 
         {currentLevel > 0 && (
-          <div className="bg-blue-900/20 border border-blue-500/30 rounded-xl p-4 mb-6">
-            <p className="text-blue-400 text-sm">
+          <div className="bg-gold-900/20 border border-gold-500/30 rounded-xl p-4 mb-6">
+            <p className="text-gold-400 text-sm">
               <span className="font-medium">Upgrading from {TIER_CONFIG[currentLevel as keyof typeof TIER_CONFIG].name}:</span> Only new requirements are shown below.
             </p>
           </div>
@@ -1328,47 +1328,47 @@ export function KYCSubmissionForm() {
 
         <div className="space-y-6">
           {needsPersonalInfo && (
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Personal Information</h3>
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
+              <h3 className="text-lg font-semibold text-ink mb-4">Personal Information</h3>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Full Name *</label>
+                  <label className="block text-ink-muted text-sm mb-2">Full Name *</label>
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Enter your full legal name"
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Email *</label>
+                  <label className="block text-ink-muted text-sm mb-2">Email *</label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Date of Birth *</label>
+                  <label className="block text-ink-muted text-sm mb-2">Date of Birth *</label>
                   <input
                     type="date"
                     value={dateOfBirth}
                     onChange={(e) => setDateOfBirth(e.target.value)}
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-xl text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Country *</label>
+                  <label className="block text-ink-muted text-sm mb-2">Country *</label>
                   <select
                     value={countryCode}
                     onChange={(e) => setCountryCode(Number(e.target.value))}
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-xl text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
                   >
                     <option value={0}>Select your country</option>
                     {countries
@@ -1385,8 +1385,8 @@ export function KYCSubmissionForm() {
           )}
 
           {needsIdDocument && (
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Government ID *</h3>
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
+              <h3 className="text-lg font-semibold text-ink mb-4">Government ID *</h3>
 
               <DocumentTypeSelector 
                 selectedType={documentType} 
@@ -1402,42 +1402,42 @@ export function KYCSubmissionForm() {
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Document Number *</label>
+                  <label className="block text-ink-muted text-sm mb-2">Document Number *</label>
                   <input
                     type="text"
                     value={documentNumber}
                     onChange={(e) => setDocumentNumber(e.target.value)}
                     placeholder="e.g. AB1234567"
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Expiry Date *</label>
+                  <label className="block text-ink-muted text-sm mb-2">Expiry Date *</label>
                   <input
                     type="date"
                     value={documentExpiry}
                     onChange={(e) => setDocumentExpiry(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-3 bg-gray-900 border border-gray-600 rounded-xl text-white focus:border-purple-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
                   />
                 </div>
               </div>
 
               <div className="mb-4">
-                <label className="block text-gray-400 text-sm mb-2">
+                <label className="block text-ink-muted text-sm mb-2">
                   {documentType === 'passport' ? 'Passport Photo Page *' : 'Front of Document *'}
                 </label>
                 {documentFrontPreview ? (
                   <div className="relative">
-                    <img src={documentFrontPreview} alt="ID Front" className="w-full max-w-sm mx-auto rounded-xl border border-gray-600" />
-                    <button onClick={() => handleFileUpload("document", null)} className="absolute top-2 right-2 p-2 bg-red-600 rounded-full text-white">
+                    <img src={documentFrontPreview} alt="ID Front" className="w-full max-w-sm mx-auto rounded-xl border border-border-strong" />
+                    <button onClick={() => handleFileUpload("document", null)} className="absolute top-2 right-2 p-2 bg-danger rounded-full text-ink">
                       <X className="w-4 h-4" />
                     </button>
                   </div>
                 ) : (
-                  <label className="flex flex-col items-center justify-center p-6 bg-gray-900 rounded-xl border-2 border-dashed border-gray-600 cursor-pointer hover:border-gray-500">
-                    <Upload className="w-8 h-8 text-gray-500 mb-2" />
-                    <span className="text-gray-400 text-sm">Upload front</span>
+                  <label className="flex flex-col items-center justify-center p-6 bg-surface-sunken rounded-xl border-2 border-dashed border-border-strong cursor-pointer hover:border-border-strong">
+                    <Upload className="w-8 h-8 text-ink-faint mb-2" />
+                    <span className="text-ink-muted text-sm">Upload front</span>
                     <input type="file" accept="image/*" onChange={(e) => handleFileUpload("document", e.target.files?.[0] || null)} className="hidden" />
                   </label>
                 )}
@@ -1445,18 +1445,18 @@ export function KYCSubmissionForm() {
 
               {documentRequiresBack(documentType) && (
                 <div className="mb-4">
-                  <label className="block text-gray-400 text-sm mb-2">Back of Document *</label>
+                  <label className="block text-ink-muted text-sm mb-2">Back of Document *</label>
                   {documentBackPreview ? (
                     <div className="relative">
-                      <img src={documentBackPreview} alt="ID Back" className="w-full max-w-sm mx-auto rounded-xl border border-gray-600" />
-                      <button onClick={() => handleFileUpload("document_back", null)} className="absolute top-2 right-2 p-2 bg-red-600 rounded-full text-white">
+                      <img src={documentBackPreview} alt="ID Back" className="w-full max-w-sm mx-auto rounded-xl border border-border-strong" />
+                      <button onClick={() => handleFileUpload("document_back", null)} className="absolute top-2 right-2 p-2 bg-danger rounded-full text-ink">
                         <X className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center p-6 bg-gray-900 rounded-xl border-2 border-dashed border-gray-600 cursor-pointer hover:border-gray-500">
-                      <Upload className="w-8 h-8 text-gray-500 mb-2" />
-                      <span className="text-gray-400 text-sm">Upload back</span>
+                    <label className="flex flex-col items-center justify-center p-6 bg-surface-sunken rounded-xl border-2 border-dashed border-border-strong cursor-pointer hover:border-border-strong">
+                      <Upload className="w-8 h-8 text-ink-faint mb-2" />
+                      <span className="text-ink-muted text-sm">Upload back</span>
                       <input type="file" accept="image/*" onChange={(e) => handleFileUpload("document_back", e.target.files?.[0] || null)} className="hidden" />
                     </label>
                   )}
@@ -1464,33 +1464,33 @@ export function KYCSubmissionForm() {
               )}
 
               {documentFrontPreview && (
-                <div className="mt-4 p-4 border border-gray-600 rounded-xl bg-gray-900/50">
+                <div className="mt-4 p-4 border border-border-strong rounded-xl bg-surface-sunken/50">
                   {isValidatingId ? (
                     <OcrProgressBar stage={ocrProgress.stage} percent={ocrProgress.percent} />
                   ) : idValidation ? (
-                    <div className={`p-3 rounded-lg ${idValidation.isValid ? 'bg-green-900/30 border border-green-500/50' : 'bg-yellow-900/30 border border-yellow-500/50'}`}>
+                    <div className={`p-3 rounded-lg ${idValidation.isValid ? 'bg-success/30 border border-success/50' : 'bg-warning/30 border border-warning/50'}`}>
                       <div className="flex items-center justify-between mb-2">
-                        <span className={idValidation.isValid ? 'text-green-400 font-medium' : 'text-yellow-400 font-medium'}>
+                        <span className={idValidation.isValid ? 'text-success font-medium' : 'text-warning font-medium'}>
                           {idValidation.isValid ? '✓ Document verified' : '⚠ Review needed'}
                         </span>
-                        <span className="text-sm text-gray-400">
+                        <span className="text-sm text-ink-muted">
                           Confidence: {idValidation.confidence}%
                         </span>
                       </div>
                       
                       {idValidation.foundText && (
-                        <div className="text-sm text-gray-400 space-y-1 mb-2">
+                        <div className="text-sm text-ink-muted space-y-1 mb-2">
                           {idValidation.foundText.name && (
-                            <p>Name: <span className="text-white">{idValidation.foundText.name}</span></p>
+                            <p>Name: <span className="text-ink">{idValidation.foundText.name}</span></p>
                           )}
                           {idValidation.foundText.dateOfBirth && (
-                            <p>DOB: <span className="text-white">{idValidation.foundText.dateOfBirth}</span></p>
+                            <p>DOB: <span className="text-ink">{idValidation.foundText.dateOfBirth}</span></p>
                           )}
                           {idValidation.foundText.documentNumber && (
-                            <p>Doc #: <span className="text-white">{idValidation.foundText.documentNumber}</span></p>
+                            <p>Doc #: <span className="text-ink">{idValidation.foundText.documentNumber}</span></p>
                           )}
                           {idValidation.foundText.expiry && (
-                            <p>Expiry: <span className={idValidation.matches.expiry?.isValid ? 'text-green-400' : 'text-red-400'}>
+                            <p>Expiry: <span className={idValidation.matches.expiry?.isValid ? 'text-success' : 'text-danger'}>
                               {idValidation.foundText.expiry}
                             </span></p>
                           )}
@@ -1498,17 +1498,17 @@ export function KYCSubmissionForm() {
                       )}
 
                       {idValidation.mrzDetected && (
-                        <p className="text-xs text-blue-400 mb-2">✓ MRZ code detected</p>
+                        <p className="text-xs text-gold-400 mb-2">✓ MRZ code detected</p>
                       )}
 
                       {idValidation.warnings && idValidation.warnings.length > 0 && (
-                        <div className="mt-2 text-sm text-yellow-400">
+                        <div className="mt-2 text-sm text-warning">
                           {idValidation.warnings.map((w, i) => <p key={i}>⚠ {w}</p>)}
                         </div>
                       )}
 
                       {idValidation.errors && idValidation.errors.length > 0 && (
-                        <div className="mt-2 text-sm text-red-400">
+                        <div className="mt-2 text-sm text-danger">
                           {idValidation.errors.map((e, i) => <p key={i}>✗ {e}</p>)}
                         </div>
                       )}
@@ -1516,7 +1516,7 @@ export function KYCSubmissionForm() {
                       <button
                         type="button"
                         onClick={resetValidation}
-                        className="mt-3 text-sm text-gray-400 hover:text-white"
+                        className="mt-3 text-sm text-ink-muted hover:text-ink"
                       >
                         Re-validate
                       </button>
@@ -1526,7 +1526,7 @@ export function KYCSubmissionForm() {
                       type="button"
                       onClick={handleValidateDocument}
                       disabled={!fullName || !dateOfBirth || !documentNumber}
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+                      className="w-full py-3 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-medium rounded-lg transition-colors"
                     >
                       Verify Document
                     </button>
@@ -1537,35 +1537,35 @@ export function KYCSubmissionForm() {
           )}
 
           {needsSelfie && (
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Selfie Verification *</h3>
-              <p className="text-gray-400 text-sm mb-4">Take a clear photo of yourself. This will be manually reviewed.</p>
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
+              <h3 className="text-lg font-semibold text-ink mb-4">Selfie Verification *</h3>
+              <p className="text-ink-muted text-sm mb-4">Take a clear photo of yourself. This will be manually reviewed.</p>
 
               {selfiePreview ? (
                 <div className="relative max-w-xs mx-auto">
-                  <img src={selfiePreview} alt="Selfie" className="w-full aspect-square object-cover rounded-xl border border-gray-600" />
-                  <button onClick={() => handleFileUpload("selfie", null)} className="absolute top-2 right-2 p-2 bg-red-600 rounded-full text-white">
+                  <img src={selfiePreview} alt="Selfie" className="w-full aspect-square object-cover rounded-xl border border-border-strong" />
+                  <button onClick={() => handleFileUpload("selfie", null)} className="absolute top-2 right-2 p-2 bg-danger rounded-full text-ink">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center p-8 bg-gray-900 rounded-xl border-2 border-dashed border-gray-600 cursor-pointer hover:border-gray-500 max-w-xs mx-auto">
-                  <Camera className="w-8 h-8 text-gray-500 mb-2" />
-                  <span className="text-gray-400">Upload selfie</span>
+                <label className="flex flex-col items-center justify-center p-8 bg-surface-sunken rounded-xl border-2 border-dashed border-border-strong cursor-pointer hover:border-border-strong max-w-xs mx-auto">
+                  <Camera className="w-8 h-8 text-ink-faint mb-2" />
+                  <span className="text-ink-muted">Upload selfie</span>
                   <input type="file" accept="image/*" capture="user" onChange={(e) => handleFileUpload("selfie", e.target.files?.[0] || null)} className="hidden" />
                 </label>
               )}
 
-              <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
-                <p className="text-yellow-400 text-sm">⏱ Manual review required (1-3 business days)</p>
+              <div className="mt-4 p-3 bg-warning/20 border border-warning/30 rounded-lg">
+                <p className="text-warning text-sm">⏱ Manual review required (1-3 business days)</p>
               </div>
             </div>
           )}
 
           {needsLiveness && (
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Liveness Verification *</h3>
-              <p className="text-gray-400 text-sm mb-4">
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
+              <h3 className="text-lg font-semibold text-ink mb-4">Liveness Verification *</h3>
+              <p className="text-ink-muted text-sm mb-4">
                 Complete a short video verification to prove you're a real person. You'll be asked to perform simple actions like looking at the camera, turning your head, and blinking.
               </p>
               
@@ -1578,81 +1578,81 @@ export function KYCSubmissionForm() {
               ) : (
                 <div className={`p-4 rounded-lg ${
                   livenessResult.passed 
-                    ? 'bg-green-900/30 border border-green-500/50' 
-                    : 'bg-red-900/30 border border-red-500/50'
+                    ? 'bg-success/30 border border-success/50' 
+                    : 'bg-danger/30 border border-danger/50'
                 }`}>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {livenessResult.passed ? (
-                        <span className="text-green-400 font-medium">✓ Liveness verified</span>
+                        <span className="text-success font-medium">✓ Liveness verified</span>
                       ) : (
-                        <span className="text-red-400 font-medium">✗ Verification failed</span>
+                        <span className="text-danger font-medium">✗ Verification failed</span>
                       )}
-                      <span className="text-sm text-gray-400">
+                      <span className="text-sm text-ink-muted">
                         ({livenessResult.completedChallenges}/{livenessResult.totalChallenges} challenges)
                       </span>
                     </div>
                     <button
                       type="button"
                       onClick={() => setLivenessResult(null)}
-                      className="text-sm text-gray-400 hover:text-white"
+                      className="text-sm text-ink-muted hover:text-ink"
                     >
                       Retry
                     </button>
                   </div>
                   {!livenessResult.passed && (
-                    <p className="text-sm text-gray-400 mt-2">
+                    <p className="text-sm text-ink-muted mt-2">
                       Please try again in better lighting conditions.
                     </p>
                   )}
                 </div>
               )}
               
-              <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
-                <p className="text-yellow-400 text-sm">⏱ Manual review required (3-5 business days)</p>
+              <div className="mt-4 p-3 bg-warning/20 border border-warning/30 rounded-lg">
+                <p className="text-warning text-sm">⏱ Manual review required (3-5 business days)</p>
               </div>
             </div>
           )}
 
           {needsAccreditedProof && (
-            <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-              <h3 className="text-lg font-semibold text-white mb-4">Accredited Investor Documentation *</h3>
-              <p className="text-gray-400 text-sm mb-4">Upload proof of accredited investor status (CPA letter, tax returns, or certification)</p>
+            <div className="bg-surface/50 rounded-xl p-6 border border-border">
+              <h3 className="text-lg font-semibold text-ink mb-4">Accredited Investor Documentation *</h3>
+              <p className="text-ink-muted text-sm mb-4">Upload proof of accredited investor status (CPA letter, tax returns, or certification)</p>
 
               {accreditedProofPreview ? (
                 <div className="relative">
-                  <img src={accreditedProofPreview} alt="Accredited Proof" className="w-full max-w-sm mx-auto rounded-xl border border-gray-600" />
-                  <button onClick={() => handleFileUpload("accredited_proof", null)} className="absolute top-2 right-2 p-2 bg-red-600 rounded-full text-white">
+                  <img src={accreditedProofPreview} alt="Accredited Proof" className="w-full max-w-sm mx-auto rounded-xl border border-border-strong" />
+                  <button onClick={() => handleFileUpload("accredited_proof", null)} className="absolute top-2 right-2 p-2 bg-danger rounded-full text-ink">
                     <X className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center p-6 bg-gray-900 rounded-xl border-2 border-dashed border-gray-600 cursor-pointer hover:border-gray-500">
-                  <Upload className="w-8 h-8 text-gray-500 mb-2" />
-                  <span className="text-gray-400 text-sm">Upload accredited investor proof</span>
+                <label className="flex flex-col items-center justify-center p-6 bg-surface-sunken rounded-xl border-2 border-dashed border-border-strong cursor-pointer hover:border-border-strong">
+                  <Upload className="w-8 h-8 text-ink-faint mb-2" />
+                  <span className="text-ink-muted text-sm">Upload accredited investor proof</span>
                   <input type="file" accept="image/*,.pdf" onChange={(e) => handleFileUpload("accredited_proof", e.target.files?.[0] || null)} className="hidden" />
                 </label>
               )}
 
-              <div className="mt-4 p-3 bg-yellow-900/20 border border-yellow-500/30 rounded-lg">
-                <p className="text-yellow-400 text-sm">⏱ Manual review required (5-10 business days)</p>
+              <div className="mt-4 p-3 bg-warning/20 border border-warning/30 rounded-lg">
+                <p className="text-warning text-sm">⏱ Manual review required (5-10 business days)</p>
               </div>
             </div>
           )}
 
-          <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
+          <div className="bg-surface/50 rounded-xl p-6 border border-border">
             <label className="flex items-start gap-3 cursor-pointer">
               <input
                 type="checkbox"
                 checked={termsAgreed}
                 onChange={(e) => setTermsAgreed(e.target.checked)}
-                className="mt-1 w-5 h-5 rounded border-gray-600 bg-gray-900 text-purple-500 focus:ring-purple-500"
+                className="mt-1 w-5 h-5 rounded border-border-strong bg-surface-sunken text-gold-500 focus:ring-purple-500"
               />
-              <span className="text-gray-400 text-sm">
+              <span className="text-ink-muted text-sm">
                 I agree to the{" "}
-                <Link href="/legal/terms" className="text-purple-400 hover:text-purple-300 underline">Terms of Service</Link>{" "}
+                <Link href="/legal/terms" className="text-gold-400 hover:text-gold-300 underline">Terms of Service</Link>{" "}
                 and{" "}
-                <Link href="/legal/privacy" className="text-purple-400 hover:text-purple-300 underline">Privacy Policy</Link>.
+                <Link href="/legal/privacy" className="text-gold-400 hover:text-gold-300 underline">Privacy Policy</Link>.
                 I confirm the information provided is accurate.
               </span>
             </label>
@@ -1660,7 +1660,7 @@ export function KYCSubmissionForm() {
             <button
               onClick={handleSubmitForm}
               disabled={!canSubmitForm || isSubmitting || isValidatingId}
-              className="w-full mt-6 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2"
+              className="w-full mt-6 py-4 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-ink font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -1682,19 +1682,19 @@ export function KYCSubmissionForm() {
 
   const renderPending = () => (
     <div className="max-w-md mx-auto text-center py-12">
-      <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-        <Clock className="w-8 h-8 text-yellow-400" />
+      <div className="w-16 h-16 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-4">
+        <Clock className="w-8 h-8 text-warning" />
       </div>
-      <h3 className="text-xl font-semibold text-white mb-2">Application Submitted</h3>
-      <p className="text-gray-400 mb-4">
+      <h3 className="text-xl font-semibold text-ink mb-2">Application Submitted</h3>
+      <p className="text-ink-muted mb-4">
         Your upgrade to {TIER_CONFIG[selectedTier as keyof typeof TIER_CONFIG].name} requires manual review.
       </p>
-      <p className="text-gray-500 text-sm">
+      <p className="text-ink-faint text-sm">
         You'll be notified once your application is approved.
       </p>
       <button
         onClick={() => router.push('/dashboard')}
-        className="mt-6 px-6 py-2 bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-lg transition-colors"
+        className="mt-6 px-6 py-2 bg-gold-600 hover:bg-gold-500 text-ink font-medium rounded-lg transition-colors"
       >
         Return to Dashboard
       </button>
@@ -1703,29 +1703,29 @@ export function KYCSubmissionForm() {
 
   const renderPayment = () => (
     <div className="max-w-md mx-auto">
-      <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4 text-center">Complete Registration</h3>
+      <div className="bg-surface/50 rounded-xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-ink mb-4 text-center">Complete Registration</h3>
 
-        <p className="text-gray-400 text-center mb-6">
+        <p className="text-ink-muted text-center mb-6">
           Pay the one-time registration fee to activate your KYC verification on-chain.
         </p>
 
-        <div className="bg-gray-900 rounded-xl p-4 mb-6">
+        <div className="bg-surface-sunken rounded-xl p-4 mb-6">
           <div className="flex justify-between items-center">
-            <span className="text-gray-400">Registration Fee</span>
-            <span className="text-white font-bold text-xl">{getKycFeeFormatted(chainId)} {getNativeToken()}</span>
+            <span className="text-ink-muted">Registration Fee</span>
+            <span className="text-ink font-bold text-xl">{getKycFeeFormatted(chainId)} {getNativeToken()}</span>
           </div>
           <div className="flex justify-between items-center mt-2 text-sm">
-            <span className="text-gray-500">Your Balance</span>
-            <span className={hasEnoughBalance ? "text-green-400" : "text-red-400"}>
+            <span className="text-ink-faint">Your Balance</span>
+            <span className={hasEnoughBalance ? "text-success" : "text-danger"}>
               {balance ? formatEther(balance.value).slice(0, 8) : "0"} {getNativeToken()}
             </span>
           </div>
         </div>
 
         {!hasEnoughBalance && (
-          <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-4 mb-6">
-            <p className="text-red-400 text-sm text-center">
+          <div className="bg-danger/20 border border-danger/30 rounded-xl p-4 mb-6">
+            <p className="text-danger text-sm text-center">
               Insufficient balance. Please add {getNativeToken()} to continue.
             </p>
           </div>
@@ -1734,7 +1734,7 @@ export function KYCSubmissionForm() {
         <button
           onClick={handlePayAndVerify}
           disabled={!hasEnoughBalance || isPaying}
-          className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-white font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-ink font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2"
         >
           {isPaying ? (
             <>
@@ -1755,7 +1755,7 @@ export function KYCSubmissionForm() {
         </button>
       </div>
 
-      <button onClick={() => setStep("form")} className="w-full mt-4 py-3 text-gray-400 hover:text-white transition-colors">
+      <button onClick={() => setStep("form")} className="w-full mt-4 py-3 text-ink-muted hover:text-ink transition-colors">
         ← Back to form
       </button>
     </div>
@@ -1763,18 +1763,18 @@ export function KYCSubmissionForm() {
 
   const renderProcessing = () => (
     <div className="max-w-md mx-auto text-center py-12">
-      <svg className="w-20 h-20 mx-auto text-purple-400 animate-spin mb-8" fill="none" viewBox="0 0 24 24">
+      <svg className="w-20 h-20 mx-auto text-gold-400 animate-spin mb-8" fill="none" viewBox="0 0 24 24">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
       </svg>
-      <h2 className="text-2xl font-bold text-white mb-4">Confirming Transaction</h2>
-      <p className="text-gray-400 mb-6">Please wait while your transaction is being confirmed...</p>
+      <h2 className="text-2xl font-bold text-ink mb-4">Confirming Transaction</h2>
+      <p className="text-ink-muted mb-6">Please wait while your transaction is being confirmed...</p>
       {txHash && (
         <a
           href={`https://polygonscan.com/tx/${txHash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-purple-400 hover:text-purple-300 text-sm"
+          className="text-gold-400 hover:text-gold-300 text-sm"
         >
           View on Explorer →
         </a>
@@ -1784,28 +1784,28 @@ export function KYCSubmissionForm() {
 
   const renderSuccess = () => (
     <div className="max-w-md mx-auto text-center py-12">
-      <div className="w-20 h-20 mx-auto bg-green-500/20 rounded-full flex items-center justify-center mb-6">
-        <Check className="w-10 h-10 text-green-400" />
+      <div className="w-20 h-20 mx-auto bg-success/20 rounded-full flex items-center justify-center mb-6">
+        <Check className="w-10 h-10 text-success" />
       </div>
 
-      <h2 className="text-2xl font-bold text-white mb-4">Verification Complete!</h2>
+      <h2 className="text-2xl font-bold text-ink mb-4">Verification Complete!</h2>
 
       <div
         className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 ${tierConfig.bgColor} ${tierConfig.borderColor} border`}
       >
         <span className="text-2xl">{tierConfig.icon}</span>
         <span className={`font-bold ${tierConfig.color}`}>{tierConfig.name} Tier</span>
-        <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded-full">✓ Active</span>
+        <span className="px-2 py-0.5 bg-success/20 text-success text-xs rounded-full">✓ Active</span>
       </div>
 
-      <p className="text-gray-400 mb-8">Your KYC verification is now active. You can invest up to {tierConfig.limit}.</p>
+      <p className="text-ink-muted mb-8">Your KYC verification is now active. You can invest up to {tierConfig.limit}.</p>
 
       {txHash && (
         <a
           href={`https://polygonscan.com/tx/${txHash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 mb-6"
+          className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 mb-6"
         >
           View Transaction
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1822,7 +1822,7 @@ export function KYCSubmissionForm() {
       <div className="flex gap-4 justify-center">
         <Link
           href="/invest"
-          className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-semibold rounded-xl transition-all"
+          className="px-6 py-3 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 text-ink font-semibold rounded-xl transition-all"
         >
           Start Investing
         </Link>
@@ -1831,7 +1831,7 @@ export function KYCSubmissionForm() {
             setStep("select");
             refreshKYC();
           }}
-          className="px-6 py-3 border border-gray-600 hover:border-gray-500 text-white font-semibold rounded-xl transition-all"
+          className="px-6 py-3 border border-border-strong hover:border-border-strong text-ink font-semibold rounded-xl transition-all"
         >
           Done
         </button>
@@ -1846,8 +1846,8 @@ export function KYCSubmissionForm() {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">KYC Verification</h1>
-        <p className="text-gray-400">Complete verification to unlock investment access</p>
+        <h1 className="text-3xl md:text-4xl font-bold text-ink mb-3">KYC Verification</h1>
+        <p className="text-ink-muted">Complete verification to unlock investment access</p>
       </div>
 
       <ProgressSteps currentStep={step} />

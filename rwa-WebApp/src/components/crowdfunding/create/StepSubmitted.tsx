@@ -28,7 +28,7 @@ export default function StepSubmitted({
       <h2 className="text-3xl font-bold text-white mb-4">{isResubmit ? 'Application Resubmitted!' : 'Application Submitted!'}</h2>
 
       <p className="text-xl text-gray-300 mb-8">
-        Your project "<span className="text-blue-400 font-medium">{projectName}</span>" has been
+        Your project "<span className="text-gold-400 font-medium">{projectName}</span>" has been
         {isResubmit ? ' resubmitted' : ' submitted'} for review.
       </p>
 
@@ -43,14 +43,14 @@ export default function StepSubmitted({
       {/* What Happens Next */}
       <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 mb-8 text-left">
         <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Clock className="w-5 h-5 text-blue-400" />
+          <Clock className="w-5 h-5 text-gold-400" />
           What Happens Next?
         </h3>
 
         <div className="space-y-4">
           <div className="flex items-start gap-4">
-            <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-blue-400 font-bold text-sm">1</span>
+            <div className="w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-gold-400 font-bold text-sm">1</span>
             </div>
             <div>
               <p className="text-white font-medium">Document Review</p>
@@ -62,8 +62,8 @@ export default function StepSubmitted({
           </div>
 
           <div className="flex items-start gap-4">
-            <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-blue-400 font-bold text-sm">2</span>
+            <div className="w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-gold-400 font-bold text-sm">2</span>
             </div>
             <div>
               <p className="text-white font-medium">Compliance Check</p>
@@ -75,8 +75,8 @@ export default function StepSubmitted({
           </div>
 
           <div className="flex items-start gap-4">
-            <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-              <span className="text-blue-400 font-bold text-sm">3</span>
+            <div className="w-8 h-8 bg-gold-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span className="text-gold-400 font-bold text-sm">3</span>
             </div>
             <div>
               <p className="text-white font-medium">Approval & Deployment</p>
@@ -153,7 +153,7 @@ export default function StepSubmitted({
         </Link>
         <Link
           href="/projects"
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+          className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
         >
           Browse Projects
           <ArrowRight className="w-5 h-5" />
@@ -163,7 +163,7 @@ export default function StepSubmitted({
       {/* Support */}
       <p className="text-sm text-gray-500 mt-8">
         Questions? Contact us at{' '}
-        <a href={`mailto:${CONTACT.general}`} className="text-blue-400 hover:underline">
+        <a href={`mailto:${CONTACT.general}`} className="text-gold-400 hover:underline">
           {CONTACT.general}
         </a>
       </p>

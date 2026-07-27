@@ -15,7 +15,7 @@ import StepMediaLegal from '@/components/crowdfunding/create/StepMediaLegal'
 import StepReview from '@/components/crowdfunding/create/StepReview'
 import StepPayment from '@/components/crowdfunding/create/StepPayment'
 import StepSubmitted from '@/components/crowdfunding/create/StepSubmitted';
-import { Loader2 } from 'lucide-react'
+import { Loader2, Clock, XCircle, Lock, ArrowRight } from 'lucide-react'
 
 // ============================================================================
 // TYPES
@@ -278,8 +278,8 @@ function KYCRequirementGate({ children }: { children: React.ReactNode }) {
       <div className="flex flex-col items-center justify-center min-h-[500px] p-8">
         <div className="max-w-md text-center">
           <div className="text-6xl mb-6">🔗</div>
-          <h2 className="text-2xl font-bold text-white mb-3">Connect Your Wallet</h2>
-          <p className="text-gray-400 mb-6">
+          <h2 className="text-2xl font-bold text-ink mb-3">Connect Your Wallet</h2>
+          <p className="text-ink-muted mb-6">
             Please connect your wallet to create a new project on the {COMPANY.name}.
           </p>
         </div>
@@ -290,8 +290,8 @@ function KYCRequirementGate({ children }: { children: React.ReactNode }) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] p-8">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="text-gray-400">Verifying KYC status...</p>
+        <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-ink-muted">Verifying KYC status...</p>
       </div>
     )
   }
@@ -299,36 +299,35 @@ function KYCRequirementGate({ children }: { children: React.ReactNode }) {
   if (kycData.status !== 'Approved') {
     const isPending = ['Pending', 'AutoVerifying', 'ManualReview'].includes(kycData.status)
     const isRejected = kycData.status === 'Rejected'
-    
+    const StatusIcon = isPending ? Clock : isRejected ? XCircle : Lock
+
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] p-8">
         <div className="max-w-lg text-center">
-          <div className="text-6xl mb-6">
-            {isPending ? '⏳' : isRejected ? '❌' : '🔒'}
-          </div>
-          <h2 className="text-2xl font-bold text-white mb-3">
-            {isPending ? 'Verification In Progress' : 
+          <StatusIcon className="w-14 h-14 text-gold mx-auto mb-6" />
+          <h2 className="text-2xl font-display font-medium text-ink mb-3">
+            {isPending ? 'Verification In Progress' :
              isRejected ? 'KYC Verification Failed' :
              'KYC Verification Required'}
           </h2>
-          <p className="text-gray-400 mb-6">
-            {isPending 
+          <p className="text-ink-muted mb-6">
+            {isPending
               ? `Your KYC verification is being processed. You'll be able to create projects once approved with Gold tier or higher.`
               : isRejected
               ? `Your KYC application was rejected. Please resubmit with correct information.`
               : `To create projects on ${COMPANY.name}, you need to complete KYC verification and achieve Gold tier or higher.`
             }
           </p>
-          
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6 text-left">
-            <h3 className="text-lg font-semibold text-white mb-4">Project Creator Requirements</h3>
-            <div className="flex items-center gap-4 p-4 bg-yellow-900/20 border border-yellow-600 rounded-lg">
-              <span className="text-3xl">{requiredTierInfo.icon}</span>
+
+          <div className="bg-surface-raised border border-border rounded-xl p-6 mb-6 text-left">
+            <h3 className="text-lg font-semibold text-ink mb-4">Project Creator Requirements</h3>
+            <div className="flex items-center gap-4 p-4 bg-gold/10 border border-gold/30 rounded-lg">
+              <requiredTierInfo.icon className={`w-8 h-8 ${requiredTierInfo.color}`} />
               <div>
                 <div className={`font-semibold ${requiredTierInfo.color}`}>
                   {requiredTierInfo.label} Tier Required
                 </div>
-                <div className="text-sm text-gray-400">
+                <div className="text-sm text-ink-muted">
                   Investment limit: {requiredTierInfo.limit}
                 </div>
               </div>
@@ -337,7 +336,7 @@ function KYCRequirementGate({ children }: { children: React.ReactNode }) {
 
           <Link
             href="/kyc"
-            className="inline-block px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white font-semibold rounded-lg transition-all"
+            className="inline-block px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-colors duration-200"
           >
             {isPending ? 'View Verification Status' : 'Start KYC Verification'}
           </Link>
@@ -352,29 +351,29 @@ function KYCRequirementGate({ children }: { children: React.ReactNode }) {
         <div className="max-w-lg text-center">
           <div className="flex items-center justify-center gap-6 mb-6">
             <div className="text-center">
-              <div className="text-4xl mb-2">{tierInfo.icon}</div>
+              <tierInfo.icon className={`w-10 h-10 mx-auto mb-2 ${tierInfo.color}`} />
               <div className={`text-sm font-medium ${tierInfo.color}`}>Your Tier</div>
-              <div className="text-lg font-bold text-white">{tierInfo.label}</div>
+              <div className="text-lg font-semibold text-ink">{tierInfo.label}</div>
             </div>
-            <div className="text-3xl text-gray-600">→</div>
+            <ArrowRight className="w-6 h-6 text-ink-faint" />
             <div className="text-center">
-              <div className="text-4xl mb-2">{requiredTierInfo.icon}</div>
+              <requiredTierInfo.icon className={`w-10 h-10 mx-auto mb-2 ${requiredTierInfo.color}`} />
               <div className={`text-sm font-medium ${requiredTierInfo.color}`}>Required</div>
-              <div className="text-lg font-bold text-white">{requiredTierInfo.label}</div>
+              <div className="text-lg font-semibold text-ink">{requiredTierInfo.label}</div>
             </div>
           </div>
 
-          <h2 className="text-2xl font-bold text-white mb-3">
+          <h2 className="text-2xl font-display font-medium text-ink mb-3">
             Upgrade to {requiredTierInfo.label} Tier
           </h2>
-          <p className="text-gray-400 mb-6">
-            You're currently at <span className={tierInfo.color}>{tierInfo.label}</span> tier. 
+          <p className="text-ink-muted mb-6">
+            You're currently at <span className={tierInfo.color}>{tierInfo.label}</span> tier.
             To create projects, you need to upgrade to <span className={requiredTierInfo.color}>{requiredTierInfo.label}</span> tier or higher.
           </p>
 
           <Link
             href="/kyc"
-            className="inline-block px-8 py-4 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white font-semibold rounded-lg transition-all"
+            className="inline-block px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-colors duration-200"
           >
             Upgrade to {requiredTierInfo.label}
           </Link>
@@ -392,10 +391,10 @@ function KYCRequirementGate({ children }: { children: React.ReactNode }) {
 
 function CreatorBadge() {
   const { tierInfo } = useKYC()
-  
+
   return (
     <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg ${tierInfo.bgColor} border ${tierInfo.borderColor}`}>
-      <span>{tierInfo.icon}</span>
+      <tierInfo.icon className={`w-4 h-4 ${tierInfo.color}`} />
       <span className={`text-sm font-medium ${tierInfo.color}`}>
         Creating as {tierInfo.label}
       </span>
@@ -665,10 +664,10 @@ function CreateProjectContent () {
   // Show loading state when fetching existing application
   if (isLoadingApplication) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Loading application...</p>
+          <Loader2 className="w-12 h-12 text-gold-500 animate-spin mx-auto mb-4" />
+          <p className="text-ink-muted">Loading application...</p>
         </div>
       </div>
     )
@@ -677,14 +676,14 @@ function CreateProjectContent () {
   // Show error state
   if (loadError) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center max-w-md">
           <div className="text-6xl mb-4">❌</div>
-          <h2 className="text-xl font-bold text-white mb-2">Failed to Load Application</h2>
-          <p className="text-gray-400 mb-6">{loadError}</p>
+          <h2 className="text-xl font-bold text-ink mb-2">Failed to Load Application</h2>
+          <p className="text-ink-muted mb-6">{loadError}</p>
           <Link
             href="/dashboard"
-            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+            className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg transition-colors"
           >
             Back to Dashboard
           </Link>
@@ -694,15 +693,15 @@ function CreateProjectContent () {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-sunken">
       <main className="max-w-6xl mx-auto px-4 py-8">
         <KYCRequirementGate>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
+              <h1 className="text-3xl font-bold text-ink mb-2">
                 {isEditMode ? 'Edit Application' : 'Create New Project'}
               </h1>
-              <p className="text-gray-400">
+              <p className="text-ink-muted">
                 {isEditMode 
                   ? originalStatus === 'rejected'
                     ? 'Make corrections and resubmit for review'
@@ -713,7 +712,7 @@ function CreateProjectContent () {
             </div>
             <div className="flex items-center gap-3">
               {isEditMode && originalStatus === 'rejected' && (
-                <span className="px-3 py-1.5 bg-red-500/20 text-red-400 rounded-lg text-sm font-medium">
+                <span className="px-3 py-1.5 bg-danger/15 text-danger rounded-lg text-sm font-medium">
                   Editing Rejected Application
                 </span>
               )}
@@ -753,29 +752,29 @@ function CreateProjectContent () {
                     >
                       <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg transition-colors
                         ${index === currentStep 
-                          ? 'bg-blue-600 text-white ring-4 ring-blue-600/30' 
+                          ? 'bg-gold-600 text-ink ring-4 ring-blue-600/30' 
                           : index < currentStep || (isEditMode && data.paymentCompleted && index < 4)
-                            ? 'bg-green-500 text-white' 
+                            ? 'bg-success text-ink' 
                             : data.paymentCompleted && index === 5
-                              ? 'bg-green-500 text-white'
+                              ? 'bg-success text-ink'
                               : skipPayment
-                                ? 'bg-green-500 text-white'
-                                : 'bg-gray-700 text-gray-400'}`}
+                                ? 'bg-success text-ink'
+                                : 'bg-surface-overlay text-ink-muted'}`}
                       >
                         {index < currentStep || (isEditMode && data.paymentCompleted && index <= 4) 
                           ? '✓' 
                           : step.icon}
                       </div>
                       <span className={`mt-2 text-xs sm:text-sm font-medium hidden sm:block text-center
-                        ${index === currentStep ? 'text-blue-400' : 'text-gray-500'}`}>
+                        ${index === currentStep ? 'text-gold-400' : 'text-ink-faint'}`}>
                         {step.title}
                       </span>
                     </button>
                     {index < STEPS.length - 1 && (
                       <div className={`flex-1 h-1 mx-2 sm:mx-4 rounded ${
                         index < currentStep || (isEditMode && data.paymentCompleted && index < 4)
-                          ? 'bg-green-500' 
-                          : 'bg-gray-700'
+                          ? 'bg-success' 
+                          : 'bg-surface-overlay'
                       }`} />
                     )}
                   </div>
@@ -785,7 +784,7 @@ function CreateProjectContent () {
           </div>
 
           {/* Step Content */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-4 sm:p-6 md:p-8">
+          <div className="bg-surface rounded-xl border border-border p-4 sm:p-6 md:p-8">
             {currentStep === 0 && (
               <StepProjectDetails
                 data={data}
@@ -874,10 +873,10 @@ function CreateProjectContent () {
 export default function CreateProjectPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-blue-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Loading...</p>
+          <Loader2 className="w-12 h-12 text-gold-500 animate-spin mx-auto mb-4" />
+          <p className="text-ink-muted">Loading...</p>
         </div>
       </div>
     }>

@@ -149,7 +149,7 @@ function LogoUpload({
         onClick={() => !displayUrl && inputRef.current?.click()}
         className={`relative aspect-square w-48 rounded-xl overflow-hidden border-2 transition-all ${
           dragOver
-            ? 'border-blue-500 bg-blue-500/10'
+            ? 'border-gold-500 bg-gold-500/10'
             : displayUrl
             ? 'border-gray-600'
             : 'border-dashed border-gray-600 hover:border-gray-500 cursor-pointer'
@@ -176,7 +176,7 @@ function LogoUpload({
                       e.stopPropagation()
                       inputRef.current?.click()
                     }}
-                    className="p-2 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
+                    className="p-2 bg-gold-600 hover:bg-gold-700 rounded-full transition-colors"
                     type="button"
                   >
                     <Upload className="w-5 h-5 text-white" />
@@ -204,7 +204,7 @@ function LogoUpload({
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
             {uploading ? (
-              <Loader2 className="w-10 h-10 text-blue-400 animate-spin" />
+              <Loader2 className="w-10 h-10 text-gold-400 animate-spin" />
             ) : (
               <>
                 <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center mb-3">
@@ -311,7 +311,7 @@ function BannerUpload({
         onClick={() => !displayUrl && inputRef.current?.click()}
         className={`relative w-full rounded-xl overflow-hidden border-2 transition-all ${
           dragOver
-            ? 'border-blue-500 bg-blue-500/10'
+            ? 'border-gold-500 bg-gold-500/10'
             : displayUrl
             ? 'border-gray-600'
             : 'border-dashed border-gray-600 hover:border-gray-500 cursor-pointer'
@@ -339,7 +339,7 @@ function BannerUpload({
                       e.stopPropagation()
                       inputRef.current?.click()
                     }}
-                    className="p-3 bg-blue-600 hover:bg-blue-700 rounded-full transition-colors"
+                    className="p-3 bg-gold-600 hover:bg-gold-700 rounded-full transition-colors"
                     type="button"
                   >
                     <Upload className="w-6 h-6 text-white" />
@@ -366,7 +366,7 @@ function BannerUpload({
         ) : (
           <div className="absolute inset-0 flex flex-col items-center justify-center p-4">
             {uploading ? (
-              <Loader2 className="w-10 h-10 text-blue-400 animate-spin" />
+              <Loader2 className="w-10 h-10 text-gold-400 animate-spin" />
             ) : (
               <>
                 <ImageIcon className="w-10 h-10 text-gray-500 mb-2" />
@@ -611,13 +611,13 @@ function SingleFileUpload({
           onClick={() => inputRef.current?.click()}
           className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
             dragOver 
-              ? 'border-blue-500 bg-blue-500/10' 
+              ? 'border-gold-500 bg-gold-500/10' 
               : 'border-gray-600 hover:border-gray-500'
           }`}
         >
           <Upload className="w-8 h-8 text-gray-500 mx-auto mb-2" />
           <p className="text-sm text-gray-400">
-            Drop file here or <span className="text-blue-400">browse</span>
+            Drop file here or <span className="text-gold-400">browse</span>
           </p>
           <p className="text-xs text-gray-600 mt-1">
             Max size: {formatFileSize(maxSize)}
@@ -637,7 +637,7 @@ function SingleFileUpload({
         <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {uploading ? (
-              <Loader2 className="w-5 h-5 text-blue-400 animate-spin" />
+              <Loader2 className="w-5 h-5 text-gold-400 animate-spin" />
             ) : isUploaded ? (
               <CheckCircle className="w-5 h-5 text-green-400" />
             ) : (
@@ -790,7 +790,7 @@ function LegalDocumentsSection({
                           className="border-2 border-dashed border-gray-600 hover:border-gray-500 rounded-lg p-6 text-center cursor-pointer transition-colors"
                         >
                           {isThisUploading ? (
-                            <Loader2 className="w-8 h-8 text-blue-400 animate-spin mx-auto" />
+                            <Loader2 className="w-8 h-8 text-gold-400 animate-spin mx-auto" />
                           ) : (
                             <>
                               <Upload className="w-8 h-8 text-gray-500 mx-auto mb-2" />
@@ -1138,7 +1138,7 @@ export default function StepMediaLegal({
             value={data.videoUrl}
             onChange={(e) => updateData({ videoUrl: e.target.value })}
             placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
           />
           <p className="text-xs text-gray-500">YouTube or Vimeo link</p>
         </div>
@@ -1184,15 +1184,15 @@ export default function StepMediaLegal({
             type="checkbox"
             checked={data.termsAccepted}
             onChange={handleTermsChange}
-            className="mt-1 w-5 h-5 rounded border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500 focus:ring-offset-gray-900"
+            className="mt-1 w-5 h-5 rounded border-gray-600 bg-gray-800 text-gold-600 focus:ring-gold-500 focus:ring-offset-gray-900"
           />
           <span className="text-sm text-gray-300">
             I confirm that all uploaded documents are accurate and legally valid. I agree to the{' '}
-            <a href="/terms" target="_blank" className="text-blue-400 hover:underline">
+            <a href="/terms" target="_blank" className="text-gold-400 hover:underline">
               Terms of Service
             </a>{' '}
             and{' '}
-            <a href="/privacy" target="_blank" className="text-blue-400 hover:underline">
+            <a href="/privacy" target="_blank" className="text-gold-400 hover:underline">
               Privacy Policy
             </a>
             . I understand that providing false information may result in project rejection and potential legal action.
@@ -1226,7 +1226,7 @@ export default function StepMediaLegal({
             onNext()
           }}
           disabled={!canProceed() || isUploading}
-          className="px-8 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+          className="px-8 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
           type="button"
         >
           {isUploading ? (

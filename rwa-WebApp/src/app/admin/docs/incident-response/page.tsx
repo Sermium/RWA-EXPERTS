@@ -92,14 +92,14 @@ export default function IncidentResponsePage() {
               </tr>
               <tr className="border-b border-gray-700/50">
                 <td className="py-3 px-4">
-                  <span className="text-blue-400 font-medium">Compliance</span>
+                  <span className="text-gold-400 font-medium">Compliance</span>
                 </td>
                 <td className="py-3 px-4">Regulatory inquiry, data breach, AML alert</td>
                 <td className="py-3 px-4">Legal notification</td>
               </tr>
               <tr>
                 <td className="py-3 px-4">
-                  <span className="text-purple-400 font-medium">Reputational</span>
+                  <span className="text-gold-400 font-medium">Reputational</span>
                 </td>
                 <td className="py-3 px-4">PR crisis, social media attack</td>
                 <td className="py-3 px-4">Communications team</td>
@@ -328,7 +328,7 @@ export default function IncidentResponsePage() {
           <div className="bg-gray-800 border border-gray-700 rounded-lg p-5">
             <h3 className="font-semibold text-white mb-3">Internal Alert Template</h3>
             <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm text-gray-300">
-              <p><span className="text-red-400">🚨 INCIDENT ALERT - [P1/P2/P3/P4]</span></p>
+              <p><span className="text-red-400 inline-flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> INCIDENT ALERT - [P1/P2/P3/P4]</span></p>
               <p className="mt-2"><strong>Summary:</strong> [Brief description]</p>
               <p><strong>Impact:</strong> [Users/systems affected]</p>
               <p><strong>Status:</strong> [Investigating/Contained/Resolved]</p>

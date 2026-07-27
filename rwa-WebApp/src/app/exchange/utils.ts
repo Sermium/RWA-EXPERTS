@@ -92,7 +92,7 @@ export const formatTokenAmount = (value: bigint | string | number): string => {
 };
 
 export const getTokenIcon = (symbol: string): string => {
-  return TOKEN_ICONS[symbol] || '🪙';
+  return TOKEN_ICONS[symbol] || '/chains/default.svg';
 };
 
 export const copyToClipboard = async (text: string): Promise<void> => {

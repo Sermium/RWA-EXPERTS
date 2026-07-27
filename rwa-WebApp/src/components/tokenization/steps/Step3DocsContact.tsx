@@ -107,11 +107,11 @@ export function Step3DocsContact({
         </p>
 
         {/* Asset Type Info */}
-        <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl mb-6">
+        <div className="p-4 bg-gold-500/10 border border-gold-500/30 rounded-xl mb-6">
           <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-blue-400 mt-0.5" />
+            <Info className="w-5 h-5 text-gold-400 mt-0.5" />
             <div>
-              <p className="text-blue-300 font-medium">
+              <p className="text-gold-300 font-medium">
                 Document requirements for {assetLabel}
               </p>
               <p className="text-gray-400 text-sm mt-1">
@@ -215,7 +215,7 @@ export function Step3DocsContact({
                         setTimeout(() => fileInputRef.current?.click(), 100);
                       }}
                       disabled={uploadingDocument}
-                      className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-lg flex-shrink-0 ml-2"
+                      className="px-3 py-1 bg-gold-500 hover:bg-gold-600 text-white text-sm rounded-lg flex-shrink-0 ml-2"
                     >
                       {uploadingDocument && selectedDocType === docType.value ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -253,7 +253,7 @@ export function Step3DocsContact({
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={!selectedDocType || uploadingDocument}
-                className="px-4 py-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-600 text-white rounded-xl"
+                className="px-4 py-3 bg-gold-500 hover:bg-gold-600 disabled:bg-gray-600 text-white rounded-xl"
               >
                 {uploadingDocument ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
               </button>
@@ -277,7 +277,7 @@ export function Step3DocsContact({
               .map((doc, index) => (
                 <div key={index} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl">
                   <div className="flex items-center gap-3">
-                    <FileText className="w-5 h-5 text-blue-400" />
+                    <FileText className="w-5 h-5 text-gold-400" />
                     <div>
                       <p className="text-white text-sm">{doc.name}</p>
                       <p className="text-gray-400 text-xs">
@@ -324,7 +324,7 @@ export function Step3DocsContact({
                 value={formData.contactName}
                 onChange={(e) => updateFormData('contactName', e.target.value)}
                 placeholder="John Doe"
-                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
                   errors.contactName ? 'border-red-500' : 'border-gray-600'
                 }`}
               />
@@ -346,7 +346,7 @@ export function Step3DocsContact({
                 value={formData.email}
                 onChange={(e) => updateFormData('email', e.target.value)}
                 placeholder="john@example.com"
-                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
                   errors.email ? 'border-red-500' : 'border-gray-600'
                 }`}
               />
@@ -368,7 +368,7 @@ export function Step3DocsContact({
                 value={formData.phone}
                 onChange={(e) => updateFormData('phone', e.target.value)}
                 placeholder="+1 (555) 000-0000"
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500"
               />
             </div>
           </div>
@@ -385,7 +385,7 @@ export function Step3DocsContact({
                 onChange={(e) => updateFormData('additionalNotes', e.target.value)}
                 placeholder="Any additional information about your asset or requirements..."
                 rows={3}
-                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 resize-none"
               />
             </div>
           </div>
@@ -403,8 +403,8 @@ export function Step3DocsContact({
           className="w-full flex items-center justify-between p-4 bg-gray-800 border border-gray-700 rounded-xl hover:bg-gray-750 transition-colors"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-purple-400" />
+            <div className="w-10 h-10 rounded-lg bg-gold-500/20 flex items-center justify-center">
+              <Building2 className="w-5 h-5 text-gold-400" />
             </div>
             <div className="text-left">
               <h3 className="text-white font-medium">Company Information</h3>
@@ -416,8 +416,8 @@ export function Step3DocsContact({
 
         {showCompanyInfo && (
           <div className="mt-4 p-6 bg-gray-800/50 border border-gray-700 rounded-xl space-y-4">
-            <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg mb-4">
-              <p className="text-purple-300 text-sm">
+            <div className="p-3 bg-gold-500/10 border border-gold-500/20 rounded-lg mb-4">
+              <p className="text-gold-300 text-sm">
                 If your asset is owned by a company, trust, or other legal entity, please provide the details below. 
                 This helps with compliance and legal structuring.
               </p>

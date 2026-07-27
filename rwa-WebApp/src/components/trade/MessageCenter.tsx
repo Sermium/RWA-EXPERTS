@@ -180,11 +180,11 @@ export default function MessageCenter({
 
   const getSenderColor = (senderType: string) => {
     switch (senderType) {
-      case 'buyer': return 'bg-blue-500';
-      case 'seller': return 'bg-purple-500';
+      case 'buyer': return 'bg-gold-500';
+      case 'seller': return 'bg-gold-500';
       case 'arbiter': return 'bg-yellow-500';
-      case 'system': return 'bg-gray-500';
-      default: return 'bg-gray-500';
+      case 'system': return 'bg-ink-faint';
+      default: return 'bg-ink-faint';
     }
   };
 
@@ -199,22 +199,22 @@ export default function MessageCenter({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-96">
-        <Loader2 className="h-8 w-8 text-blue-500 animate-spin" />
+        <Loader2 className="h-8 w-8 text-gold-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-[600px] bg-gray-800/50 rounded-xl border border-gray-700/50">
+    <div className="flex flex-col h-[600px] bg-surface-raised/50 rounded-xl border border-border/50">
       {/* Header */}
-      <div className="p-4 border-b border-gray-700 flex items-center justify-between">
+      <div className="p-4 border-b border-border flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-white">Messages</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-semibold text-ink">Messages</h3>
+          <p className="text-sm text-ink-muted">
             {buyerName} ↔ {sellerName}
           </p>
         </div>
-        <button className="p-2 text-gray-400 hover:text-white transition-colors">
+        <button className="p-2 text-ink-muted hover:text-ink transition-colors">
           <MoreVertical className="h-5 w-5" />
         </button>
       </div>
@@ -225,7 +225,7 @@ export default function MessageCenter({
           <div key={date}>
             {/* Date Separator */}
             <div className="flex items-center justify-center mb-4">
-              <span className="px-3 py-1 bg-gray-700 rounded-full text-xs text-gray-400">
+              <span className="px-3 py-1 bg-surface-overlay rounded-full text-xs text-ink-muted">
                 {date}
               </span>
             </div>
@@ -246,11 +246,11 @@ export default function MessageCenter({
                       {!isOwn && (
                         <div className="flex items-center gap-2 mb-1">
                           <div className={`w-6 h-6 rounded-full ${getSenderColor(msg.senderType)} flex items-center justify-center`}>
-                            <span className="text-xs text-white font-medium">
+                            <span className="text-xs text-ink font-medium">
                               {getSenderName(msg.senderType, msg.senderWallet)[0]}
                             </span>
                           </div>
-                          <span className="text-xs text-gray-400">
+                          <span className="text-xs text-ink-muted">
                             {getSenderName(msg.senderType, msg.senderWallet)}
                           </span>
                         </div>
@@ -260,8 +260,8 @@ export default function MessageCenter({
                       <div
                         className={`rounded-2xl p-3 ${
                           isOwn
-                            ? 'bg-blue-500 text-white rounded-br-md'
-                            : 'bg-gray-700 text-gray-200 rounded-bl-md'
+                            ? 'bg-gold-500 text-white rounded-br-md'
+                            : 'bg-surface-overlay text-ink-muted rounded-bl-md'
                         }`}
                       >
                         {msg.message && (
@@ -278,7 +278,7 @@ export default function MessageCenter({
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className={`flex items-center gap-2 p-2 rounded-lg ${
-                                  isOwn ? 'bg-blue-600/50 hover:bg-blue-600/70' : 'bg-gray-600/50 hover:bg-gray-600/70'
+                                  isOwn ? 'bg-gold-600/50 hover:bg-gold-600/70' : 'bg-border-strong/50 hover:bg-border-strong/70'
                                 } transition-colors`}
                               >
                                 {att.name.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
@@ -296,14 +296,14 @@ export default function MessageCenter({
 
                       {/* Time and read status */}
                       <div className={`flex items-center gap-1 mt-1 ${isOwn ? 'justify-end' : ''}`}>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-xs text-ink-faint">
                           {formatTime(msg.createdAt)}
                         </span>
                         {isOwn && (
                           isRead ? (
-                            <CheckCheck className="h-4 w-4 text-blue-400" />
+                            <CheckCheck className="h-4 w-4 text-gold-400" />
                           ) : (
-                            <Check className="h-4 w-4 text-gray-500" />
+                            <Check className="h-4 w-4 text-ink-faint" />
                           )
                         )}
                       </div>
@@ -317,8 +317,8 @@ export default function MessageCenter({
 
         {messages.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-400">No messages yet</p>
-            <p className="text-sm text-gray-500 mt-1">Start the conversation</p>
+            <p className="text-ink-muted">No messages yet</p>
+            <p className="text-sm text-ink-faint mt-1">Start the conversation</p>
           </div>
         )}
 
@@ -327,17 +327,17 @@ export default function MessageCenter({
 
       {/* Attachments Preview */}
       {attachments.length > 0 && (
-        <div className="px-4 py-2 border-t border-gray-700 flex gap-2 overflow-x-auto">
+        <div className="px-4 py-2 border-t border-border flex gap-2 overflow-x-auto">
           {attachments.map((file, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-2 px-3 py-2 bg-gray-700 rounded-lg text-sm"
+              className="flex items-center gap-2 px-3 py-2 bg-surface-overlay rounded-lg text-sm"
             >
-              <FileText className="h-4 w-4 text-gray-400" />
-              <span className="text-white truncate max-w-[100px]">{file.name}</span>
+              <FileText className="h-4 w-4 text-ink-muted" />
+              <span className="text-ink truncate max-w-[100px]">{file.name}</span>
               <button
                 onClick={() => removeAttachment(idx)}
-                className="text-gray-400 hover:text-white"
+                className="text-ink-muted hover:text-ink"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -347,11 +347,11 @@ export default function MessageCenter({
       )}
 
       {/* Input */}
-      <div className="p-4 border-t border-gray-700">
+      <div className="p-4 border-t border-border">
         <div className="flex items-end gap-2">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="p-2 text-gray-400 hover:text-white transition-colors"
+            className="p-2 text-ink-muted hover:text-ink transition-colors"
           >
             <Paperclip className="h-5 w-5" />
           </button>
@@ -375,7 +375,7 @@ export default function MessageCenter({
               }}
               placeholder="Type a message..."
               rows={1}
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-blue-500 outline-none resize-none"
+              className="w-full px-4 py-3 bg-surface border border-border rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 outline-none resize-none"
               style={{ minHeight: '48px', maxHeight: '120px' }}
             />
           </div>
@@ -383,7 +383,7 @@ export default function MessageCenter({
           <button
             onClick={handleSend}
             disabled={isSending || (!newMessage.trim() && attachments.length === 0)}
-            className="p-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-3 bg-gold-500 text-white rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSending ? (
               <Loader2 className="h-5 w-5 animate-spin" />

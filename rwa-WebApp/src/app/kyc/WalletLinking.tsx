@@ -35,36 +35,36 @@ function LinkedWalletCard({
     <div
       className={`
         flex items-center justify-between p-4 rounded-xl border transition-colors
-        ${isCurrentWallet 
-          ? "bg-blue-500/10 border-blue-500/30" 
-          : "bg-gray-800 border-gray-700"
+        ${isCurrentWallet
+          ? "bg-gold-500/10 border-gold-500/30"
+          : "bg-surface border-border"
         }
       `}
     >
       <div className="flex items-center gap-3">
         <div className={`
           w-10 h-10 rounded-full flex items-center justify-center
-          ${wallet.isPrimary ? "bg-amber-500/20" : "bg-gray-700"}
+          ${wallet.isPrimary ? "bg-gold/20" : "bg-surface-overlay"}
         `}>
           {wallet.isPrimary ? "👑" : "👛"}
         </div>
         <div>
           <div className="flex items-center gap-2">
-            <p className="font-mono text-white">
+            <p className="font-mono text-ink">
               {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
             </p>
             {isCurrentWallet && (
-              <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded-full">
+              <span className="px-2 py-0.5 bg-gold-500/20 text-gold-400 text-xs rounded-full">
                 Current
               </span>
             )}
             {wallet.isPrimary && (
-              <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs rounded-full">
+              <span className="px-2 py-0.5 bg-gold/20 text-gold text-xs rounded-full">
                 Primary
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-ink-faint">
             Linked {new Date(wallet.linkedAt).toLocaleDateString()}
           </p>
         </div>
@@ -73,7 +73,7 @@ function LinkedWalletCard({
       {!wallet.isPrimary && !isCurrentWallet && onUnlink && (
         <button
           onClick={onUnlink}
-          className="px-3 py-1 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+          className="px-3 py-1 text-sm text-danger hover:text-danger/80 hover:bg-danger/10 rounded-lg transition-colors"
         >
           Unlink
         </button>
@@ -127,55 +127,55 @@ function GenerateCodeSection({
 
   return (
     <div className="space-y-4">
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-2">
+      <div className="bg-surface rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-ink mb-2">
           Generate Link Code
         </h3>
-        <p className="text-gray-400 text-sm mb-4">
+        <p className="text-ink-muted text-sm mb-4">
           Generate a one-time code to link another wallet to your KYC verification.
           The code expires after 15 minutes.
         </p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-900/30 border border-red-500/30 rounded-lg text-red-400 text-sm">
+          <div className="mb-4 p-3 bg-danger/10 border border-danger/30 rounded-lg text-danger text-sm">
             {error}
           </div>
         )}
 
         {linkCode && timeLeft > 0 ? (
           <div className="space-y-4">
-            <div className="bg-gray-900 rounded-lg p-6 text-center">
-              <p className="text-gray-500 text-sm mb-2">Your Link Code</p>
+            <div className="bg-surface-sunken rounded-lg p-6 text-center">
+              <p className="text-ink-faint text-sm mb-2">Your Link Code</p>
               <div className="flex items-center justify-center gap-3">
-                <p className="text-4xl font-mono font-bold text-white tracking-widest">
+                <p className="text-4xl font-mono font-bold text-ink tracking-widest">
                   {linkCode.code}
                 </p>
                 <button
                   onClick={copyCode}
-                  className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
                   title="Copy code"
                 >
                   {copied ? (
-                    <span className="text-green-400">✓</span>
+                    <span className="text-success">✓</span>
                   ) : (
-                    <span className="text-gray-400">📋</span>
+                    <span className="text-ink-muted">📋</span>
                   )}
                 </button>
               </div>
-              <p className="text-gray-500 text-sm mt-4">
+              <p className="text-ink-faint text-sm mt-4">
                 Expires in{" "}
-                <span className={timeLeft < 60 ? "text-red-400" : "text-white"}>
+                <span className={timeLeft < 60 ? "text-danger" : "text-ink"}>
                   {formatTime(timeLeft)}
                 </span>
               </p>
             </div>
 
-            <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-              <h4 className="text-blue-400 font-medium mb-2">Instructions:</h4>
-              <ol className="text-sm text-gray-400 space-y-1 list-decimal list-inside">
+            <div className="bg-gold-500/10 border border-gold-500/30 rounded-lg p-4">
+              <h4 className="text-gold-400 font-medium mb-2">Instructions:</h4>
+              <ol className="text-sm text-ink-muted space-y-1 list-decimal list-inside">
                 <li>Open this page on your other wallet</li>
                 <li>Click "Link Existing Wallet"</li>
-                <li>Enter this code: <span className="font-mono text-white">{linkCode.code}</span></li>
+                <li>Enter this code: <span className="font-mono text-ink">{linkCode.code}</span></li>
                 <li>Sign the verification message</li>
               </ol>
             </div>
@@ -183,7 +183,7 @@ function GenerateCodeSection({
             <button
               onClick={onGenerate}
               disabled={isGenerating}
-              className="w-full py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors text-sm"
+              className="w-full py-2 text-ink-muted hover:text-ink hover:bg-surface-overlay rounded-lg transition-colors text-sm"
             >
               Generate New Code
             </button>
@@ -192,7 +192,7 @@ function GenerateCodeSection({
           <button
             onClick={onGenerate}
             disabled={isGenerating}
-            className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isGenerating ? (
               <>
@@ -280,7 +280,7 @@ function UseCodeSection({
               value={code}
               onChange={(e) => handleCodeChange(e.target.value)}
               placeholder="Enter 8-character code"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-blue-500 uppercase"
+              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-gold-500 uppercase"
               maxLength={8}
             />
             <p className="text-xs text-gray-500 mt-2 text-center">
@@ -516,7 +516,7 @@ export function WalletLinking() {
             className={`
               p-6 rounded-xl border-2 text-left transition-all
               ${hasKYC 
-                ? "border-blue-500/30 hover:border-blue-500 hover:bg-blue-500/10 cursor-pointer" 
+                ? "border-gold-500/30 hover:border-gold-500 hover:bg-gold-500/10 cursor-pointer" 
                 : "border-gray-700 opacity-50 cursor-not-allowed"
               }
             `}
@@ -559,7 +559,7 @@ export function WalletLinking() {
               Enter a link code from your verified wallet
             </p>
             {hasKYC && (
-              <p className="text-xs text-blue-400 mt-2">
+              <p className="text-xs text-gold-400 mt-2">
                 This wallet already has KYC
               </p>
             )}

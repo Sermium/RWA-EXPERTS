@@ -125,11 +125,11 @@ export function WalletLinkingModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-2xl max-w-md w-full p-6 relative">
+      <div className="bg-surface-raised rounded-2xl max-w-md w-full p-6 relative">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-white text-xl"
+          className="absolute top-4 right-4 text-ink-muted hover:text-ink text-xl"
         >
           ×
         </button>
@@ -138,15 +138,15 @@ export function WalletLinkingModal({
         {success ? (
           <div className="text-center py-6">
             <div className="text-5xl mb-4">🎉</div>
-            <h2 className="text-xl font-bold text-white mb-2">
+            <h2 className="text-xl font-display font-bold text-ink mb-2">
               Wallet Linked!
             </h2>
-            <p className="text-gray-400 mb-6">
+            <p className="text-ink-muted mb-6">
               Your wallet is now linked and can access all KYC-gated features.
             </p>
             <button
               onClick={onClose}
-              className="px-6 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-white font-medium transition-colors"
+              className="px-6 py-2 bg-success hover:bg-success/80 rounded-lg text-ink font-medium transition-colors"
             >
               Done
             </button>
@@ -154,35 +154,35 @@ export function WalletLinkingModal({
         ) : mode === "generate" ? (
           /* Generate Code Mode */
           <div>
-            <h2 className="text-xl font-bold text-white mb-2">
+            <h2 className="text-xl font-display font-bold text-ink mb-2">
               Generate Link Code
             </h2>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-ink-muted text-sm mb-6">
               Share this code with your other wallet to link it to your KYC.
             </p>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-900/30 border border-red-500/30 rounded-lg text-red-400 text-sm">
+              <div className="mb-4 p-3 bg-danger-muted border border-danger/30 rounded-lg text-danger text-sm">
                 {error}
               </div>
             )}
 
             {linkCode && timeLeft > 0 ? (
               <div className="space-y-4">
-                <div className="bg-gray-900 rounded-xl p-6 text-center">
-                  <p className="text-gray-500 text-sm mb-2">Your Link Code</p>
+                <div className="bg-surface rounded-xl p-6 text-center">
+                  <p className="text-ink-faint text-sm mb-2">Your Link Code</p>
                   <div className="flex items-center justify-center gap-2">
-                    <p className="text-3xl font-mono font-bold text-white tracking-widest">
+                    <p className="text-3xl font-mono font-bold text-ink tracking-widest">
                       {linkCode.code}
                     </p>
                     <button
                       onClick={handleCopy}
-                      className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                      className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
                     >
                       {copied ? "✓" : "📋"}
                     </button>
                   </div>
-                  <p className={`text-sm mt-3 ${timeLeft < 60 ? "text-red-400" : "text-gray-500"}`}>
+                  <p className={`text-sm mt-3 ${timeLeft < 60 ? "text-danger" : "text-ink-faint"}`}>
                     Expires in {formatTime(timeLeft)}
                   </p>
                 </div>
@@ -190,7 +190,7 @@ export function WalletLinkingModal({
                 <button
                   onClick={handleGenerate}
                   disabled={isLoading}
-                  className="w-full py-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors text-sm"
+                  className="w-full py-2 text-ink-muted hover:text-ink hover:bg-surface-overlay rounded-lg transition-colors text-sm"
                 >
                   Generate New Code
                 </button>
@@ -199,7 +199,7 @@ export function WalletLinkingModal({
               <button
                 onClick={handleGenerate}
                 disabled={isLoading}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -215,15 +215,15 @@ export function WalletLinkingModal({
         ) : (
           /* Use Code Mode */
           <div>
-            <h2 className="text-xl font-bold text-white mb-2">
+            <h2 className="text-xl font-display font-bold text-ink mb-2">
               Link Wallet
             </h2>
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-ink-muted text-sm mb-6">
               Enter the 8-character code from your verified wallet.
             </p>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-900/30 border border-red-500/30 rounded-lg text-red-400 text-sm">
+              <div className="mb-4 p-3 bg-danger-muted border border-danger/30 rounded-lg text-danger text-sm">
                 {error}
               </div>
             )}
@@ -234,14 +234,14 @@ export function WalletLinkingModal({
                 value={inputCode}
                 onChange={(e) => setInputCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8))}
                 placeholder="XXXXXXXX"
-                className="w-full px-4 py-4 bg-gray-900 border border-gray-700 rounded-xl text-white text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-blue-500 uppercase"
+                className="w-full px-4 py-4 bg-surface border border-border rounded-xl text-ink text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-gold-500 uppercase"
                 maxLength={8}
               />
 
               <button
                 onClick={handleUseCode}
                 disabled={inputCode.length !== 8 || isLoading}
-                className="w-full py-3 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 bg-success hover:bg-success/80 disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
@@ -265,7 +265,7 @@ export function WalletLinkingModal({
               setLinkCode(null);
               setInputCode("");
             }}
-            className="w-full mt-4 py-2 text-gray-500 hover:text-gray-300 text-sm transition-colors"
+            className="w-full mt-4 py-2 text-ink-faint hover:text-ink-muted text-sm transition-colors"
           >
             {mode === "generate" 
               ? "I have a code to enter →" 

@@ -165,7 +165,7 @@ export function TokenBanner({
 
   return (
     <div className="relative rounded-xl overflow-visible">
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900/40 via-purple-900/30 to-gray-900 rounded-xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-gold-900/40 via-purple-900/30 to-gray-900 rounded-xl"></div>
       
       <div className="relative p-6 border border-gray-700/50 rounded-xl backdrop-blur-sm">
         <div className="flex flex-col lg:flex-row lg:items-start gap-6">
@@ -175,12 +175,12 @@ export function TokenBanner({
             <div className="relative">
               {tokenImageLoading ? (
                 <div className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gold-500"></div>
                 </div>
               ) : tokenImage ? (
                 <img src={tokenImage} alt="Token" className="w-16 h-16 rounded-2xl object-cover border border-gray-700" onError={() => setTokenImage(null)} />
               ) : (
-                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
+                <div className="w-16 h-16 bg-gradient-to-br from-gold-500 to-gold-light-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
                   {(selectedListedToken?.symbol || selectedSecurityToken?.symbol || '?')[0]}
                 </div>
               )}
@@ -199,7 +199,7 @@ export function TokenBanner({
               </div>
               <p className="text-gray-400 text-sm">{selectedListedToken?.name || selectedSecurityToken?.name}</p>
               {selectedListedToken?.token_address && (
-                <a href={`${explorerUrl}/token/${selectedListedToken.token_address}`} target="_blank" rel="noopener noreferrer" className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 mt-2">
+                <a href={`${explorerUrl}/token/${selectedListedToken.token_address}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gold-400 hover:text-gold-300 flex items-center gap-1 mt-2">
                   <span className="font-mono">{selectedListedToken.token_address.slice(0, 6)}...{selectedListedToken.token_address.slice(-4)}</span>
                   <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                 </a>
@@ -253,7 +253,7 @@ export function TokenBanner({
                     href={`${explorerUrl}/address/${selectedListedToken.projects.owner_address}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-mono text-blue-400 hover:text-blue-300 block mt-1"
+                    className="text-sm font-mono text-gold-400 hover:text-gold-300 block mt-1"
                   >
                     {selectedListedToken.projects.owner_address.slice(0, 6)}...{selectedListedToken.projects.owner_address.slice(-4)}
                   </a>
@@ -262,7 +262,7 @@ export function TokenBanner({
                   <div className="mt-2 pt-2 border-t border-gray-700/50">
                     {onChainData.loading ? (
                       <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-blue-500"></div>
+                        <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gold-500"></div>
                         <span className="text-xs text-gray-500">Loading...</span>
                       </div>
                     ) : ownerBalance !== null ? (
@@ -299,10 +299,10 @@ export function TokenBanner({
           <div className="lg:w-56 documents-dropdown relative">
             <button onClick={() => setShowDocuments(!showDocuments)} className="w-full flex items-center justify-between gap-2 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700 rounded-xl px-4 py-3">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                <svg className="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 <span className="font-medium">Documents</span>
                 {(selectedListedToken?.documents?.files?.length || 0) > 0 && (
-                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full">{selectedListedToken?.documents?.files?.length}</span>
+                  <span className="text-xs bg-gold-500/20 text-gold-400 px-2 py-0.5 rounded-full">{selectedListedToken?.documents?.files?.length}</span>
                 )}
               </div>
               <svg className={`w-4 h-4 text-gray-400 transition-transform ${showDocuments ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
@@ -313,7 +313,7 @@ export function TokenBanner({
                 <div className="overflow-y-auto" style={{ maxHeight: '380px' }}>
                   {selectedListedToken?.projects?.metadata_uri && (
                     <a href={selectedListedToken.projects.metadata_uri} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700/50 border-b border-gray-700/50">
-                      <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg></div>
+                      <div className="w-8 h-8 bg-gold-500/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg></div>
                       <div className="flex-1"><div className="text-sm font-medium">Token Metadata</div><div className="text-xs text-gray-500">IPFS</div></div>
                       <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                     </a>
@@ -327,7 +327,7 @@ export function TokenBanner({
                   )}
                   {selectedListedToken?.documents?.website && (
                     <a href={selectedListedToken.documents.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700/50 border-b border-gray-700/50">
-                      <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg></div>
+                      <div className="w-8 h-8 bg-gold-500/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg></div>
                       <div className="flex-1"><div className="text-sm font-medium">Website</div><div className="text-xs text-gray-500 truncate">{selectedListedToken.documents.website.replace(/^https?:\/\//, '')}</div></div>
                       <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                     </a>

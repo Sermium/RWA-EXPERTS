@@ -6,14 +6,15 @@ import { useWriteContract, useWaitForTransactionReceipt, usePublicClient } from 
 import { Address } from 'viem';
 import { RWAEscrowVaultABI } from '@/config/abis';
 import { useChainConfig } from '@/hooks/useChainConfig';
+import { AlertTriangle } from 'lucide-react';
 
 const MILESTONE_STATUS: Record<number, { label: string; color: string }> = {
-  0: { label: 'Pending', color: 'bg-gray-500/20 text-gray-400' },
-  1: { label: 'Submitted', color: 'bg-yellow-500/20 text-yellow-400' },
-  2: { label: 'Approved', color: 'bg-green-500/20 text-green-400' },
-  3: { label: 'Rejected', color: 'bg-red-500/20 text-red-400' },
-  4: { label: 'Disputed', color: 'bg-orange-500/20 text-orange-400' },
-  5: { label: 'Released', color: 'bg-emerald-500/20 text-emerald-400' },
+  0: { label: 'Pending', color: 'bg-surface-overlay text-ink-muted' },
+  1: { label: 'Submitted', color: 'bg-warning/20 text-warning' },
+  2: { label: 'Approved', color: 'bg-success/20 text-success' },
+  3: { label: 'Rejected', color: 'bg-danger/20 text-danger' },
+  4: { label: 'Disputed', color: 'bg-warning/20 text-warning' },
+  5: { label: 'Released', color: 'bg-success/20 text-success' },
 };
 
 interface Milestone {
@@ -155,8 +156,8 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
   if (!isDeployed) {
     return (
       <div className="p-4 text-center">
-        <div className="text-yellow-400 mb-2">⚠️</div>
-        <p className="text-gray-400 text-sm">
+        <AlertTriangle className="w-6 h-6 text-warning mx-auto mb-2" />
+        <p className="text-ink-muted text-sm">
           Admin functions not available on {chainName || 'this network'}
         </p>
       </div>
@@ -166,7 +167,7 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
   // No escrow vault
   if (!escrowVaultAddress) {
     return (
-      <div className="p-4 text-center text-gray-400">
+      <div className="p-4 text-center text-ink-muted">
         No escrow vault configured
       </div>
     );
@@ -176,7 +177,7 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
   if (loading) {
     return (
       <div className="p-4 text-center">
-        <div className="animate-spin w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full mx-auto" />
+        <div className="animate-spin w-6 h-6 border-2 border-gold-500 border-t-transparent rounded-full mx-auto" />
       </div>
     );
   }
@@ -185,10 +186,10 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
   if (error) {
     return (
       <div className="p-4 text-center">
-        <p className="text-red-400 text-sm mb-2">{error}</p>
+        <p className="text-danger text-sm mb-2">{error}</p>
         <button
           onClick={loadMilestones}
-          className="text-blue-400 hover:text-blue-300 text-sm"
+          className="text-gold-400 hover:text-gold-300 text-sm"
         >
           Retry
         </button>
@@ -199,7 +200,7 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
   // No milestones
   if (milestones.length === 0) {
     return (
-      <div className="p-4 text-center text-gray-400">
+      <div className="p-4 text-center text-ink-muted">
         No milestones configured for this project
       </div>
     );
@@ -209,21 +210,21 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
     <div className="space-y-3">
       {/* Network indicator */}
       {chainName && (
-        <div className="px-3 py-1.5 bg-gray-700/50 rounded-lg text-center">
-          <span className="text-gray-400 text-xs">Network: </span>
-          <span className="text-white text-xs">{chainName}</span>
+        <div className="px-3 py-1.5 bg-surface-overlay/50 rounded-lg text-center">
+          <span className="text-ink-muted text-xs">Network: </span>
+          <span className="text-ink text-xs">{chainName}</span>
         </div>
       )}
 
       {/* Escrow contract link */}
       {explorerUrl && (
-        <div className="px-3 py-1.5 bg-gray-700/50 rounded-lg flex items-center justify-between">
-          <span className="text-gray-400 text-xs">Escrow:</span>
+        <div className="px-3 py-1.5 bg-surface-overlay/50 rounded-lg flex items-center justify-between">
+          <span className="text-ink-muted text-xs">Escrow:</span>
           <a
             href={`${explorerUrl}/address/${escrowVaultAddress}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-400 hover:text-blue-300 text-xs flex items-center gap-1"
+            className="text-gold-400 hover:text-gold-300 text-xs flex items-center gap-1"
           >
             {escrowVaultAddress.slice(0, 6)}...{escrowVaultAddress.slice(-4)}
             <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -235,33 +236,33 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
 
       {/* Transaction status */}
       {(approveHash || rejectHash || releaseHash) && (
-        <div className="px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg">
+        <div className="px-3 py-2 bg-gold-500/10 border border-gold-500/30 rounded-lg">
           {approveHash && (
             <div className="flex items-center justify-between text-sm">
-              <span className="text-blue-400">
+              <span className="text-gold-400">
                 {approvePending ? 'Approving...' : approveSuccess ? 'Approved!' : 'Processing...'}
               </span>
-              <a href={getTxUrl(approveHash)} target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 text-xs">
+              <a href={getTxUrl(approveHash)} target="_blank" rel="noopener noreferrer" className="text-gold-300 hover:text-gold-200 text-xs">
                 View TX
               </a>
             </div>
           )}
           {rejectHash && (
             <div className="flex items-center justify-between text-sm">
-              <span className="text-blue-400">
+              <span className="text-gold-400">
                 {rejectPending ? 'Rejecting...' : rejectSuccess ? 'Rejected!' : 'Processing...'}
               </span>
-              <a href={getTxUrl(rejectHash)} target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 text-xs">
+              <a href={getTxUrl(rejectHash)} target="_blank" rel="noopener noreferrer" className="text-gold-300 hover:text-gold-200 text-xs">
                 View TX
               </a>
             </div>
           )}
           {releaseHash && (
             <div className="flex items-center justify-between text-sm">
-              <span className="text-blue-400">
+              <span className="text-gold-400">
                 {releasePending ? 'Releasing...' : releaseSuccess ? 'Released!' : 'Processing...'}
               </span>
-              <a href={getTxUrl(releaseHash)} target="_blank" rel="noopener noreferrer" className="text-blue-300 hover:text-blue-200 text-xs">
+              <a href={getTxUrl(releaseHash)} target="_blank" rel="noopener noreferrer" className="text-gold-300 hover:text-gold-200 text-xs">
                 View TX
               </a>
             </div>
@@ -271,8 +272,8 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
 
       {/* Error messages */}
       {(approveError || rejectError || releaseError) && (
-        <div className="px-3 py-2 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <p className="text-red-400 text-xs">
+        <div className="px-3 py-2 bg-danger/10 border border-danger/30 rounded-lg">
+          <p className="text-danger text-xs">
             {approveError?.message || rejectError?.message || releaseError?.message || 'Transaction failed'}
           </p>
         </div>
@@ -282,27 +283,27 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
       {milestones.map((milestone, index) => (
         <div
           key={index}
-          className="bg-gray-700/50 rounded-lg p-4 border border-gray-600"
+          className="bg-surface-overlay/50 rounded-lg p-4 border border-border-strong"
         >
           <div className="flex justify-between items-start">
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-white font-medium">#{index + 1}</span>
+                <span className="text-ink font-medium">#{index + 1}</span>
                 <span className={`px-2 py-0.5 rounded-full text-xs ${MILESTONE_STATUS[milestone.status]?.color}`}>
                   {MILESTONE_STATUS[milestone.status]?.label}
                 </span>
-                <span className="text-gray-400 text-sm">
+                <span className="text-ink-muted text-sm">
                   {Number(milestone.percentage) / 100}%
                 </span>
               </div>
-              <p className="text-gray-300 text-sm">{milestone.description}</p>
+              <p className="text-ink-muted text-sm">{milestone.description}</p>
               
               {milestone.proofURI && (
                 <a
                   href={milestone.proofURI}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300 text-xs mt-2 inline-block"
+                  className="text-gold-400 hover:text-gold-300 text-xs mt-2 inline-block"
                 >
                   View Proof →
                 </a>
@@ -310,17 +311,17 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
 
               {/* Show rejection reason */}
               {milestone.status === 3 && milestone.rejectionReason && (
-                <div className="mt-2 p-2 bg-red-500/10 rounded text-xs">
-                  <span className="text-red-400">Rejection: </span>
-                  <span className="text-gray-300">{milestone.rejectionReason}</span>
+                <div className="mt-2 p-2 bg-danger/10 rounded text-xs">
+                  <span className="text-danger">Rejection: </span>
+                  <span className="text-ink-muted">{milestone.rejectionReason}</span>
                 </div>
               )}
 
               {/* Show released amount */}
               {milestone.status === 5 && milestone.releasedAmount > 0n && (
-                <div className="mt-2 p-2 bg-green-500/10 rounded text-xs">
-                  <span className="text-green-400">Released: </span>
-                  <span className="text-gray-300">
+                <div className="mt-2 p-2 bg-success/10 rounded text-xs">
+                  <span className="text-success">Released: </span>
+                  <span className="text-ink-muted">
                     ${(Number(milestone.releasedAmount) / 1e6).toLocaleString()}
                   </span>
                 </div>
@@ -334,14 +335,14 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
                   <button
                     onClick={() => handleApprove(index)}
                     disabled={approvePending}
-                    className="px-3 py-1.5 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 text-white text-sm rounded-lg transition"
+                    className="px-3 py-1.5 bg-success hover:bg-success disabled:bg-border-strong text-ink text-sm rounded-lg transition"
                   >
                     {approvePending ? '...' : 'Approve'}
                   </button>
                   <button
                     onClick={() => openRejectModal(index)}
                     disabled={rejectPending}
-                    className="px-3 py-1.5 bg-red-600 hover:bg-red-500 disabled:bg-gray-600 text-white text-sm rounded-lg transition"
+                    className="px-3 py-1.5 bg-danger hover:bg-danger disabled:bg-border-strong text-ink text-sm rounded-lg transition"
                   >
                     Reject
                   </button>
@@ -353,7 +354,7 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
                 <button
                   onClick={() => handleRelease(index)}
                   disabled={releasePending}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-600 text-white text-sm rounded-lg transition"
+                  className="px-3 py-1.5 bg-success hover:bg-success disabled:bg-border-strong text-ink text-sm rounded-lg transition"
                 >
                   {releasePending ? '...' : 'Release Funds'}
                 </button>
@@ -365,56 +366,56 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
 
       {/* Reject Modal */}
       {showRejectModal && selectedIndex !== null && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-xl p-6 max-w-md w-full mx-4 border border-gray-700">
-            <h3 className="text-lg font-bold text-white mb-4">Reject Milestone</h3>
+        <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50">
+          <div className="bg-surface rounded-xl p-6 max-w-md w-full mx-4 border border-border">
+            <h3 className="text-lg font-bold text-ink mb-4">Reject Milestone</h3>
 
             {/* Network info */}
             {chainName && (
-              <div className="mb-4 p-2 bg-gray-700/50 rounded text-center">
-                <span className="text-gray-400 text-xs">Network: </span>
-                <span className="text-white text-xs">{chainName}</span>
+              <div className="mb-4 p-2 bg-surface-overlay/50 rounded text-center">
+                <span className="text-ink-muted text-xs">Network: </span>
+                <span className="text-ink text-xs">{chainName}</span>
               </div>
             )}
 
             {/* Milestone info */}
-            <div className="mb-4 p-3 bg-gray-700/50 rounded-lg">
-              <p className="text-white text-sm font-medium">
+            <div className="mb-4 p-3 bg-surface-overlay/50 rounded-lg">
+              <p className="text-ink text-sm font-medium">
                 Milestone #{selectedIndex + 1}
               </p>
-              <p className="text-gray-400 text-sm">
+              <p className="text-ink-muted text-sm">
                 {milestones[selectedIndex]?.description}
               </p>
             </div>
             
             <div className="mb-4">
-              <label className="block text-gray-400 text-sm mb-2">Reason for Rejection</label>
+              <label className="block text-ink-muted text-sm mb-2">Reason for Rejection</label>
               <textarea
                 value={rejectionReason}
                 onChange={(e) => setRejectionReason(e.target.value)}
                 rows={3}
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-red-500"
+                className="w-full bg-surface-overlay border border-border-strong rounded-lg px-4 py-2 text-ink placeholder-ink-faint focus:outline-none focus:border-danger"
                 placeholder="Explain why this milestone is being rejected..."
               />
             </div>
 
             {rejectError && (
-              <div className="mb-4 p-2 bg-red-500/10 border border-red-500/30 rounded">
-                <p className="text-red-400 text-xs">{rejectError.message}</p>
+              <div className="mb-4 p-2 bg-danger/10 border border-danger/30 rounded">
+                <p className="text-danger text-xs">{rejectError.message}</p>
               </div>
             )}
 
             <div className="flex gap-3">
               <button
                 onClick={() => setShowRejectModal(false)}
-                className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition"
+                className="flex-1 px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition"
               >
                 Cancel
               </button>
               <button
                 onClick={handleReject}
                 disabled={!rejectionReason.trim() || rejectPending}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg transition"
+                className="flex-1 px-4 py-2 bg-danger hover:bg-danger disabled:bg-border-strong disabled:cursor-not-allowed text-ink rounded-lg transition"
               >
                 {rejectPending ? 'Rejecting...' : 'Reject Milestone'}
               </button>

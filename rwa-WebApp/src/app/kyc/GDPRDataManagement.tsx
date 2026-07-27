@@ -28,13 +28,13 @@ function DataCategoryCard({
   items: string[];
 }) {
   return (
-    <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+    <div className="bg-surface rounded-xl p-4 border border-border">
       <div className="flex items-start gap-3">
         <span className="text-2xl">{icon}</span>
         <div className="flex-1">
-          <h3 className="font-medium text-white">{title}</h3>
-          <p className="text-sm text-gray-400 mb-2">{description}</p>
-          <ul className="text-xs text-gray-500 space-y-1">
+          <h3 className="font-medium text-ink">{title}</h3>
+          <p className="text-sm text-ink-muted mb-2">{description}</p>
+          <ul className="text-xs text-ink-faint space-y-1">
             {items.map((item, i) => (
               <li key={i}>• {item}</li>
             ))}
@@ -57,29 +57,29 @@ function ExportSection({
   success: boolean;
 }) {
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+    <div className="bg-surface rounded-xl p-6 border border-border">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-2xl">
+        <div className="w-12 h-12 rounded-full bg-gold-500/20 flex items-center justify-center text-2xl">
           📥
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-white mb-1">
+          <h3 className="text-lg font-semibold text-ink mb-1">
             Export Your Data
           </h3>
-          <p className="text-gray-400 text-sm mb-4">
+          <p className="text-ink-muted text-sm mb-4">
             Download a complete copy of all your KYC data in JSON format.
             This includes your personal information, verification history,
             linked wallets, and document metadata.
           </p>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-900/30 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            <div className="mb-4 p-3 bg-danger/30 border border-danger/30 rounded-lg text-danger text-sm">
               {error}
             </div>
           )}
 
           {success ? (
-            <div className="p-3 bg-green-900/30 border border-green-500/30 rounded-lg text-green-400 text-sm flex items-center gap-2">
+            <div className="p-3 bg-success/30 border border-success/30 rounded-lg text-success text-sm flex items-center gap-2">
               <span>✓</span>
               <span>Download started! Check your downloads folder.</span>
             </div>
@@ -87,7 +87,7 @@ function ExportSection({
             <button
               onClick={onExport}
               disabled={isProcessing}
-              className="px-6 py-2 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors flex items-center gap-2"
+              className="px-6 py-2 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center gap-2"
             >
               {isProcessing ? (
                 <>
@@ -137,12 +137,12 @@ function DeleteSection({
 
   if (state === "success") {
     return (
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 text-center">
+      <div className="bg-surface rounded-xl p-6 border border-border text-center">
         <div className="text-5xl mb-4">🗑️</div>
-        <h3 className="text-xl font-semibold text-white mb-2">
+        <h3 className="text-xl font-semibold text-ink mb-2">
           Data Deleted Successfully
         </h3>
-        <p className="text-gray-400">
+        <p className="text-ink-muted">
           All your KYC data has been permanently removed from our systems.
           Your wallet is no longer verified.
         </p>
@@ -151,22 +151,22 @@ function DeleteSection({
   }
 
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-red-500/30">
+    <div className="bg-surface rounded-xl p-6 border border-danger/30">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center text-2xl">
+        <div className="w-12 h-12 rounded-full bg-danger/20 flex items-center justify-center text-2xl">
           🗑️
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-white mb-1">
+          <h3 className="text-lg font-semibold text-ink mb-1">
             Delete Your Data
           </h3>
-          <p className="text-gray-400 text-sm mb-4">
+          <p className="text-ink-muted text-sm mb-4">
             Permanently delete all your KYC data from our systems.
             This action cannot be undone.
           </p>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-900/30 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            <div className="mb-4 p-3 bg-danger/30 border border-danger/30 rounded-lg text-danger text-sm">
               {error}
             </div>
           )}
@@ -174,12 +174,12 @@ function DeleteSection({
           {state === "confirming" ? (
             <div className="space-y-4">
               {/* Warning Banner */}
-              <div className="p-4 bg-red-900/30 border border-red-500/30 rounded-lg">
-                <h4 className="text-red-400 font-semibold mb-2 flex items-center gap-2">
+              <div className="p-4 bg-danger/30 border border-danger/30 rounded-lg">
+                <h4 className="text-danger font-semibold mb-2 flex items-center gap-2">
                   <span>⚠️</span>
                   Warning: This action is irreversible
                 </h4>
-                <p className="text-gray-400 text-sm">
+                <p className="text-ink-muted text-sm">
                   Once deleted, your data cannot be recovered. You will need to
                   complete KYC verification again to use investment features.
                 </p>
@@ -192,9 +192,9 @@ function DeleteSection({
                     type="checkbox"
                     checked={acknowledged[0]}
                     onChange={() => handleAcknowledge(0)}
-                    className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-red-600 focus:ring-red-500"
+                    className="mt-1 w-4 h-4 rounded border-border-strong bg-surface-overlay text-danger focus:ring-danger"
                   />
-                  <span className="text-sm text-gray-300">
+                  <span className="text-sm text-ink-muted">
                     I understand that all my KYC data will be permanently deleted,
                     including personal information, documents, and verification history.
                   </span>
@@ -205,9 +205,9 @@ function DeleteSection({
                     type="checkbox"
                     checked={acknowledged[1]}
                     onChange={() => handleAcknowledge(1)}
-                    className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-red-600 focus:ring-red-500"
+                    className="mt-1 w-4 h-4 rounded border-border-strong bg-surface-overlay text-danger focus:ring-danger"
                   />
-                  <span className="text-sm text-gray-300">
+                  <span className="text-sm text-ink-muted">
                     I understand that all linked wallets will lose their verified status
                     and will need to complete KYC again.
                   </span>
@@ -218,9 +218,9 @@ function DeleteSection({
                     type="checkbox"
                     checked={acknowledged[2]}
                     onChange={() => handleAcknowledge(2)}
-                    className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-red-600 focus:ring-red-500"
+                    className="mt-1 w-4 h-4 rounded border-border-strong bg-surface-overlay text-danger focus:ring-danger"
                   />
-                  <span className="text-sm text-gray-300">
+                  <span className="text-sm text-ink-muted">
                     I understand that this action cannot be undone and I will not be
                     able to recover my data.
                   </span>
@@ -229,15 +229,15 @@ function DeleteSection({
 
               {/* Confirmation Input */}
               <div>
-                <label className="block text-sm text-gray-400 mb-2">
-                  Type <span className="font-mono text-red-400">DELETE MY DATA</span> to confirm:
+                <label className="block text-sm text-ink-muted mb-2">
+                  Type <span className="font-mono text-danger">DELETE MY DATA</span> to confirm:
                 </label>
                 <input
                   type="text"
                   value={confirmText}
                   onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
                   placeholder="DELETE MY DATA"
-                  className="w-full px-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white font-mono focus:outline-none focus:border-red-500"
+                  className="w-full px-4 py-2 bg-surface-sunken border border-border rounded-lg text-ink font-mono focus:outline-none focus:border-danger"
                 />
               </div>
 
@@ -245,28 +245,28 @@ function DeleteSection({
               <div className="flex gap-3">
                 <button
                   onClick={onCancel}
-                  className="flex-1 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white font-medium transition-colors"
+                  className="flex-1 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg text-ink font-medium transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={onConfirm}
                   disabled={!allAcknowledged || !confirmTextValid}
-                  className="flex-1 py-2 bg-red-600 hover:bg-red-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors"
+                  className="flex-1 py-2 bg-danger hover:bg-danger disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors"
                 >
                   Permanently Delete
                 </button>
               </div>
             </div>
           ) : state === "processing" ? (
-            <div className="flex items-center gap-3 text-gray-400">
+            <div className="flex items-center gap-3 text-ink-muted">
               <span className="animate-spin text-xl">⟳</span>
               <span>Deleting your data...</span>
             </div>
           ) : (
             <button
               onClick={onDelete}
-              className="px-6 py-2 bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 rounded-lg text-red-400 font-medium transition-colors flex items-center gap-2"
+              className="px-6 py-2 bg-danger/20 hover:bg-danger/30 border border-danger/30 rounded-lg text-danger font-medium transition-colors flex items-center gap-2"
             >
               <span>🗑️</span>
               Request Data Deletion
@@ -374,8 +374,8 @@ export function GDPRDataManagement() {
     return (
       <div className="max-w-2xl mx-auto p-8 text-center">
         <div className="text-6xl mb-4">🔐</div>
-        <h2 className="text-2xl font-bold text-white mb-2">Connect Your Wallet</h2>
-        <p className="text-gray-400">
+        <h2 className="text-2xl font-bold text-ink mb-2">Connect Your Wallet</h2>
+        <p className="text-ink-muted">
           Please connect your wallet to manage your data.
         </p>
       </div>
@@ -388,8 +388,8 @@ export function GDPRDataManagement() {
     return (
       <div className="max-w-2xl mx-auto p-8 text-center">
         <div className="text-6xl mb-4">📭</div>
-        <h2 className="text-2xl font-bold text-white mb-2">No Data Found</h2>
-        <p className="text-gray-400">
+        <h2 className="text-2xl font-bold text-ink mb-2">No Data Found</h2>
+        <p className="text-ink-muted">
           You haven't submitted any KYC data yet. There's nothing to export or delete.
         </p>
       </div>
@@ -400,45 +400,45 @@ export function GDPRDataManagement() {
     <div className="max-w-3xl mx-auto p-6 space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-white mb-2">Data Privacy</h1>
-        <p className="text-gray-400">
+        <h1 className="text-2xl font-bold text-ink mb-2">Data Privacy</h1>
+        <p className="text-ink-muted">
           Manage your personal data in compliance with GDPR
         </p>
       </div>
 
       {/* Your Rights Section */}
-      <div className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-xl p-6 border border-blue-500/20">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+      <div className="bg-gradient-to-br from-gold-500/10 to-gold-light-500/10 rounded-xl p-6 border border-gold-500/20">
+        <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
           <span>⚖️</span>
           Your Data Rights
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div className="flex gap-3">
-            <span className="text-blue-400">✓</span>
+            <span className="text-gold-400">✓</span>
             <div>
-              <p className="text-white font-medium">Right to Access</p>
-              <p className="text-gray-400">View and download all your data</p>
+              <p className="text-ink font-medium">Right to Access</p>
+              <p className="text-ink-muted">View and download all your data</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <span className="text-blue-400">✓</span>
+            <span className="text-gold-400">✓</span>
             <div>
-              <p className="text-white font-medium">Right to Portability</p>
-              <p className="text-gray-400">Export data in machine-readable format</p>
+              <p className="text-ink font-medium">Right to Portability</p>
+              <p className="text-ink-muted">Export data in machine-readable format</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <span className="text-blue-400">✓</span>
+            <span className="text-gold-400">✓</span>
             <div>
-              <p className="text-white font-medium">Right to Erasure</p>
-              <p className="text-gray-400">Request deletion of all your data</p>
+              <p className="text-ink font-medium">Right to Erasure</p>
+              <p className="text-ink-muted">Request deletion of all your data</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <span className="text-blue-400">✓</span>
+            <span className="text-gold-400">✓</span>
             <div>
-              <p className="text-white font-medium">Right to Rectification</p>
-              <p className="text-gray-400">Update incorrect information</p>
+              <p className="text-ink font-medium">Right to Rectification</p>
+              <p className="text-ink-muted">Update incorrect information</p>
             </div>
           </div>
         </div>
@@ -446,7 +446,7 @@ export function GDPRDataManagement() {
 
       {/* Data Categories */}
       <div>
-        <h2 className="text-lg font-semibold text-white mb-4">
+        <h2 className="text-lg font-semibold text-ink mb-4">
           Data We Store
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -498,30 +498,30 @@ export function GDPRDataManagement() {
       </div>
 
       {/* Data Security Notice */}
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+      <div className="bg-surface rounded-xl p-6 border border-border">
+        <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
           <span>🔒</span>
           How We Protect Your Data
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="text-center p-4">
             <div className="text-3xl mb-2">🔐</div>
-            <p className="text-white font-medium">AES-256 Encryption</p>
-            <p className="text-gray-400 text-xs mt-1">
+            <p className="text-ink font-medium">AES-256 Encryption</p>
+            <p className="text-ink-muted text-xs mt-1">
               All PII is encrypted at rest
             </p>
           </div>
           <div className="text-center p-4">
             <div className="text-3xl mb-2">🌐</div>
-            <p className="text-white font-medium">TLS 1.3 in Transit</p>
-            <p className="text-gray-400 text-xs mt-1">
+            <p className="text-ink font-medium">TLS 1.3 in Transit</p>
+            <p className="text-ink-muted text-xs mt-1">
               Secure data transmission
             </p>
           </div>
           <div className="text-center p-4">
             <div className="text-3xl mb-2">🗄️</div>
-            <p className="text-white font-medium">Isolated Storage</p>
-            <p className="text-gray-400 text-xs mt-1">
+            <p className="text-ink font-medium">Isolated Storage</p>
+            <p className="text-ink-muted text-xs mt-1">
               Documents stored separately
             </p>
           </div>
@@ -546,17 +546,17 @@ export function GDPRDataManagement() {
       />
 
       {/* Contact Section */}
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 text-center">
-        <h3 className="text-lg font-semibold text-white mb-2">
+      <div className="bg-surface rounded-xl p-6 border border-border text-center">
+        <h3 className="text-lg font-semibold text-ink mb-2">
           Questions About Your Data?
         </h3>
-        <p className="text-gray-400 text-sm mb-4">
+        <p className="text-ink-muted text-sm mb-4">
           If you have questions about how we handle your data or want to exercise
           other rights, please contact our Data Protection Officer.
         </p>
         <a
           href={`mailto:${CONTACT.privacy}`}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg text-ink transition-colors"
         >
           <span>✉️</span>
           {CONTACT.privacy}

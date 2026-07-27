@@ -25,7 +25,7 @@ export const STATUS_COLORS: Record<number, string> = {
 };
 
 export const PROJECT_STATUS: Record<number, { label: string; color: string }> = {
-  0: { label: 'Draft', color: 'bg-gray-500/20 text-gray-400' },
+  0: { label: 'Draft', color: 'bg-gray-500/20 text-ink-muted' },
   1: { label: 'Pending', color: 'bg-yellow-500/20 text-yellow-400' },
   2: { label: 'Active', color: 'bg-green-500/20 text-green-400' },
   3: { label: 'Funded', color: 'bg-blue-500/20 text-blue-400' },
@@ -92,7 +92,7 @@ export const TOKENIZATION_STATUS: Record<string, { label: string; color: string 
   },
   cancelled: { 
     label: 'Cancelled', 
-    color: 'bg-gray-500/10 text-gray-400 border-gray-500/30' 
+    color: 'bg-gray-500/10 text-ink-muted border-gray-500/30' 
   },
 };
 

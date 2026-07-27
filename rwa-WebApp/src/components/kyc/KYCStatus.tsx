@@ -56,7 +56,7 @@ export function KYCStatus() {
     const colorClasses = {
         green: { bg: 'bg-green-50', border: 'border-green-200', icon: 'text-green-600', text: 'text-green-800' },
         yellow: { bg: 'bg-yellow-50', border: 'border-yellow-200', icon: 'text-yellow-600', text: 'text-yellow-800' },
-        blue: { bg: 'bg-blue-50', border: 'border-blue-200', icon: 'text-blue-600', text: 'text-blue-800' },
+        blue: { bg: 'bg-gold-50', border: 'border-gold-200', icon: 'text-gold-600', text: 'text-gold-800' },
         red: { bg: 'bg-red-50', border: 'border-red-200', icon: 'text-red-600', text: 'text-red-800' },
         orange: { bg: 'bg-orange-50', border: 'border-orange-200', icon: 'text-orange-600', text: 'text-orange-800' },
         gray: { bg: 'bg-gray-50', border: 'border-gray-200', icon: 'text-gray-600', text: 'text-gray-800' },
@@ -75,7 +75,7 @@ export function KYCStatus() {
                 </div>
                 {isVerified && (
                     <span className="text-sm bg-green-100 text-green-800 px-2 py-1 rounded flex items-center gap-1">
-                        {tierInfo.icon} {tier}
+                        <tierInfo.icon className="w-4 h-4" /> {tier}
                     </span>
                 )}
             </div>

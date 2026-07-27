@@ -129,7 +129,7 @@ const ChainBadge = ({ chainId, currentChainId }: { chainId?: number; currentChai
     <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${
       isWrongChain 
         ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
-        : 'bg-purple-500/20 text-purple-300'
+        : 'bg-gold-500/20 text-gold-300'
     }`}>
       {isWrongChain && <AlertTriangle className="w-3 h-3" />}
       {chain.name}
@@ -156,7 +156,7 @@ const ChainGatedActions = ({
     return (
       <button
         onClick={() => onSwitchChain(targetChainId)}
-        className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
+        className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-ink rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
       >
         <RefreshCw className="w-4 h-4" />
         Switch to {chainConfig?.name || 'Polygon Amoy'}
@@ -190,15 +190,15 @@ const ProjectCard = ({
       case 'deployed':
         return 'bg-green-500/20 text-green-400';
       case 'approved':
-        return 'bg-blue-500/20 text-blue-400';
+        return 'bg-gold-500/20 text-gold-400';
       case 'pending':
         return 'bg-yellow-500/20 text-yellow-400';
       case 'rejected':
         return 'bg-red-500/20 text-red-400';
       case 'draft':
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-gray-500/20 text-ink-muted';
       default:
-        return 'bg-gray-500/20 text-gray-400';
+        return 'bg-gray-500/20 text-ink-muted';
     }
   };
 
@@ -216,15 +216,15 @@ const ProjectCard = ({
   };
 
   return (
-    <div className={`bg-gray-800/50 rounded-xl p-5 border transition-all ${
+    <div className={`bg-surface/50 rounded-xl p-5 border transition-all ${
       isRejected 
         ? 'border-red-500/30 hover:border-red-500/50' 
-        : 'border-gray-700/50 hover:border-gray-600/50'
+        : 'border-border/50 hover:border-border-strong/50'
     }`}>
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h3 className="font-semibold text-white truncate">{project.name}</h3>
-          <p className="text-sm text-gray-400 truncate">{project.tokenName} ({project.tokenSymbol})</p>
+          <h3 className="font-semibold text-ink truncate">{project.name}</h3>
+          <p className="text-sm text-ink-muted truncate">{project.tokenName} ({project.tokenSymbol})</p>
         </div>
         {project.logoUrl && (
           <img src={project.logoUrl} alt={project.name} className="w-10 h-10 rounded-lg object-cover ml-3" />
@@ -236,7 +236,7 @@ const ProjectCard = ({
           {project.status}
         </span>
         {project.type && (
-          <span className="px-2 py-0.5 rounded text-xs bg-blue-500/20 text-blue-400">
+          <span className="px-2 py-0.5 rounded text-xs bg-gold-500/20 text-gold-400">
             {project.type}
           </span>
         )}
@@ -246,7 +246,7 @@ const ProjectCard = ({
           project.isListed ? (
             <Link 
               href={`/exchange?token=${project.tokenAddress}`}
-              className="px-2 py-0.5 rounded text-xs bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 flex items-center gap-1 transition-colors"
+              className="px-2 py-0.5 rounded text-xs bg-gold-500/20 text-gold-400 hover:bg-gold-light/30 flex items-center gap-1 transition-colors"
               onClick={(e) => e.stopPropagation()}
             >
               <BarChart3 className="w-3 h-3" />
@@ -254,7 +254,7 @@ const ProjectCard = ({
               {project.tradingPair && <span className="opacity-70">({project.tradingPair})</span>}
             </Link>
           ) : (
-            <span className="px-2 py-0.5 rounded text-xs bg-gray-600/30 text-gray-500">
+            <span className="px-2 py-0.5 rounded text-xs bg-border-strong/30 text-ink-faint">
               Not Listed
             </span>
           )
@@ -268,27 +268,27 @@ const ProjectCard = ({
             <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="text-xs font-medium text-red-400 mb-1">Rejection Reason:</p>
-              <p className="text-xs text-gray-300 line-clamp-2">{project.rejectionReason}</p>
+              <p className="text-xs text-ink-muted line-clamp-2">{project.rejectionReason}</p>
             </div>
           </div>
         </div>
       )}
 
       {project.tokenAddress && (
-        <div className="mb-4 p-2 bg-gray-900/50 rounded-lg">
-          <p className="text-xs text-gray-500 mb-1">Token Address</p>
-          <p className="text-xs text-gray-300 font-mono truncate">{project.tokenAddress}</p>
+        <div className="mb-4 p-2 bg-surface-sunken/50 rounded-lg">
+          <p className="text-xs text-ink-faint mb-1">Token Address</p>
+          <p className="text-xs text-ink-muted font-mono truncate">{project.tokenAddress}</p>
         </div>
       )}
 
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div>
-          <p className="text-xs text-gray-500">Target</p>
-          <p className="text-sm font-medium text-white">${formatCurrency(project.targetAmount)}</p>
+          <p className="text-xs text-ink-faint">Target</p>
+          <p className="text-sm font-medium text-ink">${formatCurrency(project.targetAmount)}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-500">Token Price</p>
-          <p className="text-sm font-medium text-white">${project.tokenPrice}</p>
+          <p className="text-xs text-ink-faint">Token Price</p>
+          <p className="text-sm font-medium text-ink">${project.tokenPrice}</p>
         </div>
       </div>
 
@@ -305,13 +305,13 @@ const ProjectCard = ({
           <>
             <Link
               href={`/tokenization/${project.id}`}
-              className="flex-1 text-center py-2 px-3 bg-gray-600 hover:bg-gray-500 rounded-lg text-sm font-medium transition-colors"
+              className="flex-1 text-center py-2 px-3 bg-border-strong hover:bg-border-strong rounded-lg text-sm font-medium transition-colors"
             >
               View Details
             </Link>
             <Link
               href={`/tokenize/edit/${project.id}`}
-              className="flex-1 text-center py-2 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
+              className="flex-1 text-center py-2 px-3 bg-gold hover:bg-gold-light rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-1"
             >
               <RefreshCw className="w-4 h-4" />
               Edit & Resubmit
@@ -321,7 +321,7 @@ const ProjectCard = ({
           <>
             <Link
               href={`/tokenization/${project.id}`}
-              className="flex-1 text-center py-2 px-3 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-medium transition-colors"
+              className="flex-1 text-center py-2 px-3 bg-gold hover:bg-gold-light rounded-lg text-sm font-medium transition-colors"
             >
               View Project
             </Link>
@@ -339,7 +339,7 @@ const ProjectCard = ({
             {isDeployed && !project.isListed && !needsChainSwitch && (
               <Link
                 href={`/tokenization/${project.id}?tab=settings`}
-                className="py-2 px-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-medium transition-colors"
+                className="py-2 px-3 bg-gold hover:bg-gold-light rounded-lg text-sm font-medium transition-colors"
               >
                 List
               </Link>
@@ -384,21 +384,21 @@ function InvestmentCard({ investment, currentChainId, onSwitchChain }: Investmen
   const roi = investment.roi ?? 0;
 
   return (
-    <tr className={`hover:bg-gray-700/30 transition-colors ${isWrongChain ? 'opacity-60' : ''}`}>
+    <tr className={`hover:bg-surface-overlay/30 transition-colors ${isWrongChain ? 'opacity-60' : ''}`}>
       <td className="px-6 py-4">
         <div className="flex items-center gap-2">
           <div>
-            <p className="font-medium text-white">{investment.projectName || 'Unknown Project'}</p>
+            <p className="font-medium text-ink">{investment.projectName || 'Unknown Project'}</p>
             <div className="flex items-center gap-2 mt-1">
-              <p className="text-xs text-gray-400">{investment.tokenSymbol || 'N/A'}</p>
+              <p className="text-xs text-ink-muted">{investment.tokenSymbol || 'N/A'}</p>
               <ChainBadge chainId={investmentChainId} currentChainId={currentChainId} />
             </div>
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 text-gray-300">{formatNumber(tokens)}</td>
-      <td className="px-6 py-4 text-gray-300">{formatCurrency(amount)}</td>
-      <td className="px-6 py-4 text-white font-medium">{formatCurrency(currentValue)}</td>
+      <td className="px-6 py-4 text-ink-muted">{formatNumber(tokens)}</td>
+      <td className="px-6 py-4 text-ink-muted">{formatCurrency(amount)}</td>
+      <td className="px-6 py-4 text-ink font-medium">{formatCurrency(currentValue)}</td>
       <td className={`px-6 py-4 font-medium ${roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
         {roi >= 0 ? '+' : ''}{roi.toFixed(2)}%
       </td>
@@ -451,13 +451,13 @@ function TokenAllocationsSection({ address }: { address: string }) {
     return (
       <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-          <Coins className="w-5 h-5 text-purple-400" />
+          <Coins className="w-5 h-5 text-gold-400" />
           Token Allocations
         </h3>
         <div className="text-center py-8 text-slate-400">
           <Coins className="w-12 h-12 mx-auto mb-3 text-slate-600" />
           <p>No token allocations yet</p>
-          <Link href="/raise" className="text-purple-400 hover:text-purple-300 mt-2 inline-block">
+          <Link href="/raise" className="text-gold-400 hover:text-gold-300 mt-2 inline-block">
             Invest now →
           </Link>
         </div>
@@ -472,7 +472,7 @@ function TokenAllocationsSection({ address }: { address: string }) {
   return (
     <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <Coins className="w-5 h-5 text-purple-400" />
+        <Coins className="w-5 h-5 text-gold-400" />
         Token Allocations
       </h3>
 
@@ -480,14 +480,14 @@ function TokenAllocationsSection({ address }: { address: string }) {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <div className="bg-slate-900/50 rounded-lg p-3">
           <div className="text-xs text-slate-500">Total Tokens</div>
-          <div className="text-xl font-bold text-purple-400">
+          <div className="text-xl font-bold text-gold-400">
             {summary.totalTokens.toLocaleString()}
           </div>
           <div className="text-xs text-slate-500">RWA</div>
         </div>
         <div className="bg-slate-900/50 rounded-lg p-3">
           <div className="text-xs text-slate-500">Purchased</div>
-          <div className="text-xl font-bold text-blue-400">
+          <div className="text-xl font-bold text-gold-400">
             {summary.purchasedTokens.toLocaleString()}
           </div>
           <div className="text-xs text-slate-500">RWA</div>
@@ -523,7 +523,7 @@ function TokenAllocationsSection({ address }: { address: string }) {
           </span>
         )}
         {summary.distributedTokens > 0 && (
-          <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm flex items-center gap-1">
+          <span className="px-3 py-1 bg-gold-500/20 text-gold-400 rounded-full text-sm flex items-center gap-1">
             <ArrowRight className="w-4 h-4" />
             {summary.distributedTokens.toLocaleString()} Distributed
           </span>
@@ -548,7 +548,7 @@ function TokenAllocationsSection({ address }: { address: string }) {
             <div className="mt-4 space-y-2">
               <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
                 <div 
-                  className="h-full bg-gradient-to-r from-purple-500 to-blue-500"
+                  className="h-full bg-gradient-to-r from-gold-500 to-gold-light-500"
                   style={{ width: '0%' }} // Update based on actual vesting progress
                 />
               </div>
@@ -575,9 +575,9 @@ function TokenAllocationsSection({ address }: { address: string }) {
               <div key={alloc.id} className="flex items-center justify-between p-2 bg-slate-900/50 rounded-lg text-sm">
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded text-xs ${
-                    alloc.type === 'purchase' ? 'bg-blue-500/20 text-blue-400' :
+                    alloc.type === 'purchase' ? 'bg-gold-500/20 text-gold-400' :
                     alloc.type === 'referral_bonus' ? 'bg-green-500/20 text-green-400' :
-                    'bg-purple-500/20 text-purple-400'
+                    'bg-gold-500/20 text-gold-400'
                   }`}>
                     {alloc.type === 'purchase' ? 'Purchase' : alloc.type === 'referral_bonus' ? 'Referral' : 'Bonus'}
                   </span>
@@ -649,7 +649,7 @@ function ReferralStatsSection({ address }: { address: string }) {
   return (
     <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-        <Gift className="w-5 h-5 text-purple-400" />
+        <Gift className="w-5 h-5 text-gold-400" />
         Referral Program
         {!isActive && <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">Inactive</span>}
       </h3>
@@ -659,12 +659,12 @@ function ReferralStatsSection({ address }: { address: string }) {
         <div>
           <label className="text-xs text-slate-500 mb-1 block">Your Referral Code</label>
           <div className="flex items-center gap-2">
-            <div className="flex-1 px-3 py-2 bg-slate-900 rounded-lg font-mono text-lg font-bold text-purple-400 tracking-wider">
+            <div className="flex-1 px-3 py-2 bg-slate-900 rounded-lg font-mono text-lg font-bold text-gold-400 tracking-wider">
               {code}
             </div>
             <button
               onClick={copyCode}
-              className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition-colors"
+              className="p-2 bg-gold hover:bg-gold-light rounded-lg transition-colors"
             >
               {copiedCode ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
             </button>
@@ -678,7 +678,7 @@ function ReferralStatsSection({ address }: { address: string }) {
             </div>
             <button
               onClick={copyLink}
-              className="p-2 bg-purple-600 hover:bg-purple-500 rounded-lg transition-colors"
+              className="p-2 bg-gold hover:bg-gold-light rounded-lg transition-colors"
             >
               {copiedLink ? <Check className="w-5 h-5" /> : <Copy className="w-5 h-5" />}
             </button>
@@ -689,7 +689,7 @@ function ReferralStatsSection({ address }: { address: string }) {
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
         <div className="bg-slate-900/50 rounded-lg p-3 text-center">
-          <div className="text-2xl font-bold text-purple-400">{stats?.totalReferrals || 0}</div>
+          <div className="text-2xl font-bold text-gold-400">{stats?.totalReferrals || 0}</div>
           <div className="text-xs text-slate-500">Referrals</div>
         </div>
         <div className="bg-slate-900/50 rounded-lg p-3 text-center">
@@ -699,7 +699,7 @@ function ReferralStatsSection({ address }: { address: string }) {
           <div className="text-xs text-slate-500">Total Invested</div>
         </div>
         <div className="bg-slate-900/50 rounded-lg p-3 text-center">
-          <div className="text-2xl font-bold text-blue-400">
+          <div className="text-2xl font-bold text-gold-400">
             {(stats?.totalBonusTokens || 0).toLocaleString()}
           </div>
           <div className="text-xs text-slate-500">Bonus Tokens</div>
@@ -738,8 +738,8 @@ function ReferralStatsSection({ address }: { address: string }) {
             {referrals.map((ref: any, idx: number) => (
               <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/50 rounded-lg">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
-                    <Users className="w-4 h-4 text-purple-400" />
+                  <div className="w-8 h-8 rounded-full bg-gold-500/20 flex items-center justify-center">
+                    <Users className="w-4 h-4 text-gold-400" />
                   </div>
                   <div>
                     <div className="font-mono text-sm">
@@ -1209,8 +1209,8 @@ export default function DashboardClient() {
     const configs: Record<string, { color: string; icon: typeof Shield }> = {
       'None': { color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle },
       'Bronze': { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Shield },
-      'Silver': { color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', icon: Shield },
-      'Gold': { color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', icon: Award },
+      'Silver': { color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', icon: Shield },
+      'Gold': { color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', icon: Award },
       'Diamond': { color: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle },
     };
     return configs[tier] || configs['None'];
@@ -1243,29 +1243,29 @@ export default function DashboardClient() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-        <div className="text-center p-8 bg-gray-800 rounded-2xl border border-gray-700 max-w-md">
-          <Wallet className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Connect Your Wallet</h2>
-          <p className="text-gray-400">Connect your wallet to access your dashboard.</p>
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-4">
+        <div className="text-center p-8 bg-surface rounded-2xl border border-border max-w-md">
+          <Wallet className="w-16 h-16 text-ink-faint mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Connect Your Wallet</h2>
+          <p className="text-ink-muted">Connect your wallet to access your dashboard.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-surface-sunken py-8 px-4">
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Dashboard</h1>
-            <p className="text-gray-400 mt-1">Manage your investments and projects</p>
+            <h1 className="text-3xl font-bold text-ink">Dashboard</h1>
+            <p className="text-ink-muted mt-1">Manage your investments and projects</p>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-800 rounded-lg border border-gray-700">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-surface rounded-lg border border-border">
             <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-300">{currentChainName}</span>
+            <span className="text-sm text-ink-muted">{currentChainName}</span>
           </div>
         </div>
 
@@ -1275,22 +1275,22 @@ export default function DashboardClient() {
             <div className="flex items-center gap-3">
               <AlertCircle className="w-5 h-5 text-red-400" />
               <div>
-                <p className="text-white font-medium">KYC Verification Required</p>
-                <p className="text-sm text-gray-400">Complete verification to start investing</p>
+                <p className="text-ink font-medium">KYC Verification Required</p>
+                <p className="text-sm text-ink-muted">Complete verification to start investing</p>
               </div>
             </div>
-            <Link href="/kyc" className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors">
+            <Link href="/kyc" className="px-4 py-2 bg-red-500 hover:bg-red-600 text-ink rounded-lg text-sm font-medium transition-colors">
               Verify Now
             </Link>
           </div>
         )}
 
         {/* Tab Navigation */}
-        <div className="flex gap-2 p-1 bg-gray-800 rounded-xl w-fit">
+        <div className="flex gap-2 p-1 bg-surface rounded-xl w-fit">
           <button
             onClick={() => setActiveTab('investor')}
             className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
-              activeTab === 'investor' ? 'bg-blue-600 text-white' : 'text-gray-400 hover:text-white'
+              activeTab === 'investor' ? 'bg-gold text-ink' : 'text-ink-muted hover:text-ink'
             }`}
           >
             <span className="flex items-center gap-2">
@@ -1301,7 +1301,7 @@ export default function DashboardClient() {
           <button
             onClick={() => setActiveTab('owner')}
             className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
-              activeTab === 'owner' ? 'bg-purple-600 text-white' : 'text-gray-400 hover:text-white'
+              activeTab === 'owner' ? 'bg-gold text-ink' : 'text-ink-muted hover:text-ink'
             }`}
           >
             <span className="flex items-center gap-2">
@@ -1312,7 +1312,7 @@ export default function DashboardClient() {
           <button
             onClick={() => setActiveTab('settings')}
             className={`px-6 py-2.5 rounded-lg font-medium transition-all ${
-              activeTab === 'settings' ? 'bg-gray-600 text-white' : 'text-gray-400 hover:text-white'
+              activeTab === 'settings' ? 'bg-border-strong text-ink' : 'text-ink-muted hover:text-ink'
             }`}
           >
             <span className="flex items-center gap-2">
@@ -1327,57 +1327,57 @@ export default function DashboardClient() {
           <div className="space-y-6">
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+              <div className="bg-surface rounded-xl p-5 border border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 text-sm">Total Invested</span>
-                  <DollarSign className="w-5 h-5 text-blue-400" />
+                  <span className="text-ink-muted text-sm">Total Invested</span>
+                  <DollarSign className="w-5 h-5 text-gold-400" />
                 </div>
-                <p className="text-2xl font-bold text-white mb-2">{formatCurrency(investorStats.totalInvested)}</p>
+                <p className="text-2xl font-bold text-ink mb-2">{formatCurrency(investorStats.totalInvested)}</p>
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-gray-500">Limit ({tier})</span>
-                    <span className="text-gray-400">{formatCurrency(investmentLimit)}</span>
+                    <span className="text-ink-faint">Limit ({tier})</span>
+                    <span className="text-ink-muted">{formatCurrency(investmentLimit)}</span>
                   </div>
                   {investmentLimit !== Infinity && investmentLimit > 0 && (
                     <>
-                      <div className="w-full bg-gray-700 rounded-full h-1.5">
-                        <div className="bg-blue-500 h-1.5 rounded-full transition-all" style={{ width: `${Math.min(100, (investorStats.totalInvested / investmentLimit) * 100)}%` }} />
+                      <div className="w-full bg-surface-overlay rounded-full h-1.5">
+                        <div className="bg-gold-500 h-1.5 rounded-full transition-all" style={{ width: `${Math.min(100, (investorStats.totalInvested / investmentLimit) * 100)}%` }} />
                       </div>
-                      <p className="text-xs text-gray-500">{formatCurrency(Math.max(0, investmentLimit - investorStats.totalInvested))} remaining</p>
+                      <p className="text-xs text-ink-faint">{formatCurrency(Math.max(0, investmentLimit - investorStats.totalInvested))} remaining</p>
                     </>
                   )}
                 </div>
               </div>
 
-              <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+              <div className="bg-surface rounded-xl p-5 border border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 text-sm">Current Value</span>
+                  <span className="text-ink-muted text-sm">Current Value</span>
                   <TrendingUp className="w-5 h-5 text-green-400" />
                 </div>
-                <p className="text-2xl font-bold text-white mb-2">{formatCurrency(investorStats.currentValue)}</p>
+                <p className="text-2xl font-bold text-ink mb-2">{formatCurrency(investorStats.currentValue)}</p>
                 <div className={`flex items-center gap-1 text-sm ${investorStats.totalReturns >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                   {investorStats.totalReturns >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-                  {formatCurrency(Math.abs(investorStats.totalReturns))} <span className="text-gray-500">returns</span>
+                  {formatCurrency(Math.abs(investorStats.totalReturns))} <span className="text-ink-faint">returns</span>
                 </div>
               </div>
 
-              <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+              <div className="bg-surface rounded-xl p-5 border border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 text-sm">Global ROI</span>
-                  <PieChart className="w-5 h-5 text-purple-400" />
+                  <span className="text-ink-muted text-sm">Global ROI</span>
+                  <PieChart className="w-5 h-5 text-gold-400" />
                 </div>
                 <p className={`text-2xl font-bold ${investorStats.globalROI >= 0 ? 'text-green-400' : 'text-red-400'}`}>
                   {investorStats.globalROI >= 0 ? '+' : ''}{investorStats.globalROI.toFixed(2)}%
                 </p>
-                <p className="text-xs text-gray-500 mt-2">Since first investment</p>
+                <p className="text-xs text-ink-faint mt-2">Since first investment</p>
               </div>
 
-              <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+              <div className="bg-surface rounded-xl p-5 border border-border">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-gray-400 text-sm">Pending Dividends</span>
+                  <span className="text-ink-muted text-sm">Pending Dividends</span>
                   <Banknote className="w-5 h-5 text-yellow-400" />
                 </div>
-                <p className="text-2xl font-bold text-white mb-1">{formatCurrency(investorStats.pendingDividends)}</p>
+                <p className="text-2xl font-bold text-ink mb-1">{formatCurrency(investorStats.pendingDividends)}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-xs text-green-400">+{investorStats.pendingYield.toFixed(2)}% yield</span>
                   {investorStats.pendingDividends > 0 && (
@@ -1388,12 +1388,12 @@ export default function DashboardClient() {
             </div>
 
             {/* Portfolio Chart */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <div className="bg-surface rounded-xl border border-border p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-white">Portfolio Evolution</h3>
+                <h3 className="text-lg font-semibold text-ink">Portfolio Evolution</h3>
                 <div className="flex gap-2">
                   {['7D', '1M', '3M', '1Y', 'ALL'].map((period) => (
-                    <button key={period} className="px-3 py-1 text-xs rounded-lg bg-gray-700 text-gray-400 hover:text-white hover:bg-gray-600 transition-colors">{period}</button>
+                    <button key={period} className="px-3 py-1 text-xs rounded-lg bg-surface-overlay text-ink-muted hover:text-ink hover:bg-border-strong transition-colors">{period}</button>
                   ))}
                 </div>
               </div>
@@ -1404,16 +1404,16 @@ export default function DashboardClient() {
                     const maxValue = Math.max(...portfolioHistory.map(p => p.value));
                     const height = maxValue > 0 ? (point.value / maxValue) * 100 : 0;
                     return (
-                      <div key={idx} className="flex-1 bg-blue-500/50 hover:bg-blue-500 rounded-t transition-colors cursor-pointer group relative" style={{ height: `${Math.max(5, height)}%` }}>
-                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-900 px-2 py-1 rounded text-xs text-white whitespace-nowrap z-10">
-                          {formatCurrency(point.value)}<br /><span className="text-gray-400">{point.date}</span>
+                      <div key={idx} className="flex-1 bg-gold-500/50 hover:bg-gold-light rounded-t transition-colors cursor-pointer group relative" style={{ height: `${Math.max(5, height)}%` }}>
+                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-surface-sunken px-2 py-1 rounded text-xs text-ink whitespace-nowrap z-10">
+                          {formatCurrency(point.value)}<br /><span className="text-ink-muted">{point.date}</span>
                         </div>
                       </div>
                     );
                   })}
                 </div>
               ) : (
-                <div className="h-48 flex items-center justify-center text-gray-500">
+                <div className="h-48 flex items-center justify-center text-ink-faint">
                   <div className="text-center">
                     <BarChart3 className="w-12 h-12 mx-auto mb-2 opacity-50" />
                     <p>No portfolio data yet</p>
@@ -1423,30 +1423,30 @@ export default function DashboardClient() {
             </div>
 
             {/* Investments Table */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-              <div className="p-6 border-b border-gray-700 flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <Wallet className="w-5 h-5 text-blue-400" />
+            <div className="bg-surface rounded-xl border border-border overflow-hidden">
+              <div className="p-6 border-b border-border flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
+                  <Wallet className="w-5 h-5 text-gold-400" />
                   My Investments
                 </h3>
-                <Link href="/projects" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                <Link href="/projects" className="text-sm text-gold-400 hover:text-gold-300 flex items-center gap-1">
                   Browse Projects <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
               
               {investments.length === 0 ? (
                 <div className="p-12 text-center">
-                  <Wallet className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400 mb-4">No investments yet</p>
-                  <Link href="/projects" className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
+                  <Wallet className="w-12 h-12 text-ink-faint mx-auto mb-3" />
+                  <p className="text-ink-muted mb-4">No investments yet</p>
+                  <Link href="/projects" className="inline-flex items-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light text-ink rounded-lg text-sm transition-colors">
                     Start Investing <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full">
-                    <thead className="bg-gray-900/50">
-                      <tr className="text-left text-xs text-gray-400 uppercase">
+                    <thead className="bg-surface-sunken/50">
+                      <tr className="text-left text-xs text-ink-muted uppercase">
                         <th className="px-6 py-3">Project</th>
                         <th className="px-6 py-3">Tokens</th>
                         <th className="px-6 py-3">Invested</th>
@@ -1455,7 +1455,7 @@ export default function DashboardClient() {
                         <th className="px-6 py-3">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-700">
+                    <tbody className="divide-y divide-border">
                       {investments.map((inv, idx) => (
                         <InvestmentCard 
                           key={idx} 
@@ -1474,46 +1474,46 @@ export default function DashboardClient() {
 
         {/* Token Allocations (RWA Platform Investment) */}
         {tokenAllocations && tokenAllocations.summary && tokenAllocations.summary.totalTokens > 0 && (
-          <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+          <div className="bg-surface rounded-xl border border-border p-6">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                <Coins className="w-5 h-5 text-purple-400" />
+              <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
+                <Coins className="w-5 h-5 text-gold-400" />
                 RWA Token Allocations
               </h3>
-              <Link href="/raise" className="text-sm text-purple-400 hover:text-purple-300 flex items-center gap-1">
+              <Link href="/raise" className="text-sm text-gold-400 hover:text-gold-300 flex items-center gap-1">
                 Invest More <ChevronRight className="w-4 h-4" />
               </Link>
             </div>
 
             {/* Summary Cards */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <div className="text-xs text-gray-500 mb-1">Total Tokens</div>
-                <div className="text-xl font-bold text-purple-400">
+              <div className="bg-surface-overlay/50 rounded-lg p-4">
+                <div className="text-xs text-ink-faint mb-1">Total Tokens</div>
+                <div className="text-xl font-bold text-gold-400">
                   {tokenAllocations.summary.totalTokens.toLocaleString()}
                 </div>
-                <div className="text-xs text-gray-500">RWA</div>
+                <div className="text-xs text-ink-faint">RWA</div>
               </div>
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <div className="text-xs text-gray-500 mb-1">Purchased</div>
-                <div className="text-xl font-bold text-blue-400">
+              <div className="bg-surface-overlay/50 rounded-lg p-4">
+                <div className="text-xs text-ink-faint mb-1">Purchased</div>
+                <div className="text-xl font-bold text-gold-400">
                   {tokenAllocations.summary.purchasedTokens.toLocaleString()}
                 </div>
-                <div className="text-xs text-gray-500">RWA</div>
+                <div className="text-xs text-ink-faint">RWA</div>
               </div>
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <div className="text-xs text-gray-500 mb-1">Referral Bonus</div>
+              <div className="bg-surface-overlay/50 rounded-lg p-4">
+                <div className="text-xs text-ink-faint mb-1">Referral Bonus</div>
                 <div className="text-xl font-bold text-green-400">
                   {tokenAllocations.summary.bonusTokens.toLocaleString()}
                 </div>
-                <div className="text-xs text-gray-500">RWA</div>
+                <div className="text-xs text-ink-faint">RWA</div>
               </div>
-              <div className="bg-gray-700/50 rounded-lg p-4">
-                <div className="text-xs text-gray-500 mb-1">Value at TGE</div>
+              <div className="bg-surface-overlay/50 rounded-lg p-4">
+                <div className="text-xs text-ink-faint mb-1">Value at TGE</div>
                 <div className="text-xl font-bold text-emerald-400">
                   ${(tokenAllocations.summary.totalTokens * 0.01).toLocaleString()}
                 </div>
-                <div className="text-xs text-gray-500">@ $0.01/token</div>
+                <div className="text-xs text-ink-faint">@ $0.01/token</div>
               </div>
             </div>
 
@@ -1532,7 +1532,7 @@ export default function DashboardClient() {
                 </span>
               )}
               {tokenAllocations.summary.distributedTokens > 0 && (
-                <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm flex items-center gap-1">
+                <span className="px-3 py-1 bg-gold-500/20 text-gold-400 rounded-full text-sm flex items-center gap-1">
                   <ArrowUpRight className="w-4 h-4" />
                   {tokenAllocations.summary.distributedTokens.toLocaleString()} Distributed
                 </span>
@@ -1541,14 +1541,14 @@ export default function DashboardClient() {
 
             {/* Vesting Info */}
             {tokenAllocations.vestingMonths > 0 && (
-              <div className="p-4 bg-gray-700/30 rounded-lg border border-gray-600">
+              <div className="p-4 bg-surface-overlay/30 rounded-lg border border-border-strong">
                 <div className="flex items-center gap-2 mb-2">
-                  <Clock className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm font-medium text-white">
+                  <Clock className="w-4 h-4 text-ink-muted" />
+                  <span className="text-sm font-medium text-ink">
                     Vesting: {tokenAllocations.vestingMonths} months (no cliff)
                   </span>
                 </div>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-ink-muted">
                   Linear vesting: ~{Math.round(tokenAllocations.summary.confirmedTokens / tokenAllocations.vestingMonths).toLocaleString()} tokens unlock each month starting at TGE.
                 </p>
               </div>
@@ -1556,24 +1556,24 @@ export default function DashboardClient() {
 
             {/* Recent Allocations */}
             {tokenAllocations.allocations && tokenAllocations.allocations.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-700">
-                <h4 className="font-medium text-white mb-3">Recent Allocations</h4>
+              <div className="mt-4 pt-4 border-t border-border">
+                <h4 className="font-medium text-ink mb-3">Recent Allocations</h4>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {tokenAllocations.allocations.slice(0, 5).map((alloc: any) => (
-                    <div key={alloc.id} className="flex items-center justify-between p-3 bg-gray-700/30 rounded-lg text-sm">
+                    <div key={alloc.id} className="flex items-center justify-between p-3 bg-surface-overlay/30 rounded-lg text-sm">
                       <div className="flex items-center gap-2">
                         <span className={`px-2 py-0.5 rounded text-xs ${
-                          alloc.type === 'purchase' ? 'bg-blue-500/20 text-blue-400' :
+                          alloc.type === 'purchase' ? 'bg-gold-500/20 text-gold-400' :
                           alloc.type === 'referral_bonus' ? 'bg-green-500/20 text-green-400' :
-                          'bg-purple-500/20 text-purple-400'
+                          'bg-gold-500/20 text-gold-400'
                         }`}>
                           {alloc.type === 'purchase' ? 'Purchase' : alloc.type === 'referral_bonus' ? 'Referral' : 'Bonus'}
                         </span>
-                        <span className="text-gray-400">{alloc.fundraising_rounds?.display_name || 'Unknown Round'}</span>
+                        <span className="text-ink-muted">{alloc.fundraising_rounds?.display_name || 'Unknown Round'}</span>
                       </div>
                       <div className="text-right">
-                        <div className="font-medium text-white">{parseFloat(alloc.tokens_amount).toLocaleString()} RWA</div>
-                        <div className="text-xs text-gray-500">${parseFloat(alloc.tokens_usd_value || 0).toLocaleString()}</div>
+                        <div className="font-medium text-ink">{parseFloat(alloc.tokens_amount).toLocaleString()} RWA</div>
+                        <div className="text-xs text-ink-faint">${parseFloat(alloc.tokens_usd_value || 0).toLocaleString()}</div>
                       </div>
                     </div>
                   ))}
@@ -1585,18 +1585,18 @@ export default function DashboardClient() {
 
         {/* No allocations - CTA to invest */}
         {(!tokenAllocations || !tokenAllocations.summary || tokenAllocations.summary.totalTokens === 0) && !isLoadingAllocations && (
-          <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 rounded-xl border border-purple-500/30 p-6">
+          <div className="bg-gradient-to-r from-gold-900/30 to-gold-light-900/30 rounded-xl border border-gold-500/30 p-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-purple-500/20 rounded-xl">
-                  <Coins className="w-8 h-8 text-purple-400" />
+                <div className="p-3 bg-gold-500/20 rounded-xl">
+                  <Coins className="w-8 h-8 text-gold-400" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-white">Invest in RWA Platform</h3>
-                  <p className="text-gray-400 text-sm">Get RWA tokens at the best pre-sale price with up to 3.75x ROI at TGE</p>
+                  <h3 className="text-lg font-semibold text-ink">Invest in RWA Platform</h3>
+                  <p className="text-ink-muted text-sm">Get RWA tokens at the best pre-sale price with up to 3.75x ROI at TGE</p>
                 </div>
               </div>
-              <Link href="/raise" className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-medium transition-colors flex items-center gap-2">
+              <Link href="/raise" className="px-6 py-3 bg-gold hover:bg-gold-light text-ink rounded-lg font-medium transition-colors flex items-center gap-2">
                 Invest Now <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -1607,13 +1607,13 @@ export default function DashboardClient() {
         {activeTab === 'owner' && (
           <div className="space-y-6">
             {/* Sub-tabs for Owner */}
-            <div className="flex gap-2 p-1 bg-gray-700/50 rounded-xl w-fit">
+            <div className="flex gap-2 p-1 bg-surface-overlay/50 rounded-xl w-fit">
               <button
                 onClick={() => setOwnerSubTab('crowdfunding')}
                 className={`px-5 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
                   ownerSubTab === 'crowdfunding' 
-                    ? 'bg-blue-600 text-white' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                    ? 'bg-gold text-ink' 
+                    : 'text-ink-muted hover:text-ink hover:bg-surface-overlay'
                 }`}
               >
                 <Coins className="w-4 h-4" />
@@ -1623,8 +1623,8 @@ export default function DashboardClient() {
                 onClick={() => setOwnerSubTab('tokenization')}
                 className={`px-5 py-2 rounded-lg font-medium transition-all flex items-center gap-2 ${
                   ownerSubTab === 'tokenization' 
-                    ? 'bg-purple-600 text-white' 
-                    : 'text-gray-400 hover:text-white hover:bg-gray-700'
+                    ? 'bg-gold text-ink' 
+                    : 'text-ink-muted hover:text-ink hover:bg-surface-overlay'
                 }`}
               >
                 <FileText className="w-4 h-4" />
@@ -1642,48 +1642,48 @@ export default function DashboardClient() {
               <>
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+                  <div className="bg-surface rounded-xl p-5 border border-border">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-gray-400 text-sm">Total Tokenized</span>
-                      <Coins className="w-5 h-5 text-purple-400" />
+                      <span className="text-ink-muted text-sm">Total Tokenized</span>
+                      <Coins className="w-5 h-5 text-gold-400" />
                     </div>
-                    <p className="text-2xl font-bold text-white">
+                    <p className="text-2xl font-bold text-ink">
                       {formatCurrency(
                         userProjects
                           .filter(p => ['deployed', 'live', 'completed'].includes(p.status) && p.type !== 'crowdfund')
                           .reduce((sum, p) => sum + toNumber(p.targetAmount), 0)
                       )}
                     </p>
-                    <p className="text-xs text-gray-500 mt-2">
+                    <p className="text-xs text-ink-faint mt-2">
                       {userProjects.filter(p => ['deployed', 'live', 'completed'].includes(p.status) && p.type !== 'crowdfund').length} deployed project{userProjects.filter(p => ['deployed', 'live', 'completed'].includes(p.status) && p.type !== 'crowdfund').length !== 1 ? 's' : ''}
                     </p>
                   </div>
 
-                  <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+                  <div className="bg-surface rounded-xl p-5 border border-border">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-gray-400 text-sm">Total Raised</span>
+                      <span className="text-ink-muted text-sm">Total Raised</span>
                       <DollarSign className="w-5 h-5 text-green-400" />
                     </div>
-                    <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.totalRaised)}</p>
-                    <p className="text-xs text-gray-500 mt-2">From token sales</p>
+                    <p className="text-2xl font-bold text-ink">{formatCurrency(ownerStats.totalRaised)}</p>
+                    <p className="text-xs text-ink-faint mt-2">From token sales</p>
                   </div>
 
-                  <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+                  <div className="bg-surface rounded-xl p-5 border border-border">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-gray-400 text-sm">Current Value</span>
-                      <BarChart3 className="w-5 h-5 text-blue-400" />
+                      <span className="text-ink-muted text-sm">Current Value</span>
+                      <BarChart3 className="w-5 h-5 text-gold-400" />
                     </div>
-                    <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.currentValue)}</p>
+                    <p className="text-2xl font-bold text-ink">{formatCurrency(ownerStats.currentValue)}</p>
                     <p className="text-xs text-green-400 mt-2">+{ownerStats.totalYield.toFixed(2)}% yield</p>
                   </div>
 
-                  <div className="bg-gray-800 rounded-xl p-5 border border-gray-700">
+                  <div className="bg-surface rounded-xl p-5 border border-border">
                     <div className="flex items-center justify-between mb-3">
-                      <span className="text-gray-400 text-sm">Dividends Distributed</span>
+                      <span className="text-ink-muted text-sm">Dividends Distributed</span>
                       <Users className="w-5 h-5 text-yellow-400" />
                     </div>
-                    <p className="text-2xl font-bold text-white">{formatCurrency(ownerStats.dividendsDistributed)}</p>
-                    <p className="text-xs text-gray-500 mt-2">To investors</p>
+                    <p className="text-2xl font-bold text-ink">{formatCurrency(ownerStats.dividendsDistributed)}</p>
+                    <p className="text-xs text-ink-faint mt-2">To investors</p>
                   </div>
                 </div>
 
@@ -1693,10 +1693,10 @@ export default function DashboardClient() {
                     <div className="flex items-center gap-3">
                       <AlertTriangle className="w-5 h-5 text-yellow-400" />
                       <div>
-                        <p className="text-white font-medium">
+                        <p className="text-ink font-medium">
                           {projectsOnOtherChains} project{projectsOnOtherChains !== 1 ? 's' : ''} on other chains
                         </p>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-ink-muted">
                           Switch networks to interact with projects on different chains
                         </p>
                       </div>
@@ -1705,20 +1705,20 @@ export default function DashboardClient() {
                 )}
 
                 {/* Tokenization Projects Grid */}
-                <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
-                  <div className="p-6 border-b border-gray-700 flex items-center justify-between flex-wrap gap-4">
+                <div className="bg-surface rounded-xl border border-border overflow-hidden">
+                  <div className="p-6 border-b border-border flex items-center justify-between flex-wrap gap-4">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-purple-500/20 rounded-lg">
-                        <FileText className="w-5 h-5 text-purple-400" />
+                      <div className="p-2 bg-gold-500/20 rounded-lg">
+                        <FileText className="w-5 h-5 text-gold-400" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white">Tokenization Projects</h3>
-                        <p className="text-sm text-gray-400">
+                        <h3 className="text-lg font-semibold text-ink">Tokenization Projects</h3>
+                        <p className="text-sm text-ink-muted">
                           {tokenizationProjects.length} project{tokenizationProjects.length !== 1 ? 's' : ''}
                         </p>
                       </div>
                     </div>
-                    <Link href="/tokenize" className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm font-medium transition-colors">
+                    <Link href="/tokenize" className="flex items-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light text-ink rounded-lg text-sm font-medium transition-colors">
                       <Plus className="w-4 h-4" />
                       New Project
                     </Link>
@@ -1726,13 +1726,13 @@ export default function DashboardClient() {
 
                   {isLoading ? (
                     <div className="p-12 flex justify-center">
-                      <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
+                      <Loader2 className="w-8 h-8 text-ink-faint animate-spin" />
                     </div>
                   ) : tokenizationProjects.length === 0 ? (
                     <div className="p-12 text-center">
-                      <FileText className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                      <p className="text-gray-400 mb-4">No tokenization projects yet</p>
-                      <Link href="/tokenize" className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors">
+                      <FileText className="w-12 h-12 text-ink-faint mx-auto mb-3" />
+                      <p className="text-ink-muted mb-4">No tokenization projects yet</p>
+                      <Link href="/tokenize" className="inline-flex items-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light text-ink rounded-lg text-sm transition-colors">
                         Tokenize Asset <ChevronRight className="w-4 h-4" />
                       </Link>
                     </div>
@@ -1759,10 +1759,10 @@ export default function DashboardClient() {
           <div className="space-y-6">
             
             {/* KYC Status Card */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <div className="bg-surface rounded-xl border border-border p-6">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-blue-400" />
+                <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-gold-400" />
                   KYC Status
                 </h3>
                 <div className={`px-3 py-1.5 rounded-lg text-sm border ${kycConfig.color} flex items-center gap-2`}>
@@ -1772,42 +1772,42 @@ export default function DashboardClient() {
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-gray-700/50 rounded-lg p-4">
-                  <p className="text-sm text-gray-400">Investment Limit</p>
-                  <p className="text-xl font-bold text-white mt-1">{formatCurrency(investmentLimit)}</p>
+                <div className="bg-surface-overlay/50 rounded-lg p-4">
+                  <p className="text-sm text-ink-muted">Investment Limit</p>
+                  <p className="text-xl font-bold text-ink mt-1">{formatCurrency(investmentLimit)}</p>
                 </div>
-                <div className="bg-gray-700/50 rounded-lg p-4">
-                  <p className="text-sm text-gray-400">Total Invested</p>
-                  <p className="text-xl font-bold text-white mt-1">{formatCurrency(investorStats.totalInvested)}</p>
+                <div className="bg-surface-overlay/50 rounded-lg p-4">
+                  <p className="text-sm text-ink-muted">Total Invested</p>
+                  <p className="text-xl font-bold text-ink mt-1">{formatCurrency(investorStats.totalInvested)}</p>
                 </div>
-                <div className="bg-gray-700/50 rounded-lg p-4">
-                  <p className="text-sm text-gray-400">Remaining</p>
-                  <p className="text-xl font-bold text-white mt-1">
+                <div className="bg-surface-overlay/50 rounded-lg p-4">
+                  <p className="text-sm text-ink-muted">Remaining</p>
+                  <p className="text-xl font-bold text-ink mt-1">
                     {investmentLimit === Infinity ? 'Unlimited' : formatCurrency(Math.max(0, investmentLimit - investorStats.totalInvested))}
                   </p>
                 </div>
               </div>
               
               {tier === 'None' && (
-                <Link href="/kyc" className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors">
+                <Link href="/kyc" className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light text-ink rounded-lg text-sm transition-colors">
                   Complete KYC Verification <ChevronRight className="w-4 h-4" />
                 </Link>
               )}
             </div>
 
             {/* Linked Wallets */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <div className="bg-surface rounded-xl border border-border p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                    <LinkIcon className="w-5 h-5 text-purple-400" />
+                  <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
+                    <LinkIcon className="w-5 h-5 text-gold-400" />
                     Linked Wallets
                   </h3>
-                  <p className="text-sm text-gray-400 mt-1">
+                  <p className="text-sm text-ink-muted mt-1">
                     Link up to {MAX_LINKED_WALLETS} wallets to your KYC profile
                   </p>
                 </div>
-                <span className="text-sm text-gray-400">{linkedWallets.length} / {MAX_LINKED_WALLETS}</span>
+                <span className="text-sm text-ink-muted">{linkedWallets.length} / {MAX_LINKED_WALLETS}</span>
               </div>
 
               {linkError && (
@@ -1831,34 +1831,34 @@ export default function DashboardClient() {
                     key={wallet.address}
                     className={`flex items-center justify-between p-4 rounded-xl border transition-colors ${
                       wallet.address.toLowerCase() === address?.toLowerCase()
-                        ? "bg-blue-500/10 border-blue-500/30"
-                        : "bg-gray-700/50 border-gray-600"
+                        ? "bg-gold-500/10 border-gold-500/30"
+                        : "bg-surface-overlay/50 border-border-strong"
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
-                        wallet.isPrimary ? "bg-amber-500/20" : "bg-gray-600"
+                        wallet.isPrimary ? "bg-amber-500/20" : "bg-border-strong"
                       }`}>
                         {wallet.isPrimary ? "ðŸ‘‘" : "ðŸ‘›"}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <p className="font-mono text-white">{formatAddress(wallet.address)}</p>
+                          <p className="font-mono text-ink">{formatAddress(wallet.address)}</p>
                           {wallet.address.toLowerCase() === address?.toLowerCase() && (
-                            <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded-full">Current</span>
+                            <span className="px-2 py-0.5 bg-gold-500/20 text-gold-400 text-xs rounded-full">Current</span>
                           )}
                           {wallet.isPrimary && (
                             <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs rounded-full">Primary</span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-500">Linked {new Date(wallet.linkedAt).toLocaleDateString()}</p>
+                        <p className="text-xs text-ink-faint">Linked {new Date(wallet.linkedAt).toLocaleDateString()}</p>
                       </div>
                     </div>
                   </div>
                 ))}
 
                 {linkedWallets.length === 0 && (
-                  <div className="text-center py-6 text-gray-500">
+                  <div className="text-center py-6 text-ink-faint">
                     <Wallet className="w-10 h-10 mx-auto mb-2 opacity-50" />
                     <p>No wallets linked yet</p>
                   </div>
@@ -1867,29 +1867,29 @@ export default function DashboardClient() {
 
               {/* Generate Code Section (for verified users) */}
               {hasKYC && isPrimaryWallet && (
-                <div className="border-t border-gray-700 pt-6">
-                  <h4 className="text-white font-medium mb-3">Generate Link Code</h4>
-                  <p className="text-sm text-gray-400 mb-4">Generate a one-time code to link another wallet</p>
+                <div className="border-t border-border pt-6">
+                  <h4 className="text-ink font-medium mb-3">Generate Link Code</h4>
+                  <p className="text-sm text-ink-muted mb-4">Generate a one-time code to link another wallet</p>
                   
                   {linkCode && timeLeft > 0 ? (
-                    <div className="bg-gray-900 rounded-lg p-4 text-center">
-                      <p className="text-gray-500 text-sm mb-2">Your Link Code</p>
+                    <div className="bg-surface-sunken rounded-lg p-4 text-center">
+                      <p className="text-ink-faint text-sm mb-2">Your Link Code</p>
                       <div className="flex items-center justify-center gap-3">
-                        <p className="text-3xl font-mono font-bold text-white tracking-widest">{linkCode.code}</p>
-                        <button onClick={copyCode} className="p-2 hover:bg-gray-700 rounded-lg transition-colors">
-                          {copiedCode ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5 text-gray-400" />}
+                        <p className="text-3xl font-mono font-bold text-ink tracking-widest">{linkCode.code}</p>
+                        <button onClick={copyCode} className="p-2 hover:bg-surface-overlay rounded-lg transition-colors">
+                          {copiedCode ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5 text-ink-muted" />}
                         </button>
                       </div>
-                      <p className="text-gray-500 text-sm mt-3 flex items-center justify-center gap-1">
+                      <p className="text-ink-faint text-sm mt-3 flex items-center justify-center gap-1">
                         <Clock className="w-4 h-4" />
-                        Expires in <span className={timeLeft < 60 ? "text-red-400" : "text-white"}>{formatTime(timeLeft)}</span>
+                        Expires in <span className={timeLeft < 60 ? "text-red-400" : "text-ink"}>{formatTime(timeLeft)}</span>
                       </p>
                     </div>
                   ) : (
                     <button
                       onClick={handleGenerateCode}
                       disabled={isGenerating}
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+                      className="w-full py-3 bg-gold hover:bg-gold-light disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2"
                     >
                       {isGenerating ? (
                         <><Loader2 className="w-5 h-5 animate-spin" /> Generating...</>
@@ -1903,9 +1903,9 @@ export default function DashboardClient() {
 
               {/* Use Code Section (for non-verified users) */}
               {!hasKYC && (
-                <div className="border-t border-gray-700 pt-6">
-                  <h4 className="text-white font-medium mb-3">Link to Existing KYC</h4>
-                  <p className="text-sm text-gray-400 mb-4">Enter a link code from your verified wallet</p>
+                <div className="border-t border-border pt-6">
+                  <h4 className="text-ink font-medium mb-3">Link to Existing KYC</h4>
+                  <p className="text-sm text-ink-muted mb-4">Enter a link code from your verified wallet</p>
                   
                   <div className="flex gap-3">
                     <input
@@ -1913,13 +1913,13 @@ export default function DashboardClient() {
                       value={codeInput}
                       onChange={(e) => setCodeInput(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 8))}
                       placeholder="Enter 8-character code"
-                      className="flex-1 px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-center font-mono tracking-widest focus:outline-none focus:border-blue-500 uppercase"
+                      className="flex-1 px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink text-center font-mono tracking-widest focus:outline-none focus:border-gold-500 uppercase"
                       maxLength={8}
                     />
                     <button
                       onClick={handleUseLinkCode}
                       disabled={codeInput.length !== 8 || isLinking}
-                      className="px-6 py-3 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors flex items-center gap-2"
+                      className="px-6 py-3 bg-green-600 hover:bg-green-500 disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center gap-2"
                     >
                       {isLinking ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
                       Link
@@ -1929,17 +1929,17 @@ export default function DashboardClient() {
               )}
 
               {/* Link to full page */}
-              <div className="mt-4 pt-4 border-t border-gray-700">
-                <Link href="/kyc/link" className="text-sm text-blue-400 hover:text-blue-300 flex items-center gap-1">
+              <div className="mt-4 pt-4 border-t border-border">
+                <Link href="/kyc/link" className="text-sm text-gold-400 hover:text-gold-300 flex items-center gap-1">
                   Advanced wallet management <ExternalLink className="w-4 h-4" />
                 </Link>
               </div>
             </div>
 
             {/* Referral Code */}
-            <div className="bg-gray-800 rounded-xl border border-gray-700 p-6">
+            <div className="bg-surface rounded-xl border border-border p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
                   <Share2 className="w-5 h-5 text-green-400" />
                   Referral Program
                 </h3>
@@ -1956,27 +1956,27 @@ export default function DashboardClient() {
                     {/* Referral Stats */}
                     {referralStats && referralStats.totalReferrals > 0 && (
                       <div className="grid grid-cols-3 gap-3 mb-4">
-                        <div className="bg-gray-700/50 rounded-lg p-3 text-center">
-                          <p className="text-2xl font-bold text-white">{referralStats.totalReferrals}</p>
-                          <p className="text-xs text-gray-400">Referrals</p>
+                        <div className="bg-surface-overlay/50 rounded-lg p-3 text-center">
+                          <p className="text-2xl font-bold text-ink">{referralStats.totalReferrals}</p>
+                          <p className="text-xs text-ink-muted">Referrals</p>
                         </div>
-                        <div className="bg-gray-700/50 rounded-lg p-3 text-center">
-                          <p className="text-2xl font-bold text-white">{formatCurrency(referralStats.totalInvestmentAmount)}</p>
-                          <p className="text-xs text-gray-400">Invested</p>
+                        <div className="bg-surface-overlay/50 rounded-lg p-3 text-center">
+                          <p className="text-2xl font-bold text-ink">{formatCurrency(referralStats.totalInvestmentAmount)}</p>
+                          <p className="text-xs text-ink-muted">Invested</p>
                         </div>
-                        <div className="bg-gray-700/50 rounded-lg p-3 text-center">
+                        <div className="bg-surface-overlay/50 rounded-lg p-3 text-center">
                           <p className="text-2xl font-bold text-green-400">{referralStats.totalBonusTokens.toLocaleString()}</p>
-                          <p className="text-xs text-gray-400">Bonus Tokens</p>
+                          <p className="text-xs text-ink-muted">Bonus Tokens</p>
                         </div>
                       </div>
                     )}
 
                     {/* Referral Link */}
-                    <div className="p-4 bg-gray-700/50 rounded-lg">
-                      <p className="text-sm text-gray-400 mb-2">Your Referral Link</p>
+                    <div className="p-4 bg-surface-overlay/50 rounded-lg">
+                      <p className="text-sm text-ink-muted mb-2">Your Referral Link</p>
                       <div className="flex items-center gap-3">
-                        <div className="flex-1 p-3 bg-gray-900 rounded-lg">
-                          <p className="text-sm font-mono text-white truncate">
+                        <div className="flex-1 p-3 bg-surface-sunken rounded-lg">
+                          <p className="text-sm font-mono text-ink truncate">
                             {typeof window !== 'undefined' ? `${window.location.origin}/raise?ref=${referralCode || address?.slice(0, 8)}` : ''}
                           </p>
                         </div>
@@ -1986,7 +1986,7 @@ export default function DashboardClient() {
                             setCopiedReferral(true);
                             setTimeout(() => setCopiedReferral(false), 2000);
                           }}
-                          className="px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm transition-colors flex items-center gap-2"
+                          className="px-4 py-3 bg-green-600 hover:bg-green-700 text-ink rounded-lg text-sm transition-colors flex items-center gap-2"
                         >
                           {copiedReferral ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                           {copiedReferral ? 'Copied!' : 'Copy'}
@@ -1995,16 +1995,16 @@ export default function DashboardClient() {
                     </div>
 
                     {/* Referral Code */}
-                    <div className="p-4 bg-gray-700/50 rounded-lg">
-                      <p className="text-sm text-gray-400 mb-2">Your Referral Code</p>
+                    <div className="p-4 bg-surface-overlay/50 rounded-lg">
+                      <p className="text-sm text-ink-muted mb-2">Your Referral Code</p>
                       {isLoadingReferral ? (
                         <div className="flex items-center justify-center py-3">
-                          <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                          <Loader2 className="w-5 h-5 animate-spin text-ink-muted" />
                         </div>
                       ) : referralCode ? (
                         <div className="flex items-center gap-3">
-                          <div className="flex-1 p-3 bg-gray-900 rounded-lg text-center">
-                            <p className="text-2xl font-mono font-bold text-white tracking-widest">{referralCode}</p>
+                          <div className="flex-1 p-3 bg-surface-sunken rounded-lg text-center">
+                            <p className="text-2xl font-mono font-bold text-ink tracking-widest">{referralCode}</p>
                           </div>
                           <button
                             onClick={() => {
@@ -2012,20 +2012,20 @@ export default function DashboardClient() {
                               setCopiedReferralCode(true);
                               setTimeout(() => setCopiedReferralCode(false), 2000);
                             }}
-                            className="px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors flex items-center gap-2"
+                            className="px-4 py-3 bg-gold hover:bg-gold-light text-ink rounded-lg text-sm transition-colors flex items-center gap-2"
                           >
                             {copiedReferralCode ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                             {copiedReferralCode ? 'Copied!' : 'Copy'}
                           </button>
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-center py-3">Unable to load referral code</p>
+                        <p className="text-ink-faint text-center py-3">Unable to load referral code</p>
                       )}
                     </div>
 
                     {/* Info */}
-                    <div className="p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-                      <p className="text-sm text-blue-400 flex items-start gap-2">
+                    <div className="p-3 bg-gold-500/10 border border-gold-500/30 rounded-lg">
+                      <p className="text-sm text-gold-400 flex items-start gap-2">
                         <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                         <span>
                           Share your referral link or code with friends. When they invest using your referral, 
@@ -2038,21 +2038,21 @@ export default function DashboardClient() {
                   </div>
                 ) : (
                   <div className="text-center py-6">
-                    <Award className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                    <p className="text-white font-medium mb-2">Upgrade to Gold or Diamond</p>
-                    <p className="text-gray-400 text-sm mb-4">
+                    <Award className="w-12 h-12 text-ink-faint mx-auto mb-3" />
+                    <p className="text-ink font-medium mb-2">Upgrade to Gold or Diamond</p>
+                    <p className="text-ink-muted text-sm mb-4">
                       Referral program is available for Gold and Diamond tier members
                     </p>
-                    <Link href="/kyc" className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg text-sm transition-colors">
+                    <Link href="/kyc" className="inline-flex items-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light text-ink rounded-lg text-sm transition-colors">
                       Upgrade KYC Tier <ChevronRight className="w-4 h-4" />
                     </Link>
                   </div>
                 )
               ) : (
                 <div className="text-center py-6">
-                  <Share2 className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-                  <p className="text-gray-400 mb-4">Complete KYC to access the referral program</p>
-                  <Link href="/kyc" className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm transition-colors">
+                  <Share2 className="w-12 h-12 text-ink-faint mx-auto mb-3" />
+                  <p className="text-ink-muted mb-4">Complete KYC to access the referral program</p>
+                  <Link href="/kyc" className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-ink rounded-lg text-sm transition-colors">
                     Get Started <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -2064,28 +2064,28 @@ export default function DashboardClient() {
 
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <Link href="/projects" className="flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-750 rounded-xl border border-gray-700 transition-colors group">
+          <Link href="/projects" className="flex items-center justify-between p-4 bg-surface hover:bg-gray-750 rounded-xl border border-border transition-colors group">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-500/20 rounded-lg"><TrendingUp className="w-5 h-5 text-blue-400" /></div>
-              <span className="text-white font-medium">Browse Projects</span>
+              <div className="p-2 bg-gold-500/20 rounded-lg"><TrendingUp className="w-5 h-5 text-gold-400" /></div>
+              <span className="text-ink font-medium">Browse Projects</span>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-white transition-colors" />
+            <ChevronRight className="w-5 h-5 text-ink-faint group-hover:text-ink transition-colors" />
           </Link>
           
-          <Link href="/kyc" className="flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-750 rounded-xl border border-gray-700 transition-colors group">
+          <Link href="/kyc" className="flex items-center justify-between p-4 bg-surface hover:bg-gray-750 rounded-xl border border-border transition-colors group">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-500/20 rounded-lg"><Shield className="w-5 h-5 text-green-400" /></div>
-              <span className="text-white font-medium">KYC Verification</span>
+              <span className="text-ink font-medium">KYC Verification</span>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-white transition-colors" />
+            <ChevronRight className="w-5 h-5 text-ink-faint group-hover:text-ink transition-colors" />
           </Link>
           
-          <Link href="/exchange" className="flex items-center justify-between p-4 bg-gray-800 hover:bg-gray-750 rounded-xl border border-gray-700 transition-colors group">
+          <Link href="/exchange" className="flex items-center justify-between p-4 bg-surface hover:bg-gray-750 rounded-xl border border-border transition-colors group">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-purple-500/20 rounded-lg"><BarChart3 className="w-5 h-5 text-purple-400" /></div>
-              <span className="text-white font-medium">Trade Tokens</span>
+              <div className="p-2 bg-gold-500/20 rounded-lg"><BarChart3 className="w-5 h-5 text-gold-400" /></div>
+              <span className="text-ink font-medium">Trade Tokens</span>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-white transition-colors" />
+            <ChevronRight className="w-5 h-5 text-ink-faint group-hover:text-ink transition-colors" />
           </Link>
         </div>
 

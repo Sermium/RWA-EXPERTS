@@ -171,11 +171,11 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
               </li>
             ))}
           </ul>
-          <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+          <div className="mt-4 p-3 bg-gold-500/10 border border-gold-500/20 rounded-lg">
             <div className="flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm text-blue-400 font-medium">Professional Review Required</p>
+                <p className="text-sm text-gold-400 font-medium">Professional Review Required</p>
                 <p className="text-xs text-slate-400 mt-1">
                   All documents will be reviewed by our compliance team. <strong className="text-white">Legal opinions</strong> and <strong className="text-white">professional valuations</strong> must be from accredited providers.
                 </p>
@@ -194,10 +194,10 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
       icon: Scale,
       content: (
         <div className="space-y-3">
-          <div className="p-3 bg-purple-500/10 border border-purple-500/20 rounded-lg">
+          <div className="p-3 bg-gold-500/10 border border-gold-500/20 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Scale className="w-4 h-4 text-purple-400" />
-              <span className="text-sm font-medium text-purple-400">Regulatory Compliance</span>
+              <Scale className="w-4 h-4 text-gold-400" />
+              <span className="text-sm font-medium text-gold-400">Regulatory Compliance</span>
             </div>
             <p className="text-xs text-slate-400">
               All tokenized assets must comply with securities regulations in relevant jurisdictions.
@@ -258,28 +258,28 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
             <p className="text-sm text-white font-medium mb-2">Process Timeline:</p>
             <ul className="space-y-3 text-xs text-slate-400">
               <li className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 text-blue-400 font-medium">1</div>
+                <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">1</div>
                 <div>
                   <p className="text-white font-medium">Application Review</p>
                   <p className="text-slate-500">2-5 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 text-blue-400 font-medium">2</div>
+                <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">2</div>
                 <div>
                   <p className="text-white font-medium">Due Diligence</p>
                   <p className="text-slate-500">5-15 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 text-blue-400 font-medium">3</div>
+                <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">3</div>
                 <div>
                   <p className="text-white font-medium">Legal Structuring</p>
                   <p className="text-slate-500">10-20 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0 text-blue-400 font-medium">4</div>
+                <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">4</div>
                 <div>
                   <p className="text-white font-medium">Token Deployment</p>
                   <p className="text-slate-500">1-3 business days</p>
@@ -313,8 +313,8 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                <Globe className="w-4 h-4 text-blue-400" />
+              <div className="w-8 h-8 rounded-lg bg-gold-500/20 flex items-center justify-center flex-shrink-0">
+                <Globe className="w-4 h-4 text-gold-400" />
               </div>
               <div>
                 <p className="text-sm text-white font-medium">Global Liquidity</p>
@@ -322,8 +322,8 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <Target className="w-4 h-4 text-purple-400" />
+              <div className="w-8 h-8 rounded-lg bg-gold-500/20 flex items-center justify-center flex-shrink-0">
+                <Target className="w-4 h-4 text-gold-400" />
               </div>
               <div>
                 <p className="text-sm text-white font-medium">Automated Compliance</p>
@@ -358,7 +358,7 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
     <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
       <div className="p-4 border-b border-slate-700">
         <h3 className="font-semibold text-white flex items-center gap-2">
-          <Info className="w-5 h-5 text-blue-400" />
+          <Info className="w-5 h-5 text-gold-400" />
           Tokenization Guidelines
         </h3>
       </div>
@@ -499,12 +499,12 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                 className={`
                   flex items-center gap-3 p-4 rounded-xl border transition-all text-left
                   ${formData.assetType === type.value
-                    ? 'bg-blue-500/20 border-blue-500 text-white'
+                    ? 'bg-gold-500/20 border-gold-500 text-white'
                     : 'bg-gray-700/50 border-gray-600 text-gray-300 hover:border-gray-500'
                   }
                 `}
               >
-                <span className={formData.assetType === type.value ? 'text-blue-400' : 'text-gray-400'}>
+                <span className={formData.assetType === type.value ? 'text-gold-400' : 'text-gray-400'}>
                   {ASSET_ICONS[type.value] || <Package className="w-5 h-5" />}
                 </span>
                 <span className="text-sm font-medium">{type.label}</span>
@@ -526,7 +526,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
             value={formData.assetName}
             onChange={(e) => updateFormData('assetName', e.target.value)}
             placeholder="e.g., Downtown Office Building, Vintage Art Collection"
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
               errors.assetName ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -545,7 +545,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
             onChange={(e) => updateFormData('assetDescription', e.target.value)}
             placeholder="Describe your asset in detail: its features, condition, history, and any unique characteristics..."
             rows={4}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none ${
+            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 resize-none ${
               errors.assetDescription ? 'border-red-500' : 'border-gray-600'
             }`}
           />
@@ -570,7 +570,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
               onChange={(e) => handleLocationInputChange(e.target.value)}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
               placeholder="Start typing a city or address..."
-              className={`w-full pl-10 pr-10 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              className={`w-full pl-10 pr-10 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
                 errors.assetLocation ? 'border-red-500' : 'border-gray-600'
               }`}
             />
@@ -595,7 +595,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                     className="w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-b border-gray-700 last:border-b-0"
                   >
                     <div className="flex items-start gap-3">
-                      <MapPin className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+                      <MapPin className="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" />
                       <div>
                         <p className="text-white text-sm font-medium">
                           {city || suggestion.display_name.split(',')[0]}
@@ -642,7 +642,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                   updateFormData('estimatedValue', formattedValue);
                 }}
                 placeholder="0.00"
-                className={`w-full pl-8 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                className={`w-full pl-8 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
                   errors.estimatedValue ? 'border-red-500' : 'border-gray-600'
                 }`}
               />
@@ -650,7 +650,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
             <select
               value={formData.currency}
               onChange={(e) => updateFormData('currency', e.target.value)}
-              className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
             >
               {CURRENCIES.map((currency) => (
                 <option key={currency.value} value={currency.value}>
@@ -686,7 +686,7 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                 updateFormData('website', value ? `https://${value}` : '');
               }}
               placeholder="example.com"
-              className="w-full pl-[72px] pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-[72px] pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500"
             />
           </div>
           {formData.website && (

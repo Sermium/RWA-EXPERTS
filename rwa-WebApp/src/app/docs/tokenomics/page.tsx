@@ -128,9 +128,9 @@ export default function TokenomicsPage() {
     if (active && payload && payload.length) {
       const total = payload.reduce((sum: number, entry: any) => sum + entry.value, 0);
       return (
-        <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-xl">
-          <p className="text-white font-semibold mb-2">Month {label}</p>
-          <p className="text-blue-400 font-bold mb-2">Total: {total.toFixed(1)}%</p>
+        <div className="bg-surface-sunken border border-border rounded-lg p-3 shadow-xl">
+          <p className="text-ink font-semibold mb-2">Month {label}</p>
+          <p className="text-gold-400 font-bold mb-2">Total: {total.toFixed(1)}%</p>
         </div>
       );
     }
@@ -140,8 +140,8 @@ export default function TokenomicsPage() {
   const FinancialTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-gray-900 border border-gray-700 rounded-lg p-3 shadow-xl">
-          <p className="text-white font-semibold mb-2">{label}</p>
+        <div className="bg-surface-sunken border border-border rounded-lg p-3 shadow-xl">
+          <p className="text-ink font-semibold mb-2">{label}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-sm" style={{ color: entry.color }}>
               {entry.name}: ${entry.value.toFixed(2)}M
@@ -154,18 +154,18 @@ export default function TokenomicsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-ink">
       {/* Hero Section */}
       <section className="relative py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-gold-600/20 via-purple-600/20 to-pink-600/20" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-10">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
-              <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-gold-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                 Tokenomics & Business Plan
               </span>
             </h1>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-ink-muted max-w-2xl mx-auto">
               Complete financial model, token distribution, and 5-year projections
             </p>
           </div>
@@ -173,15 +173,15 @@ export default function TokenomicsPage() {
           {/* Hero Stats */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 max-w-5xl mx-auto">
             {[
-              { value: '$32.3M', label: 'Y5 Revenue', color: 'text-blue-400' },
-              { value: '$24.7M', label: 'Y5 EBITDA', color: 'text-green-400' },
-              { value: '$1.5B', label: 'Y5 TVL', color: 'text-purple-400' },
-              { value: '$247M', label: 'Y5 Valuation', color: 'text-orange-400' },
+              { value: '$32.3M', label: 'Y5 Revenue', color: 'text-gold-400' },
+              { value: '$24.7M', label: 'Y5 EBITDA', color: 'text-success' },
+              { value: '$1.5B', label: 'Y5 TVL', color: 'text-gold-400' },
+              { value: '$247M', label: 'Y5 Valuation', color: 'text-warning' },
               { value: '80%', label: 'Dividend Payout', color: 'text-pink-400' },
             ].map((stat, i) => (
-              <div key={i} className="bg-gray-800/50 backdrop-blur rounded-xl p-3 text-center border border-gray-700">
+              <div key={i} className="bg-surface/50 backdrop-blur rounded-xl p-3 text-center border border-border">
                 <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-                <p className="text-xs text-gray-400">{stat.label}</p>
+                <p className="text-xs text-ink-muted">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -189,19 +189,19 @@ export default function TokenomicsPage() {
       </section>
 
       {/* Quick Stats Bar */}
-      <section className="border-y border-gray-800 bg-gray-800/30 py-4">
+      <section className="border-y border-border bg-surface/30 py-4">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap justify-center gap-6 text-center">
             {[
-              { value: '1B', label: 'Total Supply', color: 'text-white' },
-              { value: '70%', label: 'Equity Holders', color: 'text-blue-400' },
-              { value: '30%', label: 'Ecosystem', color: 'text-green-400' },
-              { value: '$500', label: 'Crowdfunding Fee', color: 'text-orange-400' },
-              { value: 'Month 28', label: 'Break-even', color: 'text-purple-400' },
+              { value: '1B', label: 'Total Supply', color: 'text-ink' },
+              { value: '70%', label: 'Equity Holders', color: 'text-gold-400' },
+              { value: '30%', label: 'Ecosystem', color: 'text-success' },
+              { value: '$500', label: 'Crowdfunding Fee', color: 'text-warning' },
+              { value: 'Month 28', label: 'Break-even', color: 'text-gold-400' },
             ].map((stat, i) => (
               <div key={i}>
                 <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
-                <p className="text-xs text-gray-400">{stat.label}</p>
+                <p className="text-xs text-ink-muted">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -212,10 +212,10 @@ export default function TokenomicsPage() {
       <section className="py-16">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-2">$RWA Token Distribution</h2>
-          <p className="text-center text-gray-400 mb-10">Total Supply: 1,000,000,000 RWA</p>
+          <p className="text-center text-ink-muted mb-10">Total Supply: 1,000,000,000 RWA</p>
           
           <div className="max-w-6xl mx-auto">
-            <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-6 md:p-8 border border-gray-700/50 backdrop-blur">
+            <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-6 md:p-8 border border-border/50 backdrop-blur">
               <div className="flex flex-col lg:flex-row items-center gap-8">
                 
                 {/* Animated Donut Chart */}
@@ -284,14 +284,14 @@ export default function TokenomicsPage() {
                         <p className="text-3xl font-bold" style={{ color: tokenDistribution[hoveredSlice].color }}>
                           {tokenDistribution[hoveredSlice].value}%
                         </p>
-                        <p className="text-sm text-white font-medium">{tokenDistribution[hoveredSlice].name}</p>
-                        <p className="text-xs text-gray-400">{formatNumber(tokenDistribution[hoveredSlice].tokens)}</p>
-                        <p className="text-xs text-gray-500">{tokenDistribution[hoveredSlice].vesting}mo vest</p>
+                        <p className="text-sm text-ink font-medium">{tokenDistribution[hoveredSlice].name}</p>
+                        <p className="text-xs text-ink-muted">{formatNumber(tokenDistribution[hoveredSlice].tokens)}</p>
+                        <p className="text-xs text-ink-faint">{tokenDistribution[hoveredSlice].vesting}mo vest</p>
                       </div>
                     ) : (
                       <div className="text-center">
-                        <p className="text-4xl font-bold text-white">1B</p>
-                        <p className="text-sm text-gray-400">RWA Tokens</p>
+                        <p className="text-4xl font-bold text-ink">1B</p>
+                        <p className="text-sm text-ink-muted">RWA Tokens</p>
                       </div>
                     )}
                   </div>
@@ -304,7 +304,7 @@ export default function TokenomicsPage() {
                       <div 
                         key={index}
                         className={`flex items-center gap-2 py-1.5 px-2 rounded-lg cursor-pointer transition-all ${
-                          hoveredSlice === index ? 'bg-gray-700/50' : 'hover:bg-gray-700/30'
+                          hoveredSlice === index ? 'bg-surface-overlay/50' : 'hover:bg-surface-overlay/30'
                         }`}
                         onMouseEnter={() => setHoveredSlice(index)}
                         onMouseLeave={() => setHoveredSlice(null)}
@@ -316,27 +316,27 @@ export default function TokenomicsPage() {
                             boxShadow: hoveredSlice === index ? `0 0 8px ${item.color}` : 'none'
                           }}
                         />
-                        <span className="text-sm text-gray-300 truncate flex-1">{item.name}</span>
+                        <span className="text-sm text-ink-muted truncate flex-1">{item.name}</span>
                         <span className="text-sm font-bold" style={{ color: item.color }}>{item.value}%</span>
                       </div>
                     ))}
                   </div>
                   
                   {/* Summary */}
-                  <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-gray-700">
-                    <div className="bg-blue-500/10 rounded-lg p-3 border border-blue-500/30">
+                  <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-border">
+                    <div className="bg-gold-500/10 rounded-lg p-3 border border-gold-500/30">
                       <div className="flex items-center gap-2 mb-1">
-                        <Building2 className="w-4 h-4 text-blue-400" />
-                        <span className="text-sm font-bold text-white">Equity 70%</span>
+                        <Building2 className="w-4 h-4 text-gold-400" />
+                        <span className="text-sm font-bold text-ink">Equity 70%</span>
                       </div>
-                      <p className="text-xs text-gray-400">700M tokens</p>
+                      <p className="text-xs text-ink-muted">700M tokens</p>
                     </div>
-                    <div className="bg-green-500/10 rounded-lg p-3 border border-green-500/30">
+                    <div className="bg-success/10 rounded-lg p-3 border border-success/30">
                       <div className="flex items-center gap-2 mb-1">
-                        <Zap className="w-4 h-4 text-green-400" />
-                        <span className="text-sm font-bold text-white">Ecosystem 30%</span>
+                        <Zap className="w-4 h-4 text-success" />
+                        <span className="text-sm font-bold text-ink">Ecosystem 30%</span>
                       </div>
-                      <p className="text-xs text-gray-400">300M tokens</p>
+                      <p className="text-xs text-ink-muted">300M tokens</p>
                     </div>
                   </div>
                 </div>
@@ -347,12 +347,12 @@ export default function TokenomicsPage() {
       </section>
 
       {/* Vesting Schedule */}
-      <section className="py-12 bg-gray-800/20">
+      <section className="py-12 bg-surface/20">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-2">Vesting Schedule</h2>
-          <p className="text-center text-gray-400 mb-6 text-sm">Token unlock over 100 months</p>
+          <p className="text-center text-ink-muted mb-6 text-sm">Token unlock over 100 months</p>
           
-          <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 max-w-5xl mx-auto">
+          <div className="bg-surface/50 rounded-xl p-4 border border-border max-w-5xl mx-auto">
             <div className="h-[350px] w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={detailedVestingData} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
@@ -396,17 +396,17 @@ export default function TokenomicsPage() {
             </div>
             
             {/* Milestones */}
-            <div className="flex flex-wrap justify-center gap-4 mt-4 pt-3 border-t border-gray-700">
+            <div className="flex flex-wrap justify-center gap-4 mt-4 pt-3 border-t border-border">
               {[
-                { month: 0, label: 'TGE', color: 'text-gray-400' },
-                { month: 20, label: 'Airdrop', color: 'text-green-400' },
-                { month: 40, label: 'Investors', color: 'text-purple-400' },
-                { month: 50, label: 'Team', color: 'text-blue-400' },
+                { month: 0, label: 'TGE', color: 'text-ink-muted' },
+                { month: 20, label: 'Airdrop', color: 'text-success' },
+                { month: 40, label: 'Investors', color: 'text-gold-400' },
+                { month: 50, label: 'Team', color: 'text-gold-400' },
                 { month: 100, label: '100%', color: 'text-teal-400' },
               ].map((m, i) => (
                 <div key={i} className="flex items-center gap-1.5">
                   <CheckCircle className={`w-3 h-3 ${m.color}`} />
-                  <span className="text-xs text-gray-400">M{m.month}</span>
+                  <span className="text-xs text-ink-muted">M{m.month}</span>
                   <span className={`text-xs font-medium ${m.color}`}>{m.label}</span>
                 </div>
               ))}
@@ -419,10 +419,10 @@ export default function TokenomicsPage() {
       <section className="py-12">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-2">5-Year Financial Projections</h2>
-          <p className="text-center text-gray-400 mb-6 text-sm">Revenue, costs, and profitability</p>
+          <p className="text-center text-ink-muted mb-6 text-sm">Revenue, costs, and profitability</p>
           
           {/* Break-even */}
-          <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-xl p-4 border border-green-500/30 max-w-3xl mx-auto mb-8">
+          <div className="bg-gradient-to-r from-green-500/10 to-gold-light-500/10 rounded-xl p-4 border border-success/30 max-w-3xl mx-auto mb-8">
             <div className="grid grid-cols-4 gap-3 text-center">
               {[
                 { value: 'Month 28', label: 'Break-even' },
@@ -431,8 +431,8 @@ export default function TokenomicsPage() {
                 { value: '500', label: 'Projects' },
               ].map((item, i) => (
                 <div key={i}>
-                  <p className="text-lg font-bold text-white">{item.value}</p>
-                  <p className="text-xs text-gray-400">{item.label}</p>
+                  <p className="text-lg font-bold text-ink">{item.value}</p>
+                  <p className="text-xs text-ink-muted">{item.label}</p>
                 </div>
               ))}
             </div>
@@ -440,9 +440,9 @@ export default function TokenomicsPage() {
 
           <div className="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {/* Revenue vs Costs */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border">
               <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-green-400" />
+                <TrendingUp className="w-4 h-4 text-success" />
                 Revenue vs Costs
               </h3>
               <div className="h-[280px]">
@@ -461,9 +461,9 @@ export default function TokenomicsPage() {
             </div>
 
             {/* Revenue Breakdown */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border">
               <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-                <PieChart className="w-4 h-4 text-purple-400" />
+                <PieChart className="w-4 h-4 text-gold-400" />
                 Revenue Sources
               </h3>
               <div className="h-[280px]">
@@ -484,58 +484,58 @@ export default function TokenomicsPage() {
           </div>
 
           {/* Financial Table */}
-          <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700 max-w-5xl mx-auto mt-6">
+          <div className="bg-surface/50 rounded-xl p-4 border border-border max-w-5xl mx-auto mt-6">
             <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-yellow-400" />
+              <DollarSign className="w-4 h-4 text-warning" />
               Financial Metrics
             </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-gray-700">
-                    <th className="text-left py-2 px-2 text-gray-400">Metric</th>
+                  <tr className="border-b border-border">
+                    <th className="text-left py-2 px-2 text-ink-muted">Metric</th>
                     {financialMetrics.map((r, i) => (
-                      <th key={i} className="text-right py-2 px-2 text-gray-400">{r.year}</th>
+                      <th key={i} className="text-right py-2 px-2 text-ink-muted">{r.year}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-gray-700/50">
-                    <td className="py-2 px-2 text-white">Revenue</td>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 px-2 text-ink">Revenue</td>
                     {financialMetrics.map((r, i) => (
-                      <td key={i} className="text-right py-2 px-2 text-green-400 font-semibold">{formatCurrency(r.revenue)}</td>
+                      <td key={i} className="text-right py-2 px-2 text-success font-semibold">{formatCurrency(r.revenue)}</td>
                     ))}
                   </tr>
-                  <tr className="border-b border-gray-700/50">
-                    <td className="py-2 px-2 text-gray-300">Growth</td>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 px-2 text-ink-muted">Growth</td>
                     {financialMetrics.map((r, i) => (
-                      <td key={i} className="text-right py-2 px-2 text-blue-400">{r.revenueGrowth}</td>
+                      <td key={i} className="text-right py-2 px-2 text-gold-400">{r.revenueGrowth}</td>
                     ))}
                   </tr>
-                  <tr className="border-b border-gray-700/50">
-                    <td className="py-2 px-2 text-gray-300">Costs</td>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 px-2 text-ink-muted">Costs</td>
                     {financialMetrics.map((r, i) => (
-                      <td key={i} className="text-right py-2 px-2 text-red-400">{formatCurrency(r.costs)}</td>
+                      <td key={i} className="text-right py-2 px-2 text-danger">{formatCurrency(r.costs)}</td>
                     ))}
                   </tr>
-                  <tr className="border-b border-gray-700/50 bg-gray-700/20">
-                    <td className="py-2 px-2 text-white font-semibold">EBITDA</td>
+                  <tr className="border-b border-border/50 bg-surface-overlay/20">
+                    <td className="py-2 px-2 text-ink font-semibold">EBITDA</td>
                     {financialMetrics.map((r, i) => (
-                      <td key={i} className={`text-right py-2 px-2 font-bold ${r.ebitda >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <td key={i} className={`text-right py-2 px-2 font-bold ${r.ebitda >= 0 ? 'text-success' : 'text-danger'}`}>
                         {formatCurrency(r.ebitda)}
                       </td>
                     ))}
                   </tr>
-                  <tr className="border-b border-gray-700/50">
-                    <td className="py-2 px-2 text-gray-300">Margin</td>
+                  <tr className="border-b border-border/50">
+                    <td className="py-2 px-2 text-ink-muted">Margin</td>
                     {financialMetrics.map((r, i) => (
-                      <td key={i} className={`text-right py-2 px-2 ${r.margin >= 0 ? 'text-green-400' : 'text-red-400'}`}>{r.margin}%</td>
+                      <td key={i} className={`text-right py-2 px-2 ${r.margin >= 0 ? 'text-success' : 'text-danger'}`}>{r.margin}%</td>
                     ))}
                   </tr>
                   <tr>
-                    <td className="py-2 px-2 text-white">Cumulative</td>
+                    <td className="py-2 px-2 text-ink">Cumulative</td>
                     {financialMetrics.map((r, i) => (
-                      <td key={i} className={`text-right py-2 px-2 font-semibold ${r.cumulative >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                      <td key={i} className={`text-right py-2 px-2 font-semibold ${r.cumulative >= 0 ? 'text-success' : 'text-danger'}`}>
                         {formatCurrency(r.cumulative)}
                       </td>
                     ))}
@@ -548,13 +548,13 @@ export default function TokenomicsPage() {
       </section>
 
       {/* Platform Growth & Dividends */}
-      <section className="py-12 bg-gray-800/20">
+      <section className="py-12 bg-surface/20">
         <div className="container mx-auto px-4">
           <div className="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {/* TVL & Volume */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border">
               <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-                <TrendingUp className="w-4 h-4 text-blue-400" />
+                <TrendingUp className="w-4 h-4 text-gold-400" />
                 TVL & Volume
               </h3>
               <div className="h-[250px]">
@@ -577,9 +577,9 @@ export default function TokenomicsPage() {
             </div>
 
             {/* Dividends */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border">
               <h3 className="text-lg font-bold mb-3 flex items-center gap-2">
-                <Gift className="w-4 h-4 text-green-400" />
+                <Gift className="w-4 h-4 text-success" />
                 Dividend Pool (80% EBITDA)
               </h3>
               <div className="h-[250px]">
@@ -599,9 +599,9 @@ export default function TokenomicsPage() {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              <div className="mt-3 p-3 bg-green-500/10 rounded-lg border border-green-500/30">
-                <p className="text-xs text-gray-300">
-                  <span className="text-yellow-400 font-semibold">1% holder (10M RWA):</span> ~<span className="text-green-400 font-bold">$197K</span> Y5 dividends
+              <div className="mt-3 p-3 bg-success/10 rounded-lg border border-success/30">
+                <p className="text-xs text-ink-muted">
+                  <span className="text-warning font-semibold">1% holder (10M RWA):</span> ~<span className="text-success font-bold">$197K</span> Y5 dividends
                 </p>
               </div>
             </div>
@@ -616,41 +616,41 @@ export default function TokenomicsPage() {
           
           <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             {/* Crowdfunding */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border">
               <div className="flex items-center gap-2 mb-3">
-                <Rocket className="w-4 h-4 text-blue-400" />
+                <Rocket className="w-4 h-4 text-gold-400" />
                 <h3 className="font-bold">Crowdfunding</h3>
               </div>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-gray-400">Start</span><span className="text-green-400 font-bold">$500</span></div>
-                <div className="flex justify-between"><span className="text-gray-400">Success</span><span>2.5%</span></div>
-                <div className="flex justify-between"><span className="text-gray-400">Annual</span><span className="text-orange-400">$1K/yr</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">Start</span><span className="text-success font-bold">$500</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">Success</span><span>2.5%</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">Annual</span><span className="text-warning">$1K/yr</span></div>
               </div>
             </div>
 
             {/* Tokenization */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border">
               <div className="flex items-center gap-2 mb-3">
-                <Coins className="w-4 h-4 text-purple-400" />
+                <Coins className="w-4 h-4 text-gold-400" />
                 <h3 className="font-bold">Tokenization</h3>
               </div>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-gray-400">Base</span><span>$750</span></div>
-                <div className="flex justify-between"><span className="text-gray-400">Value</span><span className="text-blue-400">0.1%</span></div>
-                <div className="flex justify-between"><span className="text-gray-400">Annual</span><span className="text-orange-400">$1K/yr</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">Base</span><span>$750</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">Value</span><span className="text-gold-400">0.1%</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">Annual</span><span className="text-warning">$1K/yr</span></div>
               </div>
             </div>
 
             {/* Investor */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border">
               <div className="flex items-center gap-2 mb-3">
-                <Users className="w-4 h-4 text-green-400" />
+                <Users className="w-4 h-4 text-success" />
                 <h3 className="font-bold">Investor</h3>
               </div>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between"><span className="text-gray-400">KYC</span><span>$2-$20</span></div>
-                <div className="flex justify-between"><span className="text-gray-400">Investment</span><span className="text-green-400 font-bold">0%</span></div>
-                <div className="flex justify-between"><span className="text-gray-400">Trading</span><span>1%</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">KYC</span><span>$2-$20</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">Investment</span><span className="text-success font-bold">0%</span></div>
+                <div className="flex justify-between"><span className="text-ink-muted">Trading</span><span>1%</span></div>
               </div>
             </div>
           </div>
@@ -658,10 +658,10 @@ export default function TokenomicsPage() {
       </section>
 
       {/* Fundraising Rounds */}
-      <section className="py-12 bg-gray-800/20">
+      <section className="py-12 bg-surface/20">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl font-bold text-center mb-2">Fundraising Rounds</h2>
-          <p className="text-center text-gray-400 mb-6 text-sm">$2M total for 35% token supply</p>
+          <p className="text-center text-ink-muted mb-6 text-sm">$2M total for 35% token supply</p>
           
           <div className="grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             {[
@@ -669,20 +669,20 @@ export default function TokenomicsPage() {
               { name: 'Seed', status: 'UPCOMING', allocation: '10%', tokens: '100M', target: '$600K', price: '$0.006', valuation: '$6M', vesting: '33mo', active: false },
               { name: 'Presale', status: 'UPCOMING', allocation: '10%', tokens: '100M', target: '$1M', price: '$0.01', valuation: '$10M', vesting: '25mo', active: false },
             ].map((round, i) => (
-              <div key={i} className={`rounded-xl p-4 border relative ${round.active ? 'bg-purple-500/10 border-purple-500/50' : 'bg-gray-800/50 border-gray-700'}`}>
-                <div className={`absolute -top-2 left-3 text-xs font-bold px-2 py-0.5 rounded-full ${round.active ? 'bg-purple-500 text-white' : 'bg-gray-600 text-white'}`}>
+              <div key={i} className={`rounded-xl p-4 border relative ${round.active ? 'bg-gold-500/10 border-gold-500/50' : 'bg-surface/50 border-border'}`}>
+                <div className={`absolute -top-2 left-3 text-xs font-bold px-2 py-0.5 rounded-full ${round.active ? 'bg-gold-500 text-ink' : 'bg-border-strong text-ink'}`}>
                   {round.status}
                 </div>
                 <h3 className="font-bold mt-2 mb-3">{round.name}</h3>
                 <div className="space-y-1.5 text-sm">
-                  <div className="flex justify-between"><span className="text-gray-400">Allocation</span><span>{round.allocation} ({round.tokens})</span></div>
-                  <div className="flex justify-between"><span className="text-gray-400">Target</span><span className="text-green-400">{round.target}</span></div>
-                  <div className="flex justify-between"><span className="text-gray-400">Price</span><span>{round.price}</span></div>
-                  <div className="flex justify-between"><span className="text-gray-400">Valuation</span><span className="text-blue-400">{round.valuation}</span></div>
-                  <div className="flex justify-between"><span className="text-gray-400">Vesting</span><span>{round.vesting}</span></div>
+                  <div className="flex justify-between"><span className="text-ink-muted">Allocation</span><span>{round.allocation} ({round.tokens})</span></div>
+                  <div className="flex justify-between"><span className="text-ink-muted">Target</span><span className="text-success">{round.target}</span></div>
+                  <div className="flex justify-between"><span className="text-ink-muted">Price</span><span>{round.price}</span></div>
+                  <div className="flex justify-between"><span className="text-ink-muted">Valuation</span><span className="text-gold-400">{round.valuation}</span></div>
+                  <div className="flex justify-between"><span className="text-ink-muted">Vesting</span><span>{round.vesting}</span></div>
                 </div>
                 {round.active && (
-                  <Link href="/raise" className="mt-3 block w-full bg-purple-500 hover:bg-purple-600 text-white text-center py-1.5 rounded-lg text-sm font-bold">
+                  <Link href="/raise" className="mt-3 block w-full bg-gold-500 hover:bg-gold-600 text-ink text-center py-1.5 rounded-lg text-sm font-bold">
                     Invest Now
                   </Link>
                 )}
@@ -699,17 +699,17 @@ export default function TokenomicsPage() {
           
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 max-w-3xl mx-auto">
             {[
-              { icon: Gift, color: 'text-green-400', title: 'Dividends', desc: '80% EBITDA quarterly' },
-              { icon: Vote, color: 'text-blue-400', title: 'Governance', desc: 'Vote on upgrades' },
-              { icon: Percent, color: 'text-purple-400', title: 'Fee Discounts', desc: 'Up to 50% off' },
-              { icon: Rocket, color: 'text-orange-400', title: 'Priority', desc: 'Early access' },
+              { icon: Gift, color: 'text-success', title: 'Dividends', desc: '80% EBITDA quarterly' },
+              { icon: Vote, color: 'text-gold-400', title: 'Governance', desc: 'Vote on upgrades' },
+              { icon: Percent, color: 'text-gold-400', title: 'Fee Discounts', desc: 'Up to 50% off' },
+              { icon: Rocket, color: 'text-warning', title: 'Priority', desc: 'Early access' },
               { icon: Lock, color: 'text-teal-400', title: 'Staking', desc: 'Extra rewards' },
               { icon: Shield, color: 'text-pink-400', title: 'Insurance', desc: 'Protection pool' },
             ].map((item, i) => (
-              <div key={i} className="bg-gray-800/50 rounded-xl p-3 border border-gray-700">
+              <div key={i} className="bg-surface/50 rounded-xl p-3 border border-border">
                 <item.icon className={`w-6 h-6 ${item.color} mb-2`} />
                 <h3 className="font-bold text-sm">{item.title}</h3>
-                <p className="text-xs text-gray-400">{item.desc}</p>
+                <p className="text-xs text-ink-muted">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -717,7 +717,7 @@ export default function TokenomicsPage() {
       </section>
 
       {/* Resources */}
-      <section className="py-12 bg-gray-800/20">
+      <section className="py-12 bg-surface/20">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-3 gap-4 max-w-3xl mx-auto">
             {[
@@ -725,12 +725,12 @@ export default function TokenomicsPage() {
               { href: '/raise', icon: Rocket, color: 'purple', title: 'Invest Now', desc: 'Join Pre-Seed' },
               { href: '/docs/investor-guide', icon: Users, color: 'green', title: 'Investor Guide', desc: 'How to invest' },
             ].map((item, i) => (
-              <Link key={i} href={item.href} className={`bg-gray-800/50 rounded-xl p-4 border border-gray-700 hover:border-${item.color}-500 transition-colors group`}>
+              <Link key={i} href={item.href} className={`bg-surface/50 rounded-xl p-4 border border-border hover:border-${item.color}-500 transition-colors group`}>
                 <div className="flex items-center gap-2 mb-2">
                   <item.icon className={`w-5 h-5 text-${item.color}-400`} />
                   <h3 className={`font-bold group-hover:text-${item.color}-400`}>{item.title}</h3>
                 </div>
-                <p className="text-sm text-gray-400">{item.desc}</p>
+                <p className="text-sm text-ink-muted">{item.desc}</p>
               </Link>
             ))}
           </div>
@@ -738,15 +738,15 @@ export default function TokenomicsPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-12 bg-gradient-to-r from-blue-600/20 via-purple-600/20 to-pink-600/20">
+      <section className="py-12 bg-gradient-to-r from-gold-600/20 via-purple-600/20 to-pink-600/20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-2">Ready to Invest?</h2>
-          <p className="text-gray-400 mb-6 text-sm">Join our Pre-Seed round</p>
+          <p className="text-ink-muted mb-6 text-sm">Join our Pre-Seed round</p>
           <div className="flex flex-wrap justify-center gap-3">
-            <Link href="/raise" className="bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-2 px-6 rounded-lg">
+            <Link href="/raise" className="bg-gradient-to-r from-gold-500 to-gold-light-500 text-ink font-bold py-2 px-6 rounded-lg">
               Invest Now
             </Link>
-            <a href={`mailto:${CONTACT.general}`} className="bg-gray-800 text-white font-bold py-2 px-6 rounded-lg border border-gray-700">
+            <a href={`mailto:${CONTACT.general}`} className="bg-surface text-ink font-bold py-2 px-6 rounded-lg border border-border">
               Contact Us
             </a>
           </div>

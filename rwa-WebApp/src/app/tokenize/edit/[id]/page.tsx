@@ -434,12 +434,12 @@ export default function EditApplicationPage() {
 
   const getFileIcon = (mimeType: string) => {
     if (mimeType?.startsWith('image/')) {
-      return <FileImage className="w-5 h-5 text-blue-400" />;
+      return <FileImage className="w-5 h-5 text-gold-400" />;
     }
     if (mimeType === 'application/pdf') {
-      return <FileType className="w-5 h-5 text-red-400" />;
+      return <FileType className="w-5 h-5 text-danger" />;
     }
-    return <File className="w-5 h-5 text-gray-400" />;
+    return <File className="w-5 h-5 text-ink-muted" />;
   };
 
   const formatFileSize = (bytes: number): string => {
@@ -555,15 +555,15 @@ export default function EditApplicationPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <main className="max-w-3xl mx-auto px-4 py-12">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-            <Wallet className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">Connect Your Wallet</h2>
-            <p className="text-gray-400 mb-6">Please connect your wallet to edit your application.</p>
+          <div className="bg-surface-raised border border-border rounded-xl p-8 text-center">
+            <Wallet className="w-16 h-16 text-ink-faint mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-ink mb-2">Connect Your Wallet</h2>
+            <p className="text-ink-muted mb-6">Please connect your wallet to edit your application.</p>
             <button
               onClick={openConnectModal}
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition"
+              className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-ink font-semibold rounded-lg transition"
             >
               Connect Wallet
             </button>
@@ -575,11 +575,11 @@ export default function EditApplicationPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <main className="max-w-3xl mx-auto px-4 py-12">
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-            <span className="ml-3 text-gray-400">Loading application...</span>
+            <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
+            <span className="ml-3 text-ink-muted">Loading application...</span>
           </div>
         </main>
       </div>
@@ -588,15 +588,15 @@ export default function EditApplicationPage() {
 
   if (error && !application) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <main className="max-w-3xl mx-auto px-4 py-12">
           <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-8 text-center">
-            <AlertCircle className="w-16 h-16 text-red-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">Error</h2>
-            <p className="text-red-400 mb-6">{error}</p>
+            <AlertCircle className="w-16 h-16 text-danger mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-ink mb-2">Error</h2>
+            <p className="text-danger mb-6">{error}</p>
             <Link
               href="/tokenize"
-              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition inline-flex items-center"
+              className="px-6 py-3 bg-surface-overlay hover:bg-gray-600 text-ink font-semibold rounded-lg transition inline-flex items-center"
             >
               <ArrowLeft className="mr-2 w-4 h-4" />
               Back to Tokenization
@@ -609,17 +609,17 @@ export default function EditApplicationPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <main className="max-w-3xl mx-auto px-4 py-12">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
+          <div className="bg-surface-raised border border-border rounded-xl p-8 text-center">
             <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-white mb-2">Application Resubmitted!</h2>
-            <p className="text-gray-400 mb-6">
+            <h2 className="text-xl font-semibold text-ink mb-2">Application Resubmitted!</h2>
+            <p className="text-ink-muted mb-6">
               Your updated application has been submitted for review. Our team will review it and notify you of the decision.
             </p>
             <Link
               href="/dashboard"
-              className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition inline-flex items-center"
+              className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-ink font-semibold rounded-lg transition inline-flex items-center"
             >
               Back to Dashboard
               <ArrowRight className="ml-2 w-4 h-4" />
@@ -631,21 +631,21 @@ export default function EditApplicationPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-sunken">
       
       <main className="max-w-3xl mx-auto px-4 py-12">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/tokenize"
-            className="text-gray-400 hover:text-white transition inline-flex items-center mb-4"
+            className="text-ink-muted hover:text-ink transition inline-flex items-center mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Applications
           </Link>
           
-          <h1 className="text-3xl font-bold text-white mb-2">Edit & Resubmit Application</h1>
-          <p className="text-gray-400">
+          <h1 className="text-3xl font-bold text-ink mb-2">Edit & Resubmit Application</h1>
+          <p className="text-ink-muted">
             Update your application based on the feedback and resubmit for review.
           </p>
         </div>
@@ -653,14 +653,14 @@ export default function EditApplicationPage() {
         {/* Rejection Reason */}
         {(application?.admin_notes || application?.rejection_reason) && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mb-8">
-            <h3 className="text-red-400 font-semibold mb-2 flex items-center">
+            <h3 className="text-danger font-semibold mb-2 flex items-center">
               <MessageSquare className="w-5 h-5 mr-2" />
               Rejection Feedback
             </h3>
-            <p className="text-gray-300">
+            <p className="text-ink-muted">
               {application.rejection_reason || application.admin_notes}
             </p>
-            <p className="text-gray-500 text-sm mt-3">
+            <p className="text-ink-faint text-sm mt-3">
               Please address the issues mentioned above before resubmitting.
             </p>
           </div>
@@ -669,9 +669,9 @@ export default function EditApplicationPage() {
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400" />
-            <p className="text-red-400">{error}</p>
-            <button onClick={() => setError('')} className="ml-auto text-red-400 hover:text-red-300">
+            <AlertCircle className="w-5 h-5 text-danger" />
+            <p className="text-danger">{error}</p>
+            <button onClick={() => setError('')} className="ml-auto text-danger hover:text-red-300">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -679,67 +679,67 @@ export default function EditApplicationPage() {
 
         <form onSubmit={handleSubmit}>
           {/* Company Information */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-              <Building2 className="w-5 h-5 mr-2 text-blue-400" />
+          <div className="bg-surface-raised border border-border rounded-xl p-6 mb-6">
+            <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
+              <Building2 className="w-5 h-5 mr-2 text-gold-400" />
               Company Information
             </h3>
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Company Name *</label>
+                <label className="block text-sm text-ink-muted mb-1">Company Name *</label>
                 <input
                   type="text"
                   name="companyName"
                   value={formData.companyName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   placeholder="Your Company Ltd."
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Contact Name *</label>
+                <label className="block text-sm text-ink-muted mb-1">Contact Name *</label>
                 <input
                   type="text"
                   name="contactName"
                   value={formData.contactName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   placeholder="John Doe"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Email *</label>
+                <label className="block text-sm text-ink-muted mb-1">Email *</label>
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   placeholder="john@company.com"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Phone</label>
+                <label className="block text-sm text-ink-muted mb-1">Phone</label>
                 <input
                   type="tel"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   placeholder="+1 234 567 8900"
                 />
               </div>
               <div className="md:col-span-2">
-                <label className="block text-sm text-gray-400 mb-1">Website</label>
+                <label className="block text-sm text-ink-muted mb-1">Website</label>
                 <input
                   type="url"
                   name="website"
                   value={formData.website}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   placeholder="https://yourcompany.com"
                 />
               </div>
@@ -747,32 +747,32 @@ export default function EditApplicationPage() {
           </div>
 
           {/* Asset Details */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-              <Package className="w-5 h-5 mr-2 text-purple-400" />
+          <div className="bg-surface-raised border border-border rounded-xl p-6 mb-6">
+            <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
+              <Package className="w-5 h-5 mr-2 text-gold-400" />
               Asset Details
             </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Asset Name *</label>
+                <label className="block text-sm text-ink-muted mb-1">Asset Name *</label>
                 <input
                   type="text"
                   name="assetName"
                   value={formData.assetName}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   placeholder="Manhattan Office Building"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Asset Type *</label>
+                <label className="block text-sm text-ink-muted mb-1">Asset Type *</label>
                 <select
                   name="assetType"
                   value={formData.assetType}
                   onChange={handleChange}
                   required
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                  className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                 >
                   <option value="">Select asset type...</option>
                   {assetTypes.map((type) => (
@@ -783,38 +783,38 @@ export default function EditApplicationPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Asset Description *</label>
+                <label className="block text-sm text-ink-muted mb-1">Asset Description *</label>
                 <textarea
                   name="assetDescription"
                   value={formData.assetDescription}
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none resize-none"
+                  className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none resize-none"
                   placeholder="Describe the asset you want to tokenize..."
                 />
               </div>
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Estimated Value (USD) *</label>
+                  <label className="block text-sm text-ink-muted mb-1">Estimated Value (USD) *</label>
                   <input
                     type="text"
                     name="estimatedValue"
                     value={formData.estimatedValue}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                     placeholder="$1,000,000"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Use Case *</label>
+                  <label className="block text-sm text-ink-muted mb-1">Use Case *</label>
                   <select
                     name="useCase"
                     value={formData.useCase}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   >
                     <option value="">Select use case...</option>
                     {useCases.map((uc) => (
@@ -829,16 +829,16 @@ export default function EditApplicationPage() {
           </div>
 
           {/* Documents */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
+          <div className="bg-surface-raised border border-border rounded-xl p-6 mb-6">
             <div className="flex items-center justify-between mb-2">
-              <h3 className="text-lg font-semibold text-white flex items-center">
+              <h3 className="text-lg font-semibold text-ink flex items-center">
                 <Upload className="w-5 h-5 mr-2 text-cyan-400" />
                 Required Documents
               </h3>
               {formData.assetType && (
                 <span className="text-xs">
                   {hasAllRequiredDocuments(formData.assetType, documents) 
-                    ? <span className="text-green-400 flex items-center gap-1">
+                    ? <span className="text-success flex items-center gap-1">
                         <CheckCircle2 className="w-4 h-4" /> All required documents uploaded
                       </span>
                     : <span className="text-amber-400">
@@ -852,9 +852,9 @@ export default function EditApplicationPage() {
             {formData.assetType && (
               <>
                 {/* Required Documents Checklist */}
-                <div className="bg-gray-700/50 rounded-lg p-4 mb-4">
-                  <h4 className="text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-blue-400" />
+                <div className="bg-surface-overlay/50 rounded-lg p-4 mb-4">
+                  <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center gap-2">
+                    <Shield className="w-4 h-4 text-gold-400" />
                     Required for {getAssetTypeLabel(formData.assetType)}:
                   </h4>
                   <div className="grid gap-2">
@@ -865,14 +865,14 @@ export default function EditApplicationPage() {
                           key={doc.value}
                           className={`flex items-center gap-2 text-sm p-2 rounded transition-colors ${
                             isUploaded 
-                              ? 'bg-green-500/10 text-green-400' 
-                              : 'bg-gray-700/50 text-gray-400'
+                              ? 'bg-green-500/10 text-success' 
+                              : 'bg-surface-overlay/50 text-ink-muted'
                           }`}
                         >
                           {isUploaded ? (
-                            <CheckCircle2 className="w-4 h-4 text-green-400 flex-shrink-0" />
+                            <CheckCircle2 className="w-4 h-4 text-success flex-shrink-0" />
                           ) : (
-                            <Circle className="w-4 h-4 text-gray-500 flex-shrink-0" />
+                            <Circle className="w-4 h-4 text-ink-faint flex-shrink-0" />
                           )}
                           <span className="flex-1">{doc.label}</span>
                         </div>
@@ -886,7 +886,7 @@ export default function EditApplicationPage() {
                   <select
                     value={selectedDocType}
                     onChange={(e) => setSelectedDocType(e.target.value)}
-                    className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:border-blue-500 focus:outline-none"
+                    className="flex-1 px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:border-gold-500 focus:outline-none"
                   >
                     <option value="">Select document type...</option>
                     <optgroup label="Required Documents">
@@ -921,8 +921,8 @@ export default function EditApplicationPage() {
                     htmlFor="document-upload"
                     className={`px-4 py-2 rounded-lg font-medium transition inline-flex items-center justify-center cursor-pointer ${
                       !selectedDocType || uploadingDocument
-                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                        : 'bg-cyan-600 hover:bg-cyan-700 text-white'
+                        ? 'bg-gray-600 text-ink-muted cursor-not-allowed'
+                        : 'bg-cyan-600 hover:bg-cyan-700 text-ink'
                     }`}
                   >
                     {uploadingDocument ? (
@@ -941,27 +941,27 @@ export default function EditApplicationPage() {
 
                 {uploadError && (
                   <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2">
-                    <AlertCircle className="w-4 h-4 text-red-400" />
-                    <p className="text-red-400 text-sm">{uploadError}</p>
+                    <AlertCircle className="w-4 h-4 text-danger" />
+                    <p className="text-danger text-sm">{uploadError}</p>
                   </div>
                 )}
 
                 {/* Uploaded Documents List */}
                 {documents.length > 0 && (
                   <div className="space-y-2 mb-4">
-                    <h4 className="text-sm font-medium text-gray-300">Uploaded Documents ({documents.length})</h4>
+                    <h4 className="text-sm font-medium text-ink-muted">Uploaded Documents ({documents.length})</h4>
                     {documents.map((doc) => {
                       const docType = DOCUMENT_TYPES.find(d => d.value === doc.documentType);
                       const isRequired = docType && !docType.optional;
                       
                       return (
-                        <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-700/50 border border-gray-600 rounded-lg">
+                        <div key={doc.id} className="flex items-center justify-between p-3 bg-surface-overlay/50 border border-border-strong rounded-lg">
                           <div className="flex items-center gap-3 flex-1 min-w-0">
                             {getFileIcon(doc.type)}
                             <div className="min-w-0 flex-1">
-                              <p className="text-white text-sm truncate">{doc.name}</p>
-                              <div className="flex items-center gap-2 text-xs text-gray-500">
-                                <span className={isRequired ? 'text-blue-400' : 'text-gray-500'}>
+                              <p className="text-ink text-sm truncate">{doc.name}</p>
+                              <div className="flex items-center gap-2 text-xs text-ink-faint">
+                                <span className={isRequired ? 'text-gold-400' : 'text-ink-faint'}>
                                   {getDocTypeLabel(doc.documentType)}
                                 </span>
                                 {doc.size > 0 && (
@@ -978,14 +978,14 @@ export default function EditApplicationPage() {
                               href={doc.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="p-2 text-gray-400 hover:text-white transition"
+                              className="p-2 text-ink-muted hover:text-ink transition"
                             >
                               <Eye className="w-4 h-4" />
                             </a>
                             <button
                               type="button"
                               onClick={() => removeDocument(doc.id)}
-                              className="p-2 text-red-400 hover:text-red-300 transition"
+                              className="p-2 text-danger hover:text-red-300 transition"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -1000,18 +1000,18 @@ export default function EditApplicationPage() {
           </div>
 
           {/* Optional Add-ons */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-              <Key className="w-5 h-5 mr-2 text-green-400" />
+          <div className="bg-surface-raised border border-border rounded-xl p-6 mb-6">
+            <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
+              <Key className="w-5 h-5 mr-2 text-success" />
               Optional Add-ons
             </h3>
             
             <div className="space-y-4">
               {/* Escrow Option */}
-              <label className={`flex items-start gap-4 p-4 bg-gray-700/50 border rounded-xl transition ${
+              <label className={`flex items-start gap-4 p-4 bg-surface-overlay/50 border rounded-xl transition ${
                 originalOptions.needsEscrow 
                   ? 'border-green-500/50 cursor-not-allowed' 
-                  : 'border-gray-600 cursor-pointer hover:border-gray-500'
+                  : 'border-border-strong cursor-pointer hover:border-gray-500'
               }`}>
                 <input
                   type="checkbox"
@@ -1025,7 +1025,7 @@ export default function EditApplicationPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Lock className="w-5 h-5 text-green-400" />
-                      <span className="text-white font-medium">Trade Escrow</span>
+                      <span className="text-ink font-medium">Trade Escrow</span>
                       {originalOptions.needsEscrow && (
                         <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
                           Already Included
@@ -1036,11 +1036,11 @@ export default function EditApplicationPage() {
                       <span className="text-green-400 font-semibold">+${FEES.escrow}</span>
                     )}
                   </div>
-                  <p className="text-gray-400 text-sm mt-1">
+                  <p className="text-ink-muted text-sm mt-1">
                     Enable secure P2P trading with escrow protection. 1% fee on escrow trades.
                   </p>
                   {originalOptions.needsEscrow && (
-                    <p className="text-gray-500 text-xs mt-2 italic">
+                    <p className="text-ink-faint text-xs mt-2 italic">
                       This option was included in your original submission and cannot be removed.
                     </p>
                   )}
@@ -1048,10 +1048,10 @@ export default function EditApplicationPage() {
               </label>
 
               {/* Dividends Option */}
-              <label className={`flex items-start gap-4 p-4 bg-gray-700/50 border rounded-xl transition ${
+              <label className={`flex items-start gap-4 p-4 bg-surface-overlay/50 border rounded-xl transition ${
                 originalOptions.needsDividends 
                   ? 'border-yellow-500/50 cursor-not-allowed' 
-                  : 'border-gray-600 cursor-pointer hover:border-gray-500'
+                  : 'border-border-strong cursor-pointer hover:border-gray-500'
               }`}>
                 <input
                   type="checkbox"
@@ -1065,7 +1065,7 @@ export default function EditApplicationPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <TrendingUp className="w-5 h-5 text-yellow-400" />
-                      <span className="text-white font-medium">Dividend Distributor</span>
+                      <span className="text-ink font-medium">Dividend Distributor</span>
                       {originalOptions.needsDividends && (
                         <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">
                           Already Included
@@ -1076,11 +1076,11 @@ export default function EditApplicationPage() {
                       <span className="text-yellow-400 font-semibold">+${FEES.dividend}</span>
                     )}
                   </div>
-                  <p className="text-gray-400 text-sm mt-1">
+                  <p className="text-ink-muted text-sm mt-1">
                     Automatically distribute revenue to token holders. 0.5% fee on claims.
                   </p>
                   {originalOptions.needsDividends && (
-                    <p className="text-gray-500 text-xs mt-2 italic">
+                    <p className="text-ink-faint text-xs mt-2 italic">
                       This option was included in your original submission and cannot be removed.
                     </p>
                   )}
@@ -1090,8 +1090,8 @@ export default function EditApplicationPage() {
 
             {/* Info about removing options */}
             {(originalOptions.needsEscrow || originalOptions.needsDividends) && (
-              <div className="mt-4 p-3 bg-gray-700/30 border border-gray-600 rounded-lg">
-                <p className="text-gray-400 text-sm flex items-start gap-2">
+              <div className="mt-4 p-3 bg-surface-overlay/30 border border-border-strong rounded-lg">
+                <p className="text-ink-muted text-sm flex items-start gap-2">
                   <Info className="w-4 h-4 mt-0.5 flex-shrink-0" />
                   <span>
                     Options from your original submission cannot be removed. 
@@ -1108,21 +1108,21 @@ export default function EditApplicationPage() {
               ? 'bg-gradient-to-r from-amber-900/30 to-orange-900/30 border-amber-500/30'
               : 'bg-gradient-to-r from-green-900/30 to-emerald-900/30 border-green-500/30'
           }`}>
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-              <Coins className="w-5 h-5 mr-2 text-green-400" />
+            <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
+              <Coins className="w-5 h-5 mr-2 text-success" />
               Fee Summary
             </h3>
             <div className="space-y-2">
               {/* Base fee - always paid */}
               <div className="flex justify-between text-sm">
-                <span className="text-gray-400">Base Fee (Project NFT + ERC-3643 Token)</span>
-                <span className="text-green-400">${FEES.base} ✓</span>
+                <span className="text-ink-muted">Base Fee (Project NFT + ERC-3643 Token)</span>
+                <span className="text-success">${FEES.base} ✓</span>
               </div>
               
               {/* Escrow */}
               {(formData.needsEscrow || originalOptions.needsEscrow) && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Trade Escrow</span>
+                  <span className="text-ink-muted">Trade Escrow</span>
                   {originalOptions.needsEscrow ? (
                     <span className="text-green-400">${FEES.escrow} ✓</span>
                   ) : (
@@ -1134,7 +1134,7 @@ export default function EditApplicationPage() {
               {/* Dividends */}
               {(formData.needsDividends || originalOptions.needsDividends) && (
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Dividend Distributor</span>
+                  <span className="text-ink-muted">Dividend Distributor</span>
                   {originalOptions.needsDividends ? (
                     <span className="text-yellow-400">${FEES.dividend} ✓</span>
                   ) : (
@@ -1143,23 +1143,23 @@ export default function EditApplicationPage() {
                 </div>
               )}
               
-              <div className="pt-2 mt-2 border-t border-gray-600">
+              <div className="pt-2 mt-2 border-t border-border-strong">
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-400">Already Paid</span>
-                  <span className="text-green-400">${originalFee}</span>
+                  <span className="text-ink-muted">Already Paid</span>
+                  <span className="text-success">${originalFee}</span>
                 </div>
                 {calculateFeeDifference() > 0 && (
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-400">Additional Payment</span>
+                    <span className="text-ink-muted">Additional Payment</span>
                     <span className="text-amber-400">+${calculateFeeDifference()}</span>
                   </div>
                 )}
-                <div className="flex justify-between mt-2 pt-2 border-t border-gray-600">
-                  <span className="text-gray-300 font-medium">
+                <div className="flex justify-between mt-2 pt-2 border-t border-border-strong">
+                  <span className="text-ink-muted font-medium">
                     {calculateFeeDifference() > 0 ? 'Amount Due' : 'Total Paid'}
                   </span>
                   <span className={`font-bold text-lg ${
-                    calculateFeeDifference() > 0 ? 'text-amber-400' : 'text-green-400'
+                    calculateFeeDifference() > 0 ? 'text-amber-400' : 'text-success'
                   }`}>
                     {calculateFeeDifference() > 0 
                       ? `$${calculateFeeDifference()} USDC`
@@ -1176,7 +1176,7 @@ export default function EditApplicationPage() {
                 You've added new options. Additional payment of ${calculateFeeDifference()} USDC is required.
               </p>
             ) : (
-              <p className="text-green-400 text-xs mt-3 flex items-center gap-2">
+              <p className="text-success text-xs mt-3 flex items-center gap-2">
                 <CheckCircle2 className="w-4 h-4" />
                 No additional payment required. Your original payment covers all selected options.
               </p>
@@ -1187,7 +1187,7 @@ export default function EditApplicationPage() {
           <div className="flex gap-4">
             <Link
               href="/tokenize"
-              className="px-6 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition inline-flex items-center"
+              className="px-6 py-4 bg-surface-overlay hover:bg-gray-600 text-ink font-semibold rounded-xl transition inline-flex items-center"
             >
               <ArrowLeft className="mr-2 w-5 h-5" />
               Cancel
@@ -1195,7 +1195,7 @@ export default function EditApplicationPage() {
             <button
               type="submit"
               disabled={submitting || (!!formData.assetType && !hasAllRequiredDocuments(formData.assetType, documents))}
-              className={`flex-1 py-4 text-white font-semibold rounded-xl hover:opacity-90 transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
+              className={`flex-1 py-4 text-ink font-semibold rounded-xl hover:opacity-90 transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
                 calculateFeeDifference() > 0 
                   ? 'bg-gradient-to-r from-amber-500 to-orange-600'
                   : 'bg-gradient-to-r from-orange-500 to-red-600'

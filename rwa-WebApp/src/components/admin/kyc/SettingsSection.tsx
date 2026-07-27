@@ -13,7 +13,9 @@ import {
   Edit2,
   Loader2,
   ExternalLink,
-  AlertTriangle
+  AlertTriangle,
+  Check,
+  X
 } from 'lucide-react';
 import { Address } from 'viem';
 import { KYCSettings, TIER_NAMES, MAX_UINT256 } from '../types';
@@ -103,8 +105,8 @@ export function SettingsSection({
 
   if (isLoading) {
     return (
-      <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-8">
-        <div className="flex items-center justify-center gap-3 text-gray-400">
+      <div className="bg-surface/50 rounded-xl border border-border/50 p-8">
+        <div className="flex items-center justify-center gap-3 text-ink-muted">
           <Loader2 className="w-5 h-5 animate-spin" />
           Loading settings...
         </div>
@@ -114,8 +116,8 @@ export function SettingsSection({
 
   if (!settings) {
     return (
-      <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-8">
-        <p className="text-center text-gray-400">Failed to load settings</p>
+      <div className="bg-surface/50 rounded-xl border border-border/50 p-8">
+        <p className="text-center text-ink-muted">Failed to load settings</p>
       </div>
     );
   }
@@ -123,9 +125,9 @@ export function SettingsSection({
   return (
     <div className="space-y-6">
       {/* Contract Status */}
-      <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-blue-400" />
+      <div className="bg-surface/50 rounded-xl border border-border/50 p-6">
+        <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+          <Shield className="w-5 h-5 text-gold-400" />
           Contract Status
         </h3>
         
@@ -133,13 +135,13 @@ export function SettingsSection({
           <div className="flex items-center gap-3">
             {settings.isPaused ? (
               <>
-                <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-red-400 font-medium">Contract Paused</span>
+                <div className="w-3 h-3 rounded-full bg-danger animate-pulse" />
+                <span className="text-danger font-medium">Contract Paused</span>
               </>
             ) : (
               <>
-                <div className="w-3 h-3 rounded-full bg-green-500" />
-                <span className="text-green-400 font-medium">Contract Active</span>
+                <div className="w-3 h-3 rounded-full bg-success" />
+                <span className="text-success font-medium">Contract Active</span>
               </>
             )}
           </div>
@@ -149,8 +151,8 @@ export function SettingsSection({
             disabled={isProcessing}
             className={`px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
               settings.isPaused
-                ? 'bg-green-600 hover:bg-green-700 text-white'
-                : 'bg-red-600 hover:bg-red-700 text-white'
+                ? 'bg-success hover:bg-success/90 text-ink'
+                : 'bg-danger hover:bg-danger/90 text-ink'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {isProcessing ? (
@@ -165,8 +167,8 @@ export function SettingsSection({
         </div>
         
         {settings.isPaused && (
-          <div className="mt-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
-            <div className="flex items-center gap-2 text-red-400">
+          <div className="mt-4 p-3 bg-danger/20 border border-danger/30 rounded-lg">
+            <div className="flex items-center gap-2 text-danger">
               <AlertTriangle className="w-4 h-4" />
               <span className="text-sm">New KYC submissions and verifications are disabled while paused.</span>
             </div>
@@ -175,18 +177,18 @@ export function SettingsSection({
       </div>
 
       {/* Fee Settings */}
-      <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <DollarSign className="w-5 h-5 text-green-400" />
+      <div className="bg-surface/50 rounded-xl border border-border/50 p-6">
+        <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+          <DollarSign className="w-5 h-5 text-success" />
           Fee Settings
         </h3>
         
         <div className="space-y-4">
           {/* KYC Fee */}
-          <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-surface-sunken/50 rounded-lg">
             <div>
-              <p className="text-sm text-gray-400">KYC Submission Fee</p>
-              <p className="text-xl font-bold text-white">
+              <p className="text-sm text-ink-muted">KYC Submission Fee</p>
+              <p className="text-xl font-bold text-ink">
                 {formatNativeCurrency(settings.kycFee, currencySymbol)}
               </p>
             </div>
@@ -198,12 +200,12 @@ export function SettingsSection({
                   value={newFee}
                   onChange={(e) => setNewFee(e.target.value)}
                   placeholder={`0.01 ${currencySymbol}`}
-                  className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white w-32 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 bg-surface border border-border rounded-lg text-ink w-32 focus:outline-none focus:ring-2 focus:ring-gold-500"
                 />
                 <button
                   onClick={handleUpdateFee}
                   disabled={isProcessing || !isValidFee(newFee)}
-                  className="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white rounded-lg transition-colors"
+                  className="px-3 py-2 bg-success hover:bg-success/90 disabled:bg-surface-overlay text-ink rounded-lg transition-colors"
                 >
                   {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
                 </button>
@@ -212,7 +214,7 @@ export function SettingsSection({
                     setEditingFee(false);
                     setNewFee('');
                   }}
-                  className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="px-3 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -220,19 +222,19 @@ export function SettingsSection({
             ) : (
               <button
                 onClick={() => setEditingFee(true)}
-                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
               >
-                <Edit2 className="w-4 h-4 text-gray-400" />
+                <Edit2 className="w-4 h-4 text-ink-muted" />
               </button>
             )}
           </div>
 
           {/* Auto-Verify Threshold */}
-          <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-surface-sunken/50 rounded-lg">
             <div>
-              <p className="text-sm text-gray-400">Auto-Verify Threshold</p>
-              <p className="text-xl font-bold text-white">{settings.autoVerifyThreshold}%</p>
-              <p className="text-xs text-gray-500">Submissions with scores above this are auto-approved</p>
+              <p className="text-sm text-ink-muted">Auto-Verify Threshold</p>
+              <p className="text-xl font-bold text-ink">{settings.autoVerifyThreshold}%</p>
+              <p className="text-xs text-ink-faint">Submissions with scores above this are auto-approved</p>
             </div>
             
             {editingThreshold ? (
@@ -244,13 +246,13 @@ export function SettingsSection({
                   value={newThreshold}
                   onChange={(e) => setNewThreshold(e.target.value)}
                   placeholder="80"
-                  className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white w-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 bg-surface border border-border rounded-lg text-ink w-24 focus:outline-none focus:ring-2 focus:ring-gold-500"
                 />
-                <span className="text-gray-400">%</span>
+                <span className="text-ink-muted">%</span>
                 <button
                   onClick={handleUpdateThreshold}
                   disabled={isProcessing || !isValidThreshold(newThreshold)}
-                  className="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white rounded-lg transition-colors"
+                  className="px-3 py-2 bg-success hover:bg-success/90 disabled:bg-surface-overlay text-ink rounded-lg transition-colors"
                 >
                   {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
                 </button>
@@ -259,7 +261,7 @@ export function SettingsSection({
                     setEditingThreshold(false);
                     setNewThreshold('');
                   }}
-                  className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="px-3 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -267,24 +269,24 @@ export function SettingsSection({
             ) : (
               <button
                 onClick={() => setEditingThreshold(true)}
-                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
               >
-                <Edit2 className="w-4 h-4 text-gray-400" />
+                <Edit2 className="w-4 h-4 text-ink-muted" />
               </button>
             )}
           </div>
 
           {/* Fee Recipient */}
-          <div className="flex items-center justify-between p-4 bg-gray-900/50 rounded-lg">
+          <div className="flex items-center justify-between p-4 bg-surface-sunken/50 rounded-lg">
             <div>
-              <p className="text-sm text-gray-400">Fee Recipient</p>
+              <p className="text-sm text-ink-muted">Fee Recipient</p>
               <div className="flex items-center gap-2">
-                <p className="text-white font-mono">{formatAddress(settings.feeRecipient)}</p>
+                <p className="text-ink font-mono">{formatAddress(settings.feeRecipient)}</p>
                 <a
                   href={`${explorerUrl}/address/${settings.feeRecipient}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-gray-400 hover:text-white"
+                  className="text-ink-muted hover:text-ink"
                 >
                   <ExternalLink className="w-3 h-3" />
                 </a>
@@ -298,12 +300,12 @@ export function SettingsSection({
                   value={newRecipient}
                   onChange={(e) => setNewRecipient(e.target.value)}
                   placeholder="0x..."
-                  className="px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white w-64 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="px-3 py-2 bg-surface border border-border rounded-lg text-ink w-64 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
                 />
                 <button
                   onClick={handleUpdateRecipient}
                   disabled={isProcessing || !isValidAddress(newRecipient)}
-                  className="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 text-white rounded-lg transition-colors"
+                  className="px-3 py-2 bg-success hover:bg-success/90 disabled:bg-surface-overlay text-ink rounded-lg transition-colors"
                 >
                   {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
                 </button>
@@ -312,7 +314,7 @@ export function SettingsSection({
                     setEditingRecipient(false);
                     setNewRecipient('');
                   }}
-                  className="px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="px-3 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -320,9 +322,9 @@ export function SettingsSection({
             ) : (
               <button
                 onClick={() => setEditingRecipient(true)}
-                className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
               >
-                <Edit2 className="w-4 h-4 text-gray-400" />
+                <Edit2 className="w-4 h-4 text-ink-muted" />
               </button>
             )}
           </div>
@@ -330,17 +332,17 @@ export function SettingsSection({
       </div>
 
       {/* Tier Investment Limits */}
-      <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <User className="w-5 h-5 text-purple-400" />
+      <div className="bg-surface/50 rounded-xl border border-border/50 p-6">
+        <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+          <User className="w-5 h-5 text-gold-400" />
           Tier Investment Limits
         </h3>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((tier) => (
-            <div key={tier} className="p-4 bg-gray-900/50 rounded-lg">
+            <div key={tier} className="p-4 bg-surface-sunken/50 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-gray-400">
+                <span className="text-sm text-ink-muted">
                   Tier {tier} - {TIER_NAMES[tier]}
                 </span>
                 {editingTierLimit === tier ? (
@@ -350,23 +352,23 @@ export function SettingsSection({
                       value={newTierLimit}
                       onChange={(e) => setNewTierLimit(e.target.value)}
                       placeholder="10000"
-                      className="px-2 py-1 bg-gray-800 border border-gray-700 rounded text-white w-24 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-2 py-1 bg-surface border border-border rounded text-ink w-24 text-sm focus:outline-none focus:ring-2 focus:ring-gold-500"
                     />
                     <button
                       onClick={() => handleUpdateTierLimit(tier)}
                       disabled={isProcessing || !isValidTierLimit(newTierLimit)}
-                      className="p-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 rounded text-white"
+                      className="p-1 bg-success hover:bg-success/90 disabled:bg-surface-overlay rounded text-ink"
                     >
-                      {isProcessing ? <Loader2 className="w-3 h-3 animate-spin" /> : '✓'}
+                      {isProcessing ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
                     </button>
                     <button
                       onClick={() => {
                         setEditingTierLimit(null);
                         setNewTierLimit('');
                       }}
-                      className="p-1 bg-gray-700 hover:bg-gray-600 rounded text-white"
+                      className="p-1 bg-surface-overlay hover:bg-border-strong rounded text-ink"
                     >
-                      ✕
+                      <X className="w-3 h-3" />
                     </button>
                   </div>
                 ) : (
@@ -375,16 +377,16 @@ export function SettingsSection({
                       setEditingTierLimit(tier);
                       setNewTierLimit('');
                     }}
-                    className="p-1 hover:bg-gray-700 rounded transition-colors"
+                    className="p-1 hover:bg-surface-overlay rounded transition-colors"
                   >
-                    <Edit2 className="w-3 h-3 text-gray-400" />
+                    <Edit2 className="w-3 h-3 text-ink-muted" />
                   </button>
                 )}
               </div>
-              <p className="text-lg font-bold text-white">
+              <p className="text-lg font-bold text-ink">
                 {formatInvestmentLimit(settings.tierLimits[tier] || MAX_UINT256)}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-ink-faint mt-1">
                 Validity: {formatDuration(settings.validityPeriods[tier] || BigInt(0))}
               </p>
             </div>

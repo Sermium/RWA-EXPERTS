@@ -28,7 +28,7 @@ export function OCRProgressBar({ progress }: OCRProgressBarProps) {
     switch (progress.status) {
       case 'error': return 'bg-red-500';
       case 'complete': return 'bg-green-500';
-      default: return 'bg-purple-500';
+      default: return 'bg-gold-500';
     }
   };
 
@@ -67,13 +67,13 @@ export function OCRProgressBar({ progress }: OCRProgressBarProps) {
         );
       case 'complete':
         return (
-          <svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         );
       case 'error':
         return (
-          <svg className="w-4 h-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-4 h-4 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         );
@@ -85,13 +85,13 @@ export function OCRProgressBar({ progress }: OCRProgressBarProps) {
   if (progress.status === 'idle') return null;
 
   return (
-    <div className="bg-gray-900/80 rounded-lg p-3 mt-3">
+    <div className="bg-surface-sunken/80 rounded-lg p-3 mt-3">
       <div className="flex items-center gap-3 mb-2">
         {getStatusIcon()}
-        <span className="text-sm text-gray-300">{progress.message}</span>
-        <span className="text-xs text-gray-500 ml-auto">{progress.progress}%</span>
+        <span className="text-sm text-ink-muted">{progress.message}</span>
+        <span className="text-xs text-ink-faint ml-auto">{progress.progress}%</span>
       </div>
-      <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+      <div className="h-2 bg-surface-overlay rounded-full overflow-hidden">
         <div 
           className={`h-full rounded-full transition-all duration-300 ${getStatusColor()}`}
           style={{ width: `${progress.progress}%` }}
@@ -113,31 +113,31 @@ interface ErrorDisplayProps {
 
 export function ErrorDisplay({ error, onRetry, onDismiss }: ErrorDisplayProps) {
   return (
-    <div className={`rounded-lg p-4 ${error.recoverable ? 'bg-yellow-900/30 border border-yellow-500/50' : 'bg-red-900/30 border border-red-500/50'}`}>
+    <div className={`rounded-lg p-4 ${error.recoverable ? 'bg-warning-muted border border-warning/50' : 'bg-danger-muted border border-danger/50'}`}>
       <div className="flex items-start gap-3">
-        <div className={`p-2 rounded-full ${error.recoverable ? 'bg-yellow-500/20' : 'bg-red-500/20'}`}>
+        <div className={`p-2 rounded-full ${error.recoverable ? 'bg-warning/20' : 'bg-danger/20'}`}>
           {error.recoverable ? (
-            <svg className="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           ) : (
-            <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-danger" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           )}
         </div>
         <div className="flex-1">
-          <p className={`font-medium ${error.recoverable ? 'text-yellow-400' : 'text-red-400'}`}>
+          <p className={`font-medium ${error.recoverable ? 'text-warning' : 'text-danger'}`}>
             {error.message}
           </p>
           {error.suggestion && (
-            <p className="text-gray-400 text-sm mt-1">{error.suggestion}</p>
+            <p className="text-ink-muted text-sm mt-1">{error.suggestion}</p>
           )}
           <div className="flex gap-2 mt-3">
             {error.recoverable && onRetry && (
               <button
                 onClick={onRetry}
-                className="px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white text-sm font-medium rounded-lg transition-colors"
+                className="px-3 py-1.5 bg-warning hover:bg-warning/90 text-surface-sunken text-sm font-medium rounded-lg transition-colors"
               >
                 Try Again
               </button>
@@ -145,7 +145,7 @@ export function ErrorDisplay({ error, onRetry, onDismiss }: ErrorDisplayProps) {
             {onDismiss && (
               <button
                 onClick={onDismiss}
-                className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-white text-sm font-medium rounded-lg transition-colors"
+                className="px-3 py-1.5 bg-surface-overlay hover:bg-border-strong text-ink text-sm font-medium rounded-lg transition-colors"
               >
                 Dismiss
               </button>
@@ -252,12 +252,12 @@ export function DragDropZone({ onFileDrop, accept = 'image/*', maxSize = 10 * 10
       {children}
       
       {isDragging && (
-        <div className="absolute inset-0 bg-purple-500/20 border-2 border-dashed border-purple-500 rounded-xl flex items-center justify-center z-10">
+        <div className="absolute inset-0 bg-gold-500/20 border-2 border-dashed border-gold-500 rounded-xl flex items-center justify-center z-10">
           <div className="text-center">
-            <svg className="w-12 h-12 mx-auto text-purple-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-12 h-12 mx-auto text-gold-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            <p className="text-purple-400 font-medium">Drop file here</p>
+            <p className="text-gold-400 font-medium">Drop file here</p>
           </div>
         </div>
       )}
@@ -292,13 +292,13 @@ export function DocumentTypeSelector({ selectedType, onSelect }: DocumentTypeSel
             onClick={() => onSelect(type)}
             className={`p-4 rounded-xl border-2 text-left transition-all ${
               selectedType === type
-                ? 'border-purple-500 bg-purple-900/20'
+                ? 'border-gold-500 bg-gold-900/20'
                 : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
             }`}
           >
             <div className="flex items-start gap-3">
               <div className={`w-10 h-7 rounded flex items-center justify-center ${
-                selectedType === type ? 'bg-purple-500' : 'bg-gray-700'
+                selectedType === type ? 'bg-gold-500' : 'bg-gray-700'
               }`}>
                 {type === 'passport' ? (
                   <svg className={`w-5 h-5 ${selectedType === type ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -311,7 +311,7 @@ export function DocumentTypeSelector({ selectedType, onSelect }: DocumentTypeSel
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className={`font-medium text-sm ${selectedType === type ? 'text-purple-400' : 'text-white'}`}>
+                <h4 className={`font-medium text-sm ${selectedType === type ? 'text-gold-400' : 'text-white'}`}>
                   {config.label}
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5 truncate">
@@ -320,7 +320,7 @@ export function DocumentTypeSelector({ selectedType, onSelect }: DocumentTypeSel
                 <div className="mt-2 flex flex-wrap gap-1">
                   <span className={`px-2 py-0.5 text-xs rounded ${
                     selectedType === type 
-                      ? 'bg-purple-500/20 text-purple-300' 
+                      ? 'bg-gold-500/20 text-gold-300' 
                       : 'bg-gray-700 text-gray-400'
                   }`}>
                     {config.requiresBack ? 'Front + Back' : 'Front only'}
@@ -447,14 +447,14 @@ export function DocumentCaptureCard({
             {isValidating && ocrProgress.status !== 'idle' && (
               <div className="absolute inset-0 bg-black/70 flex items-center justify-center">
                 <div className="text-center px-4 w-full max-w-xs">
-                  <svg className="w-10 h-10 animate-spin text-purple-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-10 h-10 animate-spin text-gold-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                   <p className="text-white text-sm mb-2">{ocrProgress.message}</p>
                   <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
                     <div 
-                      className="h-full bg-purple-500 rounded-full transition-all duration-300"
+                      className="h-full bg-gold-500 rounded-full transition-all duration-300"
                       style={{ width: `${ocrProgress.progress}%` }}
                     />
                   </div>
@@ -543,7 +543,7 @@ export function DocumentCaptureCard({
           <button
             type="button"
             onClick={onWebcamCapture}
-            className="px-3 py-2.5 text-xs font-medium bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors flex items-center justify-center gap-1.5"
+            className="px-3 py-2.5 text-xs font-medium bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition-colors flex items-center justify-center gap-1.5"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -840,7 +840,7 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
               <p className="text-gray-400 mb-6">{error}</p>
               <button
                 onClick={handleClose}
-                className="px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-500 transition-colors"
+                className="px-6 py-3 bg-gold-600 text-white rounded-xl font-medium hover:bg-gold-500 transition-colors"
               >
                 Use File Upload Instead
               </button>
@@ -902,7 +902,7 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
             {!isReady && !error && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/80">
                 <div className="text-center">
-                  <svg className="w-12 h-12 animate-spin text-purple-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-12 h-12 animate-spin text-gold-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>

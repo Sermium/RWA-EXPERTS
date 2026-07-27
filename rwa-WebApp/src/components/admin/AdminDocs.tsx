@@ -50,8 +50,8 @@ const docSections = [
 function DocLoader() {
   return (
     <div className="flex items-center justify-center py-12">
-      <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-      <span className="ml-3 text-gray-400">Loading documentation...</span>
+      <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
+      <span className="ml-3 text-ink-muted">Loading documentation...</span>
     </div>
   );
 }
@@ -103,12 +103,12 @@ export default function AdminDocs() {
   const ActiveDocComponent = activeSection ? docComponents[activeSection] : null;
 
   const colorClasses: Record<string, string> = {
-    blue: 'bg-blue-500/20 text-blue-400',
-    green: 'bg-green-500/20 text-green-400',
-    purple: 'bg-purple-500/20 text-purple-400',
-    orange: 'bg-orange-500/20 text-orange-400',
-    red: 'bg-red-500/20 text-red-400',
-    gray: 'bg-gray-500/20 text-gray-400',
+    blue: 'bg-gold-500/20 text-gold-400',
+    green: 'bg-green-500/20 text-success',
+    purple: 'bg-gold-500/20 text-gold-400',
+    orange: 'bg-orange-500/20 text-warning',
+    red: 'bg-red-500/20 text-danger',
+    gray: 'bg-gray-500/20 text-ink-muted',
     cyan: 'bg-cyan-500/20 text-cyan-400',
   };
 
@@ -117,26 +117,26 @@ export default function AdminDocs() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white">Documentation</h2>
-          <p className="text-gray-400 text-sm">Everything you need to manage the platform</p>
+          <h2 className="text-xl font-bold text-ink">Documentation</h2>
+          <p className="text-ink-muted text-sm">Everything you need to manage the platform</p>
         </div>
         
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-faint" />
             <input
               type="text"
               placeholder="Search docs..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 text-sm w-48 sm:w-64"
+              className="pl-10 pr-4 py-2 bg-surface-raised border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 text-sm w-48 sm:w-64"
             />
           </div>
           <a
             href="https://github.com/Sermium/RWA-EXPERTS"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg text-gray-400 hover:text-white hover:border-gray-600 transition-colors text-sm"
+            className="flex items-center gap-2 px-3 py-2 bg-surface-raised border border-border rounded-lg text-ink-muted hover:text-ink hover:border-border-strong transition-colors text-sm"
           >
             <ExternalLink className="w-4 h-4" />
             <span className="hidden sm:inline">GitHub</span>
@@ -149,13 +149,13 @@ export default function AdminDocs() {
         <div className="flex items-center gap-2 text-sm">
           <button
             onClick={() => setActiveSection(null)}
-            className="text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+            className="text-ink-muted hover:text-ink transition-colors flex items-center gap-1"
           >
             <ChevronRight className="w-4 h-4 rotate-180" />
             Back to All Sections
           </button>
-          <span className="text-gray-600">|</span>
-          <span className="text-white">{currentSection?.title}</span>
+          <span className="text-ink-faint">|</span>
+          <span className="text-ink">{currentSection?.title}</span>
         </div>
       )}
 
@@ -169,19 +169,19 @@ export default function AdminDocs() {
               <button
                 key={section.id}
                 onClick={() => setActiveSection(section.id)}
-                className="p-5 bg-gray-800/50 border border-gray-700 rounded-xl text-left hover:border-gray-600 hover:bg-gray-800 transition-all group"
+                className="p-5 bg-surface/50 border border-border rounded-xl text-left hover:border-border-strong hover:bg-surface-raised transition-all group"
               >
                 <div className="flex items-start gap-4">
                   <div className={`p-3 rounded-lg ${colorClasses[section.color]}`}>
                     <Icon className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-white group-hover:text-blue-400 transition-colors mb-1">
+                    <h3 className="font-semibold text-ink group-hover:text-gold-400 transition-colors mb-1">
                       {section.title}
                     </h3>
-                    <p className="text-sm text-gray-500">{section.description}</p>
+                    <p className="text-sm text-ink-faint">{section.description}</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-600 group-hover:text-blue-400" />
+                  <ChevronRight className="w-5 h-5 text-ink-faint group-hover:text-gold-400" />
                 </div>
               </button>
             );
@@ -189,7 +189,7 @@ export default function AdminDocs() {
         </div>
       ) : (
         // Doc Content with scroll
-        <div className="bg-gray-800/30 border border-gray-700 rounded-xl p-6 max-h-[calc(100vh-300px)] overflow-y-auto">
+        <div className="bg-surface/30 border border-border rounded-xl p-6 max-h-[calc(100vh-300px)] overflow-y-auto">
           <Suspense fallback={<DocLoader />}>
             {ActiveDocComponent && <ActiveDocComponent />}
           </Suspense>

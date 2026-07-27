@@ -219,7 +219,7 @@ export async function verifyEmailConnection(): Promise<{
 
 export async function sendTestEmail(to: string): Promise<EmailResult> {
   const template: EmailTemplate = {
-    subject: '✅ RWA Platform - Email Configuration Test',
+    subject: 'RWA Platform - Email Configuration Test',
     html: `
       <!DOCTYPE html>
       <html>
@@ -250,7 +250,7 @@ export async function sendTestEmail(to: string): Promise<EmailResult> {
           </div>
           <div class="content">
             <div class="success-box">
-              <h2>✅ Email Configuration Working!</h2>
+              <h2>Email Configuration Working!</h2>
               <p>Your SMTP email settings are configured correctly.</p>
             </div>
             

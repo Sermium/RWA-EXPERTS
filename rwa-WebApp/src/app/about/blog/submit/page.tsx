@@ -92,19 +92,19 @@ export default function SubmitArticlePage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
           <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle className="w-10 h-10 text-emerald-400" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-4">Article Submitted!</h1>
-          <p className="text-gray-400 mb-8">
+          <h1 className="text-2xl font-bold text-ink mb-4">Article Submitted!</h1>
+          <p className="text-ink-muted mb-8">
             Your article has been submitted for review. Our team will review it and notify you once it is published.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href="/about/blog"
-              className="px-6 py-3 bg-gray-800 hover:bg-gray-700 text-white rounded-lg transition-colors"
+              className="px-6 py-3 bg-surface hover:bg-surface-overlay text-ink rounded-lg transition-colors"
             >
               Back to Blog
             </Link>
@@ -121,7 +121,7 @@ export default function SubmitArticlePage() {
                   author_email: ''
                 });
               }}
-              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-colors"
+              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-ink rounded-lg transition-colors"
             >
               Submit Another
             </button>
@@ -132,18 +132,18 @@ export default function SubmitArticlePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white py-12">
+    <div className="min-h-screen bg-surface-sunken text-ink py-12">
       <div className="max-w-4xl mx-auto px-4">
         <div className="mb-8">
           <Link 
             href="/about/blog"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition-colors"
+            className="inline-flex items-center gap-2 text-ink-muted hover:text-ink mb-6 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Blog
           </Link>
           <h1 className="text-3xl font-bold mb-2">Submit an Article</h1>
-          <p className="text-gray-400">
+          <p className="text-ink-muted">
             Share your knowledge with the RWA community. Articles are reviewed before publication.
           </p>
         </div>
@@ -167,7 +167,7 @@ export default function SubmitArticlePage() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               Title <span className="text-red-400">*</span>
             </label>
             <input
@@ -176,20 +176,20 @@ export default function SubmitArticlePage() {
               value={formData.title}
               onChange={handleChange}
               placeholder="Enter your article title"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               Category <span className="text-red-400">*</span>
             </label>
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
               required
             >
               <option value="">Select a category</option>
@@ -200,7 +200,7 @@ export default function SubmitArticlePage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               Excerpt / Summary
             </label>
             <textarea
@@ -209,15 +209,15 @@ export default function SubmitArticlePage() {
               onChange={handleChange}
               placeholder="A brief summary of your article (1-2 sentences)"
               rows={2}
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors resize-none"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors resize-none"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               Content <span className="text-red-400">*</span>
             </label>
-            <p className="text-gray-500 text-sm mb-2">
+            <p className="text-ink-faint text-sm mb-2">
               You can use Markdown for formatting (headers, bold, lists, links, etc.)
             </p>
             <textarea
@@ -226,13 +226,13 @@ export default function SubmitArticlePage() {
               onChange={handleChange}
               placeholder="Write your article content here..."
               rows={15}
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors font-mono text-sm"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors font-mono text-sm"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               <ImageIcon className="w-4 h-4 inline mr-1" />
               Cover Image URL
             </label>
@@ -242,13 +242,13 @@ export default function SubmitArticlePage() {
               value={formData.cover_image_url}
               onChange={handleChange}
               placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
             />
-            <p className="text-gray-500 text-sm mt-1">Optional. Use a direct image URL.</p>
+            <p className="text-ink-faint text-sm mt-1">Optional. Use a direct image URL.</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               <Tag className="w-4 h-4 inline mr-1" />
               Tags
             </label>
@@ -258,13 +258,13 @@ export default function SubmitArticlePage() {
               value={formData.tags}
               onChange={handleChange}
               placeholder="blockchain, tokenization, real-estate"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
             />
-            <p className="text-gray-500 text-sm mt-1">Separate tags with commas</p>
+            <p className="text-ink-faint text-sm mt-1">Separate tags with commas</p>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               Email (for notifications)
             </label>
             <input
@@ -273,16 +273,16 @@ export default function SubmitArticlePage() {
               value={formData.author_email}
               onChange={handleChange}
               placeholder="your@email.com"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
             />
-            <p className="text-gray-500 text-sm mt-1">We will notify you when your article is reviewed</p>
+            <p className="text-ink-faint text-sm mt-1">We will notify you when your article is reviewed</p>
           </div>
 
           <div className="pt-4">
             <button
               type="submit"
               disabled={isSubmitting || !isConnected}
-              className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-surface-overlay disabled:cursor-not-allowed text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -298,12 +298,12 @@ export default function SubmitArticlePage() {
             </button>
           </div>
 
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 mt-8">
-            <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+          <div className="bg-surface-sunken/50 border border-border rounded-lg p-6 mt-8">
+            <h3 className="font-semibold text-ink mb-3 flex items-center gap-2">
               <FileText className="w-5 h-5 text-emerald-400" />
               Submission Guidelines
             </h3>
-            <ul className="text-gray-400 text-sm space-y-2">
+            <ul className="text-ink-muted text-sm space-y-2">
               <li>• Articles should be original content not published elsewhere</li>
               <li>• Focus on topics related to RWA, tokenization, blockchain, or investing</li>
               <li>• Minimum 500 words recommended for publication</li>

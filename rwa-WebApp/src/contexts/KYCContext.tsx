@@ -3,6 +3,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from 'react';
 import { useAccount } from 'wagmi';
+import { Circle, Medal, Award, Trophy, Gem, type LucideIcon } from 'lucide-react';
 
 // ============================================================================
 // TYPES
@@ -35,7 +36,7 @@ export interface TierInfo {
   color: string;
   bgColor: string;
   borderColor: string;
-  icon: string;
+  icon: LucideIcon;
   label: string;
   description: string;
 }
@@ -99,46 +100,46 @@ export function formatLimitDisplay(value: number | null | undefined): string {
 }
 
 export function getTierInfo(tier: KYCTier, limit?: number): TierInfo {
-  const configs: Record<KYCTier, { color: string; bgColor: string; borderColor: string; icon: string; label: string; description: string }> = {
-    None: { 
-      color: 'text-gray-400', 
-      bgColor: 'bg-gray-500/10', 
-      borderColor: 'border-gray-500',
-      icon: '○', 
+  const configs: Record<KYCTier, { color: string; bgColor: string; borderColor: string; icon: LucideIcon; label: string; description: string }> = {
+    None: {
+      color: 'text-ink-faint',
+      bgColor: 'bg-ink-faint/10',
+      borderColor: 'border-border-strong',
+      icon: Circle,
       label: 'Unverified',
-      description: 'Complete KYC to invest' 
+      description: 'Complete KYC to invest'
     },
-    Bronze: { 
-      color: 'text-amber-600', 
-      bgColor: 'bg-amber-500/10', 
+    Bronze: {
+      color: 'text-amber-600',
+      bgColor: 'bg-amber-500/10',
       borderColor: 'border-amber-500',
-      icon: '🥉', 
+      icon: Medal,
       label: 'Bronze',
-      description: 'Basic verification' 
+      description: 'Basic verification'
     },
-    Silver: { 
-      color: 'text-gray-300', 
-      bgColor: 'bg-gray-400/10', 
-      borderColor: 'border-gray-400',
-      icon: '🥈', 
+    Silver: {
+      color: 'text-ink-muted',
+      bgColor: 'bg-ink-muted/10',
+      borderColor: 'border-ink-muted',
+      icon: Award,
       label: 'Silver',
-      description: 'Standard verification' 
+      description: 'Standard verification'
     },
-    Gold: { 
-      color: 'text-yellow-400', 
-      bgColor: 'bg-yellow-500/10', 
-      borderColor: 'border-yellow-500',
-      icon: '🥇', 
+    Gold: {
+      color: 'text-gold',
+      bgColor: 'bg-gold/10',
+      borderColor: 'border-gold',
+      icon: Trophy,
       label: 'Gold',
-      description: 'Accredited investor' 
+      description: 'Accredited investor'
     },
-    Diamond: { 
-      color: 'text-cyan-400', 
-      bgColor: 'bg-cyan-500/10', 
+    Diamond: {
+      color: 'text-cyan-400',
+      bgColor: 'bg-cyan-500/10',
       borderColor: 'border-cyan-500',
-      icon: '💎', 
+      icon: Gem,
       label: 'Diamond',
-      description: 'Institutional investor' 
+      description: 'Institutional investor'
     },
   };
 

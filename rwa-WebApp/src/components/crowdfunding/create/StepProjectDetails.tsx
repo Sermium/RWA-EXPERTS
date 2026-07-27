@@ -113,11 +113,11 @@ const InfoPanel = ({ category }: { category: string }) => {
               </li>
             ))}
           </ul>
-          <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+          <div className="mt-4 p-3 bg-gold-500/10 border border-gold-500/20 rounded-lg">
             <div className="flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-sm text-blue-400 font-medium">Don't forget!</p>
+                <p className="text-sm text-gold-400 font-medium">Don't forget!</p>
                 <p className="text-xs text-slate-400 mt-1">
                   A detailed <strong className="text-white">Business Plan</strong> and professional <strong className="text-white">Pitch Deck</strong> are required for all projects. These are critical for investor confidence.
                 </p>
@@ -194,8 +194,8 @@ const InfoPanel = ({ category }: { category: string }) => {
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                <FileText className="w-4 h-4 text-blue-400" />
+              <div className="w-8 h-8 rounded-lg bg-gold-500/20 flex items-center justify-center flex-shrink-0">
+                <FileText className="w-4 h-4 text-gold-400" />
               </div>
               <div>
                 <p className="text-sm text-white font-medium">Complete Documentation</p>
@@ -203,8 +203,8 @@ const InfoPanel = ({ category }: { category: string }) => {
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <Target className="w-4 h-4 text-purple-400" />
+              <div className="w-8 h-8 rounded-lg bg-gold-500/20 flex items-center justify-center flex-shrink-0">
+                <Target className="w-4 h-4 text-gold-400" />
               </div>
               <div>
                 <p className="text-sm text-white font-medium">Defined Milestones</p>
@@ -239,7 +239,7 @@ const InfoPanel = ({ category }: { category: string }) => {
     <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
       <div className="p-4 border-b border-slate-700">
         <h3 className="font-semibold text-white flex items-center gap-2">
-          <Info className="w-5 h-5 text-blue-400" />
+          <Info className="w-5 h-5 text-gold-400" />
           Project Guidelines
         </h3>
       </div>
@@ -384,7 +384,7 @@ function TokenEconomicsCalculator({
     <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6 space-y-6">
       <div className="flex items-center justify-between">
         <h4 className="text-lg font-semibold text-white flex items-center gap-2">
-          <Calculator className="w-5 h-5 text-blue-400" />
+          <Calculator className="w-5 h-5 text-gold-400" />
           Token Economics
         </h4>
         <div className="flex bg-gray-800 rounded-lg p-1">
@@ -393,7 +393,7 @@ function TokenEconomicsCalculator({
             onClick={() => setInputMode('supply')}
             className={`px-3 py-1 text-sm rounded-md transition-colors ${
               inputMode === 'supply'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-gold-600 text-white'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -404,7 +404,7 @@ function TokenEconomicsCalculator({
             onClick={() => setInputMode('price')}
             className={`px-3 py-1 text-sm rounded-md transition-colors ${
               inputMode === 'price'
-                ? 'bg-blue-600 text-white'
+                ? 'bg-gold-600 text-white'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -427,7 +427,7 @@ function TokenEconomicsCalculator({
                 value={totalSupply || ''}
                 onChange={(e) => handleSupplyChange(parseInt(e.target.value) || 0)}
                 placeholder="e.g., 100000"
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
               />
               <p className="text-xs text-gray-500">Total number of tokens to mint</p>
             </div>
@@ -459,7 +459,7 @@ function TokenEconomicsCalculator({
                   value={priceInput}
                   onChange={(e) => handlePriceChange(e.target.value)}
                   placeholder="1.00"
-                  className="w-full pl-8 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  className="w-full pl-8 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
                 />
               </div>
               <p className="text-xs text-gray-500">Price per token in USD</p>
@@ -469,7 +469,7 @@ function TokenEconomicsCalculator({
                 Calculated Total Supply
               </label>
               <div className="px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg">
-                <span className="text-2xl font-bold text-blue-400">
+                <span className="text-2xl font-bold text-gold-400">
                   {totalSupply.toLocaleString()}
                 </span>
                 <span className="text-gray-500 ml-2">tokens</span>
@@ -502,7 +502,7 @@ function TokenEconomicsCalculator({
                 }}
                 className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
                   Math.abs(tokenPrice - preset.price) < 0.001
-                    ? 'border-blue-500 bg-blue-500/20 text-blue-400'
+                    ? 'border-gold-500 bg-gold-500/20 text-gold-400'
                     : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white'
                 }`}
               >
@@ -521,9 +521,9 @@ function TokenEconomicsCalculator({
 
           {/* Info banner when platform fee comes from investors */}
           {platformFeeFromInvestors && (
-            <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-3 flex items-start gap-2">
-              <Info className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-blue-300">
+            <div className="bg-gold-900/20 border border-gold-700/50 rounded-lg p-3 flex items-start gap-2">
+              <Info className="w-4 h-4 text-gold-400 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-gold-300">
                 With {investorSharePercentage}% investor allocation, the {PLATFORM_TOKEN_FEE_PERCENT}% platform fee is deducted from investor tokens. 
                 Effective investor share: {investorEffectivePercentage.toFixed(1)}%
               </p>
@@ -533,7 +533,7 @@ function TokenEconomicsCalculator({
           {/* Visual Bar */}
           <div className="h-8 rounded-lg overflow-hidden flex">
             <div 
-              className="bg-blue-500 flex items-center justify-center"
+              className="bg-gold-500 flex items-center justify-center"
               style={{ width: `${investorEffectivePercentage}%` }}
             >
               {investorEffectivePercentage >= 15 && (
@@ -547,7 +547,7 @@ function TokenEconomicsCalculator({
             />
             {ownerPercentage > 0 && (
               <div 
-                className="bg-purple-500 flex items-center justify-center"
+                className="bg-gold-500 flex items-center justify-center"
                 style={{ width: `${ownerPercentage}%` }}
               >
                 {ownerPercentage >= 15 && (
@@ -561,7 +561,7 @@ function TokenEconomicsCalculator({
           <div className={`grid gap-4 ${ownerPercentage > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
             <div className="bg-gray-800/50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-3 h-3 rounded-full bg-blue-500" />
+                <div className="w-3 h-3 rounded-full bg-gold-500" />
                 <span className="text-xs text-gray-400">Investors</span>
               </div>
               <p className="text-lg font-bold text-white">{investorTokens.toLocaleString()}</p>
@@ -569,7 +569,7 @@ function TokenEconomicsCalculator({
                 {investorEffectivePercentage.toFixed(1)}% · ${(investorTokens * tokenPrice).toLocaleString()}
               </p>
               {platformFeeFromInvestors && (
-                <p className="text-xs text-blue-400 mt-1">
+                <p className="text-xs text-gold-400 mt-1">
                   ({investorSharePercentage}% - {PLATFORM_TOKEN_FEE_PERCENT}% fee)
                 </p>
               )}
@@ -587,7 +587,7 @@ function TokenEconomicsCalculator({
             {ownerPercentage > 0 && (
               <div className="bg-gray-800/50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
-                  <div className="w-3 h-3 rounded-full bg-purple-500" />
+                  <div className="w-3 h-3 rounded-full bg-gold-500" />
                   <span className="text-xs text-gray-400">Project Owner</span>
                 </div>
                 <p className="text-lg font-bold text-white">{ownerTokens.toLocaleString()}</p>
@@ -661,7 +661,7 @@ function TokenEconomicsCalculator({
           </div>
 
           {/* Deployment Summary Box */}
-          <div className="bg-blue-900/20 border border-blue-700/50 rounded-lg p-4">
+          <div className="bg-gold-900/20 border border-gold-700/50 rounded-lg p-4">
             <div className="grid md:grid-cols-3 gap-4">
               <div>
                 <p className="text-sm text-gray-400">Total Supply</p>
@@ -669,7 +669,7 @@ function TokenEconomicsCalculator({
               </div>
               <div>
                 <p className="text-sm text-gray-400">Token Price</p>
-                <p className="text-xl font-bold text-blue-400">${tokenPrice.toFixed(4)}</p>
+                <p className="text-xl font-bold text-gold-400">${tokenPrice.toFixed(4)}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-400">Funding Goal</p>
@@ -942,7 +942,7 @@ export default function StepProjectDetails({
           {/* Basic Information */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-gray-700 pb-2">
-              <Briefcase className="w-5 h-5 text-blue-400" />
+              <Briefcase className="w-5 h-5 text-gold-400" />
               Basic Information
             </h3>
 
@@ -958,7 +958,7 @@ export default function StepProjectDetails({
                   value={data.projectName}
                   onChange={(e) => updateData({ projectName: e.target.value })}
                   placeholder="Enter your project name"
-                  className={`w-full px-4 py-3 pr-12 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
+                  className={`w-full px-4 py-3 pr-12 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
                     errors.projectName || nameAvailable === false 
                       ? 'border-red-500' 
                       : nameAvailable === true 
@@ -1016,16 +1016,16 @@ export default function StepProjectDetails({
                     onClick={() => updateData({ category: cat.id })}
                     className={`p-4 rounded-xl border-2 transition-all text-left ${
                       data.category === cat.id
-                        ? 'border-blue-500 bg-blue-500/10'
+                        ? 'border-gold-500 bg-gold-500/10'
                         : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        data.category === cat.id ? 'bg-blue-500/20' : 'bg-slate-700'
+                        data.category === cat.id ? 'bg-gold-500/20' : 'bg-slate-700'
                       }`}>
                         <cat.icon className={`w-5 h-5 ${
-                          data.category === cat.id ? 'text-blue-400' : 'text-slate-400'
+                          data.category === cat.id ? 'text-gold-400' : 'text-slate-400'
                         }`} />
                       </div>
                       <div>
@@ -1051,7 +1051,7 @@ export default function StepProjectDetails({
                 onChange={(e) => updateData({ description: e.target.value })}
                 placeholder="Describe your project in detail. What is it? What problem does it solve? Why should investors be interested?"
                 rows={5}
-                className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none ${
+                className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 resize-none ${
                   errors.description ? 'border-red-500' : 'border-gray-700'
                 }`}
               />
@@ -1095,7 +1095,7 @@ export default function StepProjectDetails({
                   }
                 }}
                 placeholder="https://example.com"
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -1103,7 +1103,7 @@ export default function StepProjectDetails({
           {/* Company Information */}
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-gray-700 pb-2">
-              <Building2 className="w-5 h-5 text-purple-400" />
+              <Building2 className="w-5 h-5 text-gold-400" />
               Company Information
             </h3>
 
@@ -1118,7 +1118,7 @@ export default function StepProjectDetails({
                   value={data.companyName}
                   onChange={(e) => updateData({ companyName: e.target.value })}
                   placeholder="Legal entity name"
-                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
+                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
                     errors.companyName ? 'border-red-500' : 'border-gray-700'
                   }`}
                 />
@@ -1138,7 +1138,7 @@ export default function StepProjectDetails({
                   value={data.registrationNumber}
                   onChange={(e) => updateData({ registrationNumber: e.target.value })}
                   placeholder="Company registration number"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
                 />
               </div>
             </div>
@@ -1152,7 +1152,7 @@ export default function StepProjectDetails({
               <select
                 value={data.jurisdiction}
                 onChange={(e) => updateData({ jurisdiction: e.target.value })}
-                className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:outline-none focus:border-blue-500 ${
+                className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:outline-none focus:border-gold-500 ${
                   errors.jurisdiction ? 'border-red-500' : 'border-gray-700'
                 }`}
               >
@@ -1181,7 +1181,7 @@ export default function StepProjectDetails({
                 <select
                   value={data.localCurrency}
                   onChange={(e) => updateData({ localCurrency: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-gold-500"
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c.value} value={c.value}>
@@ -1204,7 +1204,7 @@ export default function StepProjectDetails({
                     value={data.amountToRaiseLocal || ''}
                     onChange={(e) => updateData({ amountToRaiseLocal: parseFloat(e.target.value) || 0 })}
                     placeholder="0"
-                    className={`w-full pl-12 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
+                    className={`w-full pl-12 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
                       errors.amountToRaiseLocal ? 'border-red-500' : 'border-gray-700'
                     }`}
                   />
@@ -1241,7 +1241,7 @@ export default function StepProjectDetails({
                     }
                   }}
                   placeholder="30"
-                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
+                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
                     errors.investorSharePercentage ? 'border-red-500' : 'border-gray-700'
                   }`}
                 />
@@ -1261,7 +1261,7 @@ export default function StepProjectDetails({
                   value={data.projectedROI || ''}
                   onChange={(e) => updateData({ projectedROI: parseFloat(e.target.value) || 0 })}
                   placeholder="25"
-                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
+                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
                     errors.projectedROI ? 'border-red-500' : 'border-gray-700'
                   }`}
                 />
@@ -1281,7 +1281,7 @@ export default function StepProjectDetails({
                   value={data.roiTimelineMonths || ''}
                   onChange={(e) => updateData({ roiTimelineMonths: parseInt(e.target.value) || 0 })}
                   placeholder="12"
-                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
+                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
                     errors.roiTimelineMonths ? 'border-red-500' : 'border-gray-700'
                   }`}
                 />
@@ -1301,7 +1301,7 @@ export default function StepProjectDetails({
                 onChange={(e) => updateData({ revenueModel: e.target.value })}
                 placeholder="Explain how the project will generate returns for investors..."
                 rows={3}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 resize-none"
               />
             </div>
           </div>
@@ -1321,7 +1321,7 @@ export default function StepProjectDetails({
                   value={data.tokenName}
                   onChange={(e) => updateData({ tokenName: e.target.value })}
                   placeholder="e.g., Dubai Property Token"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
                 />
               </div>
 
@@ -1333,7 +1333,7 @@ export default function StepProjectDetails({
                   onChange={(e) => updateData({ tokenSymbol: e.target.value.toUpperCase() })}
                   placeholder="e.g., DPT"
                   maxLength={5}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 uppercase"
+                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 uppercase"
                 />
               </div>
             </div>
@@ -1365,7 +1365,7 @@ export default function StepProjectDetails({
           className={`px-8 py-3 font-semibold rounded-lg transition-colors ${
             isCheckingName || nameAvailable === false
               ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
+              : 'bg-gold-600 hover:bg-gold-700 text-white'
           }`}
           type="button"
         >

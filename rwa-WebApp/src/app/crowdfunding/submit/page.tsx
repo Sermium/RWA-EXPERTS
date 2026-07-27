@@ -106,12 +106,12 @@ function StepBasicInfo({ formData, setFormData, errors }: StepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-white mb-2">Basic Information</h2>
-        <p className="text-gray-400">Tell us about your project</p>
+        <h2 className="text-xl font-bold text-ink mb-2">Basic Information</h2>
+        <p className="text-ink-muted">Tell us about your project</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-ink-muted mb-2">
           Project Name *
         </label>
         <input
@@ -119,15 +119,15 @@ function StepBasicInfo({ formData, setFormData, errors }: StepProps) {
           value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           placeholder="e.g., Green Energy Solar Farm"
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
-            errors.name ? 'border-red-500' : 'border-gray-600'
+          className={`w-full px-4 py-3 bg-surface-overlay border rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+            errors.name ? 'border-danger' : 'border-border-strong'
           }`}
         />
-        {errors.name && <p className="text-red-400 text-sm mt-1">{errors.name}</p>}
+        {errors.name && <p className="text-danger text-sm mt-1">{errors.name}</p>}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-ink-muted mb-2">
           Description *
         </label>
         <textarea
@@ -135,23 +135,23 @@ function StepBasicInfo({ formData, setFormData, errors }: StepProps) {
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           placeholder="Describe your project, its goals, and why investors should participate..."
           rows={5}
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none ${
-            errors.description ? 'border-red-500' : 'border-gray-600'
+          className={`w-full px-4 py-3 bg-surface-overlay border rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 resize-none ${
+            errors.description ? 'border-danger' : 'border-border-strong'
           }`}
         />
-        {errors.description && <p className="text-red-400 text-sm mt-1">{errors.description}</p>}
+        {errors.description && <p className="text-danger text-sm mt-1">{errors.description}</p>}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Category *
           </label>
           <select
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white focus:outline-none focus:border-blue-500 ${
-              errors.category ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-xl text-ink focus:outline-none focus:border-gold-500 ${
+              errors.category ? 'border-danger' : 'border-border-strong'
             }`}
           >
             <option value="">Select a category</option>
@@ -159,11 +159,11 @@ function StepBasicInfo({ formData, setFormData, errors }: StepProps) {
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
-          {errors.category && <p className="text-red-400 text-sm mt-1">{errors.category}</p>}
+          {errors.category && <p className="text-danger text-sm mt-1">{errors.category}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Website
           </label>
           <input
@@ -171,7 +171,7 @@ function StepBasicInfo({ formData, setFormData, errors }: StepProps) {
             value={formData.website}
             onChange={(e) => setFormData({ ...formData, website: e.target.value })}
             placeholder="https://yourproject.com"
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
           />
         </div>
       </div>
@@ -183,13 +183,13 @@ function StepTokenInfo({ formData, setFormData, errors }: StepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-white mb-2">Token Information</h2>
-        <p className="text-gray-400">Configure your security token</p>
+        <h2 className="text-xl font-bold text-ink mb-2">Token Information</h2>
+        <p className="text-ink-muted">Configure your security token</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Token Name *
           </label>
           <input
@@ -197,15 +197,15 @@ function StepTokenInfo({ formData, setFormData, errors }: StepProps) {
             value={formData.tokenName}
             onChange={(e) => setFormData({ ...formData, tokenName: e.target.value })}
             placeholder="e.g., Green Energy Token"
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 ${
-              errors.tokenName ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+              errors.tokenName ? 'border-danger' : 'border-border-strong'
             }`}
           />
-          {errors.tokenName && <p className="text-red-400 text-sm mt-1">{errors.tokenName}</p>}
+          {errors.tokenName && <p className="text-danger text-sm mt-1">{errors.tokenName}</p>}
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Token Symbol *
           </label>
           <input
@@ -214,20 +214,20 @@ function StepTokenInfo({ formData, setFormData, errors }: StepProps) {
             onChange={(e) => setFormData({ ...formData, tokenSymbol: e.target.value.toUpperCase().slice(0, 6) })}
             placeholder="e.g., GRN"
             maxLength={6}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 uppercase ${
-              errors.tokenSymbol ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 uppercase ${
+              errors.tokenSymbol ? 'border-danger' : 'border-border-strong'
             }`}
           />
-          {errors.tokenSymbol && <p className="text-red-400 text-sm mt-1">{errors.tokenSymbol}</p>}
+          {errors.tokenSymbol && <p className="text-danger text-sm mt-1">{errors.tokenSymbol}</p>}
         </div>
       </div>
 
-      <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+      <div className="p-4 bg-gold-500/10 border border-gold-500/30 rounded-xl">
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-blue-300">
+          <Info className="w-5 h-5 text-gold-400 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-gold-300">
             <p className="font-medium mb-1">About Security Tokens</p>
-            <p className="text-blue-400/80">
+            <p className="text-gold-400/80">
               Your token will be an ERC-20 compliant security token with built-in compliance features.
               Investors will receive tokens proportional to their investment after the funding goal is reached.
             </p>
@@ -244,84 +244,84 @@ function StepFundingInfo({ formData, setFormData, errors }: StepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-white mb-2">Funding Details</h2>
-        <p className="text-gray-400">Set your funding goal and parameters</p>
+        <h2 className="text-xl font-bold text-ink mb-2">Funding Details</h2>
+        <p className="text-ink-muted">Set your funding goal and parameters</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Funding Goal (USD) *
           </label>
           <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-faint" />
             <input
               type="number"
               value={formData.fundingGoal}
               onChange={(e) => setFormData({ ...formData, fundingGoal: Number(e.target.value) })}
               min={PROJECT_LIMITS.MIN_FUNDING_GOAL}
               max={PROJECT_LIMITS.MAX_FUNDING_GOAL}
-              className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white focus:outline-none focus:border-blue-500 ${
-                errors.fundingGoal ? 'border-red-500' : 'border-gray-600'
+              className={`w-full pl-10 pr-4 py-3 bg-surface-overlay border rounded-xl text-ink focus:outline-none focus:border-gold-500 ${
+                errors.fundingGoal ? 'border-danger' : 'border-border-strong'
               }`}
             />
           </div>
-          {errors.fundingGoal && <p className="text-red-400 text-sm mt-1">{errors.fundingGoal}</p>}
-          <p className="text-xs text-gray-500 mt-1">
+          {errors.fundingGoal && <p className="text-danger text-sm mt-1">{errors.fundingGoal}</p>}
+          <p className="text-xs text-ink-faint mt-1">
             Min: ${PROJECT_LIMITS.MIN_FUNDING_GOAL.toLocaleString()}
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Token Price (USD) *
           </label>
           <div className="relative">
-            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-faint" />
             <input
               type="number"
               value={formData.tokenPrice}
               onChange={(e) => setFormData({ ...formData, tokenPrice: Number(e.target.value) })}
               min={0.01}
               step={0.01}
-              className={`w-full pl-10 pr-4 py-3 bg-gray-700 border rounded-xl text-white focus:outline-none focus:border-blue-500 ${
-                errors.tokenPrice ? 'border-red-500' : 'border-gray-600'
+              className={`w-full pl-10 pr-4 py-3 bg-surface-overlay border rounded-xl text-ink focus:outline-none focus:border-gold-500 ${
+                errors.tokenPrice ? 'border-danger' : 'border-border-strong'
               }`}
             />
           </div>
-          {errors.tokenPrice && <p className="text-red-400 text-sm mt-1">{errors.tokenPrice}</p>}
+          {errors.tokenPrice && <p className="text-danger text-sm mt-1">{errors.tokenPrice}</p>}
         </div>
       </div>
 
-      <div className="p-4 bg-gray-700/50 rounded-xl">
-        <p className="text-sm text-gray-400">
-          Total Token Supply: <span className="text-white font-semibold">{totalSupply.toLocaleString()}</span> {formData.tokenSymbol || 'tokens'}
+      <div className="p-4 bg-surface-overlay/50 rounded-xl">
+        <p className="text-sm text-ink-muted">
+          Total Token Supply: <span className="text-ink font-semibold">{totalSupply.toLocaleString()}</span> {formData.tokenSymbol || 'tokens'}
         </p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Campaign Duration (days) *
           </label>
           <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-faint" />
             <input
               type="number"
               value={formData.deadlineDays}
               onChange={(e) => setFormData({ ...formData, deadlineDays: Number(e.target.value) })}
               min={PROJECT_LIMITS.MIN_FUNDRAISE_DAYS}
               max={PROJECT_LIMITS.MAX_FUNDRAISE_DAYS}
-              className="w-full pl-10 pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
             />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-ink-faint mt-1">
             {PROJECT_LIMITS.MIN_FUNDRAISE_DAYS}-{PROJECT_LIMITS.MAX_FUNDRAISE_DAYS} days
           </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Min Investment (USD)
           </label>
           <input
@@ -329,12 +329,12 @@ function StepFundingInfo({ formData, setFormData, errors }: StepProps) {
             value={formData.minInvestment}
             onChange={(e) => setFormData({ ...formData, minInvestment: Number(e.target.value) })}
             min={PROJECT_LIMITS.MIN_INVESTMENT}
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Max Investment (USD)
           </label>
           <input
@@ -342,9 +342,9 @@ function StepFundingInfo({ formData, setFormData, errors }: StepProps) {
             value={formData.maxInvestment}
             onChange={(e) => setFormData({ ...formData, maxInvestment: Number(e.target.value) })}
             placeholder="No limit"
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500 mt-1">Leave 0 for no limit</p>
+          <p className="text-xs text-ink-faint mt-1">Leave 0 for no limit</p>
         </div>
       </div>
     </div>
@@ -355,13 +355,13 @@ function StepInvestmentTerms({ formData, setFormData, errors }: StepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-white mb-2">Investment Terms</h2>
-        <p className="text-gray-400">Define returns for your investors</p>
+        <h2 className="text-xl font-bold text-ink mb-2">Investment Terms</h2>
+        <p className="text-ink-muted">Define returns for your investors</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Investor Share (%)
           </label>
           <input
@@ -370,13 +370,13 @@ function StepInvestmentTerms({ formData, setFormData, errors }: StepProps) {
             onChange={(e) => setFormData({ ...formData, investorSharePercent: Number(e.target.value) })}
             min={1}
             max={100}
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500 mt-1">% of profits shared with investors</p>
+          <p className="text-xs text-ink-faint mt-1">% of profits shared with investors</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Projected ROI (%)
           </label>
           <input
@@ -384,13 +384,13 @@ function StepInvestmentTerms({ formData, setFormData, errors }: StepProps) {
             value={formData.projectedROI}
             onChange={(e) => setFormData({ ...formData, projectedROI: Number(e.target.value) })}
             min={0}
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500 mt-1">Expected annual return</p>
+          <p className="text-xs text-ink-faint mt-1">Expected annual return</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             ROI Timeline (months)
           </label>
           <input
@@ -398,18 +398,18 @@ function StepInvestmentTerms({ formData, setFormData, errors }: StepProps) {
             value={formData.roiTimelineMonths}
             onChange={(e) => setFormData({ ...formData, roiTimelineMonths: Number(e.target.value) })}
             min={1}
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500 mt-1">Expected payback period</p>
+          <p className="text-xs text-ink-faint mt-1">Expected payback period</p>
         </div>
       </div>
 
-      <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl">
+      <div className="p-4 bg-warning/10 border border-warning/30 rounded-xl">
         <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-yellow-300">
+          <AlertCircle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-warning">
             <p className="font-medium mb-1">Disclaimer</p>
-            <p className="text-yellow-400/80">
+            <p className="text-warning/80">
               Projected ROI is an estimate and not guaranteed. Past performance does not guarantee future results.
               All investments carry risk.
             </p>
@@ -452,13 +452,13 @@ function StepMilestones({ formData, setFormData, errors }: StepProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-white mb-2">Milestones</h2>
-          <p className="text-gray-400">Define how funds will be released</p>
+          <h2 className="text-xl font-bold text-ink mb-2">Milestones</h2>
+          <p className="text-ink-muted">Define how funds will be released</p>
         </div>
         <button
           onClick={addMilestone}
           disabled={formData.milestones.length >= PROJECT_LIMITS.MAX_MILESTONES}
-          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white rounded-lg text-sm transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink rounded-lg text-sm transition-colors"
         >
           <Plus className="w-4 h-4" />
           Add Milestone
@@ -466,8 +466,8 @@ function StepMilestones({ formData, setFormData, errors }: StepProps) {
       </div>
 
       {totalPercentage !== 100 && (
-        <div className={`p-3 rounded-lg ${totalPercentage > 100 ? 'bg-red-500/10 border border-red-500/30' : 'bg-yellow-500/10 border border-yellow-500/30'}`}>
-          <p className={`text-sm ${totalPercentage > 100 ? 'text-red-400' : 'text-yellow-400'}`}>
+        <div className={`p-3 rounded-lg ${totalPercentage > 100 ? 'bg-danger/10 border border-danger/30' : 'bg-warning/10 border border-warning/30'}`}>
+          <p className={`text-sm ${totalPercentage > 100 ? 'text-danger' : 'text-warning'}`}>
             Total milestone percentage: {totalPercentage}% (must equal 100%)
           </p>
         </div>
@@ -475,68 +475,68 @@ function StepMilestones({ formData, setFormData, errors }: StepProps) {
 
       <div className="space-y-4">
         {formData.milestones.map((milestone, index) => (
-          <div key={index} className="p-4 bg-gray-700/50 border border-gray-600 rounded-xl">
+          <div key={index} className="p-4 bg-surface-overlay/50 border border-border-strong rounded-xl">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-white font-medium">Milestone {index + 1}</h3>
+              <h3 className="text-ink font-medium">Milestone {index + 1}</h3>
               {formData.milestones.length > 1 && (
                 <button
                   onClick={() => removeMilestone(index)}
-                  className="p-1 hover:bg-red-500/20 rounded transition-colors"
+                  className="p-1 hover:bg-danger/15 rounded transition-colors"
                 >
-                  <Trash2 className="w-4 h-4 text-red-400" />
+                  <Trash2 className="w-4 h-4 text-danger" />
                 </button>
               )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Title *</label>
+                <label className="block text-sm text-ink-muted mb-1">Title *</label>
                 <input
                   type="text"
                   value={milestone.title}
                   onChange={(e) => updateMilestone(index, 'title', e.target.value)}
                   placeholder="e.g., Land Acquisition"
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                  className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink text-sm focus:outline-none focus:border-gold-500"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">% of Funds *</label>
+                  <label className="block text-sm text-ink-muted mb-1">% of Funds *</label>
                   <input
                     type="number"
                     value={milestone.percentageOfFunds}
                     onChange={(e) => updateMilestone(index, 'percentageOfFunds', Number(e.target.value))}
                     min={1}
                     max={100}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink text-sm focus:outline-none focus:border-gold-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">Target Date</label>
+                  <label className="block text-sm text-ink-muted mb-1">Target Date</label>
                   <input
                     type="date"
                     value={milestone.targetDate}
                     onChange={(e) => updateMilestone(index, 'targetDate', e.target.value)}
-                    className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500"
+                    className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink text-sm focus:outline-none focus:border-gold-500"
                   />
                 </div>
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-sm text-gray-400 mb-1">Description</label>
+                <label className="block text-sm text-ink-muted mb-1">Description</label>
                 <textarea
                   value={milestone.description}
                   onChange={(e) => updateMilestone(index, 'description', e.target.value)}
                   placeholder="Describe what will be accomplished..."
                   rows={2}
-                  className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:outline-none focus:border-blue-500 resize-none"
+                  className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink text-sm focus:outline-none focus:border-gold-500 resize-none"
                 />
               </div>
             </div>
 
-            <div className="mt-3 text-sm text-gray-400">
+            <div className="mt-3 text-sm text-ink-muted">
               Amount: ${((formData.fundingGoal * milestone.percentageOfFunds) / 100).toLocaleString()}
             </div>
           </div>
@@ -550,13 +550,13 @@ function StepDocuments({ formData, setFormData, errors }: StepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-white mb-2">Documents & Media</h2>
-        <p className="text-gray-400">Upload supporting documents and images</p>
+        <h2 className="text-xl font-bold text-ink mb-2">Documents & Media</h2>
+        <p className="text-ink-muted">Upload supporting documents and images</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             <FileText className="w-4 h-4 inline mr-2" />
             Pitch Deck URL
           </label>
@@ -565,13 +565,13 @@ function StepDocuments({ formData, setFormData, errors }: StepProps) {
             value={formData.pitchDeckUrl}
             onChange={(e) => setFormData({ ...formData, pitchDeckUrl: e.target.value })}
             placeholder="https://... or ipfs://..."
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500 mt-1">PDF, PPT, or Google Slides link</p>
+          <p className="text-xs text-ink-faint mt-1">PDF, PPT, or Google Slides link</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             <FileText className="w-4 h-4 inline mr-2" />
             Legal Documents URL
           </label>
@@ -580,15 +580,15 @@ function StepDocuments({ formData, setFormData, errors }: StepProps) {
             value={formData.legalDocsUrl}
             onChange={(e) => setFormData({ ...formData, legalDocsUrl: e.target.value })}
             placeholder="https://... or ipfs://..."
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500 mt-1">Terms, agreements, compliance docs</p>
+          <p className="text-xs text-ink-faint mt-1">Terms, agreements, compliance docs</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             <Image className="w-4 h-4 inline mr-2" />
             Logo URL
           </label>
@@ -597,13 +597,13 @@ function StepDocuments({ formData, setFormData, errors }: StepProps) {
             value={formData.logoUrl}
             onChange={(e) => setFormData({ ...formData, logoUrl: e.target.value })}
             placeholder="https://... or ipfs://..."
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500 mt-1">Square image, 400x400px recommended</p>
+          <p className="text-xs text-ink-faint mt-1">Square image, 400x400px recommended</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             <Image className="w-4 h-4 inline mr-2" />
             Banner URL
           </label>
@@ -612,18 +612,18 @@ function StepDocuments({ formData, setFormData, errors }: StepProps) {
             value={formData.bannerUrl}
             onChange={(e) => setFormData({ ...formData, bannerUrl: e.target.value })}
             placeholder="https://... or ipfs://..."
-            className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500"
+            className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500 mt-1">Wide image, 1920x600px recommended</p>
+          <p className="text-xs text-ink-faint mt-1">Wide image, 1920x600px recommended</p>
         </div>
       </div>
 
-      <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+      <div className="p-4 bg-gold-500/10 border border-gold-500/30 rounded-xl">
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-blue-300">
+          <Info className="w-5 h-5 text-gold-400 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-gold-300">
             <p className="font-medium mb-1">IPFS Recommended</p>
-            <p className="text-blue-400/80">
+            <p className="text-gold-400/80">
               For permanent storage, upload your files to IPFS via Pinata or similar services.
               Use ipfs:// URLs for maximum decentralization.
             </p>
@@ -641,85 +641,85 @@ function StepReview({ formData }: { formData: FormData }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-bold text-white mb-2">Review & Submit</h2>
-        <p className="text-gray-400">Please review your project details before submitting</p>
+        <h2 className="text-xl font-bold text-ink mb-2">Review & Submit</h2>
+        <p className="text-ink-muted">Please review your project details before submitting</p>
       </div>
 
       {/* Basic Info */}
-      <div className="bg-gray-700/50 rounded-xl p-4">
-        <h3 className="text-white font-medium mb-3">Basic Information</h3>
+      <div className="bg-surface-overlay/50 rounded-xl p-4">
+        <h3 className="text-ink font-medium mb-3">Basic Information</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-gray-400">Project Name:</span>
-            <p className="text-white">{formData.name || '-'}</p>
+            <span className="text-ink-muted">Project Name:</span>
+            <p className="text-ink">{formData.name || '-'}</p>
           </div>
           <div>
-            <span className="text-gray-400">Category:</span>
-            <p className="text-white">{formData.category || '-'}</p>
+            <span className="text-ink-muted">Category:</span>
+            <p className="text-ink">{formData.category || '-'}</p>
           </div>
           <div className="col-span-2">
-            <span className="text-gray-400">Description:</span>
-            <p className="text-white line-clamp-3">{formData.description || '-'}</p>
+            <span className="text-ink-muted">Description:</span>
+            <p className="text-ink line-clamp-3">{formData.description || '-'}</p>
           </div>
         </div>
       </div>
 
       {/* Token & Funding */}
-      <div className="bg-gray-700/50 rounded-xl p-4">
-        <h3 className="text-white font-medium mb-3">Token & Funding</h3>
+      <div className="bg-surface-overlay/50 rounded-xl p-4">
+        <h3 className="text-ink font-medium mb-3">Token & Funding</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
           <div>
-            <span className="text-gray-400">Token:</span>
-            <p className="text-white">{formData.tokenName} ({formData.tokenSymbol})</p>
+            <span className="text-ink-muted">Token:</span>
+            <p className="text-ink">{formData.tokenName} ({formData.tokenSymbol})</p>
           </div>
           <div>
-            <span className="text-gray-400">Funding Goal:</span>
-            <p className="text-white">${formData.fundingGoal.toLocaleString()}</p>
+            <span className="text-ink-muted">Funding Goal:</span>
+            <p className="text-ink">${formData.fundingGoal.toLocaleString()}</p>
           </div>
           <div>
-            <span className="text-gray-400">Token Price:</span>
-            <p className="text-white">${formData.tokenPrice}</p>
+            <span className="text-ink-muted">Token Price:</span>
+            <p className="text-ink">${formData.tokenPrice}</p>
           </div>
           <div>
-            <span className="text-gray-400">Total Supply:</span>
-            <p className="text-white">{totalSupply.toLocaleString()}</p>
+            <span className="text-ink-muted">Total Supply:</span>
+            <p className="text-ink">{totalSupply.toLocaleString()}</p>
           </div>
           <div>
-            <span className="text-gray-400">Duration:</span>
-            <p className="text-white">{formData.deadlineDays} days</p>
+            <span className="text-ink-muted">Duration:</span>
+            <p className="text-ink">{formData.deadlineDays} days</p>
           </div>
           <div>
-            <span className="text-gray-400">Min Investment:</span>
-            <p className="text-white">${formData.minInvestment}</p>
+            <span className="text-ink-muted">Min Investment:</span>
+            <p className="text-ink">${formData.minInvestment}</p>
           </div>
         </div>
       </div>
 
       {/* Milestones */}
-      <div className="bg-gray-700/50 rounded-xl p-4">
-        <h3 className="text-white font-medium mb-3">
+      <div className="bg-surface-overlay/50 rounded-xl p-4">
+        <h3 className="text-ink font-medium mb-3">
           Milestones ({formData.milestones.length})
-          <span className={`ml-2 text-sm ${totalMilestonePercent === 100 ? 'text-green-400' : 'text-red-400'}`}>
+          <span className={`ml-2 text-sm ${totalMilestonePercent === 100 ? 'text-success' : 'text-danger'}`}>
             ({totalMilestonePercent}%)
           </span>
         </h3>
         <div className="space-y-2">
           {formData.milestones.map((m, i) => (
             <div key={i} className="flex justify-between text-sm">
-              <span className="text-gray-300">{m.title || `Milestone ${i + 1}`}</span>
-              <span className="text-white">{m.percentageOfFunds}% (${((formData.fundingGoal * m.percentageOfFunds) / 100).toLocaleString()})</span>
+              <span className="text-ink-muted">{m.title || `Milestone ${i + 1}`}</span>
+              <span className="text-ink">{m.percentageOfFunds}% (${((formData.fundingGoal * m.percentageOfFunds) / 100).toLocaleString()})</span>
             </div>
           ))}
         </div>
       </div>
 
       {/* Fee Notice */}
-      <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
+      <div className="p-4 bg-success/10 border border-success/30 rounded-xl">
         <div className="flex items-start gap-3">
-          <DollarSign className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
-          <div className="text-sm text-green-300">
+          <DollarSign className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-success">
             <p className="font-medium mb-1">Submission Fee: $500</p>
-            <p className="text-green-400/80">
+            <p className="text-success/80">
               A one-time $500 submission fee is required. This fee covers unlimited resubmissions
               if your project needs revisions. You'll be redirected to payment after submission.
             </p>
@@ -856,11 +856,11 @@ export default function CrowdfundingSubmitPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <AlertCircle className="w-16 h-16 text-yellow-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Connect Wallet</h2>
-          <p className="text-gray-400 mb-6">Please connect your wallet to submit a crowdfunding project.</p>
+          <AlertCircle className="w-16 h-16 text-warning mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Connect Wallet</h2>
+          <p className="text-ink-muted mb-6">Please connect your wallet to submit a crowdfunding project.</p>
         </div>
       </div>
     );
@@ -869,19 +869,19 @@ export default function CrowdfundingSubmitPage() {
   const CurrentStepComponent = STEPS[currentStep].component;
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8 px-4">
+    <div className="min-h-screen bg-surface-sunken py-8 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <Link
             href="/dashboard?tab=owner"
-            className="text-gray-400 hover:text-white flex items-center gap-2 mb-4"
+            className="text-ink-muted hover:text-ink flex items-center gap-2 mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Link>
-          <h1 className="text-3xl font-bold text-white">Submit Crowdfunding Project</h1>
-          <p className="text-gray-400 mt-2">Complete all steps to submit your project for review</p>
+          <h1 className="text-3xl font-bold text-ink">Submit Crowdfunding Project</h1>
+          <p className="text-ink-muted mt-2">Complete all steps to submit your project for review</p>
         </div>
 
         {/* Progress Steps */}
@@ -892,10 +892,10 @@ export default function CrowdfundingSubmitPage() {
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors ${
                     index < currentStep
-                      ? 'bg-green-600 text-white'
+                      ? 'bg-green-600 text-ink'
                       : index === currentStep
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-700 text-gray-400'
+                      ? 'bg-gold-600 text-ink'
+                      : 'bg-surface-overlay text-ink-muted'
                   }`}
                 >
                   {index < currentStep ? <Check className="w-4 h-4" /> : index + 1}
@@ -903,7 +903,7 @@ export default function CrowdfundingSubmitPage() {
                 {index < STEPS.length - 1 && (
                   <div
                     className={`w-full h-1 mx-2 ${
-                      index < currentStep ? 'bg-green-600' : 'bg-gray-700'
+                      index < currentStep ? 'bg-green-600' : 'bg-surface-overlay'
                     }`}
                     style={{ width: '40px' }}
                   />
@@ -916,7 +916,7 @@ export default function CrowdfundingSubmitPage() {
               <span
                 key={step.id}
                 className={`text-xs ${
-                  index === currentStep ? 'text-white' : 'text-gray-500'
+                  index === currentStep ? 'text-ink' : 'text-ink-faint'
                 }`}
               >
                 {step.title}
@@ -926,7 +926,7 @@ export default function CrowdfundingSubmitPage() {
         </div>
 
         {/* Form Content */}
-        <div className="bg-gray-800 rounded-2xl border border-gray-700 p-6 mb-6">
+        <div className="bg-surface rounded-2xl border border-border p-6 mb-6">
           {currentStep === STEPS.length - 1 ? (
             <StepReview formData={formData} />
           ) : (
@@ -940,9 +940,9 @@ export default function CrowdfundingSubmitPage() {
 
         {/* Error Message */}
         {submitError && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-            <p className="text-red-400">{submitError}</p>
+          <div className="mb-6 p-4 bg-danger/10 border border-danger/30 rounded-xl flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-danger flex-shrink-0" />
+            <p className="text-danger">{submitError}</p>
           </div>
         )}
 
@@ -951,7 +951,7 @@ export default function CrowdfundingSubmitPage() {
           {currentStep > 0 && (
             <button
               onClick={handleBack}
-              className="flex-1 py-4 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-4 bg-surface-overlay hover:bg-border-strong text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               <ArrowLeft className="w-5 h-5" />
               Back
@@ -961,7 +961,7 @@ export default function CrowdfundingSubmitPage() {
           {currentStep < STEPS.length - 1 ? (
             <button
               onClick={handleNext}
-              className="flex-1 py-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-4 bg-gold-600 hover:bg-gold-700 text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               Next
               <ArrowRight className="w-5 h-5" />
@@ -970,7 +970,7 @@ export default function CrowdfundingSubmitPage() {
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="flex-1 py-4 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-4 bg-green-600 hover:bg-green-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>

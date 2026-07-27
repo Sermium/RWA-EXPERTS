@@ -20,6 +20,7 @@ import {
   getTokenSymbol,
 } from '../helpers';
 import { ProjectContractsModal } from '../components';
+import { ScrollText, AlertTriangle } from 'lucide-react';
 
 interface ProjectManagementProps {
   projects: Project[];
@@ -248,55 +249,55 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-white">Project Management</h2>
-        <button onClick={onRefresh} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm">
+        <h2 className="text-2xl font-bold text-ink">Project Management</h2>
+        <button onClick={onRefresh} className="px-4 py-2 bg-gold-600 hover:bg-gold-700 rounded-lg text-ink text-sm">
           Refresh
         </button>
       </div>
 
-      <div className="bg-gray-800 rounded-xl overflow-hidden">
+      <div className="bg-surface rounded-xl overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-700">
+          <thead className="bg-surface-raised">
             <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">ID</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Name</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Status</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Raised</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Goal</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Refunds</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase">Actions</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-ink-muted uppercase">ID</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-ink-muted uppercase">Name</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-ink-muted uppercase">Status</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-ink-muted uppercase">Raised</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-ink-muted uppercase">Goal</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-ink-muted uppercase">Refunds</th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-ink-muted uppercase">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700">
+          <tbody className="divide-y divide-border">
             {projects.map(project => (
-              <tr key={project.id} className="hover:bg-gray-700/50">
-                <td className="px-4 py-4 text-white">#{project.id}</td>
-                <td className="px-4 py-4 text-white">{project.name || `Project ${project.id}`}</td>
+              <tr key={project.id} className="hover:bg-surface-raised/50">
+                <td className="px-4 py-4 text-ink">#{project.id}</td>
+                <td className="px-4 py-4 text-ink">{project.name || `Project ${project.id}`}</td>
                 <td className="px-4 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium text-white ${STATUS_COLORS[project.status]}`}>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium text-ink ${STATUS_COLORS[project.status]}`}>
                     {STATUS_NAMES[project.status]}
                   </span>
                 </td>
-                <td className="px-4 py-4 text-white">{formatUSD(project.totalRaised)}</td>
-                <td className="px-4 py-4 text-gray-400">{formatUSD(project.fundingGoal)}</td>
+                <td className="px-4 py-4 text-ink">{formatUSD(project.totalRaised)}</td>
+                <td className="px-4 py-4 text-ink-muted">{formatUSD(project.fundingGoal)}</td>
                 <td className="px-4 py-4">
                   {project.refundsEnabled ? (
-                    <span className="text-green-400 text-sm">Enabled</span>
+                    <span className="text-success text-sm">Enabled</span>
                   ) : (
-                    <span className="text-gray-500 text-sm">Disabled</span>
+                    <span className="text-ink-faint text-sm">Disabled</span>
                   )}
                 </td>
                 <td className="px-4 py-4">
                   <div className="flex gap-2">
                     <button
                       onClick={() => openDetailModal(project)}
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-700 rounded text-xs text-white"
+                      className="px-3 py-1 bg-gold-600 hover:bg-gold-700 rounded text-xs text-ink"
                     >
                       Details
                     </button>
                     <button
                       onClick={() => openContractsModal(project)}
-                      className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-xs text-white"
+                      className="px-3 py-1 bg-gold-600 hover:bg-gold-700 rounded text-xs text-ink"
                     >
                       Contracts
                     </button>
@@ -310,29 +311,29 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
 
       {/* Detail Modal */}
       {showDetailModal && selectedProject && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-start mb-6">
                 <div>
-                  <h3 className="text-xl font-bold text-white">{selectedProject.name || `Project #${selectedProject.id}`}</h3>
-                  <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium text-white ${STATUS_COLORS[selectedProject.status]}`}>
+                  <h3 className="text-xl font-bold text-ink">{selectedProject.name || `Project #${selectedProject.id}`}</h3>
+                  <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium text-ink ${STATUS_COLORS[selectedProject.status]}`}>
                     {STATUS_NAMES[selectedProject.status]}
                   </span>
                 </div>
-                <button onClick={closeDetailModal} className="text-gray-400 hover:text-white text-2xl">×</button>
+                <button onClick={closeDetailModal} className="text-ink-muted hover:text-ink text-2xl">×</button>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <p className="text-gray-400 text-sm">Funding Goal</p>
-                  <p className="text-white text-lg font-semibold">
+                <div className="bg-surface-raised rounded-lg p-4">
+                  <p className="text-ink-muted text-sm">Funding Goal</p>
+                  <p className="text-ink text-lg font-semibold">
                     {escrowFunding ? formatUSD(escrowFunding.fundingGoal) : formatUSD(selectedProject.fundingGoal)}
                   </p>
                 </div>
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <p className="text-gray-400 text-sm">Total Raised</p>
-                  <p className="text-white text-lg font-semibold">
+                <div className="bg-surface-raised rounded-lg p-4">
+                  <p className="text-ink-muted text-sm">Total Raised</p>
+                  <p className="text-ink text-lg font-semibold">
                     {escrowFunding ? formatUSD(escrowFunding.totalRaised) : formatUSD(selectedProject.totalRaised)}
                   </p>
                 </div>
@@ -345,16 +346,16 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                     closeDetailModal();
                     openContractsModal(selectedProject);
                   }}
-                  className="w-full p-4 bg-purple-600/20 border border-purple-500/30 rounded-lg hover:bg-purple-600/30 transition flex items-center justify-between"
+                  className="w-full p-4 bg-gold-600/20 border border-gold-500/30 rounded-lg hover:bg-gold-600/30 transition flex items-center justify-between"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">📜</span>
+                    <ScrollText className="w-6 h-6 text-gold-300" />
                     <div className="text-left">
-                      <p className="text-white font-medium">View All Deployed Contracts</p>
-                      <p className="text-purple-300 text-sm">Security Token, Escrow, Compliance, Modules...</p>
+                      <p className="text-ink font-medium">View All Deployed Contracts</p>
+                      <p className="text-gold-300 text-sm">Security Token, Escrow, Compliance, Modules...</p>
                     </div>
                   </div>
-                  <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </button>
@@ -363,21 +364,21 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
               {/* Token Balances */}
               {tokenBalances.length > 0 && (
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-400 uppercase tracking-wide mb-3">Token Balances</h4>
+                  <h4 className="text-sm font-medium text-ink-muted uppercase tracking-wide mb-3">Token Balances</h4>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {tokenBalances.map((tb, index) => (
-                      <div key={index} className="bg-gray-700 rounded-lg p-4">
+                      <div key={index} className="bg-surface-raised rounded-lg p-4">
                         <div className="flex justify-between items-center mb-2">
-                          <span className="text-white font-medium">{tb.symbol}</span>
+                          <span className="text-ink font-medium">{tb.symbol}</span>
                         </div>
                         <div className="space-y-1 text-sm">
                           <div className="flex justify-between">
-                            <span className="text-gray-400">Deposited:</span>
-                            <span className="text-white">{formatTokenAmount(tb.deposited, tb.token)}</span>
+                            <span className="text-ink-muted">Deposited:</span>
+                            <span className="text-ink">{formatTokenAmount(tb.deposited, tb.token)}</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-400">Available:</span>
-                            <span className="text-green-400 font-medium">{formatTokenAmount(tb.available, tb.token)}</span>
+                            <span className="text-ink-muted">Available:</span>
+                            <span className="text-success font-medium">{formatTokenAmount(tb.available, tb.token)}</span>
                           </div>
                         </div>
                       </div>
@@ -390,36 +391,36 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
               {selectedProject.escrowVault !== ZERO_ADDRESS && (
                 <div className="mb-6">
                   <div className="flex justify-between items-center mb-4">
-                    <h4 className="text-sm font-medium text-gray-400 uppercase tracking-wide">Milestones</h4>
+                    <h4 className="text-sm font-medium text-ink-muted uppercase tracking-wide">Milestones</h4>
                     <button
                       onClick={handleRefreshMilestones}
                       disabled={milestonesLoading}
-                      className="px-3 py-1 bg-gray-600 hover:bg-gray-500 disabled:opacity-50 rounded text-xs text-white"
+                      className="px-3 py-1 bg-surface-overlay hover:bg-gray-500 disabled:opacity-50 rounded text-xs text-ink"
                     >
                       {milestonesLoading ? 'Loading...' : 'Refresh'}
                     </button>
                   </div>
 
                   {milestonesLoading ? (
-                    <div className="bg-gray-700 rounded-lg p-4">
-                      <p className="text-gray-400">Loading milestones...</p>
+                    <div className="bg-surface-raised rounded-lg p-4">
+                      <p className="text-ink-muted">Loading milestones...</p>
                     </div>
                   ) : milestones.length === 0 ? (
-                    <div className="bg-gray-700 rounded-lg p-4">
-                      <p className="text-gray-400">No milestones created yet.</p>
+                    <div className="bg-surface-raised rounded-lg p-4">
+                      <p className="text-ink-muted">No milestones created yet.</p>
                     </div>
                   ) : (
                     <div className="space-y-3">
                       {milestones.map((milestone, index) => {
                         const statusInfo = MILESTONE_STATUS[milestone.status] || { label: 'Unknown', color: 'bg-gray-500' };
                         return (
-                          <div key={index} className="bg-gray-700 rounded-lg p-4">
+                          <div key={index} className="bg-surface-raised rounded-lg p-4">
                             <div className="flex justify-between items-start mb-2">
                               <div>
-                                <p className="text-white font-medium">{milestone.description || `Milestone ${index + 1}`}</p>
-                                <p className="text-gray-400 text-sm">{Number(milestone.percentage) / 100}% of funds</p>
+                                <p className="text-ink font-medium">{milestone.description || `Milestone ${index + 1}`}</p>
+                                <p className="text-ink-muted text-sm">{Number(milestone.percentage) / 100}% of funds</p>
                               </div>
-                              <span className={`px-3 py-1 rounded-full text-xs font-medium text-white ${statusInfo.color}`}>
+                              <span className={`px-3 py-1 rounded-full text-xs font-medium text-ink ${statusInfo.color}`}>
                                 {statusInfo.label}
                               </span>
                             </div>
@@ -432,7 +433,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                                   setShowStatusModal(true);
                                 }}
                                 disabled={processing || txLoading}
-                                className="px-3 py-1 bg-gray-600 hover:bg-gray-500 disabled:opacity-50 rounded text-xs text-white"
+                                className="px-3 py-1 bg-surface-overlay hover:bg-gray-500 disabled:opacity-50 rounded text-xs text-ink"
                               >
                                 Change Status
                               </button>
@@ -442,7 +443,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                                   <button
                                     onClick={() => handleApproveMilestone(index)}
                                     disabled={processing || txLoading}
-                                    className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded text-xs text-white"
+                                    className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded text-xs text-ink"
                                   >
                                     Approve
                                   </button>
@@ -452,7 +453,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                                       setShowRejectModal(true);
                                     }}
                                     disabled={processing || txLoading}
-                                    className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded text-xs text-white"
+                                    className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded text-xs text-ink"
                                   >
                                     Reject
                                   </button>
@@ -462,7 +463,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                                 <button
                                   onClick={() => handleReleaseFunds(index)}
                                   disabled={processing || txLoading}
-                                  className="px-3 py-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded text-xs text-white"
+                                  className="px-3 py-1 bg-gold-600 hover:bg-gold-700 disabled:opacity-50 rounded text-xs text-ink"
                                 >
                                   Release Funds
                                 </button>
@@ -477,13 +478,13 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
               )}
 
               {(processing || txLoading) && (
-                <div className="p-4 rounded-lg bg-blue-900/50 text-blue-400 mb-4">
+                <div className="p-4 rounded-lg bg-gold-900/50 text-gold-400 mb-4">
                   Processing transaction... Please confirm in your wallet.
                 </div>
               )}
 
               {result && (
-                <div className={`p-4 rounded-lg ${result.success ? 'bg-green-900/50 text-green-400' : 'bg-red-900/50 text-red-400'}`}>
+                <div className={`p-4 rounded-lg ${result.success ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger'}`}>
                   {result.message}
                 </div>
               )}
@@ -505,14 +506,14 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
 
       {/* Reject Milestone Modal */}
       {showRejectModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Reject Milestone</h3>
+        <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface rounded-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-ink mb-4">Reject Milestone</h3>
             <textarea
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Enter rejection reason..."
-              className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 mb-4"
+              className="w-full p-3 bg-surface-raised border border-border-strong rounded-lg text-ink placeholder-ink-faint mb-4"
               rows={3}
             />
             <div className="flex gap-3">
@@ -522,14 +523,14 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                   setRejectReason('');
                   setSelectedMilestoneIndex(null);
                 }}
-                className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-white"
+                className="flex-1 px-4 py-2 bg-surface-overlay hover:bg-surface-raised rounded-lg text-ink"
               >
                 Cancel
               </button>
               <button
                 onClick={handleRejectMilestone}
                 disabled={processing || !rejectReason.trim()}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-white"
+                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-ink"
               >
                 {processing ? 'Processing...' : 'Reject'}
               </button>
@@ -540,16 +541,16 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
 
       {/* Status Change Modal */}
       {showStatusModal && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-gray-800 rounded-xl max-w-md w-full p-6">
-            <h3 className="text-xl font-bold text-white mb-4">Change Milestone Status</h3>
-            <p className="text-yellow-400 text-sm mb-4">⚠️ Admin override - use with caution</p>
+        <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface rounded-xl max-w-md w-full p-6">
+            <h3 className="text-xl font-bold text-ink mb-4">Change Milestone Status</h3>
+            <p className="text-warning text-sm mb-4 flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> Admin override - use with caution</p>
             <div className="mb-4">
-              <label className="block text-gray-400 text-sm mb-2">New Status</label>
+              <label className="block text-ink-muted text-sm mb-2">New Status</label>
               <select
                 value={newMilestoneStatus}
                 onChange={(e) => setNewMilestoneStatus(Number(e.target.value))}
-                className="w-full p-3 bg-gray-700 border border-gray-600 rounded-lg text-white"
+                className="w-full p-3 bg-surface-raised border border-border-strong rounded-lg text-ink"
               >
                 <option value={0}>0 - Pending</option>
                 <option value={1}>1 - Submitted</option>
@@ -565,14 +566,14 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                   setShowStatusModal(false);
                   setStatusMilestoneIndex(null);
                 }}
-                className="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 rounded-lg text-white"
+                className="flex-1 px-4 py-2 bg-surface-overlay hover:bg-surface-raised rounded-lg text-ink"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSetMilestoneStatus}
                 disabled={processing}
-                className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 rounded-lg text-white"
+                className="flex-1 px-4 py-2 bg-gold-600 hover:bg-gold-700 disabled:opacity-50 rounded-lg text-ink"
               >
                 {processing ? 'Processing...' : 'Update Status'}
               </button>

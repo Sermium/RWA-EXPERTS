@@ -218,7 +218,7 @@ async function markReminderSent(dealId: string, itemId: string, type: string) {
 }
 
 function getDeadlineTitle(type: string, daysUntilDue: number): string {
-  const urgencyPrefix = daysUntilDue <= 1 ? '🚨 ' : daysUntilDue <= 3 ? '⚠️ ' : '';
+  const urgencyPrefix = daysUntilDue <= 1 ? 'Urgent: ' : daysUntilDue <= 3 ? 'Reminder: ' : '';
   
   const titles: Record<string, string> = {
     milestone_due: `${urgencyPrefix}Milestone Due ${daysUntilDue <= 1 ? 'Tomorrow' : `in ${daysUntilDue} days`}`,
@@ -244,7 +244,7 @@ function getDeadlineMessage(reminder: DeadlineReminder, daysUntilDue: number): s
 }
 
 function getDeadlineEmailSubject(type: string, daysUntilDue: number, reference: string): string {
-  const urgency = daysUntilDue <= 1 ? '🚨 URGENT: ' : daysUntilDue <= 3 ? '⚠️ ' : '';
+  const urgency = daysUntilDue <= 1 ? 'URGENT: ' : daysUntilDue <= 3 ? 'Reminder: ' : '';
   
   const subjects: Record<string, string> = {
     milestone_due: `${urgency}Milestone Due ${daysUntilDue <= 1 ? 'Tomorrow' : `in ${daysUntilDue} Days`} - ${reference}`,
@@ -288,7 +288,7 @@ function generateDeadlineEmail(
     <body>
       <div class="container">
         <div class="header">
-          <h1>${daysUntilDue <= 1 ? '🚨' : '⏰'} Deadline Reminder</h1>
+          <h1>Deadline Reminder</h1>
         </div>
         <div class="content">
           <div class="countdown">

@@ -10,8 +10,8 @@ export default function PrivacyPage() {
   return (
     <article className="max-w-4xl prose prose-invert prose-cyan">
       <div className="mb-8 not-prose">
-        <h1 className="text-4xl font-bold text-white mb-2">Privacy Policy</h1>
-        <p className="text-gray-400">Last Updated: March 2026</p>
+        <h1 className="text-4xl font-display font-bold text-ink mb-2">Privacy Policy</h1>
+        <p className="text-ink-muted">Last Updated: March 2026</p>
       </div>
 
       <section className="mb-8">
@@ -133,25 +133,25 @@ export default function PrivacyPage() {
         <div className="not-prose my-4 overflow-x-auto">
           <table className="min-w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-700">
-                <th className="text-left py-2 px-4 text-gray-400">Data Type</th>
-                <th className="text-left py-2 px-4 text-gray-400">Retention Period</th>
+              <tr className="border-b border-border">
+                <th className="text-left py-2 px-4 text-ink-muted">Data Type</th>
+                <th className="text-left py-2 px-4 text-ink-muted">Retention Period</th>
               </tr>
             </thead>
-            <tbody className="text-gray-300">
-              <tr className="border-b border-gray-800">
+            <tbody className="text-ink-muted">
+              <tr className="border-b border-border">
                 <td className="py-2 px-4">KYC Documents</td>
                 <td className="py-2 px-4">7 years after relationship ends</td>
               </tr>
-              <tr className="border-b border-gray-800">
+              <tr className="border-b border-border">
                 <td className="py-2 px-4">Transaction Records</td>
                 <td className="py-2 px-4">7 years</td>
               </tr>
-              <tr className="border-b border-gray-800">
+              <tr className="border-b border-border">
                 <td className="py-2 px-4">Account Data</td>
                 <td className="py-2 px-4">Until deletion + 3 years</td>
               </tr>
-              <tr className="border-b border-gray-800">
+              <tr className="border-b border-border">
                 <td className="py-2 px-4">Marketing Preferences</td>
                 <td className="py-2 px-4">Until consent withdrawn</td>
               </tr>
