@@ -596,7 +596,7 @@ export default function EditApplicationPage() {
             <p className="text-danger mb-6">{error}</p>
             <Link
               href="/tokenize"
-              className="px-6 py-3 bg-surface-overlay hover:bg-gray-600 text-ink font-semibold rounded-lg transition inline-flex items-center"
+              className="px-6 py-3 bg-surface-overlay hover:bg-border-strong text-ink font-semibold rounded-lg transition inline-flex items-center"
             >
               <ArrowLeft className="mr-2 w-4 h-4" />
               Back to Tokenization
@@ -671,7 +671,7 @@ export default function EditApplicationPage() {
           <div className="mb-6 p-4 bg-danger-muted border border-danger/30 rounded-lg flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-danger" />
             <p className="text-danger">{error}</p>
-            <button onClick={() => setError('')} className="ml-auto text-danger hover:text-red-300">
+            <button onClick={() => setError('')} className="ml-auto text-danger hover:text-danger">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -985,7 +985,7 @@ export default function EditApplicationPage() {
                             <button
                               type="button"
                               onClick={() => removeDocument(doc.id)}
-                              className="p-2 text-danger hover:text-red-300 transition"
+                              className="p-2 text-danger hover:text-danger transition"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

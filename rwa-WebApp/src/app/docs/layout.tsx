@@ -43,7 +43,7 @@ export default function DocsLayout({
               Home
             </Link>
             <ChevronRight className="w-4 h-4 text-ink-faint" />
-            <span className="text-cyan-400">Documentation</span>
+            <span className="text-gold">Documentation</span>
           </nav>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default function DocsLayout({
                   href={item.href}
                   className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/30'
+                      ? 'bg-gold/20 text-gold border border-gold/30'
                       : 'text-ink-muted hover:bg-surface-overlay/50 hover:text-ink'
                   }`}
                 >

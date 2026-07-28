@@ -19,8 +19,8 @@ export default function DisclaimerPage() {
         {/* Header */}
         <div className="mb-12">
           <div className="flex items-center gap-3 mb-4">
-            <div className="p-3 bg-red-500/10 rounded-lg">
-              <AlertTriangle className="w-8 h-8 text-red-400" />
+            <div className="p-3 bg-danger/10 rounded-lg">
+              <AlertTriangle className="w-8 h-8 text-danger" />
             </div>
             <div>
               <h1 className="text-3xl font-display font-bold text-ink">Risk Disclaimer</h1>
@@ -168,7 +168,7 @@ export default function DisclaimerPage() {
             <h2 className="text-xl font-display font-semibold text-ink mb-4">5. Asset-Specific Risks</h2>
             <div className="space-y-4">
               <div className="bg-surface rounded-lg p-4">
-                <h3 className="text-lg font-medium text-cyan-400 mb-2">Real Estate Risks</h3>
+                <h3 className="text-lg font-medium text-gold mb-2">Real Estate Risks</h3>
                 <p className="text-ink-muted text-sm">
                   Property values can decline due to market conditions, location factors, or property 
                   condition. Rental income may vary. Properties may require maintenance or face 
@@ -177,7 +177,7 @@ export default function DisclaimerPage() {
               </div>
 
               <div className="bg-surface rounded-lg p-4">
-                <h3 className="text-lg font-medium text-cyan-400 mb-2">Business Equity Risks</h3>
+                <h3 className="text-lg font-medium text-gold mb-2">Business Equity Risks</h3>
                 <p className="text-ink-muted text-sm">
                   Businesses may underperform, face competition, or fail entirely. Dividends are not 
                   guaranteed. Minority shareholders may have limited influence over business decisions.
@@ -185,7 +185,7 @@ export default function DisclaimerPage() {
               </div>
 
               <div className="bg-surface rounded-lg p-4">
-                <h3 className="text-lg font-medium text-cyan-400 mb-2">Commodity Risks</h3>
+                <h3 className="text-lg font-medium text-gold mb-2">Commodity Risks</h3>
                 <p className="text-ink-muted text-sm">
                   Commodity prices are affected by global supply and demand, geopolitical events, 
                   weather, and economic conditions. Storage and custody involve additional risks and costs.

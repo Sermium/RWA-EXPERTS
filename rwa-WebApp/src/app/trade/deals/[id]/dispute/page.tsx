@@ -128,7 +128,7 @@ const DISPUTE_STATUS_INFO: Record<DisputeStatus, {
 }> = {
   draft: {
     label: 'Draft',
-    color: 'bg-gray-500/10 text-ink-muted border-gray-500/20',
+    color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/20',
     description: 'Dispute is being prepared',
   },
   submitted: {
@@ -143,7 +143,7 @@ const DISPUTE_STATUS_INFO: Record<DisputeStatus, {
   },
   evidence_requested: {
     label: 'Evidence Requested',
-    color: 'bg-yellow-500/10 text-warning border-yellow-500/20',
+    color: 'bg-warning/10 text-warning border-warning/20',
     description: 'Additional evidence required',
   },
   mediation: {
@@ -153,27 +153,27 @@ const DISPUTE_STATUS_INFO: Record<DisputeStatus, {
   },
   arbitration: {
     label: 'In Arbitration',
-    color: 'bg-red-500/10 text-danger border-red-500/20',
+    color: 'bg-danger/10 text-danger border-danger/20',
     description: 'Arbiter will make final decision',
   },
   resolved_buyer: {
     label: 'Resolved - Buyer',
-    color: 'bg-green-500/10 text-success border-green-500/20',
+    color: 'bg-success/10 text-success border-success/20',
     description: 'Resolved in favor of buyer',
   },
   resolved_seller: {
     label: 'Resolved - Seller',
-    color: 'bg-green-500/10 text-success border-green-500/20',
+    color: 'bg-success/10 text-success border-success/20',
     description: 'Resolved in favor of seller',
   },
   resolved_split: {
     label: 'Resolved - Split',
-    color: 'bg-green-500/10 text-success border-green-500/20',
+    color: 'bg-success/10 text-success border-success/20',
     description: 'Resolved with split decision',
   },
   withdrawn: {
     label: 'Withdrawn',
-    color: 'bg-gray-500/10 text-ink-muted border-gray-500/20',
+    color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/20',
     description: 'Dispute withdrawn by initiator',
   },
 };
@@ -212,7 +212,7 @@ function DisputeTimeline({ dispute }: { dispute: Dispute }) {
               <div className="flex flex-col items-center">
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all ${
                   isCompleted 
-                    ? 'bg-green-500 border-green-500 text-ink'
+                    ? 'bg-success border-success text-ink'
                     : isCurrent
                       ? 'bg-gold-500 border-gold-500 text-ink'
                       : 'bg-surface-raised border-border text-ink-faint'
@@ -227,7 +227,7 @@ function DisputeTimeline({ dispute }: { dispute: Dispute }) {
               </div>
               {index < stages.length - 1 && (
                 <div className={`w-12 md:w-20 h-0.5 mx-2 ${
-                  index < currentIndex ? 'bg-green-500' : 'bg-surface-overlay'
+                  index < currentIndex ? 'bg-success' : 'bg-surface-overlay'
                 }`} />
               )}
             </div>
@@ -263,9 +263,9 @@ function MessageThread({
     switch (senderType) {
       case 'buyer': return 'bg-gold-500';
       case 'seller': return 'bg-gold-500';
-      case 'arbiter': return 'bg-yellow-500';
-      case 'system': return 'bg-gray-500';
-      default: return 'bg-gray-500';
+      case 'arbiter': return 'bg-warning';
+      case 'system': return 'bg-ink-faint';
+      default: return 'bg-ink-faint';
     }
   };
 
@@ -601,7 +601,7 @@ export default function DisputePage() {
                       key={key}
                       className={`p-4 rounded-xl border cursor-pointer transition-all ${
                         disputeType === key
-                          ? 'bg-red-500/10 border-red-500/50'
+                          ? 'bg-danger/10 border-danger/50'
                           : 'bg-surface-sunken border-border hover:border-border-strong'
                       }`}
                     >
@@ -630,7 +630,7 @@ export default function DisputePage() {
                   onChange={(e) => setDescription(e.target.value)}
                   rows={6}
                   placeholder="Describe the issue in detail, including dates, amounts, and any relevant circumstances..."
-                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink placeholder-ink-faint focus:border-red-500 outline-none resize-none"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink placeholder-ink-faint focus:border-danger outline-none resize-none"
                 />
               </div>
 
@@ -644,7 +644,7 @@ export default function DisputePage() {
                   value={claimedAmount || ''}
                   onChange={(e) => setClaimedAmount(parseFloat(e.target.value) || 0)}
                   placeholder="Amount you're claiming"
-                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink placeholder-ink-faint focus:border-red-500 outline-none"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink placeholder-ink-faint focus:border-danger outline-none"
                 />
               </div>
 
@@ -673,7 +673,7 @@ export default function DisputePage() {
               </div>
 
               {/* Warning */}
-              <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-4">
+              <div className="bg-warning/10 border border-warning/20 rounded-xl p-4">
                 <div className="flex items-start">
                   <AlertTriangle className="h-5 w-5 text-warning mt-0.5 mr-3" />
                   <div>
@@ -690,7 +690,7 @@ export default function DisputePage() {
               <button
                 onClick={handleSubmitDispute}
                 disabled={!description || !claimedAmount || isSubmitting}
-                className="w-full py-4 bg-red-500 text-ink font-semibold rounded-xl hover:bg-red-600 transition-colors disabled:opacity-50 flex items-center justify-center"
+                className="w-full py-4 bg-danger text-ink font-semibold rounded-xl hover:bg-danger transition-colors disabled:opacity-50 flex items-center justify-center"
               >
                 {isSubmitting ? (
                   <>
@@ -801,7 +801,7 @@ export default function DisputePage() {
 
                 {/* Resolution */}
                 {dispute.resolution && (
-                  <div className="bg-green-500/10 rounded-xl p-6 border border-green-500/20">
+                  <div className="bg-success/10 rounded-xl p-6 border border-success/20">
                     <h3 className="text-lg font-semibold text-success mb-4 flex items-center">
                       <CheckCircle2 className="h-5 w-5 mr-2" />
                       Resolution
@@ -898,7 +898,7 @@ export default function DisputePage() {
 
             {/* Actions */}
             {!isResolved && dispute.initiator.toLowerCase() === address?.toLowerCase() && (
-              <button className="w-full py-3 bg-surface-overlay text-ink rounded-xl hover:bg-gray-600 transition-colors">
+              <button className="w-full py-3 bg-surface-overlay text-ink rounded-xl hover:bg-border-strong transition-colors">
                 Withdraw Dispute
               </button>
             )}

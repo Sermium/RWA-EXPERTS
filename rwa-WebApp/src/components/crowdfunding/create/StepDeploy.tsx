@@ -400,11 +400,11 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
 
   // ============ MODAL HEADER (shared across all states) ============
   const ModalHeader = ({ title }: { title: string }) => (
-    <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-700">
-      <h2 className="text-xl font-semibold text-white">{title}</h2>
+    <div className="flex items-center justify-between mb-6 pb-4 border-b border-surface-overlay">
+      <h2 className="text-xl font-semibold text-ink">{title}</h2>
       <div className="flex items-center gap-3">
         {isTestnet && (
-          <span className="px-2.5 py-1 bg-yellow-500/20 text-yellow-400 text-xs font-medium rounded-full">
+          <span className="px-2.5 py-1 bg-warning/20 text-warning text-xs font-medium rounded-full">
             Testnet
           </span>
         )}
@@ -416,7 +416,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
         {onClose && (
           <button 
             onClick={onClose}
-            className="ml-2 p-1.5 text-gray-400 hover:text-white hover:bg-slate-700 rounded-lg transition-colors"
+            className="ml-2 p-1.5 text-ink-muted hover:text-ink hover:bg-surface-overlay rounded-lg transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -440,12 +440,12 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-white mb-2">Connect Your Wallet</h3>
-          <p className="text-sm text-gray-400 mb-6">Connect your wallet to activate the fundraise.</p>
+          <h3 className="text-lg font-semibold text-ink mb-2">Connect Your Wallet</h3>
+          <p className="text-sm text-ink-muted mb-6">Connect your wallet to activate the fundraise.</p>
           <button 
             onClick={handleConnect} 
             disabled={status === 'connecting'} 
-            className="px-8 py-3 bg-gold-600 text-white rounded-lg font-medium hover:bg-gold-700 disabled:opacity-50 transition-colors"
+            className="px-8 py-3 bg-gold-600 text-ink rounded-lg font-medium hover:bg-gold-700 disabled:opacity-50 transition-colors"
           >
             {status === 'connecting' ? 'Connecting...' : 'Connect Wallet'}
           </button>
@@ -460,27 +460,27 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
       <div className="p-8">
         <ModalHeader title="Activate Fundraise" />
         <div className="text-center py-6">
-          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-danger/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-red-400 mb-2">Access Denied</h3>
-          <p className="text-sm text-gray-400 mb-6">Only the project owner can activate this fundraise.</p>
-          <div className="text-sm text-gray-500 bg-slate-700/50 p-4 rounded-lg mb-6 inline-block text-left">
+          <h3 className="text-lg font-semibold text-danger mb-2">Access Denied</h3>
+          <p className="text-sm text-ink-muted mb-6">Only the project owner can activate this fundraise.</p>
+          <div className="text-sm text-ink-faint bg-surface-overlay/50 p-4 rounded-lg mb-6 inline-block text-left">
             <p className="mb-1">
-              <span className="text-gray-400">Your wallet:</span>{' '}
-              <span className="text-gray-300 font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
+              <span className="text-ink-muted">Your wallet:</span>{' '}
+              <span className="text-ink-muted font-mono">{address?.slice(0, 6)}...{address?.slice(-4)}</span>
             </p>
             <p>
-              <span className="text-gray-400">Owner:</span>{' '}
-              <span className="text-gray-300 font-mono">{application.wallet_address?.slice(0, 6)}...{application.wallet_address?.slice(-4)}</span>
+              <span className="text-ink-muted">Owner:</span>{' '}
+              <span className="text-ink-muted font-mono">{application.wallet_address?.slice(0, 6)}...{application.wallet_address?.slice(-4)}</span>
             </p>
           </div>
           <div>
             <button 
               onClick={() => disconnect()} 
-              className="px-8 py-3 bg-gray-700 text-gray-300 rounded-lg font-medium hover:bg-gray-600 transition-colors"
+              className="px-8 py-3 bg-surface-overlay text-ink-muted rounded-lg font-medium hover:bg-border-strong transition-colors"
             >
               Disconnect & Switch Wallet
             </button>
@@ -496,20 +496,20 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
       <div className="p-8">
         <ModalHeader title="Activate Fundraise" />
         <div className="text-center py-6">
-          <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-yellow-400 mb-2">Wrong Network</h3>
-          <p className="text-sm text-gray-400 mb-6">
+          <h3 className="text-lg font-semibold text-warning mb-2">Wrong Network</h3>
+          <p className="text-sm text-ink-muted mb-6">
             {chainName ? `Contracts not deployed on ${chainName}.` : 'Please connect to a supported network.'}
           </p>
           {deployedChains[0] && (
             <button 
               onClick={() => switchToChain(deployedChains[0].id as any)} 
               disabled={isSwitching} 
-              className="px-8 py-3 bg-yellow-600 text-white rounded-lg font-medium hover:bg-yellow-700 disabled:opacity-50 transition-colors"
+              className="px-8 py-3 bg-warning text-ink rounded-lg font-medium hover:bg-warning disabled:opacity-50 transition-colors"
             >
               {isSwitching ? 'Switching...' : `Switch to ${deployedChains[0].name}`}
             </button>
@@ -527,32 +527,32 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
         
         {/* Success icon & message */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="text-xl font-semibold text-green-400 mb-2">Fundraise Activated!</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-xl font-semibold text-success mb-2">Fundraise Activated!</h3>
+          <p className="text-sm text-ink-muted">
             Project #{deployedContracts.projectId.toString()} is now live
           </p>
         </div>
 
         {/* Timeline */}
-        <div className="bg-gradient-to-r from-green-900/20 to-gold-light-900/20 rounded-xl p-5 mb-6 border border-green-500/20">
-          <h4 className="text-sm font-medium text-gray-300 mb-4">Fundraise Timeline</h4>
+        <div className="bg-gradient-to-r from-success/20 to-gold-light-900/20 rounded-xl p-5 mb-6 border border-success/20">
+          <h4 className="text-sm font-medium text-ink-muted mb-4">Fundraise Timeline</h4>
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <p className="text-xs text-gray-500 mb-1">Started</p>
-              <p className="text-lg font-semibold text-green-400">{formatShortDate(activationData.activatedAt)}</p>
+              <p className="text-xs text-ink-faint mb-1">Started</p>
+              <p className="text-lg font-semibold text-success">{formatShortDate(activationData.activatedAt)}</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-1">Ends</p>
+              <p className="text-xs text-ink-faint mb-1">Ends</p>
               <p className="text-lg font-semibold text-gold-400">{formatShortDate(activationData.raiseEndDate)}</p>
             </div>
           </div>
-          <div className="mt-4 pt-4 border-t border-slate-700/50 text-sm text-gray-400">
-            Duration: <span className="text-white font-medium">{activationData.deadlineDays} days</span>
+          <div className="mt-4 pt-4 border-t border-surface-overlay/50 text-sm text-ink-muted">
+            Duration: <span className="text-ink font-medium">{activationData.deadlineDays} days</span>
           </div>
         </div>
 
@@ -560,7 +560,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
         <div className="mb-6">
           <button 
             onClick={() => setShowContractDetails(!showContractDetails)} 
-            className="w-full flex items-center justify-between text-sm text-gray-400 hover:text-gray-300 py-2"
+            className="w-full flex items-center justify-between text-sm text-ink-muted hover:text-ink-muted py-2"
           >
             <span className="font-medium">Contract Details</span>
             <svg 
@@ -572,9 +572,9 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
           </button>
 
           {showContractDetails && (
-            <div className="bg-slate-700/30 rounded-lg p-4 mt-2 space-y-3">
+            <div className="bg-surface-overlay/30 rounded-lg p-4 mt-2 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-400">Security Token</span>
+                <span className="text-sm text-ink-muted">Security Token</span>
                 <a 
                   href={`${explorerUrl}/address/${deployedContracts.securityToken}`} 
                   target="_blank" 
@@ -585,7 +585,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                 </a>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-400">Escrow Vault</span>
+                <span className="text-sm text-ink-muted">Escrow Vault</span>
                 <a 
                   href={`${explorerUrl}/address/${deployedContracts.escrowVault}`} 
                   target="_blank" 
@@ -596,7 +596,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                 </a>
               </div>
               <div className="flex justify-between items-center">
-                <span className="text-sm text-gray-400">Compliance</span>
+                <span className="text-sm text-ink-muted">Compliance</span>
                 <a 
                   href={`${explorerUrl}/address/${deployedContracts.compliance}`} 
                   target="_blank" 
@@ -608,13 +608,13 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
               </div>
               {deployedContracts.nftTokenId !== undefined && (
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">NFT Token ID</span>
+                  <span className="text-sm text-ink-muted">NFT Token ID</span>
                   <span className="text-gold-400 font-medium">#{deployedContracts.nftTokenId.toString()}</span>
                 </div>
               )}
               {txHash && (
-                <div className="flex justify-between items-center pt-3 border-t border-slate-600/50">
-                  <span className="text-sm text-gray-400">Deploy Tx</span>
+                <div className="flex justify-between items-center pt-3 border-t border-surface-overlay/50">
+                  <span className="text-sm text-ink-muted">Deploy Tx</span>
                   <a 
                     href={getTxUrl(txHash)} 
                     target="_blank" 
@@ -633,13 +633,13 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
         <div className="flex gap-4">
           <button 
             onClick={() => window.location.href = `/projects/${application.id}`} 
-            className="flex-1 px-6 py-3 bg-gold-600 text-white rounded-lg font-medium hover:bg-gold-700 transition-colors"
+            className="flex-1 px-6 py-3 bg-gold-600 text-ink rounded-lg font-medium hover:bg-gold-700 transition-colors"
           >
             View Project
           </button>
           <button 
             onClick={() => window.location.href = '/dashboard'} 
-            className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg font-medium hover:bg-gray-600 transition-colors"
+            className="px-6 py-3 bg-surface-overlay text-ink-muted rounded-lg font-medium hover:bg-border-strong transition-colors"
           >
             Dashboard
           </button>
@@ -654,23 +654,23 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
       <div className="p-8">
         <ModalHeader title="Activation Failed" />
         <div className="text-center py-6">
-          <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-danger/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-8 h-8 text-danger" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <h3 className="text-lg font-semibold text-red-400 mb-2">Something went wrong</h3>
-          <p className="text-sm text-gray-400 mb-6 max-w-md mx-auto">{error}</p>
+          <h3 className="text-lg font-semibold text-danger mb-2">Something went wrong</h3>
+          <p className="text-sm text-ink-muted mb-6 max-w-md mx-auto">{error}</p>
           <div className="flex gap-4 justify-center">
             <button 
               onClick={() => { setStatus('idle'); setError(''); }} 
-              className="px-8 py-3 bg-gold-600 text-white rounded-lg font-medium hover:bg-gold-700 transition-colors"
+              className="px-8 py-3 bg-gold-600 text-ink rounded-lg font-medium hover:bg-gold-700 transition-colors"
             >
               Try Again
             </button>
             <button 
               onClick={onBack} 
-              className="px-8 py-3 bg-gray-700 text-gray-300 rounded-lg font-medium hover:bg-gray-600 transition-colors"
+              className="px-8 py-3 bg-surface-overlay text-ink-muted rounded-lg font-medium hover:bg-border-strong transition-colors"
             >
               Go Back
             </button>
@@ -686,7 +686,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
       <ModalHeader title="Activate Fundraise" />
 
       {/* Project info card */}
-      <div className="flex items-center gap-4 p-4 bg-slate-700/40 rounded-xl mb-6">
+      <div className="flex items-center gap-4 p-4 bg-surface-overlay/40 rounded-xl mb-6">
         {application.logo_url && (
           <img 
             src={application.logo_url} 
@@ -695,8 +695,8 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
           />
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-white text-lg truncate">{application.project_name}</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="font-semibold text-ink text-lg truncate">{application.project_name}</h3>
+          <p className="text-sm text-ink-muted">
             {application.token_symbol} Â· ${application.funding_goal?.toLocaleString()} goal Â· {application.total_supply?.toLocaleString()} tokens
           </p>
         </div>
@@ -705,7 +705,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
       {/* Deadline selector */}
       {status === 'idle' && (
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-300 mb-3">Fundraise Duration</label>
+          <label className="block text-sm font-medium text-ink-muted mb-3">Fundraise Duration</label>
           <div className="grid grid-cols-5 gap-2">
             {[14, 30, 45, 60, 90].map(d => (
               <button 
@@ -713,8 +713,8 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                 onClick={() => setSelectedDeadlineDays(d)} 
                 className={`py-3 text-sm rounded-lg font-medium transition-all ${
                   selectedDeadlineDays === d 
-                    ? 'bg-gold-600 text-white ring-2 ring-blue-400 ring-offset-2 ring-offset-slate-800' 
-                    : 'bg-slate-700 text-gray-400 hover:bg-slate-600 hover:text-gray-300'
+                    ? 'bg-gold-600 text-ink ring-2 ring-gold ring-offset-2 ring-offset-surface' 
+                    : 'bg-surface-overlay text-ink-muted hover:bg-surface-overlay hover:text-ink-muted'
                 }`}
               >
                 {d} days
@@ -726,27 +726,27 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
 
       {/* Timeline preview */}
       {status === 'idle' && (
-        <div className="bg-slate-700/40 rounded-xl p-5 mb-6">
+        <div className="bg-surface-overlay/40 rounded-xl p-5 mb-6">
           <div className="flex items-center gap-2 mb-4">
             <svg className="w-5 h-5 text-gold-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
-            <span className="text-sm font-medium text-white">Timeline Preview</span>
+            <span className="text-sm font-medium text-ink">Timeline Preview</span>
           </div>
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <p className="text-xs text-gray-500 mb-1">Starts</p>
-              <p className="text-lg font-semibold text-green-400">Now</p>
+              <p className="text-xs text-ink-faint mb-1">Starts</p>
+              <p className="text-lg font-semibold text-success">Now</p>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-1">Ends</p>
+              <p className="text-xs text-ink-faint mb-1">Ends</p>
               <p className="text-lg font-semibold text-gold-400">{formatShortDate(previewEndDate)}</p>
             </div>
           </div>
           {creationFee > BigInt(0) && (
-            <div className="mt-4 pt-4 border-t border-slate-600/50 flex justify-between text-sm">
-              <span className="text-gray-400">Creation Fee</span>
-              <span className="text-white font-medium">{formatEther(creationFee)} {nativeCurrency}</span>
+            <div className="mt-4 pt-4 border-t border-surface-overlay/50 flex justify-between text-sm">
+              <span className="text-ink-muted">Creation Fee</span>
+              <span className="text-ink font-medium">{formatEther(creationFee)} {nativeCurrency}</span>
             </div>
           )}
         </div>
@@ -767,11 +767,11 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
               return (
                 <div key={key[0]} className="flex items-center gap-4">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    stepStatus === 'complete' ? 'bg-green-500' : 
-                    stepStatus === 'active' ? 'bg-gold-500' : 'bg-slate-600'
+                    stepStatus === 'complete' ? 'bg-success' : 
+                    stepStatus === 'active' ? 'bg-gold-500' : 'bg-surface-overlay'
                   }`}>
                     {stepStatus === 'complete' && (
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-ink" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     )}
@@ -780,8 +780,8 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
                     )}
                   </div>
                   <span className={`text-sm ${
-                    stepStatus === 'complete' ? 'text-green-400' : 
-                    stepStatus === 'active' ? 'text-gold-400 font-medium' : 'text-gray-500'
+                    stepStatus === 'complete' ? 'text-success' : 
+                    stepStatus === 'active' ? 'text-gold-400 font-medium' : 'text-ink-faint'
                   }`}>
                     {label}
                   </span>
@@ -792,8 +792,8 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
 
           {/* Transaction link */}
           {txHash && (
-            <div className="mt-6 p-4 bg-slate-700/40 rounded-xl">
-              <p className="text-xs text-gray-400 mb-2">Transaction Submitted</p>
+            <div className="mt-6 p-4 bg-surface-overlay/40 rounded-xl">
+              <p className="text-xs text-ink-muted mb-2">Transaction Submitted</p>
               <a 
                 href={getTxUrl(txHash)} 
                 target="_blank" 
@@ -812,14 +812,14 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
         <button 
           onClick={onBack} 
           disabled={status !== 'idle'} 
-          className="px-6 py-3 bg-gray-700 text-gray-300 rounded-lg font-medium hover:bg-gray-600 disabled:opacity-50 transition-colors"
+          className="px-6 py-3 bg-surface-overlay text-ink-muted rounded-lg font-medium hover:bg-border-strong disabled:opacity-50 transition-colors"
         >
           Back
         </button>
         <button 
           onClick={handleDeploy} 
           disabled={status !== 'idle'} 
-          className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 transition-colors"
+          className="flex-1 px-6 py-3 bg-gradient-to-r from-success to-success text-ink rounded-lg font-medium hover:from-success hover:to-success disabled:opacity-50 transition-colors"
         >
           {status === 'idle' 
             ? 'Activate Fundraise' 

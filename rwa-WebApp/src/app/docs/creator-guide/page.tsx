@@ -28,7 +28,7 @@ export default function CreatorGuidePage() {
 
       {/* Overview */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Overview</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">Overview</h2>
         <p className="text-ink-muted mb-6">
           {COMPANY.name} enables you to tokenize real-world assets and raise capital from a global 
           investor base. This guide walks you through every step from application to funding.
@@ -42,7 +42,7 @@ export default function CreatorGuidePage() {
             { icon: Wallet, label: 'Min Investment', value: '$100' },
           ].map((stat, i) => (
             <div key={i} className="bg-surface border border-border rounded-lg p-4 text-center">
-              <stat.icon className="w-8 h-8 text-cyan-400 mx-auto mb-2" />
+              <stat.icon className="w-8 h-8 text-gold mx-auto mb-2" />
               <div className="text-sm text-ink-muted">{stat.label}</div>
               <div className="text-xl font-bold text-ink">{stat.value}</div>
             </div>
@@ -52,7 +52,7 @@ export default function CreatorGuidePage() {
 
       {/* Eligibility */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">1. Eligibility Requirements</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">1. Eligibility Requirements</h2>
         
         <div className="bg-surface border border-border rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold text-ink mb-4">You must have:</h3>
@@ -90,13 +90,13 @@ export default function CreatorGuidePage() {
 
       {/* KYC */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">2. Complete Gold-Tier KYC</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">2. Complete Gold-Tier KYC</h2>
         
         <p className="text-ink-muted mb-6">
           Asset creators must complete Gold-tier verification to ensure compliance and build investor trust.
         </p>
 
-        <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-warning/30 rounded-lg p-6 mb-6">
+        <div className="bg-gradient-to-r from-warning/10 to-orange-500/10 border border-warning/30 rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold text-warning mb-4">Gold KYC Requirements</h3>
           <ul className="space-y-2 text-ink-muted">
             <li>• Government-issued photo ID (passport or national ID)</li>
@@ -114,7 +114,7 @@ export default function CreatorGuidePage() {
 
       {/* Application Process */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">3. Submit Application</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">3. Submit Application</h2>
         
         <div className="space-y-6">
           <div className="bg-surface border border-border rounded-lg p-6">
@@ -183,8 +183,8 @@ export default function CreatorGuidePage() {
           <div className="bg-surface border border-border rounded-lg p-6">
             <h3 className="text-lg font-semibold text-ink mb-4">Step 3.4: Optional Features</h3>
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
-                <h4 className="font-semibold text-cyan-400">Escrow Module (+$250)</h4>
+              <div className="bg-gold/10 border border-gold/30 rounded-lg p-4">
+                <h4 className="font-semibold text-gold">Escrow Module (+$250)</h4>
                 <p className="text-sm text-ink-muted mt-2">
                   Milestone-based fund release protecting investors and ensuring project delivery.
                 </p>
@@ -202,7 +202,7 @@ export default function CreatorGuidePage() {
 
       {/* Fees */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">4. Fee Structure</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">4. Fee Structure</h2>
         
         <div className="bg-surface border border-border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
@@ -260,12 +260,12 @@ export default function CreatorGuidePage() {
 
       {/* Review Process */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">5. Admin Review Process</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">5. Admin Review Process</h2>
         
         <div className="space-y-4">
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-cyan-400 font-bold">1</span>
+            <div className="w-10 h-10 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-gold font-bold">1</span>
             </div>
             <div>
               <h3 className="font-semibold text-ink">Submission Review (Day 1-2)</h3>
@@ -273,8 +273,8 @@ export default function CreatorGuidePage() {
             </div>
           </div>
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-cyan-400 font-bold">2</span>
+            <div className="w-10 h-10 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-gold font-bold">2</span>
             </div>
             <div>
               <h3 className="font-semibold text-ink">Verification (Day 2-3)</h3>
@@ -282,8 +282,8 @@ export default function CreatorGuidePage() {
             </div>
           </div>
           <div className="flex items-start gap-4">
-            <div className="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-cyan-400 font-bold">3</span>
+            <div className="w-10 h-10 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-gold font-bold">3</span>
             </div>
             <div>
               <h3 className="font-semibold text-ink">Decision (Day 3-5)</h3>
@@ -314,7 +314,7 @@ export default function CreatorGuidePage() {
 
       {/* Deployment */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">6. Deploy Your Token</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">6. Deploy Your Token</h2>
         
         <p className="text-ink-muted mb-6">
           After approval, configure and deploy your security token with one click.
@@ -324,37 +324,37 @@ export default function CreatorGuidePage() {
           <h3 className="font-semibold text-ink mb-4">Token Configuration</h3>
           <ul className="space-y-3 text-ink-muted">
             <li className="flex items-start gap-3">
-              <span className="text-cyan-400">•</span>
+              <span className="text-gold">•</span>
               <div>
                 <strong>Token Name:</strong> e.g., "Lagos Tower Token"
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-cyan-400">•</span>
+              <span className="text-gold">•</span>
               <div>
                 <strong>Token Symbol:</strong> e.g., "LTT" (3-5 characters)
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-cyan-400">•</span>
+              <span className="text-gold">•</span>
               <div>
                 <strong>Total Supply:</strong> Number of tokens to create
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-cyan-400">•</span>
+              <span className="text-gold">•</span>
               <div>
                 <strong>Token Price:</strong> Price per token in USD/stablecoin
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-cyan-400">•</span>
+              <span className="text-gold">•</span>
               <div>
                 <strong>Funding Goal:</strong> Target amount to raise
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <span className="text-cyan-400">•</span>
+              <span className="text-gold">•</span>
               <div>
                 <strong>Milestones:</strong> (If escrow enabled) Define release triggers
               </div>
@@ -376,7 +376,7 @@ export default function CreatorGuidePage() {
 
       {/* Post-Deployment */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">7. Post-Deployment</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">7. Post-Deployment</h2>
         
         <p className="text-ink-muted mb-6">
           Once deployed, your project goes live and KYC-verified investors can begin participating.
@@ -409,7 +409,7 @@ export default function CreatorGuidePage() {
       </section>
 
       {/* Support */}
-      <section className="bg-gradient-to-r from-cyan-500/10 to-gold-light-500/10 border border-cyan-500/20 rounded-xl p-8">
+      <section className="bg-gradient-to-r from-gold/10 to-gold-light-500/10 border border-gold/20 rounded-xl p-8">
         <h2 className="text-2xl font-semibold text-ink mb-4">Need Help?</h2>
         <p className="text-ink-muted mb-6">
           Our team is here to guide you through the tokenization process.
@@ -417,15 +417,15 @@ export default function CreatorGuidePage() {
         <div className="grid md:grid-cols-3 gap-4 text-center">
           <div>
             <h3 className="font-semibold text-ink">Discord</h3>
-            <p className="text-cyan-400 text-sm">{SOCIAL.discord}</p>
+            <p className="text-gold text-sm">{SOCIAL.discord}</p>
           </div>
           <div>
             <h3 className="font-semibold text-ink">Email</h3>
-            <p className="text-cyan-400 text-sm">{CONTACT.support}</p>
+            <p className="text-gold text-sm">{CONTACT.support}</p>
           </div>
           <div>
             <h3 className="font-semibold text-ink">Office Hours</h3>
-            <p className="text-cyan-400 text-sm">Thursdays 2PM UTC</p>
+            <p className="text-gold text-sm">Thursdays 2PM UTC</p>
           </div>
         </div>
       </section>

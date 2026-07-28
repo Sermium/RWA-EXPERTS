@@ -76,7 +76,7 @@ const calculateROI = (tokenPrice: number): number => TGE_TOKEN_PRICE / tokenPric
 
 // Token Icon Component
 function TokenIcon({ token, className = "w-5 h-5" }: { token: 'USDC' | 'USDT'; className?: string }) {
-  const colors = { USDC: 'bg-gold-500', USDT: 'bg-green-500' };
+  const colors = { USDC: 'bg-gold-500', USDT: 'bg-success' };
   return <div className={`${className} ${colors[token]} rounded-full flex items-center justify-center text-ink text-xs font-bold`}>{token === 'USDC' ? '$' : '₮'}</div>;
 }
 
@@ -123,7 +123,7 @@ function StripePaymentForm({ clientSecret, onSuccess, onError, amount, investmen
         <PaymentElement />
       </div>
       {errorMessage && (
-        <div className="flex items-center gap-2 text-red-400 text-sm bg-red-500/10 p-3 rounded-lg">
+        <div className="flex items-center gap-2 text-danger text-sm bg-danger/10 p-3 rounded-lg">
           <AlertCircle className="w-4 h-4" />{errorMessage}
         </div>
       )}
@@ -268,7 +268,7 @@ function CryptoPayment({ amount, selectedToken, onTokenChange, onSuccess, onErro
               <span className="text-ink-muted">Network</span>
               <span className="font-medium flex items-center gap-2">
                 {chainInfo?.name || `Chain ${chainId}`}
-                {chainInfo?.testnet && <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">Testnet</span>}
+                {chainInfo?.testnet && <span className="text-xs bg-warning/20 text-warning px-2 py-0.5 rounded">Testnet</span>}
               </span>
             </div>
             <div className="flex justify-between items-center">
@@ -285,7 +285,7 @@ function CryptoPayment({ amount, selectedToken, onTokenChange, onSuccess, onErro
           <button 
             onClick={handleTransfer} 
             disabled={transferring || isConfirming || !address || !tokenAddress}
-            className="w-full py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg font-semibold hover:from-green-500 hover:to-emerald-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="w-full py-3 bg-gradient-to-r from-success to-success rounded-lg font-semibold hover:from-success hover:to-success transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
             {transferring || isConfirming ? (
               <><Loader2 className="w-5 h-5 animate-spin" />{isConfirming ? 'Confirming on-chain...' : 'Sending...'}</>
@@ -309,9 +309,9 @@ function CryptoPayment({ amount, selectedToken, onTokenChange, onSuccess, onErro
           )}
         </>
       ) : (
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 text-center">
-          <AlertCircle className="w-8 h-8 text-yellow-400 mx-auto mb-2" />
-          <p className="text-yellow-400 font-medium">No stablecoins available on {chainInfo?.name || 'this network'}</p>
+        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 text-center">
+          <AlertCircle className="w-8 h-8 text-warning mx-auto mb-2" />
+          <p className="text-warning font-medium">No stablecoins available on {chainInfo?.name || 'this network'}</p>
           <p className="text-sm text-ink-muted mt-1">
             Please switch to a network with USDC/USDT deployed, or use card payment.
           </p>
@@ -371,7 +371,7 @@ function WalletBalanceDisplay({ chainId, token, address }: { chainId: number; to
         <span className="text-ink-faint">Network</span>
         <span className="text-ink-muted flex items-center gap-1">
           {chainInfo?.name || `Chain ${chainId}`}
-          {chainInfo?.testnet && <span className="px-1.5 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">Testnet</span>}
+          {chainInfo?.testnet && <span className="px-1.5 py-0.5 bg-warning/20 text-warning rounded">Testnet</span>}
         </span>
       </div>
     </div>
@@ -680,10 +680,10 @@ export default function RaisePage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
         {/* Success Message */}
         {success && (
-          <div className="mb-8 bg-green-500/10 border border-green-500/30 rounded-xl p-6 flex items-start gap-4">
-            <CheckCircle className="w-8 h-8 text-green-500 flex-shrink-0 mt-0.5" />
+          <div className="mb-8 bg-success/10 border border-success/30 rounded-xl p-6 flex items-start gap-4">
+            <CheckCircle className="w-8 h-8 text-success flex-shrink-0 mt-0.5" />
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-green-400">Investment Successful!</h3>
+              <h3 className="text-lg font-semibold text-success">Investment Successful!</h3>
               <p className="text-ink-muted mt-1">Thank you for your investment. You will receive a confirmation email shortly with details about your token allocation.</p>
             </div>
             <button onClick={() => setSuccess(false)} className="text-ink-muted hover:text-ink text-2xl leading-none">&times;</button>
@@ -727,9 +727,9 @@ export default function RaisePage() {
                     <h2 className="text-2xl font-bold mt-2">Current Investment Round</h2>
                   </div>
                   <div className="text-right">
-                    <div className="text-3xl font-bold text-green-400">{roi.toFixed(2)}x</div>
+                    <div className="text-3xl font-bold text-success">{roi.toFixed(2)}x</div>
                     <div className="text-sm text-ink-muted">ROI at TGE</div>
-                    <div className="text-lg font-bold text-emerald-400 mt-1">{calculate5YearROI(activeRound.token_price_usd).toFixed(0)}x</div>
+                    <div className="text-lg font-bold text-success mt-1">{calculate5YearROI(activeRound.token_price_usd).toFixed(0)}x</div>
                     <div className="text-xs text-ink-faint">5Y Potential</div>
                   </div>
                 </div>
@@ -831,14 +831,14 @@ export default function RaisePage() {
                             disabled={!!appliedReferral}
                             className={`w-full px-4 py-3 bg-surface-sunken border rounded-lg focus:outline-none transition-colors ${
                               appliedReferral 
-                                ? 'border-green-500 bg-green-500/10' 
+                                ? 'border-success bg-success/10' 
                                 : referralError 
-                                  ? 'border-red-500' 
+                                  ? 'border-danger' 
                                   : 'border-border focus:border-gold-500'
                             }`}
                           />
                           {appliedReferral && (
-                            <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-green-500" />
+                            <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-success" />
                           )}
                         </div>
                         {!appliedReferral ? (
@@ -869,13 +869,13 @@ export default function RaisePage() {
                         )}
                       </div>
                       {referralError && (
-                        <p className="text-red-400 text-sm mt-2 flex items-center gap-1">
+                        <p className="text-danger text-sm mt-2 flex items-center gap-1">
                           <AlertCircle className="w-4 h-4" />
                           {referralError}
                         </p>
                       )}
                       {appliedReferral && (
-                        <p className="text-green-400 text-sm mt-2 flex items-center gap-1">
+                        <p className="text-success text-sm mt-2 flex items-center gap-1">
                           <CheckCircle className="w-4 h-4" />
                           Referral applied! Your referrer will receive 5% bonus tokens.
                         </p>
@@ -902,7 +902,7 @@ export default function RaisePage() {
                           <CreditCard className="w-6 h-6" />
                           <div className="text-left">
                             <div className="font-medium">Card</div>
-                            <div className="text-xs text-yellow-400">+4% fee</div>
+                            <div className="text-xs text-warning">+4% fee</div>
                           </div>
                         </button>
                       </div>
@@ -925,7 +925,7 @@ export default function RaisePage() {
                           })}
                         </div>
                         {chain && !hasStablecoins(chain.id) && (
-                          <p className="text-xs text-yellow-400 mt-2">No stablecoins on {CHAINS[chain.id as SupportedChainId]?.name}. Switch network or use card.</p>
+                          <p className="text-xs text-warning mt-2">No stablecoins on {CHAINS[chain.id as SupportedChainId]?.name}. Switch network or use card.</p>
                         )}
                         
                         {/* Show balance in main form */}
@@ -965,7 +965,7 @@ export default function RaisePage() {
                       <div className="bg-surface/50 rounded-lg p-4 space-y-3">
                         <div className="flex justify-between"><span className="text-ink-muted">Investment</span><span>{formatCurrency(amount)}</span></div>
                         {paymentMethod === 'fiat' && (
-                          <div className="flex justify-between text-yellow-400">
+                          <div className="flex justify-between text-warning">
                             <span className="flex items-center gap-1"><Info className="w-4 h-4" />Stripe Fee (4%)</span>
                             <span>+{formatCurrency(stripeFee)}</span>
                           </div>
@@ -980,10 +980,10 @@ export default function RaisePage() {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-ink-muted flex items-center gap-1">
-                              <Gift className="w-4 h-4 text-green-400" /> 
+                              <Gift className="w-4 h-4 text-success" /> 
                               {appliedReferral ? 'Referral Bonus (5%)' : 'Investor Bonus (5%)'}
                             </span>
-                            <span className="text-green-400 font-semibold">+{formatNumber(bonusTokens)} RWA</span>
+                            <span className="text-success font-semibold">+{formatNumber(bonusTokens)} RWA</span>
                           </div>
                           <div className="flex justify-between font-semibold">
                             <span className="text-ink-muted">Total Tokens</span>
@@ -991,19 +991,19 @@ export default function RaisePage() {
                           </div>
                           <div className="flex justify-between">
                             <span className="text-ink-muted">Value at TGE</span>
-                            <span className="text-green-400 font-semibold">{formatCurrency(valueAtTGE)}</span>
+                            <span className="text-success font-semibold">{formatCurrency(valueAtTGE)}</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-ink-muted">ROI at TGE</span>
-                            <span className="text-green-400 font-semibold">+{((roi - 1) * 100).toFixed(0)}%</span>
+                            <span className="text-success font-semibold">+{((roi - 1) * 100).toFixed(0)}%</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-ink-muted">5Y Potential ROI</span>
-                            <span className="text-emerald-400 font-semibold">+{((calculate5YearROI(activeRound.token_price_usd) - 1) * 100).toFixed(0)}%</span>
+                            <span className="text-success font-semibold">+{((calculate5YearROI(activeRound.token_price_usd) - 1) * 100).toFixed(0)}%</span>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-ink-muted">5Y Token Value</span>
-                            <span className="text-emerald-400 font-semibold">{formatCurrency(totalTokens * yearlyProjections.year5.tokenValue)}</span>
+                            <span className="text-success font-semibold">{formatCurrency(totalTokens * yearlyProjections.year5.tokenValue)}</span>
                           </div>
                         </div>
                         {!appliedReferral && (
@@ -1017,7 +1017,7 @@ export default function RaisePage() {
 
                     {/* Error */}
                     {error && (
-                      <div className="flex items-start gap-2 text-red-400 bg-red-500/10 p-3 rounded-lg">
+                      <div className="flex items-start gap-2 text-danger bg-danger/10 p-3 rounded-lg">
                         <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                         <span>{error}</span>
                       </div>
@@ -1129,14 +1129,14 @@ export default function RaisePage() {
                         </div>
                         
                         {/* ROI */}
-                        <div className="flex gap-4 mb-4 p-3 bg-green-500/10 rounded-lg border border-green-500/20">
+                        <div className="flex gap-4 mb-4 p-3 bg-success/10 rounded-lg border border-success/20">
                           <div className="flex-1 text-center">
                             <div className="text-xs text-ink-muted">TGE ROI</div>
-                            <div className="text-lg font-bold text-green-400">{calculateROI(round.token_price_usd).toFixed(2)}x</div>
+                            <div className="text-lg font-bold text-success">{calculateROI(round.token_price_usd).toFixed(2)}x</div>
                           </div>
                           <div className="flex-1 text-center border-l border-border">
                             <div className="text-xs text-ink-muted">5Y Potential</div>
-                            <div className="text-lg font-bold text-emerald-400">{calculate5YearROI(round.token_price_usd).toFixed(0)}x</div>
+                            <div className="text-lg font-bold text-success">{calculate5YearROI(round.token_price_usd).toFixed(0)}x</div>
                           </div>
                         </div>
                         
@@ -1161,23 +1161,23 @@ export default function RaisePage() {
                   // Completed round - collapsed with summary
                   if (isCompleted) {
                     return (
-                      <div key={round.id} className="p-4 rounded-lg border border-green-500/30 bg-green-500/5">
+                      <div key={round.id} className="p-4 rounded-lg border border-success/30 bg-success/5">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-full bg-success flex items-center justify-center">
                               <CheckCircle className="w-5 h-5 text-ink" />
                             </div>
                             <div>
-                              <h3 className="font-semibold text-green-400">{round.display_name || round.name}</h3>
+                              <h3 className="font-semibold text-success">{round.display_name || round.name}</h3>
                               <span className="text-xs text-ink-faint">{round.timeline || 'Completed'}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
                             <div className="text-right hidden sm:block">
-                              <div className="text-sm font-medium text-green-400">{formatCurrency(round.raised_amount_usd || 0)} raised</div>
+                              <div className="text-sm font-medium text-success">{formatCurrency(round.raised_amount_usd || 0)} raised</div>
                               <div className="text-xs text-ink-faint">{round.investor_count || 0} investors • ${round.token_price_usd}/token</div>
                             </div>
-                            <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full font-medium">Completed</span>
+                            <span className="px-2 py-1 bg-success/20 text-success text-xs rounded-full font-medium">Completed</span>
                           </div>
                         </div>
                       </div>
@@ -1195,13 +1195,13 @@ export default function RaisePage() {
                             </div>
                             <div>
                               <h3 className="font-semibold text-ink-muted">{round.display_name || round.name}</h3>
-                              <span className="text-xs text-slate-600">{round.timeline || 'Coming Soon'}</span>
+                              <span className="text-xs text-surface-overlay">{round.timeline || 'Coming Soon'}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-4">
                             <div className="text-right hidden sm:block">
                               <div className="text-sm font-medium text-ink-faint">${round.token_price_usd}/token</div>
-                              <div className="text-xs text-slate-600">Target: {formatCurrency(round.target_amount_usd)}</div>
+                              <div className="text-xs text-surface-overlay">Target: {formatCurrency(round.target_amount_usd)}</div>
                             </div>
                             <span className="px-2 py-1 bg-surface-overlay text-ink-faint text-xs rounded-full font-medium">Upcoming</span>
                           </div>
@@ -1217,7 +1217,7 @@ export default function RaisePage() {
               {/* No rounds message */}
               {rounds.length === 0 && (
                 <div className="text-center py-8 text-ink-muted">
-                  <Clock className="w-12 h-12 mx-auto mb-3 text-slate-600" />
+                  <Clock className="w-12 h-12 mx-auto mb-3 text-surface-overlay" />
                   <p className="text-lg font-medium">No investment rounds available</p>
                   <p className="text-sm">Check back soon for opportunities</p>
                 </div>
@@ -1242,11 +1242,11 @@ export default function RaisePage() {
                       <tr key={year} className="border-b border-border/50">
                         <td className="py-2 font-medium">Year {idx + 1}</td>
                         <td className="py-2 text-right">{formatCurrency(data.revenue)}</td>
-                        <td className={`py-2 text-right ${data.ebitda < 0 ? 'text-red-400' : 'text-green-400'}`}>
+                        <td className={`py-2 text-right ${data.ebitda < 0 ? 'text-danger' : 'text-success'}`}>
                           {formatCurrency(data.ebitda)}
                         </td>
                         <td className="py-2 text-right text-gold-400">${data.tokenValue}</td>
-                        <td className="py-2 text-right text-emerald-400">
+                        <td className="py-2 text-right text-success">
                           {amount > 0 && activeRound ? formatCurrency(totalTokens * data.tokenValue) : '-'}
                         </td>
                       </tr>
@@ -1273,7 +1273,7 @@ export default function RaisePage() {
                 
                 <div className="bg-surface/50 rounded-lg p-3 text-sm">
                   <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle className="w-4 h-4 text-green-400" />
+                    <CheckCircle className="w-4 h-4 text-success" />
                     With referral → Bonus goes to referrer
                   </div>
 
@@ -1310,7 +1310,7 @@ export default function RaisePage() {
               <h2 className="text-xl font-semibold mb-4">Why Invest?</h2>
               <div className="space-y-4">
                 {[
-                  { icon: TrendingUp, color: 'text-green-500', title: 'High ROI', desc: 'Up to 3.75x at TGE' },
+                  { icon: TrendingUp, color: 'text-success', title: 'High ROI', desc: 'Up to 3.75x at TGE' },
                   { icon: Shield, color: 'text-gold-500', title: 'Regulated', desc: 'Full compliance' },
                   { icon: Coins, color: 'text-gold-500', title: '80% Revenue Share', desc: 'EBITDA to holders' },
                   { icon: Users, color: 'text-orange-500', title: '$16T Market', desc: 'RWA by 2030' },
@@ -1329,15 +1329,15 @@ export default function RaisePage() {
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-3 bg-surface/50 rounded-lg">
                   <TokenIcon token="USDC" className="w-8 h-8" />
-                  <div><div className="font-medium">USDC</div><div className="text-xs text-green-400">No fees</div></div>
+                  <div><div className="font-medium">USDC</div><div className="text-xs text-success">No fees</div></div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-surface/50 rounded-lg">
                   <TokenIcon token="USDT" className="w-8 h-8" />
-                  <div><div className="font-medium">USDT</div><div className="text-xs text-green-400">No fees</div></div>
+                  <div><div className="font-medium">USDT</div><div className="text-xs text-success">No fees</div></div>
                 </div>
                 <div className="flex items-center gap-3 p-3 bg-surface/50 rounded-lg">
                   <CreditCard className="w-8 h-8 text-gold-400" />
-                  <div><div className="font-medium">Credit/Debit Card</div><div className="text-xs text-yellow-400">+4% Stripe fee</div></div>
+                  <div><div className="font-medium">Credit/Debit Card</div><div className="text-xs text-warning">+4% Stripe fee</div></div>
                 </div>
               </div>
             </div>

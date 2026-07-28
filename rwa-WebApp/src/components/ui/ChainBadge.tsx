@@ -31,8 +31,8 @@ export function ChainBadge({ onClick, className = "" }: ChainBadgeProps) {
       className={`
         flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all
         ${isTestnet
-          ? "bg-yellow-900/30 border-yellow-600 text-yellow-400 hover:bg-yellow-900/50"
-          : "bg-green-900/30 border-green-600 text-green-400 hover:bg-green-900/50"
+          ? "bg-warning/30 border-warning text-warning hover:bg-warning/50"
+          : "bg-success/30 border-success text-success hover:bg-success/50"
         }
         ${!isDeployed ? "opacity-50" : ""}
         disabled:cursor-not-allowed

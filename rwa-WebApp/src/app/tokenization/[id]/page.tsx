@@ -106,14 +106,14 @@ interface TokenMetrics {
 // ============================================================================
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  pending: { label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Clock },
+  pending: { label: 'Pending Review', color: 'bg-warning/20 text-warning border-warning/30', icon: Clock },
   under_review: { label: 'Under Review', color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', icon: Eye },
-  approved: { label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle2 },
-  rejected: { label: 'Rejected', color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle },
-  deployed: { label: 'Deployed', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle2 },
-  completed: { label: 'Deployed', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle2 },
-  active: { label: 'Active', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', icon: CheckCircle2 },
-  cancelled: { label: 'Cancelled', color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', icon: XCircle },
+  approved: { label: 'Approved', color: 'bg-success/20 text-success border-success/30', icon: CheckCircle2 },
+  rejected: { label: 'Rejected', color: 'bg-danger/20 text-danger border-danger/30', icon: XCircle },
+  deployed: { label: 'Deployed', color: 'bg-success/20 text-success border-success/30', icon: CheckCircle2 },
+  completed: { label: 'Deployed', color: 'bg-success/20 text-success border-success/30', icon: CheckCircle2 },
+  active: { label: 'Active', color: 'bg-success/20 text-success border-success/30', icon: CheckCircle2 },
+  cancelled: { label: 'Cancelled', color: 'bg-ink-faint/20 text-ink-muted border-ink-faint/30', icon: XCircle },
 };
 
 const ASSET_TYPE_LABELS: Record<string, string> = {
@@ -214,23 +214,23 @@ interface StatCardProps {
 function StatCard({ label, value, subValue, icon: Icon, color = 'blue' }: StatCardProps) {
   const colorClasses: Record<string, string> = {
     blue: 'bg-gold-500/20 text-gold-400',
-    green: 'bg-green-500/20 text-green-400',
+    green: 'bg-success/20 text-success',
     purple: 'bg-gold-500/20 text-gold-400',
-    yellow: 'bg-yellow-500/20 text-yellow-400',
-    cyan: 'bg-cyan-500/20 text-cyan-400',
+    yellow: 'bg-warning/20 text-warning',
+    cyan: 'bg-gold/20 text-gold',
   };
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
+    <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-5">
       <div className="flex items-start justify-between">
         <div className={`w-10 h-10 rounded-lg ${colorClasses[color]} flex items-center justify-center`}>
           <Icon className="w-5 h-5" />
         </div>
       </div>
       <div className="mt-4">
-        <p className="text-2xl font-bold text-white">{value}</p>
-        {subValue && <p className="text-slate-400 text-sm mt-1">{subValue}</p>}
-        <p className="text-slate-500 text-sm mt-1">{label}</p>
+        <p className="text-2xl font-bold text-ink">{value}</p>
+        {subValue && <p className="text-surface-overlay text-sm mt-1">{subValue}</p>}
+        <p className="text-surface-overlay text-sm mt-1">{label}</p>
       </div>
     </div>
   );
@@ -248,10 +248,10 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="p-1.5 hover:bg-slate-700 rounded transition"
+      className="p-1.5 hover:bg-surface-overlay rounded transition"
       title={`Copy ${label || 'address'}`}
     >
-      {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-slate-400" />}
+      {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4 text-surface-overlay" />}
     </button>
   );
 }
@@ -259,16 +259,16 @@ function CopyButton({ text, label }: { text: string; label?: string }) {
 function AddressDisplay({ address, explorerUrl, label }: { address: string; explorerUrl: string; label?: string }) {
   return (
     <div className="flex items-center gap-2">
-      <span className="font-mono text-sm text-white">{truncateAddress(address)}</span>
+      <span className="font-mono text-sm text-ink">{truncateAddress(address)}</span>
       <CopyButton text={address} label={label} />
       <a
         href={`${explorerUrl}/address/${address}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="p-1.5 hover:bg-slate-700 rounded transition"
+        className="p-1.5 hover:bg-surface-overlay rounded transition"
         title="View on explorer"
       >
-        <ExternalLink className="w-4 h-4 text-slate-400" />
+        <ExternalLink className="w-4 h-4 text-surface-overlay" />
       </a>
     </div>
   );
@@ -282,9 +282,9 @@ function HolderRow({ holder, rank, explorerUrl, tokenSymbol, decimals }: {
   decimals: number 
 }) {
   return (
-    <div className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 transition">
+    <div className="flex items-center justify-between p-4 bg-surface-overlay/30 rounded-lg hover:bg-surface-overlay/50 transition">
       <div className="flex items-center gap-4">
-        <span className="w-8 h-8 rounded-full bg-slate-600 flex items-center justify-center text-sm font-medium text-white">
+        <span className="w-8 h-8 rounded-full bg-surface-overlay flex items-center justify-center text-sm font-medium text-ink">
           {rank}
         </span>
         <div>
@@ -295,10 +295,10 @@ function HolderRow({ holder, rank, explorerUrl, tokenSymbol, decimals }: {
         </div>
       </div>
       <div className="text-right">
-        <p className="text-white font-medium">
+        <p className="text-ink font-medium">
           {formatTokenAmount(holder.balance, decimals)} {tokenSymbol}
         </p>
-        <p className="text-slate-400 text-sm">{holder.percentage.toFixed(2)}%</p>
+        <p className="text-surface-overlay text-sm">{holder.percentage.toFixed(2)}%</p>
       </div>
     </div>
   );
@@ -310,22 +310,22 @@ function DocumentCard({ name, url, type, size }: { name: string; url: string; ty
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-3 p-4 bg-slate-700/50 rounded-lg hover:bg-slate-700 transition group"
+      className="flex items-center gap-3 p-4 bg-surface-overlay/50 rounded-lg hover:bg-surface-overlay transition group"
     >
       <div className="w-10 h-10 rounded-lg bg-gold-500/20 flex items-center justify-center">
         <FileText className="w-5 h-5 text-gold-400" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-white font-medium truncate">{name}</p>
+        <p className="text-ink font-medium truncate">{name}</p>
         {(type || size) && (
-          <p className="text-slate-400 text-sm">
+          <p className="text-surface-overlay text-sm">
             {type && <span>{type}</span>}
             {type && size && <span> • </span>}
             {size && <span>{(size / 1024).toFixed(1)} KB</span>}
           </p>
         )}
       </div>
-      <Download className="w-5 h-5 text-slate-400 group-hover:text-white transition" />
+      <Download className="w-5 h-5 text-surface-overlay group-hover:text-ink transition" />
     </a>
   );
 }
@@ -343,34 +343,34 @@ interface RejectionBannerProps {
 
 function RejectionBanner({ rejectionReason, rejectedAt, projectId, isOwner }: RejectionBannerProps) {
   return (
-    <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mb-6">
+    <div className="bg-danger/10 border border-danger/30 rounded-xl p-6 mb-6">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
-          <AlertTriangle className="w-6 h-6 text-red-400" />
+        <div className="w-12 h-12 rounded-full bg-danger/20 flex items-center justify-center flex-shrink-0">
+          <AlertTriangle className="w-6 h-6 text-danger" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-red-400 mb-2">Application Rejected</h3>
+          <h3 className="text-lg font-semibold text-danger mb-2">Application Rejected</h3>
           {rejectedAt && (
-            <p className="text-slate-400 text-sm mb-3">
+            <p className="text-surface-overlay text-sm mb-3">
               Rejected on {formatDate(rejectedAt)}
             </p>
           )}
           {rejectionReason && (
-            <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
-              <p className="text-slate-400 text-sm font-medium mb-1">Reason:</p>
-              <p className="text-white">{rejectionReason}</p>
+            <div className="bg-surface-overlay/50 rounded-lg p-4 mb-4">
+              <p className="text-surface-overlay text-sm font-medium mb-1">Reason:</p>
+              <p className="text-ink">{rejectionReason}</p>
             </div>
           )}
           {isOwner && (
             <div className="flex flex-wrap gap-3">
               <Link
                 href={`/tokenize/edit/${projectId}`}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold-600 hover:bg-gold-500 text-white rounded-lg font-medium transition"
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold-600 hover:bg-gold-500 text-ink rounded-lg font-medium transition"
               >
                 <Edit className="w-4 h-4" />
                 Edit & Resubmit Application
               </Link>
-              <p className="text-slate-400 text-sm self-center">
+              <p className="text-surface-overlay text-sm self-center">
                 Your original payment is still valid – no additional fee required.
               </p>
             </div>
@@ -393,20 +393,20 @@ interface ApprovedBannerProps {
 
 function ApprovedBanner({ project, isOwner, onDeploy }: ApprovedBannerProps) {
   return (
-    <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 mb-6">
+    <div className="bg-success/10 border border-success/30 rounded-xl p-6 mb-6">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
-          <CheckCircle2 className="w-6 h-6 text-green-400" />
+        <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center flex-shrink-0">
+          <CheckCircle2 className="w-6 h-6 text-success" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-green-400 mb-2">Application Approved!</h3>
-          <p className="text-slate-400 text-sm mb-4">
+          <h3 className="text-lg font-semibold text-success mb-2">Application Approved!</h3>
+          <p className="text-surface-overlay text-sm mb-4">
             Your tokenization application has been approved. You can now deploy your security token to the blockchain.
           </p>
           
-          <div className="bg-slate-800/50 rounded-lg p-4 mb-4">
-            <h4 className="text-white font-medium mb-2">Deployment will create:</h4>
-            <ul className="space-y-2 text-sm text-slate-300">
+          <div className="bg-surface-overlay/50 rounded-lg p-4 mb-4">
+            <h4 className="text-ink font-medium mb-2">Deployment will create:</h4>
+            <ul className="space-y-2 text-sm text-surface-overlay">
               <li className="flex items-center gap-2">
                 <Coins className="w-4 h-4 text-gold-400" />
                 ERC-3643 Security Token ({project.token_name} - {project.token_symbol})
@@ -417,13 +417,13 @@ function ApprovedBanner({ project, isOwner, onDeploy }: ApprovedBannerProps) {
               </li>
               {project.needs_escrow && (
                 <li className="flex items-center gap-2">
-                  <Lock className="w-4 h-4 text-green-400" />
+                  <Lock className="w-4 h-4 text-success" />
                   Trade Escrow Contract
                 </li>
               )}
               {project.needs_dividends && (
                 <li className="flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-yellow-400" />
+                  <TrendingUp className="w-4 h-4 text-warning" />
                   Dividend Distributor Contract
                 </li>
               )}
@@ -433,13 +433,13 @@ function ApprovedBanner({ project, isOwner, onDeploy }: ApprovedBannerProps) {
           {isOwner ? (
             <button
               onClick={onDeploy}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg font-medium transition shadow-lg shadow-green-500/25"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-success to-success hover:from-success hover:to-success text-ink rounded-lg font-medium transition shadow-lg shadow-green-500/25"
             >
               <Rocket className="w-5 h-5" />
               Deploy Token
             </button>
           ) : (
-            <p className="text-slate-400 text-sm italic">
+            <p className="text-surface-overlay text-sm italic">
               Only the project owner can deploy the token.
             </p>
           )}
@@ -480,7 +480,7 @@ function DeploymentModal({ project, isOpen, onClose, onSuccess }: DeploymentModa
         onClick={onClose}
       />
       
-      <div className="relative bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+      <div className="relative bg-surface-overlay border border-surface-overlay rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         {DeploymentWizard ? (
           <DeploymentWizard
             application={project}
@@ -494,7 +494,7 @@ function DeploymentModal({ project, isOpen, onClose, onSuccess }: DeploymentModa
         ) : (
           <div className="p-8 text-center">
             <Loader2 className="w-8 h-8 text-gold-500 animate-spin mx-auto mb-4" />
-            <p className="text-slate-400">Loading deployment wizard...</p>
+            <p className="text-surface-overlay">Loading deployment wizard...</p>
           </div>
         )}
       </div>
@@ -699,10 +699,10 @@ export default function TokenizationProjectPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-overlay flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-gold-500 animate-spin mx-auto mb-4" />
-          <p className="text-slate-400">Loading project...</p>
+          <p className="text-surface-overlay">Loading project...</p>
         </div>
       </div>
     );
@@ -711,14 +711,14 @@ export default function TokenizationProjectPage() {
   // Error state
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-overlay flex items-center justify-center">
         <div className="text-center max-w-md">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2">Project Not Found</h1>
-          <p className="text-slate-400 mb-6">{error || 'This project does not exist or has been removed.'}</p>
+          <AlertCircle className="w-16 h-16 text-danger mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-ink mb-2">Project Not Found</h1>
+          <p className="text-surface-overlay mb-6">{error || 'This project does not exist or has been removed.'}</p>
           <Link
             href="/tokenization"
-            className="inline-flex items-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-500 text-ink rounded-lg transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Projects
@@ -732,22 +732,22 @@ export default function TokenizationProjectPage() {
   const StatusIcon = statusConfig.icon;
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-surface-overlay">
       {/* Header Banner */}
-      <div className="relative h-48 md:h-64 bg-gradient-to-br from-gold-600 via-purple-600 to-indigo-700">
+      <div className="relative h-48 md:h-64 bg-gradient-to-br from-gold-600 via-gold-light to-gold">
         {project.banner_url && (
           <div 
             className="absolute inset-0 bg-cover bg-center opacity-30"
             style={{ backgroundImage: `url(${project.banner_url})` }}
           />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface-overlay via-surface-overlay/50 to-transparent" />
         
         {/* Back button */}
         <div className="absolute top-6 left-6">
           <Link
             href="/tokenization"
-            className="flex items-center gap-2 px-4 py-2 bg-slate-900/50 backdrop-blur-sm rounded-lg text-white hover:bg-slate-900/70 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-overlay/50 backdrop-blur-sm rounded-lg text-ink hover:bg-surface-overlay/70 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Back
@@ -759,14 +759,14 @@ export default function TokenizationProjectPage() {
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-900/50 backdrop-blur-sm rounded-lg text-white hover:bg-slate-900/70 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-overlay/50 backdrop-blur-sm rounded-lg text-ink hover:bg-surface-overlay/70 transition"
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
           </button>
           <button
             onClick={() => copyToClipboard(window.location.href, 'url')}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-900/50 backdrop-blur-sm rounded-lg text-white hover:bg-slate-900/70 transition"
+            className="flex items-center gap-2 px-4 py-2 bg-surface-overlay/50 backdrop-blur-sm rounded-lg text-ink hover:bg-surface-overlay/70 transition"
           >
             {copied === 'url' ? <Check className="w-4 h-4" /> : <Share2 className="w-4 h-4" />}
             Share
@@ -777,34 +777,34 @@ export default function TokenizationProjectPage() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-24 relative z-10 pb-12">
         {/* Project Header Card */}
-        <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 mb-6">
+        <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6 mb-6">
           <div className="flex flex-col md:flex-row md:items-start gap-6">
             {/* Logo */}
             <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-gold-500 to-gold-light-600 flex items-center justify-center flex-shrink-0">
               {project.logo_url ? (
                 <img src={project.logo_url} alt={project.asset_name} className="w-full h-full rounded-xl object-cover" />
               ) : (
-                <Building2 className="w-10 h-10 text-white" />
+                <Building2 className="w-10 h-10 text-ink" />
               )}
             </div>
 
             {/* Info */}
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-2">
-                <h1 className="text-2xl md:text-3xl font-bold text-white">{project.asset_name}</h1>
+                <h1 className="text-2xl md:text-3xl font-bold text-ink">{project.asset_name}</h1>
                 <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium border ${statusConfig.color}`}>
                   <StatusIcon className="w-4 h-4" />
                   {statusConfig.label}
                 </span>
                 {isDeployed && tokenMetrics?.isPaused && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-red-500/20 text-red-400 border border-red-500/30">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-medium bg-danger/20 text-danger border border-danger/30">
                     <Lock className="w-4 h-4" />
                     Paused
                   </span>
                 )}
               </div>
 
-              <div className="flex flex-wrap items-center gap-4 text-sm text-slate-400 mb-4">
+              <div className="flex flex-wrap items-center gap-4 text-sm text-surface-overlay mb-4">
                 <span className="flex items-center gap-1">
                   <Building2 className="w-4 h-4" />
                   {ASSET_TYPE_LABELS[project.asset_type] || project.asset_type}
@@ -821,25 +821,25 @@ export default function TokenizationProjectPage() {
                     ${project.token_symbol}
                   </span>
                 )}
-                <span className={`flex items-center gap-1 ${isTestnet ? 'text-yellow-400' : 'text-green-400'}`}>
+                <span className={`flex items-center gap-1 ${isTestnet ? 'text-warning' : 'text-success'}`}>
                   <Activity className="w-4 h-4" />
                   {chainName}
                 </span>
               </div>
 
-              <p className="text-slate-300 line-clamp-2">{project.asset_description}</p>
+              <p className="text-surface-overlay line-clamp-2">{project.asset_description}</p>
             </div>
 
             {/* Quick Stats */}
             <div className="flex flex-col gap-2 md:text-right">
               <div>
-                <p className="text-slate-400 text-sm">Estimated Value</p>
-                <p className="text-2xl font-bold text-white">{formatCurrency(project.estimated_value)}</p>
+                <p className="text-surface-overlay text-sm">Estimated Value</p>
+                <p className="text-2xl font-bold text-ink">{formatCurrency(project.estimated_value)}</p>
               </div>
               {isDeployed && tokenMetrics && (
                 <div>
-                  <p className="text-slate-400 text-sm">Total Supply</p>
-                  <p className="text-lg font-semibold text-white">
+                  <p className="text-surface-overlay text-sm">Total Supply</p>
+                  <p className="text-lg font-semibold text-ink">
                     {formatTokenAmount(tokenMetrics.totalSupply, tokenMetrics.decimals)} {project.token_symbol}
                   </p>
                 </div>
@@ -849,15 +849,15 @@ export default function TokenizationProjectPage() {
 
           {/* Token Address */}
           {isDeployed && project.token_address && (
-            <div className="mt-6 pt-6 border-t border-slate-700">
+            <div className="mt-6 pt-6 border-t border-surface-overlay">
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-slate-400 text-sm">Token:</span>
+                  <span className="text-surface-overlay text-sm">Token:</span>
                   <AddressDisplay address={project.token_address} explorerUrl={explorerUrl} label="token address" />
                 </div>
                 {project.escrow_address && (
                   <div className="flex items-center gap-2">
-                    <span className="text-slate-400 text-sm">Escrow:</span>
+                    <span className="text-surface-overlay text-sm">Escrow:</span>
                     <AddressDisplay address={project.escrow_address} explorerUrl={explorerUrl} label="escrow address" />
                   </div>
                 )}
@@ -886,7 +886,7 @@ export default function TokenizationProjectPage() {
         )}
 
         {/* Tabs */}
-        <div className="flex gap-1 mb-6 bg-slate-800 rounded-lg p-1 overflow-x-auto">
+        <div className="flex gap-1 mb-6 bg-surface-overlay rounded-lg p-1 overflow-x-auto">
           {[
             { id: 'overview', label: 'Overview', icon: Eye },
             { id: 'holders', label: 'Holders', icon: Users, disabled: !isDeployed },
@@ -899,10 +899,10 @@ export default function TokenizationProjectPage() {
               disabled={(tab as any).disabled}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition whitespace-nowrap ${
                 activeTab === tab.id
-                  ? 'bg-gold-600 text-white'
+                  ? 'bg-gold-600 text-ink'
                   : (tab as any).disabled
-                  ? 'text-slate-600 cursor-not-allowed'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-700'
+                  ? 'text-surface-overlay cursor-not-allowed'
+                  : 'text-surface-overlay hover:text-ink hover:bg-surface-overlay'
               }`}
             >
               <tab.icon className="w-4 h-4" />
@@ -950,54 +950,54 @@ export default function TokenizationProjectPage() {
                 {/* Project Details */}
                 <div className="lg:col-span-2 space-y-6">
                   {/* Description */}
-                  <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-                    <h2 className="text-lg font-semibold text-white mb-4">About This Asset</h2>
-                    <p className="text-slate-300 whitespace-pre-wrap">{project.asset_description}</p>
+                  <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
+                    <h2 className="text-lg font-semibold text-ink mb-4">About This Asset</h2>
+                    <p className="text-surface-overlay whitespace-pre-wrap">{project.asset_description}</p>
                   </div>
 
                   {/* Token Details */}
                   {(project.token_name || project.token_symbol) && (
-                    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-                      <h2 className="text-lg font-semibold text-white mb-4">Token Information</h2>
+                    <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
+                      <h2 className="text-lg font-semibold text-ink mb-4">Token Information</h2>
                       <div className="grid sm:grid-cols-2 gap-4">
-                        <div className="p-4 bg-slate-700/50 rounded-lg">
-                          <p className="text-slate-400 text-sm">Token Name</p>
-                          <p className="text-white font-medium">{project.token_name || 'TBD'}</p>
+                        <div className="p-4 bg-surface-overlay/50 rounded-lg">
+                          <p className="text-surface-overlay text-sm">Token Name</p>
+                          <p className="text-ink font-medium">{project.token_name || 'TBD'}</p>
                         </div>
-                        <div className="p-4 bg-slate-700/50 rounded-lg">
-                          <p className="text-slate-400 text-sm">Token Symbol</p>
-                          <p className="text-white font-medium">{project.token_symbol || 'TBD'}</p>
+                        <div className="p-4 bg-surface-overlay/50 rounded-lg">
+                          <p className="text-surface-overlay text-sm">Token Symbol</p>
+                          <p className="text-ink font-medium">{project.token_symbol || 'TBD'}</p>
                         </div>
-                        <div className="p-4 bg-slate-700/50 rounded-lg">
-                          <p className="text-slate-400 text-sm">Total Supply</p>
-                          <p className="text-white font-medium">{project.token_supply ? formatNumber(project.token_supply) : 'TBD'}</p>
+                        <div className="p-4 bg-surface-overlay/50 rounded-lg">
+                          <p className="text-surface-overlay text-sm">Total Supply</p>
+                          <p className="text-ink font-medium">{project.token_supply ? formatNumber(project.token_supply) : 'TBD'}</p>
                         </div>
-                        <div className="p-4 bg-slate-700/50 rounded-lg">
-                          <p className="text-slate-400 text-sm">Use Case</p>
-                          <p className="text-white font-medium">{project.use_case?.replace(/_/g, ' ') || 'N/A'}</p>
+                        <div className="p-4 bg-surface-overlay/50 rounded-lg">
+                          <p className="text-surface-overlay text-sm">Use Case</p>
+                          <p className="text-ink font-medium">{project.use_case?.replace(/_/g, ' ') || 'N/A'}</p>
                         </div>
                       </div>
                     </div>
                   )}
 
                   {/* Features */}
-                  <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-                    <h2 className="text-lg font-semibold text-white mb-4">Features</h2>
+                  <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
+                    <h2 className="text-lg font-semibold text-ink mb-4">Features</h2>
                     <div className="flex flex-wrap gap-3">
                       {project.needs_escrow && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-green-500/10 text-green-400 rounded-lg border border-green-500/30">
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-success/10 text-success rounded-lg border border-success/30">
                           <Lock className="w-4 h-4" />
                           Trade Escrow
                         </span>
                       )}
                       {project.needs_dividends && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/10 text-yellow-400 rounded-lg border border-yellow-500/30">
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-warning/10 text-warning rounded-lg border border-warning/30">
                           <TrendingUp className="w-4 h-4" />
                           Dividend Distribution
                         </span>
                       )}
                       {!project.needs_escrow && !project.needs_dividends && (
-                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-slate-500/10 text-slate-400 rounded-lg border border-slate-500/30">
+                        <span className="inline-flex items-center gap-2 px-4 py-2 bg-surface-overlay/10 text-surface-overlay rounded-lg border border-surface-overlay/30">
                           <Coins className="w-4 h-4" />
                           Base Token
                         </span>
@@ -1007,29 +1007,29 @@ export default function TokenizationProjectPage() {
 
                   {/* Deployment Info */}
                   {isDeployed && (
-                    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-                      <h2 className="text-lg font-semibold text-white mb-4">Deployment Information</h2>
+                    <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
+                      <h2 className="text-lg font-semibold text-ink mb-4">Deployment Information</h2>
                       <div className="space-y-4">
                         {project.token_address && (
-                          <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+                          <div className="flex items-center justify-between p-4 bg-surface-overlay/50 rounded-lg">
                             <div>
-                              <p className="text-slate-400 text-sm">Token Contract</p>
+                              <p className="text-surface-overlay text-sm">Token Contract</p>
                               <AddressDisplay address={project.token_address} explorerUrl={explorerUrl} />
                             </div>
                           </div>
                         )}
                         {project.escrow_address && (
-                          <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+                          <div className="flex items-center justify-between p-4 bg-surface-overlay/50 rounded-lg">
                             <div>
-                              <p className="text-slate-400 text-sm">Escrow Contract</p>
+                              <p className="text-surface-overlay text-sm">Escrow Contract</p>
                               <AddressDisplay address={project.escrow_address} explorerUrl={explorerUrl} />
                             </div>
                           </div>
                         )}
                         {project.deployment_tx_hash && (
-                          <div className="flex items-center justify-between p-4 bg-slate-700/50 rounded-lg">
+                          <div className="flex items-center justify-between p-4 bg-surface-overlay/50 rounded-lg">
                             <div>
-                              <p className="text-slate-400 text-sm">Deployment Transaction</p>
+                              <p className="text-surface-overlay text-sm">Deployment Transaction</p>
                               <a
                                 href={`${explorerUrl}/tx/${project.deployment_tx_hash}`}
                                 target="_blank"
@@ -1040,7 +1040,7 @@ export default function TokenizationProjectPage() {
                                 <ExternalLink className="w-4 h-4" />
                               </a>
                             </div>
-                            <p className="text-slate-400 text-sm">{formatDate(project.deployed_at)}</p>
+                            <p className="text-surface-overlay text-sm">{formatDate(project.deployed_at)}</p>
                           </div>
                         )}
                       </div>
@@ -1051,16 +1051,16 @@ export default function TokenizationProjectPage() {
                 {/* Sidebar */}
                 <div className="space-y-6">
                   {/* Company Info */}
-                  <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-                    <h2 className="text-lg font-semibold text-white mb-4">Company Information</h2>
+                  <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
+                    <h2 className="text-lg font-semibold text-ink mb-4">Company Information</h2>
                     <div className="space-y-4">
                       <div>
-                        <p className="text-slate-400 text-sm">Legal Entity</p>
-                        <p className="text-white font-medium">{project.legal_entity_name || 'N/A'}</p>
+                        <p className="text-surface-overlay text-sm">Legal Entity</p>
+                        <p className="text-ink font-medium">{project.legal_entity_name || 'N/A'}</p>
                       </div>
                       <div>
-                        <p className="text-slate-400 text-sm">Contact</p>
-                        <p className="text-white font-medium">{project.contact_name || 'N/A'}</p>
+                        <p className="text-surface-overlay text-sm">Contact</p>
+                        <p className="text-ink font-medium">{project.contact_name || 'N/A'}</p>
                       </div>
                       {project.website && (
                         <a
@@ -1078,11 +1078,11 @@ export default function TokenizationProjectPage() {
                   </div>
 
                   {/* Owner Info */}
-                  <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-                    <h2 className="text-lg font-semibold text-white mb-4">Owner</h2>
+                  <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
+                    <h2 className="text-lg font-semibold text-ink mb-4">Owner</h2>
                     <AddressDisplay address={project.user_address} explorerUrl={explorerUrl} />
                     {isOwner && (
-                      <p className="text-green-400 text-sm mt-2 flex items-center gap-1">
+                      <p className="text-success text-sm mt-2 flex items-center gap-1">
                         <CheckCircle2 className="w-4 h-4" />
                         This is your project
                       </p>
@@ -1095,18 +1095,18 @@ export default function TokenizationProjectPage() {
 
           {/* Holders Tab */}
           {activeTab === 'holders' && isDeployed && (
-            <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
+            <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-semibold text-white">Token Holders</h2>
+                <h2 className="text-lg font-semibold text-ink">Token Holders</h2>
                 <div className="flex items-center gap-3">
-                  <span className="text-slate-400">{holders.length} holder{holders.length !== 1 ? 's' : ''}</span>
+                  <span className="text-surface-overlay">{holders.length} holder{holders.length !== 1 ? 's' : ''}</span>
                   <button
                     onClick={handleRefresh}
                     disabled={refreshing || holdersLoading}
-                    className="p-2 hover:bg-slate-700 rounded-lg transition"
+                    className="p-2 hover:bg-surface-overlay rounded-lg transition"
                     title="Refresh holders"
                   >
-                    <RefreshCw className={`w-4 h-4 text-slate-400 ${(refreshing || holdersLoading) ? 'animate-spin' : ''}`} />
+                    <RefreshCw className={`w-4 h-4 text-surface-overlay ${(refreshing || holdersLoading) ? 'animate-spin' : ''}`} />
                   </button>
                 </div>
               </div>
@@ -1114,7 +1114,7 @@ export default function TokenizationProjectPage() {
               {holdersLoading ? (
                 <div className="text-center py-12">
                   <Loader2 className="w-8 h-8 text-gold-500 animate-spin mx-auto mb-3" />
-                  <p className="text-slate-400">Loading holders...</p>
+                  <p className="text-surface-overlay">Loading holders...</p>
                 </div>
               ) : holders.length > 0 ? (
                 <div className="space-y-3">
@@ -1131,9 +1131,9 @@ export default function TokenizationProjectPage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <Users className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400">No holders found</p>
-                  <p className="text-slate-500 text-sm mt-1">Tokens may not have been distributed yet</p>
+                  <Users className="w-12 h-12 text-surface-overlay mx-auto mb-3" />
+                  <p className="text-surface-overlay">No holders found</p>
+                  <p className="text-surface-overlay text-sm mt-1">Tokens may not have been distributed yet</p>
                 </div>
               )}
             </div>
@@ -1141,8 +1141,8 @@ export default function TokenizationProjectPage() {
 
           {/* Documents Tab */}
           {activeTab === 'documents' && (
-            <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-              <h2 className="text-lg font-semibold text-white mb-6">Documents</h2>
+            <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-ink mb-6">Documents</h2>
               
               {documents.length > 0 ? (
                 <div className="grid sm:grid-cols-2 gap-4">
@@ -1158,8 +1158,8 @@ export default function TokenizationProjectPage() {
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-400">No documents uploaded</p>
+                  <FileText className="w-12 h-12 text-surface-overlay mx-auto mb-3" />
+                  <p className="text-surface-overlay">No documents uploaded</p>
                 </div>
               )}
             </div>
@@ -1167,23 +1167,23 @@ export default function TokenizationProjectPage() {
 
           {/* Settings Tab (Owner Only) */}
           {activeTab === 'settings' && isOwner && (
-            <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-              <h2 className="text-lg font-semibold text-white mb-6">Project Settings</h2>
+            <div className="bg-surface-overlay border border-surface-overlay rounded-xl p-6">
+              <h2 className="text-lg font-semibold text-ink mb-6">Project Settings</h2>
               
               <div className="space-y-6">
                 {/* Deploy Option for Approved Projects */}
                 {isApproved && (
-                  <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-                    <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                      <Rocket className="w-5 h-5 text-green-400" />
+                  <div className="p-4 bg-success/10 border border-success/30 rounded-lg">
+                    <h3 className="text-ink font-medium mb-2 flex items-center gap-2">
+                      <Rocket className="w-5 h-5 text-success" />
                       Ready to Deploy
                     </h3>
-                    <p className="text-slate-400 text-sm mb-4">
+                    <p className="text-surface-overlay text-sm mb-4">
                       Your application has been approved. Deploy your token to make it live on the blockchain.
                     </p>
                     <button
                       onClick={() => setShowDeployModal(true)}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-success hover:bg-success text-ink rounded-lg transition"
                     >
                       <Rocket className="w-4 h-4" />
                       Deploy Token
@@ -1193,17 +1193,17 @@ export default function TokenizationProjectPage() {
 
                 {/* Resubmit Option for Rejected Projects */}
                 {isRejected && (
-                  <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                    <h3 className="text-white font-medium mb-2 flex items-center gap-2">
-                      <AlertTriangle className="w-5 h-5 text-red-400" />
+                  <div className="p-4 bg-danger/10 border border-danger/30 rounded-lg">
+                    <h3 className="text-ink font-medium mb-2 flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-danger" />
                       Application Rejected
                     </h3>
-                    <p className="text-slate-400 text-sm mb-4">
+                    <p className="text-surface-overlay text-sm mb-4">
                       {project.rejection_reason || 'Your application was rejected. You can edit and resubmit it.'}
                     </p>
                     <Link
                       href={`/tokenize/edit/${project.id}`}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-500 text-ink rounded-lg transition"
                     >
                       <Edit className="w-4 h-4" />
                       Edit & Resubmit
@@ -1212,14 +1212,14 @@ export default function TokenizationProjectPage() {
                 )}
 
                 {isDeployed && (
-                  <div className="p-4 bg-slate-700/50 rounded-lg">
-                    <h3 className="text-white font-medium mb-4">Token Controls</h3>
+                  <div className="p-4 bg-surface-overlay/50 rounded-lg">
+                    <h3 className="text-ink font-medium mb-4">Token Controls</h3>
                     <div className="flex flex-wrap gap-3">
-                      <button className="flex items-center gap-2 px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-white rounded-lg transition">
+                      <button className="flex items-center gap-2 px-4 py-2 bg-warning hover:bg-warning text-ink rounded-lg transition">
                         {tokenMetrics?.isPaused ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />}
                         {tokenMetrics?.isPaused ? 'Unpause Token' : 'Pause Token'}
                       </button>
-                      <button className="flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition">
+                      <button className="flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-500 text-ink rounded-lg transition">
                         <Edit className="w-4 h-4" />
                         Update Metadata
                       </button>
@@ -1227,9 +1227,9 @@ export default function TokenizationProjectPage() {
                   </div>
                 )}
 
-                <div className="p-4 bg-slate-700/50 rounded-lg">
-                  <h3 className="text-white font-medium mb-4">Project Information</h3>
-                  <p className="text-slate-400 text-sm">
+                <div className="p-4 bg-surface-overlay/50 rounded-lg">
+                  <h3 className="text-ink font-medium mb-4">Project Information</h3>
+                  <p className="text-surface-overlay text-sm">
                     {isRejected 
                       ? 'Edit your application to fix any issues and resubmit for review.'
                       : isApproved

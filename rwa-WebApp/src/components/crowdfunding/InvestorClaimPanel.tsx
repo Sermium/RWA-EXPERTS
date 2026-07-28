@@ -250,14 +250,14 @@ export default function InvestorClaimPanel({
 
       {/* Messages */}
       {error && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2">
+        <div className="mb-4 p-3 bg-danger/10 border border-danger/30 rounded-lg flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-danger flex-shrink-0" />
           <p className="text-danger text-sm">{error}</p>
         </div>
       )}
 
       {success && (
-        <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
+        <div className="mb-4 p-3 bg-success/10 border border-success/30 rounded-lg">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-4 h-4 text-success flex-shrink-0" />
             <p className="text-success text-sm">{success}</p>
@@ -291,7 +291,7 @@ export default function InvestorClaimPanel({
       )}
 
       {stats.hasClaimed && (
-        <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-xl mb-4">
+        <div className="p-4 bg-success/10 border border-success/30 rounded-xl mb-4">
           <div className="flex items-center gap-2">
             <CheckCircle className="w-5 h-5 text-success" />
             <div>
@@ -310,7 +310,7 @@ export default function InvestorClaimPanel({
           <button
             onClick={handleClaimTokens}
             disabled={isClaiming}
-            className="flex-1 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 disabled:from-border-strong disabled:to-border-strong text-ink rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-gradient-to-r from-success to-success hover:from-success hover:to-success disabled:from-border-strong disabled:to-border-strong text-ink rounded-xl font-bold transition-all flex items-center justify-center gap-2"
           >
             {isClaiming ? (
               <Loader2 className="w-5 h-5 animate-spin" />
@@ -325,7 +325,7 @@ export default function InvestorClaimPanel({
           <button
             onClick={handleClaimRefund}
             disabled={isRefunding}
-            className="flex-1 py-3 bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 disabled:from-border-strong disabled:to-border-strong text-ink rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-gradient-to-r from-orange-600 to-danger hover:from-orange-700 hover:to-danger disabled:from-border-strong disabled:to-border-strong text-ink rounded-xl font-bold transition-all flex items-center justify-center gap-2"
           >
             {isRefunding ? (
               <Loader2 className="w-5 h-5 animate-spin" />

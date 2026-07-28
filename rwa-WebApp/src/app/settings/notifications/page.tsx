@@ -252,7 +252,7 @@ function ChannelToggle({
         flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all
         ${enabled 
           ? 'bg-gold-500/20 text-gold-400 border border-gold-500/30' 
-          : 'bg-gray-800 text-gray-500 border border-gray-700 hover:border-gray-600'
+          : 'bg-surface text-ink-faint border border-border hover:border-border-strong'
         }
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
       `}
@@ -280,17 +280,17 @@ function CategoryCard({
   const noneEnabled = Object.values(preference.channels).every(v => !v);
 
   return (
-    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 overflow-hidden">
+    <div className="bg-surface/50 rounded-xl border border-border/50 overflow-hidden">
       {/* Header */}
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-start gap-3">
-            <div className={`p-2 rounded-lg ${allEnabled ? 'bg-gold-500/20 text-gold-400' : noneEnabled ? 'bg-gray-700 text-gray-500' : 'bg-yellow-500/20 text-yellow-400'}`}>
+            <div className={`p-2 rounded-lg ${allEnabled ? 'bg-gold-500/20 text-gold-400' : noneEnabled ? 'bg-surface-overlay text-ink-faint' : 'bg-warning/20 text-warning'}`}>
               {preference.icon}
             </div>
             <div>
-              <h3 className="text-white font-semibold">{preference.label}</h3>
-              <p className="text-sm text-gray-400 mt-0.5">{preference.description}</p>
+              <h3 className="text-ink font-semibold">{preference.label}</h3>
+              <p className="text-sm text-ink-muted mt-0.5">{preference.description}</p>
             </div>
           </div>
           
@@ -305,7 +305,7 @@ function CategoryCard({
             className={`p-2 rounded-lg transition-colors ${
               allEnabled 
                 ? 'bg-gold-500/20 text-gold-400 hover:bg-gold-500/30' 
-                : 'bg-gray-700 text-gray-400 hover:bg-gray-600'
+                : 'bg-surface-overlay text-ink-muted hover:bg-border-strong'
             }`}
           >
             {allEnabled ? <BellRing className="h-5 w-5" /> : <BellOff className="h-5 w-5" />}
@@ -328,7 +328,7 @@ function CategoryCard({
         {preference.subcategories && preference.subcategories.length > 0 && (
           <button
             onClick={onToggleExpand}
-            className="mt-4 text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1"
+            className="mt-4 text-sm text-ink-muted hover:text-ink transition-colors flex items-center gap-1"
           >
             {expanded ? 'Hide' : 'Show'} detailed settings
             <svg
@@ -345,15 +345,15 @@ function CategoryCard({
 
       {/* Subcategories */}
       {expanded && preference.subcategories && (
-        <div className="border-t border-gray-700/50 bg-gray-900/50">
+        <div className="border-t border-border/50 bg-surface-sunken/50">
           {preference.subcategories.map((sub, index) => (
             <div
               key={sub.id}
               className={`p-4 flex items-center justify-between ${
-                index < preference.subcategories!.length - 1 ? 'border-b border-gray-700/30' : ''
+                index < preference.subcategories!.length - 1 ? 'border-b border-border/30' : ''
               }`}
             >
-              <span className="text-sm text-gray-300">{sub.label}</span>
+              <span className="text-sm text-ink-muted">{sub.label}</span>
               <div className="flex gap-2">
                 {(['email', 'push', 'inApp', 'sms'] as NotificationChannel[]).map(channel => (
                   <ChannelToggle
@@ -381,8 +381,8 @@ function GlobalSettingsCard({
   onChange: (settings: NotificationSettings['globalSettings']) => void;
 }) {
   return (
-    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-6">
-      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+    <div className="bg-surface/50 rounded-xl border border-border/50 p-6">
+      <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
         <Globe className="h-5 w-5 text-gold-400" />
         Global Settings
       </h3>
@@ -390,33 +390,33 @@ function GlobalSettingsCard({
       <div className="space-y-6">
         {/* Email Digest */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Email Digest Frequency
           </label>
           <select
             value={settings.emailDigest}
             onChange={(e) => onChange({ ...settings, emailDigest: e.target.value as any })}
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-gold-500 outline-none"
+            className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink focus:border-gold-500 outline-none"
           >
             <option value="realtime">Real-time (as they happen)</option>
             <option value="daily">Daily digest</option>
             <option value="weekly">Weekly digest</option>
             <option value="never">Never (in-app only)</option>
           </select>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-ink-faint">
             Choose how often you want to receive email notifications
           </p>
         </div>
 
         {/* Timezone */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Timezone
           </label>
           <select
             value={settings.timezone}
             onChange={(e) => onChange({ ...settings, timezone: e.target.value })}
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-gold-500 outline-none"
+            className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink focus:border-gold-500 outline-none"
           >
             {TIMEZONES.map(tz => (
               <option key={tz.value} value={tz.value}>{tz.label}</option>
@@ -428,15 +428,15 @@ function GlobalSettingsCard({
         <div>
           <div className="flex items-center justify-between mb-3">
             <div>
-              <label className="block text-sm font-medium text-gray-300">
+              <label className="block text-sm font-medium text-ink-muted">
                 Quiet Hours
               </label>
-              <p className="text-xs text-gray-500">Pause non-urgent notifications during these hours</p>
+              <p className="text-xs text-ink-faint">Pause non-urgent notifications during these hours</p>
             </div>
             <button
               onClick={() => onChange({ ...settings, quietHoursEnabled: !settings.quietHoursEnabled })}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                settings.quietHoursEnabled ? 'bg-gold-500' : 'bg-gray-700'
+                settings.quietHoursEnabled ? 'bg-gold-500' : 'bg-surface-overlay'
               }`}
             >
               <span
@@ -450,21 +450,21 @@ function GlobalSettingsCard({
           {settings.quietHoursEnabled && (
             <div className="flex items-center gap-4 mt-3">
               <div className="flex-1">
-                <label className="block text-xs text-gray-500 mb-1">Start</label>
+                <label className="block text-xs text-ink-faint mb-1">Start</label>
                 <input
                   type="time"
                   value={settings.quietHoursStart}
                   onChange={(e) => onChange({ ...settings, quietHoursStart: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:border-gold-500 outline-none"
+                  className="w-full px-3 py-2 bg-surface-sunken border border-border rounded-lg text-ink text-sm focus:border-gold-500 outline-none"
                 />
               </div>
               <div className="flex-1">
-                <label className="block text-xs text-gray-500 mb-1">End</label>
+                <label className="block text-xs text-ink-faint mb-1">End</label>
                 <input
                   type="time"
                   value={settings.quietHoursEnd}
                   onChange={(e) => onChange({ ...settings, quietHoursEnd: e.target.value })}
-                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-lg text-white text-sm focus:border-gold-500 outline-none"
+                  className="w-full px-3 py-2 bg-surface-sunken border border-border rounded-lg text-ink text-sm focus:border-gold-500 outline-none"
                 />
               </div>
             </div>
@@ -473,19 +473,19 @@ function GlobalSettingsCard({
 
         {/* Sound & Desktop */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <label className="flex items-center justify-between flex-1 p-4 bg-gray-900 rounded-xl border border-gray-700 cursor-pointer hover:border-gray-600 transition-colors">
+          <label className="flex items-center justify-between flex-1 p-4 bg-surface-sunken rounded-xl border border-border cursor-pointer hover:border-border-strong transition-colors">
             <div className="flex items-center gap-3">
               {settings.soundEnabled ? (
                 <Volume2 className="h-5 w-5 text-gold-400" />
               ) : (
-                <VolumeX className="h-5 w-5 text-gray-500" />
+                <VolumeX className="h-5 w-5 text-ink-faint" />
               )}
-              <span className="text-sm text-gray-300">Sound alerts</span>
+              <span className="text-sm text-ink-muted">Sound alerts</span>
             </div>
             <button
               onClick={() => onChange({ ...settings, soundEnabled: !settings.soundEnabled })}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                settings.soundEnabled ? 'bg-gold-500' : 'bg-gray-700'
+                settings.soundEnabled ? 'bg-gold-500' : 'bg-surface-overlay'
               }`}
             >
               <span
@@ -496,15 +496,15 @@ function GlobalSettingsCard({
             </button>
           </label>
 
-          <label className="flex items-center justify-between flex-1 p-4 bg-gray-900 rounded-xl border border-gray-700 cursor-pointer hover:border-gray-600 transition-colors">
+          <label className="flex items-center justify-between flex-1 p-4 bg-surface-sunken rounded-xl border border-border cursor-pointer hover:border-border-strong transition-colors">
             <div className="flex items-center gap-3">
-              <Globe className={`h-5 w-5 ${settings.desktopNotifications ? 'text-gold-400' : 'text-gray-500'}`} />
-              <span className="text-sm text-gray-300">Desktop notifications</span>
+              <Globe className={`h-5 w-5 ${settings.desktopNotifications ? 'text-gold-400' : 'text-ink-faint'}`} />
+              <span className="text-sm text-ink-muted">Desktop notifications</span>
             </div>
             <button
               onClick={() => onChange({ ...settings, desktopNotifications: !settings.desktopNotifications })}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                settings.desktopNotifications ? 'bg-gold-500' : 'bg-gray-700'
+                settings.desktopNotifications ? 'bg-gold-500' : 'bg-surface-overlay'
               }`}
             >
               <span
@@ -532,8 +532,8 @@ function ContactInfoCard({
   onVerifyPhone: () => void;
 }) {
   return (
-    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-6">
-      <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+    <div className="bg-surface/50 rounded-xl border border-border/50 p-6">
+      <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
         <Users className="h-5 w-5 text-gold-400" />
         Contact Information
       </h3>
@@ -541,25 +541,25 @@ function ContactInfoCard({
       <div className="space-y-4">
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Email Address
           </label>
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-faint" />
               <input
                 type="email"
                 value={contactInfo.email}
                 onChange={(e) => onChange({ ...contactInfo, email: e.target.value, emailVerified: false })}
                 placeholder="your@email.com"
-                className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-gold-500 outline-none"
+                className="w-full pl-10 pr-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink focus:border-gold-500 outline-none"
               />
             </div>
             {contactInfo.email && (
               contactInfo.emailVerified ? (
-                <div className="flex items-center px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-xl">
-                  <CheckCircle2 className="h-5 w-5 text-green-400 mr-2" />
-                  <span className="text-green-400 text-sm">Verified</span>
+                <div className="flex items-center px-4 py-2 bg-success/10 border border-success/30 rounded-xl">
+                  <CheckCircle2 className="h-5 w-5 text-success mr-2" />
+                  <span className="text-success text-sm">Verified</span>
                 </div>
               ) : (
                 <button
@@ -575,25 +575,25 @@ function ContactInfoCard({
 
         {/* Phone */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-ink-muted mb-2">
             Phone Number (for SMS)
           </label>
           <div className="flex gap-2">
             <div className="relative flex-1">
-              <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" />
+              <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-faint" />
               <input
                 type="tel"
                 value={contactInfo.phone}
                 onChange={(e) => onChange({ ...contactInfo, phone: e.target.value, phoneVerified: false })}
                 placeholder="+1 (555) 000-0000"
-                className="w-full pl-10 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-xl text-white focus:border-gold-500 outline-none"
+                className="w-full pl-10 pr-4 py-3 bg-surface-sunken border border-border rounded-xl text-ink focus:border-gold-500 outline-none"
               />
             </div>
             {contactInfo.phone && (
               contactInfo.phoneVerified ? (
-                <div className="flex items-center px-4 py-2 bg-green-500/10 border border-green-500/30 rounded-xl">
-                  <CheckCircle2 className="h-5 w-5 text-green-400 mr-2" />
-                  <span className="text-green-400 text-sm">Verified</span>
+                <div className="flex items-center px-4 py-2 bg-success/10 border border-success/30 rounded-xl">
+                  <CheckCircle2 className="h-5 w-5 text-success mr-2" />
+                  <span className="text-success text-sm">Verified</span>
                 </div>
               ) : (
                 <button
@@ -605,7 +605,7 @@ function ContactInfoCard({
               )
             )}
           </div>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-ink-faint">
             SMS notifications are only sent for critical alerts
           </p>
         </div>
@@ -768,13 +768,13 @@ export default function NotificationPreferencesPage() {
 
   if (!isConnected) {
     return (
-      <main className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <main className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-6">
-            <Bell className="h-8 w-8 text-gray-600" />
+          <div className="w-16 h-16 rounded-full bg-surface flex items-center justify-center mx-auto mb-6">
+            <Bell className="h-8 w-8 text-ink-faint" />
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Connect Wallet</h1>
-          <p className="text-gray-400">Please connect your wallet to manage notification preferences</p>
+          <h1 className="text-2xl font-bold text-ink mb-2">Connect Wallet</h1>
+          <p className="text-ink-muted">Please connect your wallet to manage notification preferences</p>
         </div>
       </main>
     );
@@ -782,36 +782,36 @@ export default function NotificationPreferencesPage() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <main className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-8 w-8 text-gold-500 animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Loading preferences...</p>
+          <p className="text-ink-muted">Loading preferences...</p>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-900 py-8">
+    <main className="min-h-screen bg-surface-sunken py-8">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/settings" className="inline-flex items-center text-gray-400 hover:text-white transition-colors mb-4">
+          <Link href="/settings" className="inline-flex items-center text-ink-muted hover:text-ink transition-colors mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Settings
           </Link>
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-ink flex items-center gap-3">
                 <Bell className="h-8 w-8 text-gold-400" />
                 Notification Preferences
               </h1>
-              <p className="text-gray-400 mt-1">Manage how and when you receive notifications</p>
+              <p className="text-ink-muted mt-1">Manage how and when you receive notifications</p>
             </div>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="px-6 py-3 bg-gold-500 text-white font-semibold rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 flex items-center gap-2"
+              className="px-6 py-3 bg-gold-500 text-ink font-semibold rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 flex items-center gap-2"
             >
               {saving ? (
                 <>
@@ -849,7 +849,7 @@ export default function NotificationPreferencesPage() {
                 })),
               }));
             }}
-            className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+            className="px-4 py-2 bg-surface text-ink-muted rounded-lg hover:bg-surface-overlay transition-colors text-sm"
           >
             Enable All
           </button>
@@ -867,7 +867,7 @@ export default function NotificationPreferencesPage() {
                 })),
               }));
             }}
-            className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+            className="px-4 py-2 bg-surface text-ink-muted rounded-lg hover:bg-surface-overlay transition-colors text-sm"
           >
             In-App Only
           </button>
@@ -885,7 +885,7 @@ export default function NotificationPreferencesPage() {
                 })),
               }));
             }}
-            className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg hover:bg-gray-700 transition-colors text-sm"
+            className="px-4 py-2 bg-surface text-ink-muted rounded-lg hover:bg-surface-overlay transition-colors text-sm"
           >
             Disable All
           </button>
@@ -911,7 +911,7 @@ export default function NotificationPreferencesPage() {
 
         {/* Category Preferences */}
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold text-white">Notification Categories</h2>
+          <h2 className="text-xl font-semibold text-ink">Notification Categories</h2>
           
           {settings.preferences.map(preference => (
             <CategoryCard
@@ -934,7 +934,7 @@ export default function NotificationPreferencesPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className="w-full px-6 py-3 bg-gold-500 text-white font-semibold rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full px-6 py-3 bg-gold-500 text-ink font-semibold rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {saving ? (
               <>

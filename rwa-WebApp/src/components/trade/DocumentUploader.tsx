@@ -324,7 +324,7 @@ export default function DocumentUploader({
           <button
             onClick={handleUpload}
             disabled={!file || !selectedType || isUploading}
-            className="flex-1 px-4 py-3 bg-gold-500 text-white font-medium rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            className="flex-1 px-4 py-3 bg-gold-500 text-ink font-medium rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
           >
             {isUploading ? (
               <>

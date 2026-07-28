@@ -276,14 +276,14 @@ export default function CSVUploader({
   return (
     <div className="space-y-4">
       {/* Input Mode Toggle */}
-      <div className="flex items-center gap-2 p-1 bg-slate-800 rounded-lg w-fit">
+      <div className="flex items-center gap-2 p-1 bg-surface-overlay rounded-lg w-fit">
         <button
           type="button"
           onClick={() => setInputMode('manual')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             inputMode === 'manual'
-              ? 'bg-gold-600 text-white'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-gold-600 text-ink'
+              : 'text-surface-overlay hover:text-ink'
           }`}
         >
           Manual Entry
@@ -293,8 +293,8 @@ export default function CSVUploader({
           onClick={() => setInputMode('csv')}
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
             inputMode === 'csv'
-              ? 'bg-gold-600 text-white'
-              : 'text-slate-400 hover:text-white'
+              ? 'bg-gold-600 text-ink'
+              : 'text-surface-overlay hover:text-ink'
           }`}
         >
           CSV Upload
@@ -303,24 +303,24 @@ export default function CSVUploader({
 
       {/* Manual Entry Mode */}
       {inputMode === 'manual' && (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-4">
-          <h4 className="text-sm font-medium text-white mb-3">Add Recipient</h4>
+        <div className="bg-surface-overlay/50 border border-surface-overlay rounded-lg p-4">
+          <h4 className="text-sm font-medium text-ink mb-3">Add Recipient</h4>
           
           <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
-              <label className="block text-xs text-slate-400 mb-1">Wallet Address</label>
+              <label className="block text-xs text-surface-overlay mb-1">Wallet Address</label>
               <input
                 type="text"
                 value={manualAddress}
                 onChange={(e) => setManualAddress(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="0x..."
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-gold-500"
+                className="w-full px-3 py-2 bg-surface-overlay border border-surface-overlay rounded-lg text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-gold-500"
               />
             </div>
             
             <div className="w-full sm:w-40">
-              <label className="block text-xs text-slate-400 mb-1">Amount</label>
+              <label className="block text-xs text-surface-overlay mb-1">Amount</label>
               <input
                 type="number"
                 value={manualAmount}
@@ -330,7 +330,7 @@ export default function CSVUploader({
                 min="0"
                 step="any"
                 max={remainingTokens}
-                className="w-full px-3 py-2 bg-slate-900 border border-slate-600 rounded-lg text-white text-sm placeholder-slate-500 focus:outline-none focus:border-gold-500"
+                className="w-full px-3 py-2 bg-surface-overlay border border-surface-overlay rounded-lg text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-gold-500"
               />
             </div>
             
@@ -338,7 +338,7 @@ export default function CSVUploader({
               <button
                 type="button"
                 onClick={handleAddManual}
-                className="w-full sm:w-auto px-4 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
+                className="w-full sm:w-auto px-4 py-2 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg text-sm font-medium transition-colors"
               >
                 Add
               </button>
@@ -346,13 +346,13 @@ export default function CSVUploader({
           </div>
 
           {manualError && (
-            <p className="mt-2 text-sm text-red-400">{manualError}</p>
+            <p className="mt-2 text-sm text-danger">{manualError}</p>
           )}
 
-          <p className="mt-3 text-xs text-slate-500">
-            Remaining tokens: <span className="text-slate-300">{formatTokenAmount(remainingTokens)}</span>
+          <p className="mt-3 text-xs text-surface-overlay">
+            Remaining tokens: <span className="text-surface-overlay">{formatTokenAmount(remainingTokens)}</span>
             {remainingTokens > 0 && allocations.length > 0 && (
-              <span className="text-slate-500"> • Unallocated tokens will be minted to your wallet</span>
+              <span className="text-surface-overlay"> • Unallocated tokens will be minted to your wallet</span>
             )}
           </p>
         </div>
@@ -362,20 +362,20 @@ export default function CSVUploader({
       {inputMode === 'csv' && (
         <>
           {/* Info Guide */}
-          <div className="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
+          <div className="bg-surface-overlay/50 border border-surface-overlay rounded-lg overflow-hidden">
             <button
               type="button"
               onClick={() => setShowGuide(!showGuide)}
-              className="w-full flex items-center justify-between p-3 text-left hover:bg-slate-700/30 transition-colors"
+              className="w-full flex items-center justify-between p-3 text-left hover:bg-surface-overlay/30 transition-colors"
             >
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm text-slate-300">CSV Format Guide</span>
+                <span className="text-sm text-surface-overlay">CSV Format Guide</span>
               </div>
               <svg
-                className={`w-4 h-4 text-slate-400 transition-transform ${showGuide ? 'rotate-180' : ''}`}
+                className={`w-4 h-4 text-surface-overlay transition-transform ${showGuide ? 'rotate-180' : ''}`}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -385,10 +385,10 @@ export default function CSVUploader({
             </button>
 
             {showGuide && (
-              <div className="p-4 border-t border-slate-700 space-y-3">
+              <div className="p-4 border-t border-surface-overlay space-y-3">
                 <div>
-                  <p className="text-sm text-slate-300 mb-2">Your CSV should have two columns:</p>
-                  <code className="block bg-slate-900 p-3 rounded text-xs text-green-400 font-mono">
+                  <p className="text-sm text-surface-overlay mb-2">Your CSV should have two columns:</p>
+                  <code className="block bg-surface-overlay p-3 rounded text-xs text-success font-mono">
                     address,amount<br />
                     0x742d...1abc,400000<br />
                     0x8ba1...7890,250000.354<br />
@@ -397,10 +397,10 @@ export default function CSVUploader({
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                  <span className="text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded">
+                  <span className="text-xs text-surface-overlay bg-surface-overlay/50 px-2 py-1 rounded">
                     Supports: comma (,) or semicolon (;)
                   </span>
-                  <span className="text-xs text-slate-400 bg-slate-700/50 px-2 py-1 rounded">
+                  <span className="text-xs text-surface-overlay bg-surface-overlay/50 px-2 py-1 rounded">
                     Header row is optional
                   </span>
                 </div>
@@ -428,7 +428,7 @@ export default function CSVUploader({
             className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors ${
               isDragging
                 ? 'border-gold-500 bg-gold-500/10'
-                : 'border-slate-600 hover:border-slate-500 bg-slate-800/30'
+                : 'border-surface-overlay hover:border-surface-overlay bg-surface-overlay/30'
             }`}
           >
             <input
@@ -438,13 +438,13 @@ export default function CSVUploader({
               onChange={handleFileInput}
               className="hidden"
             />
-            <svg className="w-10 h-10 mx-auto mb-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-10 h-10 mx-auto mb-3 text-surface-overlay" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
             </svg>
-            <p className="text-sm text-slate-300">
+            <p className="text-sm text-surface-overlay">
               Drag & drop your CSV file here, or <span className="text-gold-400">browse</span>
             </p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-xs text-surface-overlay mt-1">
               Or switch to Manual Entry for small distributions
             </p>
           </div>
@@ -453,15 +453,15 @@ export default function CSVUploader({
 
       {/* Allocations List */}
       {allocations.length > 0 && (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-lg overflow-hidden">
-          <div className="flex items-center justify-between p-3 border-b border-slate-700">
-            <h4 className="text-sm font-medium text-white">
+        <div className="bg-surface-overlay/50 border border-surface-overlay rounded-lg overflow-hidden">
+          <div className="flex items-center justify-between p-3 border-b border-surface-overlay">
+            <h4 className="text-sm font-medium text-ink">
               Token Distribution ({allocations.length} recipient{allocations.length !== 1 ? 's' : ''})
             </h4>
             <button
               type="button"
               onClick={clearAll}
-              className="text-xs text-red-400 hover:text-red-300"
+              className="text-xs text-danger hover:text-danger"
             >
               Clear All
             </button>
@@ -469,19 +469,19 @@ export default function CSVUploader({
 
           <div className="max-h-64 overflow-y-auto">
             <table className="w-full">
-              <thead className="bg-slate-900/50 sticky top-0">
+              <thead className="bg-surface-overlay/50 sticky top-0">
                 <tr>
-                  <th className="text-left text-xs font-medium text-slate-400 px-3 py-2">Address</th>
-                  <th className="text-right text-xs font-medium text-slate-400 px-3 py-2">Amount</th>
-                  <th className="text-right text-xs font-medium text-slate-400 px-3 py-2">%</th>
+                  <th className="text-left text-xs font-medium text-surface-overlay px-3 py-2">Address</th>
+                  <th className="text-right text-xs font-medium text-surface-overlay px-3 py-2">Amount</th>
+                  <th className="text-right text-xs font-medium text-surface-overlay px-3 py-2">%</th>
                   <th className="w-20"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/50">
+              <tbody className="divide-y divide-surface-overlay/50">
                 {allocations.map((alloc, index) => (
                   <tr
                     key={index}
-                    className={`${!alloc.isValid ? 'bg-red-500/10' : 'hover:bg-slate-700/30'}`}
+                    className={`${!alloc.isValid ? 'bg-danger/10' : 'hover:bg-surface-overlay/30'}`}
                   >
                     <td className="px-3 py-2">
                       <input
@@ -489,11 +489,11 @@ export default function CSVUploader({
                         value={alloc.address}
                         onChange={(e) => updateAllocation(index, 'address', e.target.value)}
                         className={`w-full bg-transparent text-sm font-mono focus:outline-none ${
-                          alloc.isValid ? 'text-slate-300' : 'text-red-400'
+                          alloc.isValid ? 'text-surface-overlay' : 'text-danger'
                         }`}
                       />
                       {alloc.error && (
-                        <p className="text-xs text-red-400 mt-1">{alloc.error}</p>
+                        <p className="text-xs text-danger mt-1">{alloc.error}</p>
                       )}
                     </td>
                     <td className="px-3 py-2">
@@ -501,10 +501,10 @@ export default function CSVUploader({
                         type="number"
                         value={alloc.amount}
                         onChange={(e) => updateAllocation(index, 'amount', e.target.value)}
-                        className="w-full bg-transparent text-sm text-right text-white focus:outline-none"
+                        className="w-full bg-transparent text-sm text-right text-ink focus:outline-none"
                       />
                     </td>
-                    <td className="px-3 py-2 text-right text-sm text-slate-400">
+                    <td className="px-3 py-2 text-right text-sm text-surface-overlay">
                       {alloc.percentage.toFixed(2)}%
                     </td>
                     <td className="px-3 py-2 text-right">
@@ -514,7 +514,7 @@ export default function CSVUploader({
                             type="button"
                             onClick={() => fillRemaining(index)}
                             title="Fill remaining tokens"
-                            className="p-1 text-slate-500 hover:text-gold-400"
+                            className="p-1 text-surface-overlay hover:text-gold-400"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -524,7 +524,7 @@ export default function CSVUploader({
                         <button
                           type="button"
                           onClick={() => removeAllocation(index)}
-                          className="p-1 text-slate-500 hover:text-red-400"
+                          className="p-1 text-surface-overlay hover:text-danger"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -539,32 +539,32 @@ export default function CSVUploader({
           </div>
 
           {/* Summary */}
-          <div className="p-3 border-t border-slate-700 bg-slate-900/30">
+          <div className="p-3 border-t border-surface-overlay bg-surface-overlay/30">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-slate-400">Allocated</span>
-              <span className="text-sm text-white font-medium">
+              <span className="text-sm text-surface-overlay">Allocated</span>
+              <span className="text-sm text-ink font-medium">
                 {formatTokenAmount(totalAllocated)} / {formatTokenAmount(totalSupply)} tokens
               </span>
             </div>
 
             {/* Progress bar */}
-            <div className="h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div className="h-2 bg-surface-overlay rounded-full overflow-hidden">
               <div
                 className={`h-full transition-all ${
-                  allocationPercentage > 100 ? 'bg-red-500' : 'bg-gold-500'
+                  allocationPercentage > 100 ? 'bg-danger' : 'bg-gold-500'
                 }`}
                 style={{ width: `${Math.min(allocationPercentage, 100)}%` }}
               />
             </div>
 
             {allocationPercentage > 100 && (
-              <p className="text-xs text-red-400 mt-2">
+              <p className="text-xs text-danger mt-2">
                 Over-allocated by {formatTokenAmount(totalAllocated - totalSupply)} tokens
               </p>
             )}
 
             {remainingTokens > 0 && (
-              <p className="text-xs text-slate-500 mt-2">
+              <p className="text-xs text-surface-overlay mt-2">
                 {formatTokenAmount(remainingTokens)} tokens ({(100 - allocationPercentage).toFixed(2)}%) will be minted to your wallet
               </p>
             )}
@@ -574,7 +574,7 @@ export default function CSVUploader({
 
       {/* No allocations message */}
       {allocations.length === 0 && (
-        <div className="text-center py-6 text-slate-500">
+        <div className="text-center py-6 text-surface-overlay">
           <p className="text-sm">No recipients added yet</p>
           <p className="text-xs mt-1">All tokens will be minted to your wallet</p>
         </div>

@@ -209,7 +209,7 @@ function CopyButton({ text }: { text: string }) {
   };
   return (
     <button onClick={handleCopy} className="p-1 hover:bg-white/10 rounded transition-colors" title="Copy">
-      {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4 text-slate-400" />}
+      {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4 text-surface-overlay" />}
     </button>
   );
 }
@@ -217,30 +217,30 @@ function CopyButton({ text }: { text: string }) {
 // Stat card
 function StatCard({ icon: Icon, label, value, subValue }: { icon: React.ElementType; label: string; value: string; subValue?: string }) {
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700">
+    <div className="bg-surface-overlay/50 backdrop-blur-sm rounded-xl p-4 border border-surface-overlay">
       <div className="flex items-center gap-2 mb-2">
-        <Icon className="w-4 h-4 text-slate-400" />
-        <span className="text-slate-400 text-sm">{label}</span>
+        <Icon className="w-4 h-4 text-surface-overlay" />
+        <span className="text-surface-overlay text-sm">{label}</span>
       </div>
-      <p className="text-xl font-bold text-white">{value}</p>
-      {subValue && <p className="text-sm text-slate-500 mt-1">{subValue}</p>}
+      <p className="text-xl font-bold text-ink">{value}</p>
+      {subValue && <p className="text-sm text-surface-overlay mt-1">{subValue}</p>}
     </div>
   );
 }
 
 // Milestone card
 function MilestoneCard({ milestone, index }: { milestone: ProjectData['milestones'][0]; index: number }) {
-  const statusColors: Record<string, string> = { completed: 'bg-green-500', in_progress: 'bg-gold-500', pending: 'bg-slate-500' };
+  const statusColors: Record<string, string> = { completed: 'bg-success', in_progress: 'bg-gold-500', pending: 'bg-surface-overlay' };
   return (
-    <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+    <div className="bg-surface-overlay/50 rounded-xl p-6 border border-surface-overlay">
       <div className="flex items-start gap-4">
-        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-bold ${statusColors[milestone.status] || statusColors.pending}`}>{index + 1}</div>
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center text-ink font-bold ${statusColors[milestone.status] || statusColors.pending}`}>{index + 1}</div>
         <div className="flex-1">
-          <h4 className="text-lg font-semibold text-white mb-2">{milestone.title}</h4>
-          <p className="text-slate-400 text-sm mb-3">{milestone.description}</p>
+          <h4 className="text-lg font-semibold text-ink mb-2">{milestone.title}</h4>
+          <p className="text-surface-overlay text-sm mb-3">{milestone.description}</p>
           <div className="flex items-center gap-4 text-sm">
-            <span className="text-slate-500"><Calendar className="w-4 h-4 inline mr-1" />{formatDate(milestone.targetDate)}</span>
-            <span className="text-slate-500"><Target className="w-4 h-4 inline mr-1" />{milestone.fundingPercentage}% of funds</span>
+            <span className="text-surface-overlay"><Calendar className="w-4 h-4 inline mr-1" />{formatDate(milestone.targetDate)}</span>
+            <span className="text-surface-overlay"><Target className="w-4 h-4 inline mr-1" />{milestone.fundingPercentage}% of funds</span>
           </div>
         </div>
       </div>
@@ -252,13 +252,13 @@ function MilestoneCard({ milestone, index }: { milestone: ProjectData['milestone
 function DocumentItem({ doc }: { doc: { name?: string; url: string; type?: string } }) {
   const docType = doc.type || inferDocType(doc.url, doc.name);
   return (
-    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-slate-800/50 rounded-lg border border-slate-700 hover:border-slate-600 transition-colors">
+    <a href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 bg-surface-overlay/50 rounded-lg border border-surface-overlay hover:border-surface-overlay transition-colors">
       <FileText className="w-8 h-8 text-gold-400 flex-shrink-0" />
       <div className="flex-1 min-w-0">
-        <p className="text-white font-medium">{docType}</p>
-        <p className="text-slate-400 text-sm truncate">{doc.url.split('/').pop()?.split('?')[0]}</p>
+        <p className="text-ink font-medium">{docType}</p>
+        <p className="text-surface-overlay text-sm truncate">{doc.url.split('/').pop()?.split('?')[0]}</p>
       </div>
-      <ExternalLink className="w-5 h-5 text-slate-400 flex-shrink-0" />
+      <ExternalLink className="w-5 h-5 text-surface-overlay flex-shrink-0" />
     </a>
   );
 }
@@ -316,14 +316,14 @@ function StripeInlineForm({
           type="button"
           onClick={onCancel}
           disabled={isProcessing}
-          className="flex-1 py-3 bg-slate-700 hover:bg-slate-600 disabled:opacity-50 text-white rounded-xl transition-colors"
+          className="flex-1 py-3 bg-surface-overlay hover:bg-surface-overlay disabled:opacity-50 text-ink rounded-xl transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={!stripe || !isReady || isProcessing}
-          className="flex-1 py-3 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 disabled:from-slate-600 disabled:to-slate-600 disabled:cursor-not-allowed text-white font-bold rounded-xl transition-all flex items-center justify-center gap-2"
+          className="flex-1 py-3 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 disabled:from-surface-overlay disabled:to-surface-overlay disabled:cursor-not-allowed text-ink font-bold rounded-xl transition-all flex items-center justify-center gap-2"
         >
           {isProcessing ? (
             <><Loader2 className="w-5 h-5 animate-spin" />Processing...</>
@@ -598,22 +598,22 @@ function InvestmentCard({
   // SUCCESS STATE
   if (success) {
     return (
-      <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-6 border border-green-500/30">
+      <div className="bg-surface-overlay/50 backdrop-blur-sm rounded-xl p-6 border border-success/30">
         <div className="text-center">
-          <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <CheckCircle className="w-8 h-8 text-green-400" />
+          <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <CheckCircle className="w-8 h-8 text-success" />
           </div>
-          <h3 className="text-xl font-bold text-green-400 mb-2">Investment Successful!</h3>
-          <p className="text-slate-300 mb-4">
-            You invested <span className="font-bold text-white">${numericAmount.toLocaleString()}</span> for{' '}
-            <span className="font-bold text-white">{tokensToReceive.toLocaleString(undefined, { maximumFractionDigits: 2 })} {project.tokenSymbol}</span>
+          <h3 className="text-xl font-bold text-success mb-2">Investment Successful!</h3>
+          <p className="text-surface-overlay mb-4">
+            You invested <span className="font-bold text-ink">${numericAmount.toLocaleString()}</span> for{' '}
+            <span className="font-bold text-ink">{tokensToReceive.toLocaleString(undefined, { maximumFractionDigits: 2 })} {project.tokenSymbol}</span>
           </p>
           {txHash && chainInfo.explorer && (
             <a href={`${chainInfo.explorer}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 text-sm mb-4">
               View Transaction <ExternalLink className="w-4 h-4" />
             </a>
           )}
-          <button onClick={resetForm} className="w-full mt-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-colors">
+          <button onClick={resetForm} className="w-full mt-4 py-3 bg-surface-overlay hover:bg-surface-overlay text-ink rounded-xl transition-colors">
             Make Another Investment
           </button>
         </div>
@@ -623,25 +623,25 @@ function InvestmentCard({
 
   // MAIN CARD
   return (
-    <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700 overflow-hidden">
+    <div className="bg-surface-overlay/50 backdrop-blur-sm rounded-xl border border-surface-overlay overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-slate-700">
-        <h3 className="text-xl font-bold text-white mb-1">Invest Now</h3>
-        <p className="text-slate-400 text-sm">{project.tokenSymbol} Token Sale</p>
+      <div className="p-6 border-b border-surface-overlay">
+        <h3 className="text-xl font-bold text-ink mb-1">Invest Now</h3>
+        <p className="text-surface-overlay text-sm">{project.tokenSymbol} Token Sale</p>
       </div>
 
       {/* Progress Bar */}
-      <div className="px-6 py-4 bg-slate-900/50">
+      <div className="px-6 py-4 bg-surface-overlay/50">
         <div className="flex justify-between text-sm mb-2">
-          <span className="text-slate-400">Raised</span>
-          <span className="text-white font-medium">{formatCurrency(project.totalRaised)} / {formatCurrency(project.fundingGoal)}</span>
+          <span className="text-surface-overlay">Raised</span>
+          <span className="text-ink font-medium">{formatCurrency(project.totalRaised)} / {formatCurrency(project.fundingGoal)}</span>
         </div>
-        <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+        <div className="h-3 bg-surface-overlay rounded-full overflow-hidden">
           <div className="h-full bg-gradient-to-r from-gold-500 to-gold-light-500 rounded-full transition-all duration-500" style={{ width: `${fundingProgress}%` }} />
         </div>
         <div className="flex justify-between text-xs mt-2">
-          <span className="text-slate-500">{fundingProgress.toFixed(1)}% funded</span>
-          <span className="text-slate-500">{formatCurrency(remainingAmount)} remaining</span>
+          <span className="text-surface-overlay">{fundingProgress.toFixed(1)}% funded</span>
+          <span className="text-surface-overlay">{formatCurrency(remainingAmount)} remaining</span>
         </div>
       </div>
 
@@ -650,32 +650,32 @@ function InvestmentCard({
         {!paymentMethod && (
           <>
             <div>
-              <label className="block text-sm font-medium text-slate-300 mb-2">Investment Amount (USD)</label>
+              <label className="block text-sm font-medium text-surface-overlay mb-2">Investment Amount (USD)</label>
               <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-surface-overlay" />
                 <input
                   type="number"
                   value={amount}
                   onChange={(e) => { setAmount(e.target.value); setError(''); }}
                   placeholder={`Min ${project.minInvestment}`}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-surface-overlay/50 border border-surface-overlay rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
                   min={project.minInvestment}
                   max={project.maxInvestment}
                 />
               </div>
-              <p className="text-xs text-slate-500 mt-2">Min: ${project.minInvestment.toLocaleString()} • Max: ${project.maxInvestment.toLocaleString()}</p>
+              <p className="text-xs text-surface-overlay mt-2">Min: ${project.minInvestment.toLocaleString()} • Max: ${project.maxInvestment.toLocaleString()}</p>
             </div>
 
             {/* Token Preview */}
             {numericAmount > 0 && (
-              <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-700">
+              <div className="bg-surface-overlay/50 rounded-xl p-4 border border-surface-overlay">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-slate-400 text-sm">You will receive</span>
-                  <span className="text-white font-bold">{tokensToReceive.toLocaleString(undefined, { maximumFractionDigits: 2 })} {project.tokenSymbol}</span>
+                  <span className="text-surface-overlay text-sm">You will receive</span>
+                  <span className="text-ink font-bold">{tokensToReceive.toLocaleString(undefined, { maximumFractionDigits: 2 })} {project.tokenSymbol}</span>
                 </div>
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-slate-500">Token Price</span>
-                  <span className="text-slate-400">{formatCurrencyPrecise(project.tokenPrice)}</span>
+                  <span className="text-surface-overlay">Token Price</span>
+                  <span className="text-surface-overlay">{formatCurrencyPrecise(project.tokenPrice)}</span>
                 </div>
               </div>
             )}
@@ -684,32 +684,32 @@ function InvestmentCard({
 
         {/* Error Display */}
         {error && (
-          <div className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
-            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-            <p className="text-red-400 text-sm">{error}</p>
+          <div className="flex items-start gap-3 p-4 bg-danger/10 border border-danger/30 rounded-xl">
+            <AlertCircle className="w-5 h-5 text-danger flex-shrink-0 mt-0.5" />
+            <p className="text-danger text-sm">{error}</p>
           </div>
         )}
 
         {/* Payment Methods */}
         {!paymentMethod && isValidAmount && !isProcessing && (
           <div className="space-y-3">
-            <p className="text-sm font-medium text-slate-300">Select Payment Method</p>
+            <p className="text-sm font-medium text-surface-overlay">Select Payment Method</p>
             
             {/* Card Payment - Always available */}
             <button
               onClick={createStripeIntent}
-              className="w-full flex items-center justify-between p-4 bg-slate-900/50 border-2 border-slate-600 rounded-xl hover:border-gold-500 hover:bg-slate-900 transition-all group"
+              className="w-full flex items-center justify-between p-4 bg-surface-overlay/50 border-2 border-surface-overlay rounded-xl hover:border-gold-500 hover:bg-surface-overlay transition-all group"
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gold-500/20 rounded-lg flex items-center justify-center">
                   <CreditCard className="w-5 h-5 text-gold-400" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium text-white">Credit / Debit Card</p>
-                  <p className="text-xs text-slate-500">Visa, Mastercard, Amex</p>
+                  <p className="font-medium text-ink">Credit / Debit Card</p>
+                  <p className="text-xs text-surface-overlay">Visa, Mastercard, Amex</p>
                 </div>
               </div>
-              <ChevronDown className="w-5 h-5 text-slate-500 -rotate-90 group-hover:text-gold-400" />
+              <ChevronDown className="w-5 h-5 text-surface-overlay -rotate-90 group-hover:text-gold-400" />
             </button>
 
             {/* USDC Payment - Requires escrow */}
@@ -717,15 +717,15 @@ function InvestmentCard({
               <button
                 onClick={() => handleCryptoPayment('usdc')}
                 disabled={!isConnected || !hasEscrow}
-                className="w-full flex items-center justify-between p-4 bg-slate-900/50 border-2 border-slate-600 rounded-xl hover:border-green-500 hover:bg-slate-900 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-between p-4 bg-surface-overlay/50 border-2 border-surface-overlay rounded-xl hover:border-success hover:bg-surface-overlay transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
-                    <span className="text-green-400 font-bold text-sm">USDC</span>
+                  <div className="w-10 h-10 bg-success/20 rounded-lg flex items-center justify-center">
+                    <span className="text-success font-bold text-sm">USDC</span>
                   </div>
                   <div className="text-left">
-                    <p className="font-medium text-white">Pay with USDC</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="font-medium text-ink">Pay with USDC</p>
+                    <p className="text-xs text-surface-overlay">
                       {!hasEscrow ? (
                         <span className="text-orange-400">Escrow not configured</span>
                       ) : isConnected ? (
@@ -741,7 +741,7 @@ function InvestmentCard({
                 ) : isWrongChain && isConnected ? (
                   <span className="text-xs text-orange-400 bg-orange-500/10 px-2 py-1 rounded">Switch to {chainInfo.name}</span>
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-slate-500 -rotate-90 group-hover:text-green-400" />
+                  <ChevronDown className="w-5 h-5 text-surface-overlay -rotate-90 group-hover:text-success" />
                 )}
               </button>
             )}
@@ -751,15 +751,15 @@ function InvestmentCard({
               <button
                 onClick={() => handleCryptoPayment('usdt')}
                 disabled={!isConnected || !hasEscrow}
-                className="w-full flex items-center justify-between p-4 bg-slate-900/50 border-2 border-slate-600 rounded-xl hover:border-teal-500 hover:bg-slate-900 transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-between p-4 bg-surface-overlay/50 border-2 border-surface-overlay rounded-xl hover:border-gold hover:bg-surface-overlay transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-teal-500/20 rounded-lg flex items-center justify-center">
-                    <span className="text-teal-400 font-bold text-sm">USDT</span>
+                  <div className="w-10 h-10 bg-gold/15 rounded-lg flex items-center justify-center">
+                    <span className="text-gold font-bold text-sm">USDT</span>
                   </div>
                   <div className="text-left">
-                    <p className="font-medium text-white">Pay with USDT</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="font-medium text-ink">Pay with USDT</p>
+                    <p className="text-xs text-surface-overlay">
                       {!hasEscrow ? (
                         <span className="text-orange-400">Escrow not configured</span>
                       ) : isConnected ? (
@@ -773,7 +773,7 @@ function InvestmentCard({
                 {!hasEscrow ? (
                   <ShieldAlert className="w-5 h-5 text-orange-400" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 text-slate-500 -rotate-90 group-hover:text-teal-400" />
+                  <ChevronDown className="w-5 h-5 text-surface-overlay -rotate-90 group-hover:text-gold" />
                 )}
               </button>
             )}
@@ -789,7 +789,7 @@ function InvestmentCard({
             )}
 
             {!isConnected && hasEscrow && (
-              <p className="text-center text-slate-500 text-sm py-2">
+              <p className="text-center text-surface-overlay text-sm py-2">
                 <Wallet className="w-4 h-4 inline mr-1" />
                 Connect wallet for crypto payments
               </p>
@@ -808,8 +808,8 @@ function InvestmentCard({
         {isProcessing && !stripeReady && (
           <div className="text-center py-8">
             <Loader2 className="w-12 h-12 text-gold-500 animate-spin mx-auto mb-4" />
-            <p className="text-white font-medium mb-1">{isConfirming ? 'Confirming Transaction...' : 'Processing...'}</p>
-            <p className="text-slate-400 text-sm">{isConfirming ? 'Waiting for blockchain confirmation' : 'Please wait'}</p>
+            <p className="text-ink font-medium mb-1">{isConfirming ? 'Confirming Transaction...' : 'Processing...'}</p>
+            <p className="text-surface-overlay text-sm">{isConfirming ? 'Waiting for blockchain confirmation' : 'Please wait'}</p>
             {txHash && chainInfo.explorer && (
               <a href={`${chainInfo.explorer}/tx/${txHash}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 text-sm mt-4">
                 View on Explorer <ExternalLink className="w-4 h-4" />
@@ -822,8 +822,8 @@ function InvestmentCard({
         {paymentMethod === 'card' && stripeReady && clientSecret && (
           <div className="space-y-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-slate-400 text-sm">Payment Amount</span>
-              <span className="text-white font-bold">${numericAmount.toLocaleString()}</span>
+              <span className="text-surface-overlay text-sm">Payment Amount</span>
+              <span className="text-ink font-bold">${numericAmount.toLocaleString()}</span>
             </div>
             <Elements 
               stripe={stripePromise} 
@@ -859,8 +859,8 @@ function InvestmentCard({
       </div>
 
       {/* Footer Info */}
-      <div className="px-6 py-4 bg-slate-900/30 border-t border-slate-700">
-        <div className="flex items-center justify-between text-xs text-slate-500">
+      <div className="px-6 py-4 bg-surface-overlay/30 border-t border-surface-overlay">
+        <div className="flex items-center justify-between text-xs text-surface-overlay">
           <span>Chain: {chainInfo.name}</span>
           <span>{project.daysLeft !== null ? `${project.daysLeft} days left` : 'Open-ended'}</span>
         </div>
@@ -1044,7 +1044,7 @@ function ProjectPageContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-overlay flex items-center justify-center">
         <Loader2 className="w-12 h-12 text-gold-500 animate-spin" />
       </div>
     );
@@ -1052,12 +1052,12 @@ function ProjectPageContent() {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-overlay flex items-center justify-center">
         <div className="text-center max-w-md p-8">
-          <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-white mb-2">Project Not Found</h1>
-          <p className="text-slate-400 mb-6">{error || 'The project does not exist.'}</p>
-          <button onClick={() => router.push('/projects')} className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-white rounded-lg">Browse Projects</button>
+          <AlertCircle className="w-16 h-16 text-danger mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-ink mb-2">Project Not Found</h1>
+          <p className="text-surface-overlay mb-6">{error || 'The project does not exist.'}</p>
+          <button onClick={() => router.push('/projects')} className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg">Browse Projects</button>
         </div>
       </div>
     );
@@ -1068,46 +1068,46 @@ function ProjectPageContent() {
   const fundingProgress = project.fundingGoal > 0 ? Math.min(100, (project.totalRaised / project.fundingGoal) * 100) : 0;
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="min-h-screen bg-surface-overlay">
       {/* Hero Banner */}
       <div className="relative h-[400px] md:h-[500px] overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: project.bannerUrl ? `url(${project.bannerUrl})` : 'linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%)' }} />
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-transparent to-slate-900/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-surface-overlay via-surface-overlay/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-surface-overlay/80 via-transparent to-surface-overlay/80" />
         
         <div className="absolute top-6 left-6 z-10">
-          <button onClick={() => router.push('/projects')} className="flex items-center gap-2 px-4 py-2 bg-black/30 backdrop-blur-sm rounded-lg text-white hover:bg-black/50">
+          <button onClick={() => router.push('/projects')} className="flex items-center gap-2 px-4 py-2 bg-black/30 backdrop-blur-sm rounded-lg text-ink hover:bg-black/50">
             <ArrowLeft className="w-5 h-5" />Back
           </button>
         </div>
 
         <div className="absolute top-6 right-6 z-10 flex gap-2">
-          <button className="p-3 bg-black/30 backdrop-blur-sm rounded-lg text-white hover:bg-black/50"><Share2 className="w-5 h-5" /></button>
-          <button className="p-3 bg-black/30 backdrop-blur-sm rounded-lg text-white hover:bg-black/50"><Bookmark className="w-5 h-5" /></button>
-          <button onClick={() => setShowDebug(!showDebug)} className="px-3 py-2 bg-black/30 backdrop-blur-sm rounded-lg text-white hover:bg-black/50 text-sm">Debug</button>
+          <button className="p-3 bg-black/30 backdrop-blur-sm rounded-lg text-ink hover:bg-black/50"><Share2 className="w-5 h-5" /></button>
+          <button className="p-3 bg-black/30 backdrop-blur-sm rounded-lg text-ink hover:bg-black/50"><Bookmark className="w-5 h-5" /></button>
+          <button onClick={() => setShowDebug(!showDebug)} className="px-3 py-2 bg-black/30 backdrop-blur-sm rounded-lg text-ink hover:bg-black/50 text-sm">Debug</button>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-10">
           <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-start md:items-end gap-6">
-            <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-slate-800 bg-slate-800 flex-shrink-0">
+            <div className="w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden border-4 border-surface-overlay bg-surface-overlay flex-shrink-0">
               {project.logoUrl ? (
                 <img src={project.logoUrl} alt={project.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gold-600 to-gold-light-600">
-                  <span className="text-3xl md:text-4xl font-bold text-white">{project.name.charAt(0).toUpperCase()}</span>
+                  <span className="text-3xl md:text-4xl font-bold text-ink">{project.name.charAt(0).toUpperCase()}</span>
                 </div>
               )}
             </div>
             <div className="flex-1">
               <div className="flex flex-wrap items-center gap-3 mb-3">
                 <span className={`px-3 py-1 rounded-full text-sm font-medium bg-${statusConfig.color}-500/20 text-${statusConfig.color}-400`}>{statusConfig.label}</span>
-                <span className="px-3 py-1 rounded-full text-sm font-medium bg-slate-700/50 text-slate-300">{project.category}</span>
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-surface-overlay/50 text-surface-overlay">{project.category}</span>
               </div>
-              <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">{project.name}</h1>
+              <h1 className="text-3xl md:text-5xl font-bold text-ink mb-4">{project.name}</h1>
               <div className="flex flex-wrap items-center gap-4">
-                <div className="flex items-center gap-2 text-slate-300"><Globe className="w-4 h-4" />{chainInfo.name}</div>
-                {project.companyName && <div className="flex items-center gap-2 text-slate-300"><Building2 className="w-4 h-4" />{project.companyName}</div>}
-                {project.jurisdiction && <div className="flex items-center gap-2 text-slate-300"><MapPin className="w-4 h-4" />{project.jurisdiction}</div>}
+                <div className="flex items-center gap-2 text-surface-overlay"><Globe className="w-4 h-4" />{chainInfo.name}</div>
+                {project.companyName && <div className="flex items-center gap-2 text-surface-overlay"><Building2 className="w-4 h-4" />{project.companyName}</div>}
+                {project.jurisdiction && <div className="flex items-center gap-2 text-surface-overlay"><MapPin className="w-4 h-4" />{project.jurisdiction}</div>}
                 {project.website && <a href={project.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gold-400 hover:text-gold-300"><ExternalLink className="w-4 h-4" />Website</a>}
               </div>
             </div>
@@ -1136,9 +1136,9 @@ function ProjectPageContent() {
       {/* Debug Panel */}
       {showDebug && project._raw && (
         <div className="max-w-7xl mx-auto px-4 md:px-6 mt-6">
-          <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-            <h3 className="text-lg font-semibold text-white mb-2">Debug: Raw API Data</h3>
-            <pre className="text-xs text-slate-400 overflow-auto max-h-96">{JSON.stringify(project._raw, null, 2)}</pre>
+          <div className="bg-surface-overlay rounded-xl p-4 border border-surface-overlay">
+            <h3 className="text-lg font-semibold text-ink mb-2">Debug: Raw API Data</h3>
+            <pre className="text-xs text-surface-overlay overflow-auto max-h-96">{JSON.stringify(project._raw, null, 2)}</pre>
           </div>
         </div>
       )}
@@ -1148,70 +1148,70 @@ function ProjectPageContent() {
         {/* Video Link */}
         {project.videoUrl && (
           <div className="mb-8">
-            <a href={project.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-4 bg-slate-800/50 rounded-xl border border-slate-700 hover:border-gold-500/50">
-              <div className="w-12 h-12 rounded-full bg-gold-600 flex items-center justify-center"><Play className="w-6 h-6 text-white" /></div>
-              <div><p className="text-white font-medium">Watch Project Video</p><p className="text-slate-400 text-sm">Learn more about this project</p></div>
+            <a href={project.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-6 py-4 bg-surface-overlay/50 rounded-xl border border-surface-overlay hover:border-gold-500/50">
+              <div className="w-12 h-12 rounded-full bg-gold-600 flex items-center justify-center"><Play className="w-6 h-6 text-ink" /></div>
+              <div><p className="text-ink font-medium">Watch Project Video</p><p className="text-surface-overlay text-sm">Learn more about this project</p></div>
             </a>
           </div>
         )}
 
         {/* Description */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-white mb-4">About This Project</h2>
-          <p className="text-slate-300 leading-relaxed whitespace-pre-wrap">{project.description || 'No description available.'}</p>
+          <h2 className="text-2xl font-bold text-ink mb-4">About This Project</h2>
+          <p className="text-surface-overlay leading-relaxed whitespace-pre-wrap">{project.description || 'No description available.'}</p>
         </div>
 
         {/* Tabs and Investment Card */}
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="flex gap-2 mb-6 border-b border-slate-700 overflow-x-auto">
+            <div className="flex gap-2 mb-6 border-b border-surface-overlay overflow-x-auto">
               {['overview', 'milestones', 'documents', 'company'].map((tab) => (
-                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-3 font-medium capitalize whitespace-nowrap ${activeTab === tab ? 'text-gold-400 border-b-2 border-gold-400' : 'text-slate-400 hover:text-white'}`}>{tab}</button>
+                <button key={tab} onClick={() => setActiveTab(tab)} className={`px-6 py-3 font-medium capitalize whitespace-nowrap ${activeTab === tab ? 'text-gold-400 border-b-2 border-gold-400' : 'text-surface-overlay hover:text-ink'}`}>{tab}</button>
               ))}
             </div>
 
-            <div className="bg-slate-800/30 rounded-xl p-6 border border-slate-700">
+            <div className="bg-surface-overlay/30 rounded-xl p-6 border border-surface-overlay">
               {activeTab === 'overview' && (
                 <div className="space-y-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Token Information</h3>
+                    <h3 className="text-lg font-semibold text-ink mb-4">Token Information</h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Token Name</p><p className="text-white font-medium">{project.tokenName || 'N/A'}</p></div>
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Token Symbol</p><p className="text-white font-medium">{project.tokenSymbol || 'N/A'}</p></div>
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Total Supply</p><p className="text-white font-medium">{formatNumber(project.totalSupply)}</p></div>
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Token Price</p><p className="text-white font-medium">{formatCurrencyPrecise(project.tokenPrice)}</p></div>
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Tokens for Raise</p><p className="text-white font-medium">{formatNumber(project.tokensForRaise)} ({formatPercent(project.tokensForRaisePercentage)})</p></div>
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Total Valuation</p><p className="text-white font-medium">{formatCurrency(project.totalValuation)}</p></div>
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Token Name</p><p className="text-ink font-medium">{project.tokenName || 'N/A'}</p></div>
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Token Symbol</p><p className="text-ink font-medium">{project.tokenSymbol || 'N/A'}</p></div>
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Total Supply</p><p className="text-ink font-medium">{formatNumber(project.totalSupply)}</p></div>
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Token Price</p><p className="text-ink font-medium">{formatCurrencyPrecise(project.tokenPrice)}</p></div>
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Tokens for Raise</p><p className="text-ink font-medium">{formatNumber(project.tokensForRaise)} ({formatPercent(project.tokensForRaisePercentage)})</p></div>
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Total Valuation</p><p className="text-ink font-medium">{formatCurrency(project.totalValuation)}</p></div>
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-4">Investment Terms</h3>
+                    <h3 className="text-lg font-semibold text-ink mb-4">Investment Terms</h3>
                     <div className="grid md:grid-cols-2 gap-4">
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Projected ROI</p><p className="text-white font-medium">{safeNumber(project.projectedRoi)}% over {project.roiTimeline}</p></div>
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Cliff Period</p><p className="text-white font-medium">{project.cliffPeriod} months</p></div>
-                      <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Vesting Period</p><p className="text-white font-medium">{project.vestingPeriod} months</p></div>
-                      {project.dividendYield > 0 && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Dividend Yield</p><p className="text-white font-medium">{project.dividendYield}%</p></div>}
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Projected ROI</p><p className="text-ink font-medium">{safeNumber(project.projectedRoi)}% over {project.roiTimeline}</p></div>
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Cliff Period</p><p className="text-ink font-medium">{project.cliffPeriod} months</p></div>
+                      <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Vesting Period</p><p className="text-ink font-medium">{project.vestingPeriod} months</p></div>
+                      {project.dividendYield > 0 && <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Dividend Yield</p><p className="text-ink font-medium">{project.dividendYield}%</p></div>}
                     </div>
                   </div>
                   {(project.contractAddress || project.escrowAddress) && (
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Contract Addresses</h3>
+                      <h3 className="text-lg font-semibold text-ink mb-4">Contract Addresses</h3>
                       <div className="space-y-3">
                         {project.contractAddress && (
-                          <div className="flex items-center justify-between bg-slate-800/50 rounded-lg p-4">
-                            <div><p className="text-slate-400 text-sm">Token Contract</p><p className="text-white font-mono text-sm">{shortenAddress(project.contractAddress)}</p></div>
+                          <div className="flex items-center justify-between bg-surface-overlay/50 rounded-lg p-4">
+                            <div><p className="text-surface-overlay text-sm">Token Contract</p><p className="text-ink font-mono text-sm">{shortenAddress(project.contractAddress)}</p></div>
                             <div className="flex items-center gap-2">
                               <CopyButton text={project.contractAddress} />
-                              {chainInfo.explorer && <a href={`${chainInfo.explorer}/address/${project.contractAddress}`} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-white/10 rounded"><ExternalLink className="w-4 h-4 text-slate-400" /></a>}
+                              {chainInfo.explorer && <a href={`${chainInfo.explorer}/address/${project.contractAddress}`} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-white/10 rounded"><ExternalLink className="w-4 h-4 text-surface-overlay" /></a>}
                             </div>
                           </div>
                         )}
                         {project.escrowAddress && (
-                          <div className="flex items-center justify-between bg-slate-800/50 rounded-lg p-4">
-                            <div><p className="text-slate-400 text-sm">Escrow Contract</p><p className="text-white font-mono text-sm">{shortenAddress(project.escrowAddress)}</p></div>
+                          <div className="flex items-center justify-between bg-surface-overlay/50 rounded-lg p-4">
+                            <div><p className="text-surface-overlay text-sm">Escrow Contract</p><p className="text-ink font-mono text-sm">{shortenAddress(project.escrowAddress)}</p></div>
                             <div className="flex items-center gap-2">
                               <CopyButton text={project.escrowAddress} />
-                              {chainInfo.explorer && <a href={`${chainInfo.explorer}/address/${project.escrowAddress}`} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-white/10 rounded"><ExternalLink className="w-4 h-4 text-slate-400" /></a>}
+                              {chainInfo.explorer && <a href={`${chainInfo.explorer}/address/${project.escrowAddress}`} target="_blank" rel="noopener noreferrer" className="p-2 hover:bg-white/10 rounded"><ExternalLink className="w-4 h-4 text-surface-overlay" /></a>}
                             </div>
                           </div>
                         )}
@@ -1224,7 +1224,7 @@ function ProjectPageContent() {
               {activeTab === 'milestones' && (
                 <div className="space-y-4">
                   {project.milestones.length > 0 ? project.milestones.map((milestone, index) => <MilestoneCard key={index} milestone={milestone} index={index} />) : (
-                    <div className="text-center py-12"><Milestone className="w-12 h-12 text-slate-600 mx-auto mb-3" /><p className="text-slate-400">No milestones defined</p></div>
+                    <div className="text-center py-12"><Milestone className="w-12 h-12 text-surface-overlay mx-auto mb-3" /><p className="text-surface-overlay">No milestones defined</p></div>
                   )}
                 </div>
               )}
@@ -1232,7 +1232,7 @@ function ProjectPageContent() {
               {activeTab === 'documents' && (
                 <div className="space-y-4">
                   {project.legalDocuments.length > 0 ? project.legalDocuments.map((doc, index) => <DocumentItem key={index} doc={doc} />) : (
-                    <div className="text-center py-12"><FileText className="w-12 h-12 text-slate-600 mx-auto mb-3" /><p className="text-slate-400">No documents available</p></div>
+                    <div className="text-center py-12"><FileText className="w-12 h-12 text-surface-overlay mx-auto mb-3" /><p className="text-surface-overlay">No documents available</p></div>
                   )}
                 </div>
               )}
@@ -1240,21 +1240,21 @@ function ProjectPageContent() {
               {activeTab === 'company' && (
                 <div className="space-y-6">
                   <div className="grid md:grid-cols-2 gap-4">
-                    {project.companyName && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Company Name</p><p className="text-white font-medium">{project.companyName}</p></div>}
-                    {project.jurisdiction && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Jurisdiction</p><p className="text-white font-medium">{project.jurisdiction}</p></div>}
-                    {project.registrationNumber && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Registration Number</p><p className="text-white font-medium">{project.registrationNumber}</p></div>}
-                    {project.email && <div className="bg-slate-800/50 rounded-lg p-4"><p className="text-slate-400 text-sm">Contact Email</p><a href={`mailto:${project.email}`} className="text-gold-400 hover:text-gold-300">{project.email}</a></div>}
+                    {project.companyName && <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Company Name</p><p className="text-ink font-medium">{project.companyName}</p></div>}
+                    {project.jurisdiction && <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Jurisdiction</p><p className="text-ink font-medium">{project.jurisdiction}</p></div>}
+                    {project.registrationNumber && <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Registration Number</p><p className="text-ink font-medium">{project.registrationNumber}</p></div>}
+                    {project.email && <div className="bg-surface-overlay/50 rounded-lg p-4"><p className="text-surface-overlay text-sm">Contact Email</p><a href={`mailto:${project.email}`} className="text-gold-400 hover:text-gold-300">{project.email}</a></div>}
                   </div>
                   {project.teamMembers.length > 0 && (
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Team</h3>
+                      <h3 className="text-lg font-semibold text-ink mb-4">Team</h3>
                       <div className="grid md:grid-cols-2 gap-4">
                         {project.teamMembers.map((member, index) => (
-                          <div key={index} className="flex items-center gap-4 bg-slate-800/50 rounded-lg p-4">
-                            <div className="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center overflow-hidden">
-                              {member.image ? <img src={member.image} alt={member.name} className="w-full h-full object-cover" /> : <span className="text-lg font-bold text-white">{member.name.charAt(0).toUpperCase()}</span>}
+                          <div key={index} className="flex items-center gap-4 bg-surface-overlay/50 rounded-lg p-4">
+                            <div className="w-12 h-12 rounded-full bg-surface-overlay flex items-center justify-center overflow-hidden">
+                              {member.image ? <img src={member.image} alt={member.name} className="w-full h-full object-cover" /> : <span className="text-lg font-bold text-ink">{member.name.charAt(0).toUpperCase()}</span>}
                             </div>
-                            <div><p className="text-white font-medium">{member.name}</p><p className="text-slate-400 text-sm">{member.role}</p></div>
+                            <div><p className="text-ink font-medium">{member.name}</p><p className="text-surface-overlay text-sm">{member.role}</p></div>
                             {member.linkedin && <a href={member.linkedin} target="_blank" rel="noopener noreferrer" className="ml-auto text-gold-400 hover:text-gold-300"><ExternalLink className="w-4 h-4" /></a>}
                           </div>
                         ))}
@@ -1263,10 +1263,10 @@ function ProjectPageContent() {
                   )}
                   {Object.values(project.socialLinks).some(Boolean) && (
                     <div>
-                      <h3 className="text-lg font-semibold text-white mb-4">Social Links</h3>
+                      <h3 className="text-lg font-semibold text-ink mb-4">Social Links</h3>
                       <div className="flex flex-wrap gap-3">
                         {Object.entries(project.socialLinks).map(([platform, url]) => url ? (
-                          <a key={platform} href={url as string} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 bg-slate-800/50 rounded-lg text-slate-300 hover:text-white hover:bg-slate-700/50 capitalize"><Globe className="w-4 h-4" />{platform}</a>
+                          <a key={platform} href={url as string} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 px-4 py-2 bg-surface-overlay/50 rounded-lg text-surface-overlay hover:text-ink hover:bg-surface-overlay/50 capitalize"><Globe className="w-4 h-4" />{platform}</a>
                         ) : null)}
                       </div>
                     </div>
@@ -1288,7 +1288,7 @@ function ProjectPageContent() {
 
 export default function ProjectPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-slate-900 flex items-center justify-center"><Loader2 className="w-12 h-12 text-gold-500 animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-surface-overlay flex items-center justify-center"><Loader2 className="w-12 h-12 text-gold-500 animate-spin" /></div>}>
       <ProjectPageContent />
     </Suspense>
   );

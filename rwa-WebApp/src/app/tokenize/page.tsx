@@ -248,7 +248,7 @@ export default function TokenizePage() {
           )}
 
           {submitError && (
-            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-xl">
+            <div className="mt-4 p-4 bg-danger/10 border border-danger/30 rounded-xl">
               <p className="text-danger">{submitError}</p>
             </div>
           )}
@@ -263,7 +263,7 @@ export default function TokenizePage() {
                 flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-colors
                 ${currentStep === 1
                   ? 'bg-surface-overlay text-ink-faint cursor-not-allowed'
-                  : 'bg-surface-overlay text-ink hover:bg-gray-600'
+                  : 'bg-surface-overlay text-ink hover:bg-border-strong'
                 }
               `}
             >
@@ -287,7 +287,7 @@ export default function TokenizePage() {
                 disabled={isSubmitting || !paymentInfo}
                 className={`flex items-center gap-2 px-6 py-3 font-medium rounded-xl transition-colors ${
                   paymentInfo
-                    ? 'bg-green-500 hover:bg-green-600 text-ink'
+                    ? 'bg-success hover:bg-success text-ink'
                     : 'bg-surface-overlay text-ink-faint cursor-not-allowed'
                 }`}
               >

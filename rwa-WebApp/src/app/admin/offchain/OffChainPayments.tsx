@@ -159,9 +159,9 @@ export default function OffChainPayments({ projects, onRefresh }: OffChainPaymen
         </div>
       </div>
 
-      <div className="bg-warning-muted border border-yellow-700 rounded-xl p-4">
+      <div className="bg-warning-muted border border-warning rounded-xl p-4">
         <h4 className="text-warning font-medium mb-2">Important Notes</h4>
-        <ul className="text-yellow-200/80 text-sm space-y-1">
+        <ul className="text-warning/80 text-sm space-y-1">
           <li>• Off-chain payments are tracked separately from on-chain funds</li>
           <li>• Security tokens will be minted to the investor&apos;s wallet</li>
           <li>• Fund release for off-chain amounts must be handled manually</li>

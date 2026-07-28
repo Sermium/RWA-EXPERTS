@@ -32,8 +32,8 @@ export function TokenList({
   onCategoryChange,
 }: TokenListProps) {
   return (
-    <div className="bg-gray-800/50 rounded-xl p-4">
-      <h3 className="text-lg font-semibold text-white mb-3">Security Tokens</h3>
+    <div className="bg-surface/50 rounded-xl p-4">
+      <h3 className="text-lg font-semibold text-ink mb-3">Security Tokens</h3>
       
       {/* Category Filter */}
       <div className="mb-4">
@@ -47,15 +47,15 @@ export function TokenList({
               className={`
                 px-2 py-1 text-xs rounded-lg transition-colors flex items-center gap-1
                 ${selectedCategory === category.value
-                  ? 'bg-gold-500 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  ? 'bg-gold-500 text-ink'
+                  : 'bg-surface-overlay text-ink-muted hover:bg-border-strong'
                 }
               `}
             >
               <category.icon className="w-3.5 h-3.5" />
               <span>{category.label}</span>
               {categoryCounts[category.value] > 0 && (
-                <span className="bg-gray-600 px-1.5 py-0.5 rounded-full text-[10px]">
+                <span className="bg-border-strong px-1.5 py-0.5 rounded-full text-[10px]">
                   {categoryCounts[category.value]}
                 </span>
               )}
@@ -72,7 +72,7 @@ export function TokenList({
           </div>
         ) : securityTokens.length === 0 && listedTokens.length === 0 ? (
           <div className="text-center py-8">
-            <p className="text-gray-500">No tokens available</p>
+            <p className="text-ink-faint">No tokens available</p>
             {selectedCategory !== 'all' && (
               <button
                 onClick={() => onCategoryChange('all')}
@@ -91,8 +91,8 @@ export function TokenList({
                 onClick={() => onSelectSecurityToken(token)}
                 className={`w-full p-3 rounded-lg text-left transition-colors ${
                   selectedSecurityToken?.address === token.address
-                    ? 'bg-gold-600 text-white'
-                    : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                    ? 'bg-gold-600 text-ink'
+                    : 'bg-surface-overlay hover:bg-border-strong text-gray-200'
                 }`}
               >
                 <div className="flex justify-between items-center">
@@ -111,8 +111,8 @@ export function TokenList({
                   onClick={() => onSelectListedToken(token)}
                   className={`w-full p-3 rounded-lg text-left transition-colors ${
                     selectedListedToken?.id === token.id
-                      ? 'bg-gold-600 text-white'
-                      : 'bg-gray-700 hover:bg-gray-600 text-gray-200'
+                      ? 'bg-gold-600 text-ink'
+                      : 'bg-surface-overlay hover:bg-border-strong text-gray-200'
                   }`}
                 >
                   <div className="flex justify-between items-center">
@@ -129,14 +129,14 @@ export function TokenList({
                       ) : (
                         (() => {
                           const CategoryIcon = categoryInfo?.icon || Layers;
-                          return <CategoryIcon className="w-4 h-4 text-gray-400" />;
+                          return <CategoryIcon className="w-4 h-4 text-ink-muted" />;
                         })()
                       )}
                       <span className="font-medium">{token.symbol}</span>
                       <span className="text-xs bg-gold-600 px-1.5 py-0.5 rounded">RWA</span>
                     </div>
                     <span className={`text-sm ${
-                      selectedListedToken?.id === token.id ? 'text-white' : 'text-green-400'
+                      selectedListedToken?.id === token.id ? 'text-ink' : 'text-success'
                     }`}>
                       ${token.current_price || token.initial_price || '1.00'}
                     </span>

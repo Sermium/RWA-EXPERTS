@@ -53,7 +53,7 @@ export function SecurityTradeForm({
 
   if (!isConnected) {
     return (
-      <div className="bg-gray-900 rounded-xl p-4">
+      <div className="bg-surface-sunken rounded-xl p-4">
         <h3 className="font-semibold mb-4 flex items-center gap-2">
           <svg className="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -61,10 +61,10 @@ export function SecurityTradeForm({
           Trade
         </h3>
         <div className="text-center py-8">
-          <svg className="w-12 h-12 text-gray-600 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-12 h-12 text-ink-faint mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
           </svg>
-          <p className="text-gray-400 mb-4">Connect wallet to trade</p>
+          <p className="text-ink-muted mb-4">Connect wallet to trade</p>
         </div>
       </div>
     );
@@ -72,13 +72,13 @@ export function SecurityTradeForm({
 
   if (isWrongChain) {
     return (
-      <div className="bg-gray-900 rounded-xl p-4">
+      <div className="bg-surface-sunken rounded-xl p-4">
         <h3 className="font-semibold mb-4">Trade</h3>
         <div className="text-center py-8">
-          <p className="text-gray-400 mb-4">Switch to {chainName} to trade</p>
+          <p className="text-ink-muted mb-4">Switch to {chainName} to trade</p>
           <button
             onClick={() => onSwitchNetwork(chainId)}
-            className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-warning hover:bg-warning text-black font-medium rounded-lg transition-colors"
           >
             Switch Network
           </button>
@@ -89,17 +89,17 @@ export function SecurityTradeForm({
 
   if (!hasToken) {
     return (
-      <div className="bg-gray-900 rounded-xl p-4">
+      <div className="bg-surface-sunken rounded-xl p-4">
         <h3 className="font-semibold mb-4">Trade</h3>
         <div className="text-center py-8">
-          <p className="text-gray-400">Select a token to trade</p>
+          <p className="text-ink-muted">Select a token to trade</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-gray-900 rounded-xl p-4">
+    <div className="bg-surface-sunken rounded-xl p-4">
       <h3 className="font-semibold mb-4 flex items-center gap-2">
         <svg className="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
@@ -109,11 +109,11 @@ export function SecurityTradeForm({
 
       <div className="space-y-4">
         {/* Order Type Toggle */}
-        <div className="flex gap-2 p-1 bg-gray-800 rounded-lg">
+        <div className="flex gap-2 p-1 bg-surface rounded-lg">
           <button
             onClick={() => onOrderTypeChange('limit')}
             className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
-              orderType === 'limit' ? 'bg-gold-600 text-white' : 'text-gray-400 hover:text-white'
+              orderType === 'limit' ? 'bg-gold-600 text-ink' : 'text-ink-muted hover:text-ink'
             }`}
           >
             Limit
@@ -121,7 +121,7 @@ export function SecurityTradeForm({
           <button
             onClick={() => onOrderTypeChange('market')}
             className={`flex-1 py-2 rounded-md text-sm font-medium transition-colors ${
-              orderType === 'market' ? 'bg-gold-600 text-white' : 'text-gray-400 hover:text-white'
+              orderType === 'market' ? 'bg-gold-600 text-ink' : 'text-ink-muted hover:text-ink'
             }`}
           >
             Market
@@ -133,7 +133,7 @@ export function SecurityTradeForm({
           <button
             onClick={() => onOrderSideChange('buy')}
             className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
-              orderSide === 'buy' ? 'bg-green-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              orderSide === 'buy' ? 'bg-success text-ink' : 'bg-surface text-ink-muted hover:bg-surface-overlay'
             }`}
           >
             Buy
@@ -141,7 +141,7 @@ export function SecurityTradeForm({
           <button
             onClick={() => onOrderSideChange('sell')}
             className={`flex-1 py-3 rounded-lg font-semibold transition-colors ${
-              orderSide === 'sell' ? 'bg-red-600 text-white' : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+              orderSide === 'sell' ? 'bg-danger text-ink' : 'bg-surface text-ink-muted hover:bg-surface-overlay'
             }`}
           >
             Sell
@@ -151,31 +151,31 @@ export function SecurityTradeForm({
         {/* Price Input (Limit orders only) */}
         {orderType === 'limit' && (
           <div>
-            <label className="block text-sm text-gray-400 mb-2">Price (USDC)</label>
+            <label className="block text-sm text-ink-muted mb-2">Price (USDC)</label>
             <input
               type="number"
               value={orderPrice}
               onChange={(e) => onPriceChange(e.target.value)}
               placeholder="0.00"
               step="0.01"
-              className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+              className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
             />
           </div>
         )}
 
         {/* Amount Input */}
         <div>
-          <label className="block text-sm text-gray-400 mb-2">Amount ({symbol})</label>
+          <label className="block text-sm text-ink-muted mb-2">Amount ({symbol})</label>
           <input
             type="number"
             value={orderAmount}
             onChange={(e) => onAmountChange(e.target.value)}
             placeholder="0.00"
-            className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+            className="w-full bg-surface border border-border rounded-lg px-4 py-3 text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
           />
           <div className="flex gap-2 mt-2">
             {[25, 50, 75, 100].map((pct) => (
-              <button key={pct} className="flex-1 text-xs py-1.5 bg-gray-800 hover:bg-gray-700 rounded text-gray-400">
+              <button key={pct} className="flex-1 text-xs py-1.5 bg-surface hover:bg-surface-overlay rounded text-ink-muted">
                 {pct}%
               </button>
             ))}
@@ -184,18 +184,18 @@ export function SecurityTradeForm({
 
         {/* Order Summary */}
         {orderAmount && (orderType === 'market' || orderPrice) && (
-          <div className="bg-gray-800/50 rounded-lg p-3 space-y-2 text-sm">
+          <div className="bg-surface/50 rounded-lg p-3 space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-400">Price</span>
-              <span className="text-white">${orderType === 'limit' ? orderPrice : currentPrice}</span>
+              <span className="text-ink-muted">Price</span>
+              <span className="text-ink">${orderType === 'limit' ? orderPrice : currentPrice}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Amount</span>
-              <span className="text-white">{orderAmount} {symbol}</span>
+              <span className="text-ink-muted">Amount</span>
+              <span className="text-ink">{orderAmount} {symbol}</span>
             </div>
-            <div className="flex justify-between border-t border-gray-700 pt-2">
-              <span className="text-gray-400">Total</span>
-              <span className={orderSide === 'buy' ? 'text-green-400' : 'text-red-400'}>
+            <div className="flex justify-between border-t border-border pt-2">
+              <span className="text-ink-muted">Total</span>
+              <span className={orderSide === 'buy' ? 'text-success' : 'text-danger'}>
                 ${(parseFloat(orderAmount || '0') * parseFloat(orderType === 'limit' ? orderPrice || '0' : String(currentPrice))).toFixed(2)} USDC
               </span>
             </div>
@@ -204,8 +204,8 @@ export function SecurityTradeForm({
 
         {/* Error Display */}
         {orderError && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-3">
-            <p className="text-sm text-red-400">{orderError}</p>
+          <div className="bg-danger/10 border border-danger/30 rounded-lg p-3">
+            <p className="text-sm text-danger">{orderError}</p>
           </div>
         )}
 
@@ -214,7 +214,7 @@ export function SecurityTradeForm({
           onClick={onSubmit}
           disabled={!orderAmount || (orderType === 'limit' && !orderPrice) || orderSubmitting}
           className={`w-full py-3 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-            orderSide === 'buy' ? 'bg-green-600 hover:bg-green-500 text-white' : 'bg-red-600 hover:bg-red-500 text-white'
+            orderSide === 'buy' ? 'bg-success hover:bg-success text-ink' : 'bg-danger hover:bg-danger text-ink'
           }`}
         >
           {orderSubmitting ? (

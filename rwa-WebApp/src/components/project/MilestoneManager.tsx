@@ -8,7 +8,7 @@ import { RWAEscrowVaultABI } from '@/config/abis';
 import { useChainConfig } from '@/hooks/useChainConfig';
 
 const MILESTONE_STATUS: Record<number, { label: string; color: string }> = {
-  0: { label: 'Pending', color: 'bg-gray-500/20 text-ink-muted' },
+  0: { label: 'Pending', color: 'bg-ink-faint/20 text-ink-muted' },
   1: { label: 'Approved', color: 'bg-success/20 text-success' },
   2: { label: 'Released', color: 'bg-success/20 text-success' },
   3: { label: 'Disputed', color: 'bg-warning/20 text-warning' },
@@ -275,7 +275,7 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
           </div>
           <div className="h-3 bg-surface-overlay rounded-full overflow-hidden">
             <div
-              className="h-full bg-gradient-to-r from-emerald-500 to-green-500 rounded-full transition-all"
+              className="h-full bg-gradient-to-r from-success to-success rounded-full transition-all"
               style={{ width: `${Math.min((totalReleasedUSD / totalTargetUSD) * 100, 100)}%` }}
             />
           </div>
@@ -330,7 +330,7 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
                       <span className="text-ink font-medium">
                         Milestone {index + 1}
                       </span>
-                      <span className={`px-2 py-0.5 rounded-full text-xs ${MILESTONE_STATUS[milestone.status]?.color || 'bg-gray-500/20 text-ink-muted'}`}>
+                      <span className={`px-2 py-0.5 rounded-full text-xs ${MILESTONE_STATUS[milestone.status]?.color || 'bg-ink-faint/20 text-ink-muted'}`}>
                         {MILESTONE_STATUS[milestone.status]?.label || 'Unknown'}
                       </span>
                     </div>
@@ -340,7 +340,7 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
                         Target: <span className="text-ink">${targetUSD.toLocaleString()}</span>
                       </span>
                       <span className="text-ink-muted">
-                        Released: <span className={releasedUSD > 0 ? 'text-emerald-400' : 'text-ink'}>${releasedUSD.toLocaleString()}</span>
+                        Released: <span className={releasedUSD > 0 ? 'text-success' : 'text-ink'}>${releasedUSD.toLocaleString()}</span>
                       </span>
                       <span className="text-ink-faint">
                         Deadline: {new Date(Number(milestone.deadline) * 1000).toLocaleDateString()}
@@ -353,7 +353,7 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
                     <button
                       onClick={() => handleReleaseMilestone(milestone.id)}
                       disabled={releasePending}
-                      className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 disabled:bg-surface-overlay text-ink text-sm rounded-lg transition"
+                      className="px-3 py-1.5 bg-success hover:bg-success disabled:bg-surface-overlay text-ink text-sm rounded-lg transition"
                     >
                       {releasePending ? 'Releasing...' : 'Release Funds'}
                     </button>
@@ -365,7 +365,7 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
                   <div className="mt-3">
                     <div className="h-2 bg-surface-overlay rounded-full overflow-hidden">
                       <div
-                        className={`h-full rounded-full transition-all ${isFullyReleased ? 'bg-emerald-500' : 'bg-gold-500'}`}
+                        className={`h-full rounded-full transition-all ${isFullyReleased ? 'bg-success' : 'bg-gold-500'}`}
                         style={{ width: `${Math.min((releasedUSD / targetUSD) * 100, 100)}%` }}
                       />
                     </div>

@@ -141,7 +141,7 @@ export default function InvestmentForm({
           className={`w-full py-4 rounded-lg font-semibold transition-all ${
             !investCheck.allowed || isSubmitting || numericAmount <= 0
               ? 'bg-surface-overlay text-ink-muted cursor-not-allowed'
-              : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-ink'
+              : 'bg-gradient-to-r from-success to-success hover:from-success hover:to-success text-ink'
           }`}
         >
           {isSubmitting ? (

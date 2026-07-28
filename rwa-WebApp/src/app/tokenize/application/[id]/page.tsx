@@ -36,19 +36,19 @@ import {
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode; description?: string }> = {
   pending: { 
     label: 'Pending Review', 
-    color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', 
+    color: 'bg-warning/20 text-warning border-warning/30', 
     icon: <Clock className="w-4 h-4" />,
     description: 'Your application is being reviewed by our team. Payment has been received.'
   },
   approved: { 
     label: 'Ready to Deploy', 
-    color: 'bg-green-500/20 text-green-400 border-green-500/30', 
+    color: 'bg-success/20 text-success border-success/30', 
     icon: <CheckCircle2 className="w-4 h-4" />,
     description: 'Your application is approved! You can now deploy your token.'
   },
   rejected: { 
     label: 'Rejected', 
-    color: 'bg-red-500/20 text-red-400 border-red-500/30', 
+    color: 'bg-danger/20 text-danger border-danger/30', 
     icon: <AlertCircle className="w-4 h-4" />,
     description: 'Your application was not approved. Please review the feedback and resubmit.'
   },
@@ -60,7 +60,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   },
   cancelled: { 
     label: 'Cancelled', 
-    color: 'bg-gray-500/20 text-gray-400 border-gray-500/30', 
+    color: 'bg-ink-faint/20 text-ink-muted border-ink-faint/30', 
     icon: <AlertCircle className="w-4 h-4" />,
     description: 'This application has been cancelled.'
   },
@@ -293,11 +293,11 @@ export default function ApplicationDetailPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="max-w-4xl mx-auto px-4 py-12 text-center">
-          <Wallet className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Connect Your Wallet</h2>
-          <p className="text-gray-400">Please connect your wallet to view this application.</p>
+          <Wallet className="w-16 h-16 text-ink-faint mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Connect Your Wallet</h2>
+          <p className="text-ink-muted">Please connect your wallet to view this application.</p>
         </div>
       </div>
     );
@@ -307,12 +307,12 @@ export default function ApplicationDetailPage() {
   if (!isDeployed) {
    
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="max-w-4xl mx-auto px-4 py-12">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-            <Globe className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Network Not Supported</h2>
-            <p className="text-gray-400 mb-6">
+          <div className="bg-surface border border-border rounded-xl p-8 text-center">
+            <Globe className="w-16 h-16 text-warning mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-ink mb-2">Network Not Supported</h2>
+            <p className="text-ink-muted mb-6">
               Tokenization is not available on {chainName}. Please switch to a supported network.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -321,14 +321,14 @@ export default function ApplicationDetailPage() {
                   key={chain.id}
                   onClick={() => handleSwitchNetwork(chain.id as SupportedChainId)}
                   disabled={isSwitching}
-                  className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+                  className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2"
                 >
                   {isSwitching ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : null}
                   {chain.name}
                   {chain.testnet && (
-                    <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">
+                    <span className="text-xs bg-warning/20 text-warning px-2 py-0.5 rounded">
                       Testnet
                     </span>
                   )}
@@ -344,18 +344,18 @@ export default function ApplicationDetailPage() {
   // Wrong chain warning
   if (isWrongChain) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="max-w-4xl mx-auto px-4 py-12">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-            <AlertTriangle className="w-16 h-16 text-yellow-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Wrong Network</h2>
-            <p className="text-gray-400 mb-6">
+          <div className="bg-surface border border-border rounded-xl p-8 text-center">
+            <AlertTriangle className="w-16 h-16 text-warning mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-ink mb-2">Wrong Network</h2>
+            <p className="text-ink-muted mb-6">
               Please switch to {chainName} to continue.
             </p>
             <button
               onClick={() => handleSwitchNetwork(chainId)}
               disabled={isSwitching}
-              className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2 mx-auto"
+              className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2 mx-auto"
             >
               {isSwitching ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -370,7 +370,7 @@ export default function ApplicationDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="flex items-center justify-center h-[60vh]">
           <Loader2 className="w-8 h-8 text-gold-500 animate-spin" />
         </div>
@@ -380,12 +380,12 @@ export default function ApplicationDetailPage() {
 
   if (error || !application) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="max-w-4xl mx-auto px-4 py-12">
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-8 text-center">
-            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Error</h2>
-            <p className="text-gray-400 mb-6">{error || 'Application not found'}</p>
+          <div className="bg-surface border border-border rounded-xl p-8 text-center">
+            <AlertCircle className="w-16 h-16 text-danger mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-ink mb-2">Error</h2>
+            <p className="text-ink-muted mb-6">{error || 'Application not found'}</p>
             <Link
               href={backUrl}
               className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300"
@@ -403,31 +403,31 @@ export default function ApplicationDetailPage() {
   const applicationChainName = application.chain_id ? getChainName(application.chain_id) : chainName;
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-sunken">
 
       <main className="max-w-4xl mx-auto px-4 py-8">
         {/* Back Link */}
         <Link
           href={backUrl}
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-6 transition"
+          className="inline-flex items-center gap-2 text-ink-muted hover:text-ink mb-6 transition"
         >
           <ArrowLeft className="w-4 h-4" /> {backLabel}
         </Link>
 
         {/* Header */}
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-6">
+        <div className="bg-surface border border-border rounded-xl p-6 mb-6">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-white mb-2">{application.asset_name}</h1>
+              <h1 className="text-2xl font-bold text-ink mb-2">{application.asset_name}</h1>
               <div className="flex flex-wrap items-center gap-3 text-sm">
-                <p className="text-gray-400">
+                <p className="text-ink-muted">
                   Application ID: {application.id}
                 </p>
                 {/* Network Badge */}
                 <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium ${
                   isTestnet 
-                    ? 'bg-yellow-500/20 text-yellow-400' 
-                    : 'bg-green-500/20 text-green-400'
+                    ? 'bg-warning/20 text-warning' 
+                    : 'bg-success/20 text-success'
                 }`}>
                   <Globe className="w-3 h-3" />
                   {applicationChainName}
@@ -442,13 +442,13 @@ export default function ApplicationDetailPage() {
             </div>
           </div>
 
-          <p className="text-gray-300 mt-4">{statusConfig.description}</p>
+          <p className="text-ink-muted mt-4">{statusConfig.description}</p>
 
           {/* Rejection Reason */}
           {application.status === 'rejected' && application.rejection_reason && (
-            <div className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 font-medium mb-1">Rejection Reason:</p>
-              <p className="text-gray-300">{application.rejection_reason}</p>
+            <div className="mt-4 p-4 bg-danger/10 border border-danger/30 rounded-lg">
+              <p className="text-danger font-medium mb-1">Rejection Reason:</p>
+              <p className="text-ink-muted">{application.rejection_reason}</p>
             </div>
           )}
 
@@ -458,7 +458,7 @@ export default function ApplicationDetailPage() {
             {application.status === 'approved' && (
               <Link
                 href={`/tokenize/create/${application.id}${fromDashboard ? '?from=dashboard' : ''}`}
-                className="px-6 py-2 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-lg transition inline-flex items-center gap-2"
+                className="px-6 py-2 bg-gold-600 hover:bg-gold-500 text-ink font-medium rounded-lg transition inline-flex items-center gap-2"
               >
                 <Coins className="w-4 h-4" />
                 Create Token
@@ -469,7 +469,7 @@ export default function ApplicationDetailPage() {
             {application.status === 'rejected' && (
               <Link
                 href={`/tokenize/edit/${application.id}?resubmit=true${fromDashboard ? '&from=dashboard' : ''}`}
-                className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white font-medium rounded-lg transition inline-flex items-center gap-2"
+                className="px-6 py-2 bg-danger hover:bg-danger text-ink font-medium rounded-lg transition inline-flex items-center gap-2"
               >
                 <AlertCircle className="w-4 h-4" />
                 Edit & Resubmit
@@ -480,7 +480,7 @@ export default function ApplicationDetailPage() {
               <button
                 onClick={handleCancel}
                 disabled={cancelling}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-gray-300 rounded-lg transition inline-flex items-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink-muted rounded-lg transition inline-flex items-center gap-2 disabled:opacity-50"
               >
                 {cancelling ? <Loader2 className="w-4 h-4 animate-spin" /> : <XCircle className="w-4 h-4" />}
                 Cancel Application
@@ -492,59 +492,59 @@ export default function ApplicationDetailPage() {
         {/* Details Grid */}
         <div className="grid md:grid-cols-2 gap-6">
           {/* Asset Info */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <div className="bg-surface border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
               <FileText className="w-5 h-5 text-gold-400" />
               Asset Details
             </h2>
 
             <div className="space-y-3">
               <div>
-                <span className="text-gray-400 text-sm">Asset Type</span>
-                <p className="text-white">{application.asset_type.replace(/_/g, ' ')}</p>
+                <span className="text-ink-muted text-sm">Asset Type</span>
+                <p className="text-ink">{application.asset_type.replace(/_/g, ' ')}</p>
               </div>
               <div>
-                <span className="text-gray-400 text-sm">Estimated Value</span>
-                <p className="text-white font-semibold">{formatCurrency(application.estimated_value)}</p>
+                <span className="text-ink-muted text-sm">Estimated Value</span>
+                <p className="text-ink font-semibold">{formatCurrency(application.estimated_value)}</p>
               </div>
               <div>
-                <span className="text-gray-400 text-sm">Description</span>
-                <p className="text-gray-300 text-sm">{application.asset_description}</p>
+                <span className="text-ink-muted text-sm">Description</span>
+                <p className="text-ink-muted text-sm">{application.asset_description}</p>
               </div>
             </div>
           </div>
 
           {/* Company Info */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <div className="bg-surface border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
               <Building2 className="w-5 h-5 text-gold-400" />
               Company Info
             </h2>
 
             <div className="space-y-3">
               <div className="flex items-center gap-2">
-                <User className="w-4 h-4 text-gray-500" />
-                <span className="text-white">{application.contact_name}</span>
+                <User className="w-4 h-4 text-ink-faint" />
+                <span className="text-ink">{application.contact_name}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 text-gray-500" />
-                <span className="text-white">{application.company_name}</span>
+                <Building2 className="w-4 h-4 text-ink-faint" />
+                <span className="text-ink">{application.company_name}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-gray-500" />
+                <Mail className="w-4 h-4 text-ink-faint" />
                 <a href={`mailto:${application.email}`} className="text-gold-400 hover:underline">
                   {application.email}
                 </a>
               </div>
               {application.phone && (
                 <div className="flex items-center gap-2">
-                  <Phone className="w-4 h-4 text-gray-500" />
-                  <span className="text-white">{application.phone}</span>
+                  <Phone className="w-4 h-4 text-ink-faint" />
+                  <span className="text-ink">{application.phone}</span>
                 </div>
               )}
               {application.website && (
                 <div className="flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-gray-500" />
+                  <Globe className="w-4 h-4 text-ink-faint" />
                   <a href={application.website} target="_blank" rel="noopener noreferrer" className="text-gold-400 hover:underline">
                     {application.website}
                   </a>
@@ -554,36 +554,36 @@ export default function ApplicationDetailPage() {
           </div>
 
           {/* Fee & Add-ons */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-400" />
+          <div className="bg-surface border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-success" />
               Fee & Add-ons
             </h2>
 
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-400">Total Fee</span>
-                <span className="text-green-400 font-bold">${application.fee_amount} {application.fee_currency}</span>
+                <span className="text-ink-muted">Total Fee</span>
+                <span className="text-success font-bold">${application.fee_amount} {application.fee_currency}</span>
               </div>
 
-              <div className="pt-3 border-t border-gray-700 space-y-2">
+              <div className="pt-3 border-t border-border space-y-2">
                 <div className="flex items-center gap-2">
                   {application.needs_escrow ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-400" />
+                    <CheckCircle2 className="w-4 h-4 text-success" />
                   ) : (
-                    <XCircle className="w-4 h-4 text-gray-500" />
+                    <XCircle className="w-4 h-4 text-ink-faint" />
                   )}
-                  <span className={application.needs_escrow ? 'text-white' : 'text-gray-500'}>
+                  <span className={application.needs_escrow ? 'text-ink' : 'text-ink-faint'}>
                     Trade Escrow
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   {application.needs_dividends ? (
-                    <CheckCircle2 className="w-4 h-4 text-green-400" />
+                    <CheckCircle2 className="w-4 h-4 text-success" />
                   ) : (
-                    <XCircle className="w-4 h-4 text-gray-500" />
+                    <XCircle className="w-4 h-4 text-ink-faint" />
                   )}
-                  <span className={application.needs_dividends ? 'text-white' : 'text-gray-500'}>
+                  <span className={application.needs_dividends ? 'text-ink' : 'text-ink-faint'}>
                     Dividend Distributor
                   </span>
                 </div>
@@ -592,31 +592,31 @@ export default function ApplicationDetailPage() {
           </div>
 
           {/* Token Preferences */}
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Coins className="w-5 h-5 text-yellow-400" />
+          <div className="bg-surface border border-border rounded-xl p-6">
+            <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+              <Coins className="w-5 h-5 text-warning" />
               Token Preferences
             </h2>
 
             <div className="space-y-3">
               <div>
-                <span className="text-gray-400 text-sm">Token Name</span>
-                <p className="text-white">{application.token_name || 'To be decided'}</p>
+                <span className="text-ink-muted text-sm">Token Name</span>
+                <p className="text-ink">{application.token_name || 'To be decided'}</p>
               </div>
               <div>
-                <span className="text-gray-400 text-sm">Symbol</span>
-                <p className="text-white font-mono">{application.token_symbol || 'TBD'}</p>
+                <span className="text-ink-muted text-sm">Symbol</span>
+                <p className="text-ink font-mono">{application.token_symbol || 'TBD'}</p>
               </div>
               <div>
-                <span className="text-gray-400 text-sm">Total Supply</span>
-                <p className="text-white">{application.total_supply || 'To be decided'}</p>
+                <span className="text-ink-muted text-sm">Total Supply</span>
+                <p className="text-ink">{application.total_supply || 'To be decided'}</p>
               </div>
               <div>
-                <span className="text-gray-400 text-sm">Network</span>
-                <p className="text-white flex items-center gap-2">
+                <span className="text-ink-muted text-sm">Network</span>
+                <p className="text-ink flex items-center gap-2">
                   {applicationChainName}
                   {isTestnet && (
-                    <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">
+                    <span className="text-xs bg-warning/20 text-warning px-2 py-0.5 rounded">
                       Testnet
                     </span>
                   )}
@@ -628,9 +628,9 @@ export default function ApplicationDetailPage() {
 
         {/* Documents */}
         {documents.length > 0 && (
-          <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mt-6">
-            <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-cyan-400" />
+          <div className="bg-surface border border-border rounded-xl p-6 mt-6">
+            <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-gold" />
               Documents ({documents.length})
             </h2>
 
@@ -641,14 +641,14 @@ export default function ApplicationDetailPage() {
                   href={doc.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-gray-700/50 rounded-lg hover:bg-gray-700 transition group"
+                  className="flex items-center gap-3 p-3 bg-surface-overlay/50 rounded-lg hover:bg-surface-overlay transition group"
                 >
-                  <FileText className="w-5 h-5 text-gray-400 group-hover:text-white" />
+                  <FileText className="w-5 h-5 text-ink-muted group-hover:text-ink" />
                   <div className="flex-1 min-w-0">
-                    <p className="text-white text-sm truncate">{doc.name}</p>
-                    <p className="text-gray-500 text-xs">{doc.type}</p>
+                    <p className="text-ink text-sm truncate">{doc.name}</p>
+                    <p className="text-ink-faint text-xs">{doc.type}</p>
                   </div>
-                  <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                  <ExternalLink className="w-4 h-4 text-ink-muted group-hover:text-ink" />
                 </a>
               ))}
             </div>
@@ -657,18 +657,18 @@ export default function ApplicationDetailPage() {
 
         {/* Deployment Info (if completed) */}
         {application.status === 'completed' && (application.token_address || application.nft_address) && (
-          <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-6 mt-6">
-            <h2 className="text-lg font-semibold text-green-400 mb-4 flex items-center gap-2">
+          <div className="bg-success/10 border border-success/30 rounded-xl p-6 mt-6">
+            <h2 className="text-lg font-semibold text-success mb-4 flex items-center gap-2">
               <CheckCircle2 className="w-5 h-5" />
               Deployment Information
             </h2>
 
             {/* Deployed Network Info */}
             {application.chain_id && (
-              <div className="mb-4 pb-4 border-b border-green-500/20">
-                <span className="text-gray-400 text-sm">Deployed Network</span>
-                <p className="text-white flex items-center gap-2 mt-1">
-                  <Globe className="w-4 h-4 text-green-400" />
+              <div className="mb-4 pb-4 border-b border-success/20">
+                <span className="text-ink-muted text-sm">Deployed Network</span>
+                <p className="text-ink flex items-center gap-2 mt-1">
+                  <Globe className="w-4 h-4 text-success" />
                   {getChainName(application.chain_id)}
                 </p>
               </div>
@@ -677,17 +677,17 @@ export default function ApplicationDetailPage() {
             <div className="space-y-3">
               {application.token_address && (
                 <div>
-                  <span className="text-gray-400 text-sm">Token Address</span>
+                  <span className="text-ink-muted text-sm">Token Address</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <code className="text-white bg-gray-800 px-2 py-1 rounded text-sm font-mono">
+                    <code className="text-ink bg-surface px-2 py-1 rounded text-sm font-mono">
                       {application.token_address}
                     </code>
                     <button 
                       onClick={() => copyToClipboard(application.token_address!)} 
-                      className="text-gray-400 hover:text-white transition"
+                      className="text-ink-muted hover:text-ink transition"
                       title="Copy address"
                     >
-                      {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
+                      {copied ? <Check className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
                     </button>
                     <a 
                       href={`${getApplicationExplorerUrl}/address/${application.token_address}`} 
@@ -704,14 +704,14 @@ export default function ApplicationDetailPage() {
 
               {application.nft_address && (
                 <div>
-                  <span className="text-gray-400 text-sm">NFT Address</span>
+                  <span className="text-ink-muted text-sm">NFT Address</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <code className="text-white bg-gray-800 px-2 py-1 rounded text-sm font-mono">
+                    <code className="text-ink bg-surface px-2 py-1 rounded text-sm font-mono">
                       {application.nft_address}
                     </code>
                     <button 
                       onClick={() => copyToClipboard(application.nft_address!)} 
-                      className="text-gray-400 hover:text-white transition"
+                      className="text-ink-muted hover:text-ink transition"
                       title="Copy address"
                     >
                       <Copy className="w-4 h-4" />
@@ -731,14 +731,14 @@ export default function ApplicationDetailPage() {
 
               {application.escrow_address && (
                 <div>
-                  <span className="text-gray-400 text-sm">Escrow Address</span>
+                  <span className="text-ink-muted text-sm">Escrow Address</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <code className="text-white bg-gray-800 px-2 py-1 rounded text-sm font-mono">
+                    <code className="text-ink bg-surface px-2 py-1 rounded text-sm font-mono">
                       {application.escrow_address}
                     </code>
                     <button 
                       onClick={() => copyToClipboard(application.escrow_address!)} 
-                      className="text-gray-400 hover:text-white transition"
+                      className="text-ink-muted hover:text-ink transition"
                       title="Copy address"
                     >
                       <Copy className="w-4 h-4" />
@@ -758,7 +758,7 @@ export default function ApplicationDetailPage() {
 
               {application.deployment_tx_hash && (
                 <div>
-                  <span className="text-gray-400 text-sm">Deployment Transaction</span>
+                  <span className="text-ink-muted text-sm">Deployment Transaction</span>
                   <div className="flex items-center gap-2 mt-1">
                     <a 
                       href={`${getApplicationExplorerUrl}/tx/${application.deployment_tx_hash}`} 
@@ -779,27 +779,27 @@ export default function ApplicationDetailPage() {
         )}
 
         {/* Timeline */}
-        <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mt-6">
-          <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-            <Calendar className="w-5 h-5 text-gray-400" />
+        <div className="bg-surface border border-border rounded-xl p-6 mt-6">
+          <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5 text-ink-muted" />
             Timeline
           </h2>
 
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-400">Submitted</span>
-              <span className="text-white">{formatDate(application.created_at)}</span>
+              <span className="text-ink-muted">Submitted</span>
+              <span className="text-ink">{formatDate(application.created_at)}</span>
             </div>
             {application.updated_at !== application.created_at && (
               <div className="flex justify-between">
-                <span className="text-gray-400">Last Updated</span>
-                <span className="text-white">{formatDate(application.updated_at)}</span>
+                <span className="text-ink-muted">Last Updated</span>
+                <span className="text-ink">{formatDate(application.updated_at)}</span>
               </div>
             )}
             {application.chain_id && (
-              <div className="flex justify-between pt-2 border-t border-gray-700 mt-2">
-                <span className="text-gray-400">Network</span>
-                <span className="text-white">{getChainName(application.chain_id)}</span>
+              <div className="flex justify-between pt-2 border-t border-border mt-2">
+                <span className="text-ink-muted">Network</span>
+                <span className="text-ink">{getChainName(application.chain_id)}</span>
               </div>
             )}
           </div>

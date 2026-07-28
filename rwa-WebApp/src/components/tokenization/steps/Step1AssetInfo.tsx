@@ -154,19 +154,19 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
       icon: FileText,
       content: (
         <div className="space-y-3">
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-surface-overlay">
             Based on your selected asset type ({getAssetTypeLabel(assetType)}), you will need:
           </p>
           <ul className="space-y-2">
             {documents.map((doc) => (
               <li key={doc.id} className="flex items-start gap-2">
-                <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${doc.required ? 'bg-red-400' : 'bg-slate-500'}`} />
+                <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${doc.required ? 'bg-danger' : 'bg-surface-overlay'}`} />
                 <div>
-                  <span className={`text-sm ${doc.required ? 'text-white font-medium' : 'text-slate-400'}`}>
+                  <span className={`text-sm ${doc.required ? 'text-ink font-medium' : 'text-surface-overlay'}`}>
                     {doc.name}
-                    {doc.required && <span className="text-red-400 ml-1">*</span>}
+                    {doc.required && <span className="text-danger ml-1">*</span>}
                   </span>
-                  <p className="text-xs text-slate-500">{doc.description}</p>
+                  <p className="text-xs text-surface-overlay">{doc.description}</p>
                 </div>
               </li>
             ))}
@@ -176,14 +176,14 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
               <AlertCircle className="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-sm text-gold-400 font-medium">Professional Review Required</p>
-                <p className="text-xs text-slate-400 mt-1">
-                  All documents will be reviewed by our compliance team. <strong className="text-white">Legal opinions</strong> and <strong className="text-white">professional valuations</strong> must be from accredited providers.
+                <p className="text-xs text-surface-overlay mt-1">
+                  All documents will be reviewed by our compliance team. <strong className="text-ink">Legal opinions</strong> and <strong className="text-ink">professional valuations</strong> must be from accredited providers.
                 </p>
               </div>
             </div>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
-            <span className="text-red-400">*</span> Required documents
+          <p className="text-xs text-surface-overlay mt-2">
+            <span className="text-danger">*</span> Required documents
           </p>
         </div>
       ),
@@ -199,40 +199,40 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
               <Scale className="w-4 h-4 text-gold-400" />
               <span className="text-sm font-medium text-gold-400">Regulatory Compliance</span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-surface-overlay">
               All tokenized assets must comply with securities regulations in relevant jurisdictions.
             </p>
           </div>
           <div>
-            <p className="text-sm text-white font-medium mb-2">Compliance Requirements:</p>
-            <ul className="space-y-2 text-xs text-slate-400">
+            <p className="text-sm text-ink font-medium mb-2">Compliance Requirements:</p>
+            <ul className="space-y-2 text-xs text-surface-overlay">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>KYC/AML verification for asset owners</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Accredited investor verification for token holders</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Securities exemption documentation</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Transfer restrictions and whitelist enforcement</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Ongoing reporting and disclosure requirements</span>
               </li>
             </ul>
           </div>
-          <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+          <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
             <div className="flex items-start gap-2">
-              <Lightbulb className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-slate-400">
-                <strong className="text-amber-400">Pro tip:</strong> Engage legal counsel early in the process to ensure your tokenization structure complies with all applicable regulations.
+              <Lightbulb className="w-4 h-4 text-warning mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-surface-overlay">
+                <strong className="text-warning">Pro tip:</strong> Engage legal counsel early in the process to ensure your tokenization structure complies with all applicable regulations.
               </p>
             </div>
           </div>
@@ -245,52 +245,52 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
       icon: Shield,
       content: (
         <div className="space-y-3">
-          <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-4 h-4 text-green-400" />
-              <span className="text-sm font-medium text-green-400">Secure & Transparent</span>
+              <Shield className="w-4 h-4 text-success" />
+              <span className="text-sm font-medium text-success">Secure & Transparent</span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-surface-overlay">
               Your asset will be represented as security tokens on the blockchain with full compliance features.
             </p>
           </div>
           <div>
-            <p className="text-sm text-white font-medium mb-2">Process Timeline:</p>
-            <ul className="space-y-3 text-xs text-slate-400">
+            <p className="text-sm text-ink font-medium mb-2">Process Timeline:</p>
+            <ul className="space-y-3 text-xs text-surface-overlay">
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">1</div>
                 <div>
-                  <p className="text-white font-medium">Application Review</p>
-                  <p className="text-slate-500">2-5 business days</p>
+                  <p className="text-ink font-medium">Application Review</p>
+                  <p className="text-surface-overlay">2-5 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">2</div>
                 <div>
-                  <p className="text-white font-medium">Due Diligence</p>
-                  <p className="text-slate-500">5-15 business days</p>
+                  <p className="text-ink font-medium">Due Diligence</p>
+                  <p className="text-surface-overlay">5-15 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">3</div>
                 <div>
-                  <p className="text-white font-medium">Legal Structuring</p>
-                  <p className="text-slate-500">10-20 business days</p>
+                  <p className="text-ink font-medium">Legal Structuring</p>
+                  <p className="text-surface-overlay">10-20 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">4</div>
                 <div>
-                  <p className="text-white font-medium">Token Deployment</p>
-                  <p className="text-slate-500">1-3 business days</p>
+                  <p className="text-ink font-medium">Token Deployment</p>
+                  <p className="text-surface-overlay">1-3 business days</p>
                 </div>
               </li>
             </ul>
           </div>
-          <div className="flex items-center gap-2 p-3 bg-slate-700/50 rounded-lg">
-            <Clock className="w-4 h-4 text-slate-400" />
-            <p className="text-xs text-slate-400">
-              Total estimated time: <strong className="text-white">3-6 weeks</strong>
+          <div className="flex items-center gap-2 p-3 bg-surface-overlay/50 rounded-lg">
+            <Clock className="w-4 h-4 text-surface-overlay" />
+            <p className="text-xs text-surface-overlay">
+              Total estimated time: <strong className="text-ink">3-6 weeks</strong>
             </p>
           </div>
         </div>
@@ -304,12 +304,12 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
         <div className="space-y-3">
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                <Users className="w-4 h-4 text-green-400" />
+              <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0">
+                <Users className="w-4 h-4 text-success" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Fractional Ownership</p>
-                <p className="text-xs text-slate-400">Enable investors to own fractions of high-value assets</p>
+                <p className="text-sm text-ink font-medium">Fractional Ownership</p>
+                <p className="text-xs text-surface-overlay">Enable investors to own fractions of high-value assets</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -317,8 +317,8 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
                 <Globe className="w-4 h-4 text-gold-400" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Global Liquidity</p>
-                <p className="text-xs text-slate-400">Access worldwide investor base 24/7</p>
+                <p className="text-sm text-ink font-medium">Global Liquidity</p>
+                <p className="text-xs text-surface-overlay">Access worldwide investor base 24/7</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -326,26 +326,26 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
                 <Target className="w-4 h-4 text-gold-400" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Automated Compliance</p>
-                <p className="text-xs text-slate-400">Built-in transfer restrictions and investor verification</p>
+                <p className="text-sm text-ink font-medium">Automated Compliance</p>
+                <p className="text-xs text-surface-overlay">Built-in transfer restrictions and investor verification</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-4 h-4 text-amber-400" />
+              <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-4 h-4 text-warning" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Reduced Costs</p>
-                <p className="text-xs text-slate-400">Lower transaction fees and administrative overhead</p>
+                <p className="text-sm text-ink font-medium">Reduced Costs</p>
+                <p className="text-xs text-surface-overlay">Lower transaction fees and administrative overhead</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-4 h-4 text-cyan-400" />
+              <div className="w-8 h-8 rounded-lg bg-gold/20 flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-4 h-4 text-gold" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Transparent Ownership</p>
-                <p className="text-xs text-slate-400">Immutable record of ownership on blockchain</p>
+                <p className="text-sm text-ink font-medium">Transparent Ownership</p>
+                <p className="text-xs text-surface-overlay">Immutable record of ownership on blockchain</p>
               </div>
             </li>
           </ul>
@@ -355,27 +355,27 @@ function ProjectGuidelines({ assetType }: { assetType: string }) {
   ];
 
   return (
-    <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
-      <div className="p-4 border-b border-slate-700">
-        <h3 className="font-semibold text-white flex items-center gap-2">
+    <div className="bg-surface-overlay/50 rounded-xl border border-surface-overlay overflow-hidden">
+      <div className="p-4 border-b border-surface-overlay">
+        <h3 className="font-semibold text-ink flex items-center gap-2">
           <Info className="w-5 h-5 text-gold-400" />
           Tokenization Guidelines
         </h3>
       </div>
-      <div className="divide-y divide-slate-700">
+      <div className="divide-y divide-surface-overlay">
         {sections.map((section) => (
           <div key={section.id}>
             <button
               type="button"
               onClick={() => setOpenSection(openSection === section.id ? null : section.id)}
-              className="w-full p-4 flex items-center justify-between hover:bg-slate-700/30 transition-colors"
+              className="w-full p-4 flex items-center justify-between hover:bg-surface-overlay/30 transition-colors"
             >
               <div className="flex items-center gap-2">
-                <section.icon className="w-4 h-4 text-slate-400" />
-                <span className="text-sm font-medium text-white">{section.title}</span>
+                <section.icon className="w-4 h-4 text-surface-overlay" />
+                <span className="text-sm font-medium text-ink">{section.title}</span>
               </div>
               <ChevronDown 
-                className={`w-4 h-4 text-slate-400 transition-transform ${
+                className={`w-4 h-4 text-surface-overlay transition-transform ${
                   openSection === section.id ? 'rotate-180' : ''
                 }`} 
               />
@@ -479,16 +479,16 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
       {/* Main Form - 2/3 width */}
       <div className="lg:col-span-2 space-y-6">
         <div>
-          <h2 className="text-xl font-semibold text-white mb-2">Asset Information</h2>
-          <p className="text-gray-400 text-sm">
+          <h2 className="text-xl font-semibold text-ink mb-2">Asset Information</h2>
+          <p className="text-ink-muted text-sm">
             Tell us about the asset you want to tokenize
           </p>
         </div>
 
         {/* Asset Type Selection - 3x3 grid */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-3">
-            Asset Type <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-ink-muted mb-3">
+            Asset Type <span className="text-danger">*</span>
           </label>
           <div className="grid grid-cols-3 gap-3">
             {ASSET_TYPES.map((type) => (
@@ -499,12 +499,12 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                 className={`
                   flex items-center gap-3 p-4 rounded-xl border transition-all text-left
                   ${formData.assetType === type.value
-                    ? 'bg-gold-500/20 border-gold-500 text-white'
-                    : 'bg-gray-700/50 border-gray-600 text-gray-300 hover:border-gray-500'
+                    ? 'bg-gold-500/20 border-gold-500 text-ink'
+                    : 'bg-surface-overlay/50 border-border-strong text-ink-muted hover:border-ink-faint'
                   }
                 `}
               >
-                <span className={formData.assetType === type.value ? 'text-gold-400' : 'text-gray-400'}>
+                <span className={formData.assetType === type.value ? 'text-gold-400' : 'text-ink-muted'}>
                   {ASSET_ICONS[type.value] || <Package className="w-5 h-5" />}
                 </span>
                 <span className="text-sm font-medium">{type.label}</span>
@@ -512,76 +512,76 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
             ))}
           </div>
           {errors.assetType && (
-            <p className="mt-2 text-sm text-red-400">{errors.assetType}</p>
+            <p className="mt-2 text-sm text-danger">{errors.assetType}</p>
           )}
         </div>
 
         {/* Asset Name */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Asset Name <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-ink-muted mb-2">
+            Asset Name <span className="text-danger">*</span>
           </label>
           <input
             type="text"
             value={formData.assetName}
             onChange={(e) => updateFormData('assetName', e.target.value)}
             placeholder="e.g., Downtown Office Building, Vintage Art Collection"
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
-              errors.assetName ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold-500 ${
+              errors.assetName ? 'border-danger' : 'border-border-strong'
             }`}
           />
           {errors.assetName && (
-            <p className="mt-1 text-sm text-red-400">{errors.assetName}</p>
+            <p className="mt-1 text-sm text-danger">{errors.assetName}</p>
           )}
         </div>
 
         {/* Asset Description */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Asset Description <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-ink-muted mb-2">
+            Asset Description <span className="text-danger">*</span>
           </label>
           <textarea
             value={formData.assetDescription}
             onChange={(e) => updateFormData('assetDescription', e.target.value)}
             placeholder="Describe your asset in detail: its features, condition, history, and any unique characteristics..."
             rows={4}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 resize-none ${
-              errors.assetDescription ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold-500 resize-none ${
+              errors.assetDescription ? 'border-danger' : 'border-border-strong'
             }`}
           />
           {errors.assetDescription && (
-            <p className="mt-1 text-sm text-red-400">{errors.assetDescription}</p>
+            <p className="mt-1 text-sm text-danger">{errors.assetDescription}</p>
           )}
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-ink-faint">
             {formData.assetDescription.length}/1000 characters
           </p>
         </div>
 
         {/* Asset Location with Autocomplete */}
         <div ref={wrapperRef} className="relative">
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Asset Location <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-ink-muted mb-2">
+            Asset Location <span className="text-danger">*</span>
           </label>
           <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-muted" />
             <input
               type="text"
               value={locationQuery}
               onChange={(e) => handleLocationInputChange(e.target.value)}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
               placeholder="Start typing a city or address..."
-              className={`w-full pl-10 pr-10 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
-                errors.assetLocation ? 'border-red-500' : 'border-gray-600'
+              className={`w-full pl-10 pr-10 py-3 bg-surface-overlay border rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold-500 ${
+                errors.assetLocation ? 'border-danger' : 'border-border-strong'
               }`}
             />
             {isSearching && (
-              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 animate-spin" />
+              <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-muted animate-spin" />
             )}
           </div>
           
           {/* Suggestions Dropdown */}
           {showSuggestions && suggestions.length > 0 && (
-            <div className="absolute z-50 w-full mt-1 bg-gray-800 border border-gray-600 rounded-xl shadow-lg overflow-hidden">
+            <div className="absolute z-50 w-full mt-1 bg-surface border border-border-strong rounded-xl shadow-lg overflow-hidden">
               {suggestions.map((suggestion, index) => {
                 const { address } = suggestion;
                 const city = address.city || address.town || address.village || address.municipality || '';
@@ -592,15 +592,15 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                     key={index}
                     type="button"
                     onClick={() => handleLocationSelect(suggestion)}
-                    className="w-full px-4 py-3 text-left hover:bg-gray-700 transition-colors border-b border-gray-700 last:border-b-0"
+                    className="w-full px-4 py-3 text-left hover:bg-surface-overlay transition-colors border-b border-border last:border-b-0"
                   >
                     <div className="flex items-start gap-3">
                       <MapPin className="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" />
                       <div>
-                        <p className="text-white text-sm font-medium">
+                        <p className="text-ink text-sm font-medium">
                           {city || suggestion.display_name.split(',')[0]}
                         </p>
-                        <p className="text-gray-400 text-xs">
+                        <p className="text-ink-muted text-xs">
                           {[address.state, country].filter(Boolean).join(', ')}
                         </p>
                       </div>
@@ -612,21 +612,21 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
           )}
           
           {errors.assetLocation && (
-            <p className="mt-1 text-sm text-red-400">{errors.assetLocation}</p>
+            <p className="mt-1 text-sm text-danger">{errors.assetLocation}</p>
           )}
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="mt-1 text-xs text-ink-faint">
             Type at least 3 characters to search for locations
           </p>
         </div>
 
         {/* Estimated Value & Currency */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Estimated Value <span className="text-red-400">*</span>
+          <label className="block text-sm font-medium text-ink-muted mb-2">
+            Estimated Value <span className="text-danger">*</span>
           </label>
           <div className="flex gap-3">
             <div className="flex-1 relative">
-              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+              <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted">
                 {formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : ''}
               </span>
               <input
@@ -642,15 +642,15 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                   updateFormData('estimatedValue', formattedValue);
                 }}
                 placeholder="0.00"
-                className={`w-full pl-8 pr-4 py-3 bg-gray-700 border rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500 ${
-                  errors.estimatedValue ? 'border-red-500' : 'border-gray-600'
+                className={`w-full pl-8 pr-4 py-3 bg-surface-overlay border rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold-500 ${
+                  errors.estimatedValue ? 'border-danger' : 'border-border-strong'
                 }`}
               />
             </div>
             <select
               value={formData.currency}
               onChange={(e) => updateFormData('currency', e.target.value)}
-              className="px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-gold-500"
+              className="px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink focus:outline-none focus:ring-2 focus:ring-gold-500"
             >
               {CURRENCIES.map((currency) => (
                 <option key={currency.value} value={currency.value}>
@@ -660,10 +660,10 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
             </select>
           </div>
           {errors.estimatedValue && (
-            <p className="mt-1 text-sm text-red-400">{errors.estimatedValue}</p>
+            <p className="mt-1 text-sm text-danger">{errors.estimatedValue}</p>
           )}
           {formData.estimatedValue && (
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-ink-faint">
               {formData.currency === 'USD' ? '$' : formData.currency === 'EUR' ? '€' : formData.currency === 'GBP' ? '£' : ''}{formData.estimatedValue} {formData.currency}
             </p>
           )}
@@ -671,11 +671,11 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
 
         {/* Website (Optional) */}
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">
-            Website <span className="text-gray-500">(Optional)</span>
+          <label className="block text-sm font-medium text-ink-muted mb-2">
+            Website <span className="text-ink-faint">(Optional)</span>
           </label>
           <div className="relative">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
+            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-faint text-sm">
               https://
             </span>
             <input
@@ -686,11 +686,11 @@ export function Step1AssetInfo({ formData, errors, updateFormData }: Step1AssetI
                 updateFormData('website', value ? `https://${value}` : '');
               }}
               placeholder="example.com"
-              className="w-full pl-[72px] pr-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gold-500"
+              className="w-full pl-[72px] pr-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold-500"
             />
           </div>
           {formData.website && (
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-ink-faint">
               Full URL: {formData.website}
             </p>
           )}

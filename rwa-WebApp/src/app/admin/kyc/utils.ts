@@ -299,19 +299,19 @@ export function getRiskLevelColor(level: number): string {
     2: 'text-warning',
     3: 'text-warning',
     4: 'text-danger',
-    5: 'text-red-600'
+    5: 'text-danger'
   };
   return colors[level] || 'text-ink-muted';
 }
 
 export function getRiskBadgeColors(level: number): { bg: string; text: string; border: string } {
   const colors: Record<number, { bg: string; text: string; border: string }> = {
-    0: { bg: 'bg-gray-500/20', text: 'text-ink-muted', border: 'border-gray-500/30' },
+    0: { bg: 'bg-ink-faint/20', text: 'text-ink-muted', border: 'border-ink-faint/30' },
     1: { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' },
     2: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' },
     3: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' },
     4: { bg: 'bg-danger/20', text: 'text-danger', border: 'border-danger/30' },
-    5: { bg: 'bg-red-600/20', text: 'text-danger', border: 'border-danger/40/30' }
+    5: { bg: 'bg-danger/20', text: 'text-danger', border: 'border-danger/40/30' }
   };
   return colors[level] || colors[0];
 }

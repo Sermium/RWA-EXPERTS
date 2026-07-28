@@ -182,7 +182,7 @@ export default function MessageCenter({
     switch (senderType) {
       case 'buyer': return 'bg-gold-500';
       case 'seller': return 'bg-gold-500';
-      case 'arbiter': return 'bg-yellow-500';
+      case 'arbiter': return 'bg-warning';
       case 'system': return 'bg-ink-faint';
       default: return 'bg-ink-faint';
     }
@@ -260,7 +260,7 @@ export default function MessageCenter({
                       <div
                         className={`rounded-2xl p-3 ${
                           isOwn
-                            ? 'bg-gold-500 text-white rounded-br-md'
+                            ? 'bg-gold-500 text-ink rounded-br-md'
                             : 'bg-surface-overlay text-ink-muted rounded-bl-md'
                         }`}
                       >
@@ -383,7 +383,7 @@ export default function MessageCenter({
           <button
             onClick={handleSend}
             disabled={isSending || (!newMessage.trim() && attachments.length === 0)}
-            className="p-3 bg-gold-500 text-white rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-3 bg-gold-500 text-ink rounded-xl hover:bg-gold-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSending ? (
               <Loader2 className="h-5 w-5 animate-spin" />

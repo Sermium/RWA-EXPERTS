@@ -96,15 +96,15 @@ const statusConfig: Record<string, {
 }> = {
   draft: {
     label: 'Draft',
-    color: 'text-gray-400',
-    bgColor: 'bg-gray-500/20',
+    color: 'text-ink-muted',
+    bgColor: 'bg-ink-faint/20',
     icon: FileText,
     description: 'Continue editing your application',
   },
   pending_payment: {
     label: 'Pending Payment',
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-500/20',
+    color: 'text-warning',
+    bgColor: 'bg-warning/20',
     icon: DollarSign,
     description: 'Complete payment to submit for review',
   },
@@ -117,15 +117,15 @@ const statusConfig: Record<string, {
   },
   approved: {
     label: 'Approved',
-    color: 'text-green-400',
-    bgColor: 'bg-green-500/20',
+    color: 'text-success',
+    bgColor: 'bg-success/20',
     icon: CheckCircle,
     description: 'Ready to activate your fundraise',
   },
   active: {
     label: 'Active',
-    color: 'text-emerald-400',
-    bgColor: 'bg-emerald-500/20',
+    color: 'text-success',
+    bgColor: 'bg-success/20',
     icon: Rocket,
     description: 'Fundraise is live and accepting investments',
   },
@@ -138,15 +138,15 @@ const statusConfig: Record<string, {
   },
   rejected: {
     label: 'Rejected',
-    color: 'text-red-400',
-    bgColor: 'bg-red-500/20',
+    color: 'text-danger',
+    bgColor: 'bg-danger/20',
     icon: XCircle,
     description: 'Application was not approved',
   },
   deployed: {
     label: 'Deployed',
-    color: 'text-cyan-400',
-    bgColor: 'bg-cyan-500/20',
+    color: 'text-gold',
+    bgColor: 'bg-gold/20',
     icon: CheckCircle,
     description: 'Contracts deployed on-chain',
   },
@@ -215,7 +215,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <Link
             href={`/crowdfunding/apply?draft=${application.id}`}
-            className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg text-sm font-medium transition-colors"
           >
             Continue Editing
           </Link>
@@ -225,7 +225,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <Link
             href={`/crowdfunding/apply?id=${application.id}&step=payment`}
-            className="flex-1 text-center py-2.5 px-4 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex-1 text-center py-2.5 px-4 bg-warning hover:bg-warning text-ink rounded-lg text-sm font-medium transition-colors"
           >
             Complete Payment
           </Link>
@@ -233,7 +233,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
 
       case 'pending_review':
         return (
-          <div className="flex-1 text-center py-2.5 px-4 bg-gray-700 text-gray-400 rounded-lg text-sm font-medium cursor-not-allowed">
+          <div className="flex-1 text-center py-2.5 px-4 bg-surface-overlay text-ink-muted rounded-lg text-sm font-medium cursor-not-allowed">
             Under Review
           </div>
         );
@@ -242,7 +242,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <button
             onClick={() => onActivate(application)}
-            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg text-sm font-medium transition-all"
+            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-gradient-to-r from-success to-success hover:from-success hover:to-success text-ink rounded-lg text-sm font-medium transition-all"
           >
             <Rocket className="w-4 h-4" />
             Activate Raise
@@ -254,13 +254,13 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
           <div className="flex gap-2 flex-1">
             <Link
               href={`/projects/${application.id}`}
-              className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
+              className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg text-sm font-medium transition-colors"
             >
               View Project
             </Link>
             <Link
               href={`/projects/${application.id}?tab=investments`}
-              className="py-2.5 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
+              className="py-2.5 px-4 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg text-sm font-medium transition-colors"
             >
               Manage
             </Link>
@@ -272,7 +272,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <Link
             href={`/projects/${application.id}`}
-            className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex-1 text-center py-2.5 px-4 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg text-sm font-medium transition-colors"
           >
             View Project
           </Link>
@@ -282,7 +282,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <Link
             href={`/crowdfunding/apply?resubmit=${application.id}`}
-            className="flex-1 text-center py-2.5 px-4 bg-gray-600 hover:bg-gray-500 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex-1 text-center py-2.5 px-4 bg-border-strong hover:bg-ink-faint text-ink rounded-lg text-sm font-medium transition-colors"
           >
             Resubmit Application
           </Link>
@@ -292,7 +292,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
         return (
           <Link
             href={`/projects/${application.id}`}
-            className="flex-1 text-center py-2.5 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm font-medium transition-colors"
+            className="flex-1 text-center py-2.5 px-4 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg text-sm font-medium transition-colors"
           >
             View Details
           </Link>
@@ -301,12 +301,12 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
   };
 
   return (
-    <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 overflow-hidden hover:border-gray-600/50 transition-all">
+    <div className="bg-surface/50 rounded-xl border border-border/50 overflow-hidden hover:border-border-strong/50 transition-all">
       {/* Header with Logo and Status */}
       <div className="p-5">
         <div className="flex items-start gap-4">
           {/* Logo */}
-          <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-700 flex-shrink-0">
+          <div className="w-14 h-14 rounded-xl overflow-hidden bg-surface-overlay flex-shrink-0">
             {application.logo_url ? (
               <img
                 src={application.logo_url}
@@ -315,7 +315,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gold-600 to-gold-light-600">
-                <span className="text-xl font-bold text-white">
+                <span className="text-xl font-bold text-ink">
                   {application.project_name?.charAt(0) || '?'}
                 </span>
               </div>
@@ -326,8 +326,8 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <h3 className="font-semibold text-white truncate">{application.project_name}</h3>
-                <p className="text-sm text-gray-400 capitalize">{application.category}</p>
+                <h3 className="font-semibold text-ink truncate">{application.project_name}</h3>
+                <p className="text-sm text-ink-muted capitalize">{application.category}</p>
               </div>
               
               {/* Status Badge */}
@@ -339,7 +339,7 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
 
             {/* Description Preview */}
             {application.description && (
-              <p className="text-sm text-gray-500 mt-2 line-clamp-2">
+              <p className="text-sm text-ink-faint mt-2 line-clamp-2">
                 {application.description}
               </p>
             )}
@@ -348,58 +348,58 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-4">
-          <div className="bg-gray-700/30 rounded-lg p-3">
-            <p className="text-xs text-gray-500">Funding Goal</p>
-            <p className="text-sm font-semibold text-white">{formatCurrency(application.funding_goal)}</p>
+          <div className="bg-surface-overlay/30 rounded-lg p-3">
+            <p className="text-xs text-ink-faint">Funding Goal</p>
+            <p className="text-sm font-semibold text-ink">{formatCurrency(application.funding_goal)}</p>
           </div>
-          <div className="bg-gray-700/30 rounded-lg p-3">
-            <p className="text-xs text-gray-500">Token Price</p>
-            <p className="text-sm font-semibold text-white">${application.token_price}</p>
+          <div className="bg-surface-overlay/30 rounded-lg p-3">
+            <p className="text-xs text-ink-faint">Token Price</p>
+            <p className="text-sm font-semibold text-ink">${application.token_price}</p>
           </div>
-          <div className="bg-gray-700/30 rounded-lg p-3">
-            <p className="text-xs text-gray-500">Token</p>
-            <p className="text-sm font-semibold text-white">{application.token_symbol}</p>
+          <div className="bg-surface-overlay/30 rounded-lg p-3">
+            <p className="text-xs text-ink-faint">Token</p>
+            <p className="text-sm font-semibold text-ink">{application.token_symbol}</p>
           </div>
-          <div className="bg-gray-700/30 rounded-lg p-3">
-            <p className="text-xs text-gray-500">Created</p>
-            <p className="text-sm font-semibold text-white">{formatDate(application.created_at)}</p>
+          <div className="bg-surface-overlay/30 rounded-lg p-3">
+            <p className="text-xs text-ink-faint">Created</p>
+            <p className="text-sm font-semibold text-ink">{formatDate(application.created_at)}</p>
           </div>
         </div>
 
         {/* Active Project Progress */}
         {application.status === 'active' && (
-          <div className="mt-4 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-lg">
+          <div className="mt-4 p-4 bg-success/10 border border-success/20 rounded-lg">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-emerald-400 font-medium">Fundraise Progress</span>
-              <span className="text-sm text-white font-semibold">{fundingProgress.toFixed(1)}%</span>
+              <span className="text-sm text-success font-medium">Fundraise Progress</span>
+              <span className="text-sm text-ink font-semibold">{fundingProgress.toFixed(1)}%</span>
             </div>
-            <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-surface-overlay rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-green-400 rounded-full transition-all"
+                className="h-full bg-gradient-to-r from-success to-success rounded-full transition-all"
                 style={{ width: `${fundingProgress}%` }}
               />
             </div>
             <div className="flex items-center justify-between mt-2 text-xs">
-              <span className="text-gray-400">
+              <span className="text-ink-muted">
                 {formatCurrency(application.funded_amount || 0)} raised
               </span>
               {daysRemaining !== null && (
-                <span className="text-gray-400 flex items-center gap-1">
+                <span className="text-ink-muted flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {daysRemaining} days left
                 </span>
               )}
             </div>
             {application.activated_at && (
-              <div className="mt-3 pt-3 border-t border-emerald-500/20 grid grid-cols-2 gap-2 text-xs">
+              <div className="mt-3 pt-3 border-t border-success/20 grid grid-cols-2 gap-2 text-xs">
                 <div>
-                  <span className="text-gray-500">Started:</span>
-                  <span className="text-gray-300 ml-1">{formatDateTime(application.activated_at)}</span>
+                  <span className="text-ink-faint">Started:</span>
+                  <span className="text-ink-muted ml-1">{formatDateTime(application.activated_at)}</span>
                 </div>
                 {application.raise_end_date && (
                   <div>
-                    <span className="text-gray-500">Ends:</span>
-                    <span className="text-gray-300 ml-1">{formatDateTime(application.raise_end_date)}</span>
+                    <span className="text-ink-faint">Ends:</span>
+                    <span className="text-ink-muted ml-1">{formatDateTime(application.raise_end_date)}</span>
                   </div>
                 )}
               </div>
@@ -409,8 +409,8 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
 
         {/* Rejection Reason */}
         {application.status === 'rejected' && application.rejection_reason && (
-          <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
-            <p className="text-sm text-red-400">
+          <div className="mt-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
+            <p className="text-sm text-danger">
               <span className="font-medium">Reason:</span> {application.rejection_reason}
             </p>
           </div>
@@ -418,9 +418,9 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
 
         {/* Payment Status for pending_payment */}
         {application.status === 'pending_payment' && (
-          <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-yellow-400" />
-            <p className="text-sm text-yellow-400">
+          <div className="mt-4 p-3 bg-warning/10 border border-warning/20 rounded-lg flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-warning" />
+            <p className="text-sm text-warning">
               Complete payment to submit your application for review
             </p>
           </div>
@@ -428,12 +428,12 @@ function ApplicationCard({ application, onActivate, onRefresh }: ApplicationCard
 
         {/* Approved - Ready to Activate */}
         {application.status === 'approved' && (
-          <div className="mt-4 p-4 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div className="mt-4 p-4 bg-success/10 border border-success/20 rounded-lg">
             <div className="flex items-start gap-3">
-              <Rocket className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+              <Rocket className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm text-green-400 font-medium">Ready to Launch!</p>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-sm text-success font-medium">Ready to Launch!</p>
+                <p className="text-xs text-ink-muted mt-1">
                   Your application has been approved. Click "Activate Raise" to deploy your smart contracts and start accepting investments.
                 </p>
               </div>
@@ -561,9 +561,9 @@ export default function DashboardCrowdfundingSummary() {
 
   if (!isConnected) {
     return (
-      <div className="bg-gray-800 rounded-xl border border-gray-700 p-8 text-center">
-        <AlertCircle className="w-12 h-12 text-gray-600 mx-auto mb-3" />
-        <p className="text-gray-400">Connect your wallet to view your crowdfunding applications</p>
+      <div className="bg-surface rounded-xl border border-border p-8 text-center">
+        <AlertCircle className="w-12 h-12 text-ink-faint mx-auto mb-3" />
+        <p className="text-ink-muted">Connect your wallet to view your crowdfunding applications</p>
       </div>
     );
   }
@@ -578,8 +578,8 @@ export default function DashboardCrowdfundingSummary() {
               <Coins className="w-5 h-5 text-gold-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white">Crowdfunding Applications</h3>
-              <p className="text-sm text-gray-400">{stats.total} application{stats.total !== 1 ? 's' : ''}</p>
+              <h3 className="text-lg font-semibold text-ink">Crowdfunding Applications</h3>
+              <p className="text-sm text-ink-muted">{stats.total} application{stats.total !== 1 ? 's' : ''}</p>
             </div>
           </div>
           
@@ -587,13 +587,13 @@ export default function DashboardCrowdfundingSummary() {
             <button
               onClick={fetchApplications}
               disabled={isLoading}
-              className="p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors disabled:opacity-50"
+              className="p-2 bg-surface-overlay hover:bg-border-strong rounded-lg transition-colors disabled:opacity-50"
             >
-              <RefreshCw className={`w-4 h-4 text-gray-400 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 text-ink-muted ${isLoading ? 'animate-spin' : ''}`} />
             </button>
             <Link
               href="/crowdfunding/apply"
-              className="flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg text-sm font-medium transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg text-sm font-medium transition-colors"
             >
               <Plus className="w-4 h-4" />
               New Application
@@ -604,45 +604,45 @@ export default function DashboardCrowdfundingSummary() {
         {/* Stats Overview */}
         {stats.total > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
               <div className="flex items-center gap-2 mb-2">
                 <Target className="w-4 h-4 text-gold-400" />
-                <span className="text-sm text-gray-400">Total Goal</span>
+                <span className="text-sm text-ink-muted">Total Goal</span>
               </div>
-              <p className="text-xl font-bold text-white">{formatCurrency(stats.totalFundingGoal)}</p>
+              <p className="text-xl font-bold text-ink">{formatCurrency(stats.totalFundingGoal)}</p>
             </div>
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
               <div className="flex items-center gap-2 mb-2">
-                <TrendingUp className="w-4 h-4 text-green-400" />
-                <span className="text-sm text-gray-400">Total Raised</span>
+                <TrendingUp className="w-4 h-4 text-success" />
+                <span className="text-sm text-ink-muted">Total Raised</span>
               </div>
-              <p className="text-xl font-bold text-white">{formatCurrency(stats.totalRaised)}</p>
+              <p className="text-xl font-bold text-ink">{formatCurrency(stats.totalRaised)}</p>
             </div>
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
               <div className="flex items-center gap-2 mb-2">
-                <Rocket className="w-4 h-4 text-emerald-400" />
-                <span className="text-sm text-gray-400">Active Raises</span>
+                <Rocket className="w-4 h-4 text-success" />
+                <span className="text-sm text-ink-muted">Active Raises</span>
               </div>
-              <p className="text-xl font-bold text-white">{stats.active}</p>
+              <p className="text-xl font-bold text-ink">{stats.active}</p>
             </div>
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
               <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="w-4 h-4 text-yellow-400" />
-                <span className="text-sm text-gray-400">Ready to Activate</span>
+                <CheckCircle className="w-4 h-4 text-warning" />
+                <span className="text-sm text-ink-muted">Ready to Activate</span>
               </div>
-              <p className="text-xl font-bold text-white">{stats.approved}</p>
+              <p className="text-xl font-bold text-ink">{stats.approved}</p>
             </div>
           </div>
         )}
 
         {/* Error State */}
         {error && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-center gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
-            <p className="text-red-400">{error}</p>
+          <div className="bg-danger/10 border border-danger/30 rounded-xl p-4 flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-danger flex-shrink-0" />
+            <p className="text-danger">{error}</p>
             <button
               onClick={fetchApplications}
-              className="ml-auto px-3 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg text-sm transition-colors"
+              className="ml-auto px-3 py-1 bg-danger/20 hover:bg-danger/30 text-danger rounded-lg text-sm transition-colors"
             >
               Retry
             </button>
@@ -652,20 +652,20 @@ export default function DashboardCrowdfundingSummary() {
         {/* Loading State */}
         {isLoading ? (
           <div className="flex justify-center py-12">
-            <Loader2 className="w-8 h-8 text-gray-500 animate-spin" />
+            <Loader2 className="w-8 h-8 text-ink-faint animate-spin" />
           </div>
         ) : applications.length === 0 ? (
           /* Empty State */
-          <div className="bg-gray-800/50 rounded-xl border border-gray-700/50 p-12 text-center">
-            <FileText className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-white mb-2">No Applications Yet</h3>
-            <p className="text-gray-400 mb-6 max-w-md mx-auto">
+          <div className="bg-surface/50 rounded-xl border border-border/50 p-12 text-center">
+            <FileText className="w-16 h-16 text-ink-faint mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-ink mb-2">No Applications Yet</h3>
+            <p className="text-ink-muted mb-6 max-w-md mx-auto">
               Start your crowdfunding journey by creating your first application. 
               Get your project funded by the community.
             </p>
             <Link
               href="/crowdfunding/apply"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-700 text-white rounded-lg font-medium transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg font-medium transition-colors"
             >
               <Plus className="w-5 h-5" />
               Create Application
@@ -696,13 +696,13 @@ export default function DashboardCrowdfundingSummary() {
           />
           
           {/* Modal Content */}
-          <div className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-gray-900 rounded-2xl border border-gray-700 shadow-2xl">
+          <div className="relative z-10 w-full max-w-3xl max-h-[90vh] overflow-y-auto bg-surface-sunken rounded-2xl border border-border shadow-2xl">
             {/* Close Button */}
             <button
               onClick={() => setShowActivationModal(false)}
-              className="absolute top-4 right-4 p-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors z-20"
+              className="absolute top-4 right-4 p-2 bg-surface hover:bg-surface-overlay rounded-lg transition-colors z-20"
             >
-              <X className="w-5 h-5 text-gray-400" />
+              <X className="w-5 h-5 text-ink-muted" />
             </button>
             
             {/* StepDeploy Component */}

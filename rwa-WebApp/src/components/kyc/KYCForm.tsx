@@ -28,7 +28,7 @@ function TierSelector({ selectedTier, onSelect, currentTier }: TierSelectorProps
   
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-medium text-white">Select Verification Tier</h3>
+      <h3 className="text-lg font-medium text-ink">Select Verification Tier</h3>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {selectableTiers.map((tier) => {
           const config = TIER_CONFIGS[tier];
@@ -42,17 +42,17 @@ function TierSelector({ selectedTier, onSelect, currentTier }: TierSelectorProps
               className={`p-4 rounded-lg border-2 transition-all ${
                 isSelected
                   ? `${config.borderColor} ${config.bgColor}`
-                  : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+                  : 'border-border bg-surface hover:border-border-strong'
               }`}
             >
-              <div className={`font-semibold ${isSelected ? config.color : 'text-white'}`}>
+              <div className={`font-semibold ${isSelected ? config.color : 'text-ink'}`}>
                 {tier}
               </div>
-              <div className="text-sm text-gray-400 mt-1">
+              <div className="text-sm text-ink-muted mt-1">
                 {formatCurrency(config.limit)}
               </div>
               {isCurrent && (
-                <div className="text-xs text-green-400 mt-2">Current</div>
+                <div className="text-xs text-success mt-2">Current</div>
               )}
             </button>
           );
@@ -66,8 +66,8 @@ function TierSelector({ selectedTier, onSelect, currentTier }: TierSelectorProps
         </h4>
         <ul className="mt-2 space-y-1">
           {TIER_CONFIGS[selectedTier].requirements.map((req, i) => (
-            <li key={i} className="text-sm text-gray-300 flex items-center gap-2">
-              <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <li key={i} className="text-sm text-ink-muted flex items-center gap-2">
+              <svg className="w-4 h-4 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
               {req}
@@ -87,7 +87,7 @@ interface DocumentTypeSelectorProps {
 function DocumentTypeSelector({ selected, onSelect }: DocumentTypeSelectorProps) {
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-medium text-white">Document Type</h3>
+      <h3 className="text-lg font-medium text-ink">Document Type</h3>
       <div className="grid grid-cols-2 gap-3">
         {Object.values(DOCUMENT_TYPES).map((docType) => (
           <button
@@ -96,13 +96,13 @@ function DocumentTypeSelector({ selected, onSelect }: DocumentTypeSelectorProps)
             className={`p-4 rounded-lg border-2 transition-all text-left ${
               selected === docType.id
                 ? 'border-gold-500 bg-gold-500/10'
-                : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+                : 'border-border bg-surface hover:border-border-strong'
             }`}
           >
-            <div className="font-medium text-white">{docType.label}</div>
-            <div className="text-sm text-gray-400 mt-1">{docType.description}</div>
+            <div className="font-medium text-ink">{docType.label}</div>
+            <div className="text-sm text-ink-muted mt-1">{docType.description}</div>
             {docType.requiresBack && (
-              <div className="text-xs text-yellow-400 mt-2">Front & back required</div>
+              <div className="text-xs text-warning mt-2">Front & back required</div>
             )}
           </button>
         ))}
@@ -158,7 +158,7 @@ function DocumentCaptureCard({
   
   if (image) {
     return (
-      <div className="relative rounded-lg overflow-hidden border border-gray-700 bg-gray-800">
+      <div className="relative rounded-lg overflow-hidden border border-border bg-surface">
         <div className="aspect-[3/2] relative">
           <Image
             src={image}
@@ -170,24 +170,24 @@ function DocumentCaptureCard({
         <div className="absolute top-2 right-2 flex gap-2">
           <button
             onClick={onRotate}
-            className="p-2 bg-gray-900/80 rounded-lg hover:bg-gray-900 transition-colors"
+            className="p-2 bg-surface-sunken/80 rounded-lg hover:bg-surface-sunken transition-colors"
             title="Rotate"
           >
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
           </button>
           <button
             onClick={onRemove}
-            className="p-2 bg-red-500/80 rounded-lg hover:bg-red-500 transition-colors"
+            className="p-2 bg-danger/80 rounded-lg hover:bg-danger transition-colors"
             title="Remove"
           >
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
-        <div className="absolute bottom-2 left-2 px-2 py-1 bg-green-500/80 rounded text-xs text-white font-medium">
+        <div className="absolute bottom-2 left-2 px-2 py-1 bg-success/80 rounded text-xs text-ink font-medium">
           {side === 'front' ? 'Front' : 'Back'} captured
         </div>
       </div>
@@ -202,7 +202,7 @@ function DocumentCaptureCard({
       className={`border-2 border-dashed rounded-lg p-6 transition-colors ${
         isDragging
           ? 'border-gold-500 bg-gold-500/10'
-          : 'border-gray-700 hover:border-gray-600'
+          : 'border-border hover:border-border-strong'
       }`}
     >
       <input
@@ -214,31 +214,31 @@ function DocumentCaptureCard({
       />
       
       <div className="text-center">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-700 flex items-center justify-center">
-          <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-surface-overlay flex items-center justify-center">
+          <svg className="w-8 h-8 text-ink-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
           </svg>
         </div>
         
-        <h4 className="text-white font-medium mb-2">
+        <h4 className="text-ink font-medium mb-2">
           {side === 'front' ? 'Front of Document' : 'Back of Document'}
         </h4>
         
-        <p className="text-sm text-gray-400 mb-4">
+        <p className="text-sm text-ink-muted mb-4">
           Drag & drop or click to upload
         </p>
         
         <div className="flex justify-center gap-3">
           <button
             onClick={() => fileInputRef.current?.click()}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm transition-colors"
+            className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg text-sm transition-colors"
           >
             Choose File
           </button>
           <button
             onClick={onWebcamClick}
-            className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg text-sm transition-colors"
+            className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-ink rounded-lg text-sm transition-colors"
           >
             Use Camera
           </button>
@@ -257,44 +257,44 @@ function ValidationResult({ result, onReset }: ValidationResultProps) {
   return (
     <div className={`mt-4 p-4 rounded-lg border ${
       result.isValid 
-        ? 'bg-green-500/10 border-green-500/30' 
-        : 'bg-yellow-500/10 border-yellow-500/30'
+        ? 'bg-success/10 border-success/30' 
+        : 'bg-warning/10 border-warning/30'
     }`}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {result.isValid ? (
-            <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           ) : (
-            <svg className="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           )}
-          <h4 className="font-medium text-white">
+          <h4 className="font-medium text-ink">
             {result.isValid ? 'Document Verified' : 'Manual Review Required'}
           </h4>
         </div>
         <span className={`text-lg font-bold ${
-          result.confidence >= 70 ? 'text-green-400' :
-          result.confidence >= 50 ? 'text-yellow-400' : 'text-red-400'
+          result.confidence >= 70 ? 'text-success' :
+          result.confidence >= 50 ? 'text-warning' : 'text-danger'
         }`}>
           {result.confidence}%
         </span>
       </div>
 
       {/* Confidence Bar */}
-      <div className="w-full bg-gray-700 rounded-full h-2 mb-4">
+      <div className="w-full bg-surface-overlay rounded-full h-2 mb-4">
         <div 
           className={`h-2 rounded-full transition-all duration-500 ${
-            result.confidence >= 70 ? 'bg-green-500' :
-            result.confidence >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+            result.confidence >= 70 ? 'bg-success' :
+            result.confidence >= 50 ? 'bg-warning' : 'bg-danger'
           }`}
           style={{ width: `${result.confidence}%` }}
         />
       </div>
 
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-ink-muted">
         {result.isValid 
           ? 'Your document has been successfully verified and matches the information provided.'
           : 'We could not fully verify your document. Please ensure the image is clear and the information matches exactly.'
@@ -303,7 +303,7 @@ function ValidationResult({ result, onReset }: ValidationResultProps) {
 
       <button
         onClick={onReset}
-        className="mt-4 w-full py-2 px-4 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors"
+        className="mt-4 w-full py-2 px-4 bg-surface-overlay hover:bg-border-strong text-ink text-sm rounded-lg transition-colors"
       >
         Re-validate Document
       </button>
@@ -317,12 +317,12 @@ interface OcrProgressBarProps {
 
 function OcrProgressBar({ progress }: OcrProgressBarProps) {
   return (
-    <div className="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-700">
+    <div className="mt-4 p-4 bg-surface rounded-lg border border-border">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm text-gray-300">{progress.stage}</span>
-        <span className="text-sm text-gray-400">{progress.percent}%</span>
+        <span className="text-sm text-ink-muted">{progress.stage}</span>
+        <span className="text-sm text-ink-muted">{progress.percent}%</span>
       </div>
-      <div className="w-full bg-gray-700 rounded-full h-2">
+      <div className="w-full bg-surface-overlay rounded-full h-2">
         <div 
           className="h-2 rounded-full bg-gold-500 transition-all duration-300"
           style={{ width: `${progress.percent}%` }}
@@ -452,59 +452,59 @@ export function KYCForm(props: KYCFormProps) {
 
       {/* Personal Information */}
       <section className="space-y-4">
-        <h3 className="text-lg font-medium text-white">Personal Information</h3>
+        <h3 className="text-lg font-medium text-ink">Personal Information</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Full Name */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Full Name <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-ink-muted mb-2">
+              Full Name <span className="text-danger">*</span>
             </label>
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="As shown on your document"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
           
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Email Address <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-ink-muted mb-2">
+              Email Address <span className="text-danger">*</span>
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your@email.com"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
           
           {/* Date of Birth */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Date of Birth <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-ink-muted mb-2">
+              Date of Birth <span className="text-danger">*</span>
             </label>
             <input
               type="date"
               value={dateOfBirth}
               onChange={(e) => setDateOfBirth(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
           
           {/* Country */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Country <span className="text-red-400">*</span>
+            <label className="block text-sm font-medium text-ink-muted mb-2">
+              Country <span className="text-danger">*</span>
             </label>
             <select
               value={countryCode}
               onChange={(e) => setCountryCode(Number(e.target.value))}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             >
               <option value={0}>Select country...</option>
               {countries.map((country) => (
@@ -519,7 +519,7 @@ export function KYCForm(props: KYCFormProps) {
 
       {/* Document Verification */}
       <section className="space-y-4">
-        <h3 className="text-lg font-medium text-white">Document Verification</h3>
+        <h3 className="text-lg font-medium text-ink">Document Verification</h3>
         
         {/* Document Type */}
         <DocumentTypeSelector
@@ -530,27 +530,27 @@ export function KYCForm(props: KYCFormProps) {
         {/* Document Number & Expiry */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Document Number <span className="text-gray-500">(Optional)</span>
+            <label className="block text-sm font-medium text-ink-muted mb-2">
+              Document Number <span className="text-ink-faint">(Optional)</span>
             </label>
             <input
               type="text"
               value={documentNumber}
               onChange={(e) => setDocumentNumber(e.target.value)}
               placeholder="As shown on document"
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              Expiry Date <span className="text-gray-500">(Optional)</span>
+            <label className="block text-sm font-medium text-ink-muted mb-2">
+              Expiry Date <span className="text-ink-faint">(Optional)</span>
             </label>
             <input
               type="date"
               value={expiryDate}
               onChange={(e) => setExpiryDate(e.target.value)}
-              className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:ring-2 focus:ring-gold-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -582,8 +582,8 @@ export function KYCForm(props: KYCFormProps) {
         
         {/* Validation Error */}
         {validationError && (
-          <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <p className="text-red-400 text-sm">{validationError}</p>
+          <div className="p-4 bg-danger/10 border border-danger/30 rounded-lg">
+            <p className="text-danger text-sm">{validationError}</p>
           </div>
         )}
         
@@ -596,7 +596,7 @@ export function KYCForm(props: KYCFormProps) {
             {canValidate ? (
               <button
                 onClick={handleValidateDocument}
-                className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-500 text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -604,8 +604,8 @@ export function KYCForm(props: KYCFormProps) {
                 Validate Document
               </button>
             ) : (
-              <div className="p-4 bg-gray-800 border border-gray-700 rounded-lg">
-                <p className="text-gray-400 text-sm">
+              <div className="p-4 bg-surface border border-border rounded-lg">
+                <p className="text-ink-muted text-sm">
                   Please fill in your name, date of birth, country, and upload document image(s) to validate.
                 </p>
               </div>
@@ -617,7 +617,7 @@ export function KYCForm(props: KYCFormProps) {
         {isValidatingId && !ocrProgress && (
           <div className="flex items-center justify-center py-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gold-500"></div>
-            <span className="ml-3 text-gray-400">Validating document...</span>
+            <span className="ml-3 text-ink-muted">Validating document...</span>
           </div>
         )}
         
@@ -630,7 +630,7 @@ export function KYCForm(props: KYCFormProps) {
       {/* Selfie - Required for Silver+ */}
       {(selectedTier === 'Silver' || selectedTier === 'Gold' || selectedTier === 'Diamond') && (
         <section className="space-y-4">
-          <h3 className="text-lg font-medium text-white">Selfie Verification</h3>
+          <h3 className="text-lg font-medium text-ink">Selfie Verification</h3>
           
           <input
             ref={selfieInputRef}
@@ -649,14 +649,14 @@ export function KYCForm(props: KYCFormProps) {
           
           {selfieImage ? (
             <div className="relative max-w-xs">
-              <div className="aspect-square relative rounded-lg overflow-hidden border border-gray-700">
+              <div className="aspect-square relative rounded-lg overflow-hidden border border-border">
                 <Image src={selfieImage} alt="Selfie" fill className="object-cover" />
               </div>
               <button
                 onClick={() => setSelfieImage(null)}
-                className="absolute top-2 right-2 p-2 bg-red-500/80 rounded-lg hover:bg-red-500"
+                className="absolute top-2 right-2 p-2 bg-danger/80 rounded-lg hover:bg-danger"
               >
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -665,13 +665,13 @@ export function KYCForm(props: KYCFormProps) {
             <div className="flex gap-3">
               <button
                 onClick={() => selfieInputRef.current?.click()}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm"
+                className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg text-sm"
               >
                 Upload Selfie
               </button>
               <button
                 onClick={() => openWebcam('selfie')}
-                className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg text-sm"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-ink rounded-lg text-sm"
               >
                 Take Selfie
               </button>
@@ -683,8 +683,8 @@ export function KYCForm(props: KYCFormProps) {
       {/* Proof of Address - Required for Gold+ */}
       {(selectedTier === 'Gold' || selectedTier === 'Diamond') && (
         <section className="space-y-4">
-          <h3 className="text-lg font-medium text-white">Proof of Address</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-medium text-ink">Proof of Address</h3>
+          <p className="text-sm text-ink-muted">
             Upload a utility bill, bank statement, or government letter dated within the last 3 months.
           </p>
           
@@ -704,14 +704,14 @@ export function KYCForm(props: KYCFormProps) {
           />
           
           {proofOfAddress ? (
-            <div className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
-              <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex items-center gap-3 p-3 bg-success/10 border border-success/30 rounded-lg">
+              <svg className="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-green-400 text-sm">Document uploaded</span>
+              <span className="text-success text-sm">Document uploaded</span>
               <button
                 onClick={() => setProofOfAddress(null)}
-                className="ml-auto text-gray-400 hover:text-white text-sm"
+                className="ml-auto text-ink-muted hover:text-ink text-sm"
               >
                 Remove
               </button>
@@ -719,7 +719,7 @@ export function KYCForm(props: KYCFormProps) {
           ) : (
             <button
               onClick={() => poaInputRef.current?.click()}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm"
+              className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg text-sm"
             >
               Upload Document
             </button>
@@ -730,8 +730,8 @@ export function KYCForm(props: KYCFormProps) {
       {/* Accredited Investor - Required for Diamond */}
       {selectedTier === 'Diamond' && (
         <section className="space-y-4">
-          <h3 className="text-lg font-medium text-white">Accredited Investor Verification</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-medium text-ink">Accredited Investor Verification</h3>
+          <p className="text-sm text-ink-muted">
             Upload documentation proving accredited investor status (e.g., CPA letter, brokerage statement).
           </p>
           
@@ -751,14 +751,14 @@ export function KYCForm(props: KYCFormProps) {
           />
           
           {accreditedProof ? (
-            <div className="flex items-center gap-3 p-3 bg-green-500/10 border border-green-500/30 rounded-lg">
-              <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex items-center gap-3 p-3 bg-success/10 border border-success/30 rounded-lg">
+              <svg className="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span className="text-green-400 text-sm">Document uploaded</span>
+              <span className="text-success text-sm">Document uploaded</span>
               <button
                 onClick={() => setAccreditedProof(null)}
-                className="ml-auto text-gray-400 hover:text-white text-sm"
+                className="ml-auto text-ink-muted hover:text-ink text-sm"
               >
                 Remove
               </button>
@@ -766,7 +766,7 @@ export function KYCForm(props: KYCFormProps) {
           ) : (
             <button
               onClick={() => accreditedInputRef.current?.click()}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm"
+              className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg text-sm"
             >
               Upload Document
             </button>
@@ -781,9 +781,9 @@ export function KYCForm(props: KYCFormProps) {
             type="checkbox"
             checked={agreedToTerms}
             onChange={(e) => setAgreedToTerms(e.target.checked)}
-            className="mt-1 w-4 h-4 rounded border-gray-600 bg-gray-700 text-gold-600 focus:ring-gold-500"
+            className="mt-1 w-4 h-4 rounded border-border-strong bg-surface-overlay text-gold-600 focus:ring-gold-500"
           />
-          <span className="text-sm text-gray-300">
+          <span className="text-sm text-ink-muted">
             I confirm that all information provided is accurate and I agree to the{' '}
             <a href="/terms" className="text-gold-400 hover:underline">Terms of Service</a>{' '}
             and{' '}
@@ -792,8 +792,8 @@ export function KYCForm(props: KYCFormProps) {
         </label>
         
         {submitError && (
-          <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-            <p className="text-red-400 text-sm">{submitError}</p>
+          <div className="p-4 bg-danger/10 border border-danger/30 rounded-lg">
+            <p className="text-danger text-sm">{submitError}</p>
           </div>
         )}
         
@@ -802,8 +802,8 @@ export function KYCForm(props: KYCFormProps) {
           disabled={!canSubmit || isSubmitting}
           className={`w-full py-4 px-6 rounded-lg font-medium text-lg transition-colors flex items-center justify-center gap-2 ${
             canSubmit && !isSubmitting
-              ? 'bg-gold-600 hover:bg-gold-500 text-white'
-              : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+              ? 'bg-gold-600 hover:bg-gold-500 text-ink'
+              : 'bg-surface-overlay text-ink-muted cursor-not-allowed'
           }`}
         >
           {isSubmitting ? (

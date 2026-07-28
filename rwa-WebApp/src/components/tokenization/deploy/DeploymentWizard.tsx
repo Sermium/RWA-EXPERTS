@@ -524,7 +524,7 @@ export function DeploymentWizard({ application, onBack, onClose, onSuccess }: De
               </button>
               <button
                 onClick={handleDeploy}
-                className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-ink rounded-lg font-medium hover:from-green-600 hover:to-emerald-700 transition flex items-center justify-center gap-2"
+                className="flex-1 px-6 py-3 bg-gradient-to-r from-success to-success text-ink rounded-lg font-medium hover:from-success hover:to-success transition flex items-center justify-center gap-2"
               >
                 <Rocket className="w-5 h-5" />
                 Deploy Token

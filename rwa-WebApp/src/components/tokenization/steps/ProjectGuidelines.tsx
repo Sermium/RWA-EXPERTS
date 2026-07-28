@@ -101,19 +101,19 @@ export function ProjectGuidelines({ assetType }: ProjectGuidelinesProps) {
       icon: FileText,
       content: (
         <div className="space-y-3">
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-surface-overlay">
             Based on your selected asset type ({getAssetTypeLabel(assetType)}), you will need:
           </p>
           <ul className="space-y-2">
             {documents.map((doc) => (
               <li key={doc.id} className="flex items-start gap-2">
-                <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${doc.required ? 'bg-red-400' : 'bg-slate-500'}`} />
+                <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${doc.required ? 'bg-danger' : 'bg-surface-overlay'}`} />
                 <div>
-                  <span className={`text-sm ${doc.required ? 'text-white font-medium' : 'text-slate-400'}`}>
+                  <span className={`text-sm ${doc.required ? 'text-ink font-medium' : 'text-surface-overlay'}`}>
                     {doc.name}
-                    {doc.required && <span className="text-red-400 ml-1">*</span>}
+                    {doc.required && <span className="text-danger ml-1">*</span>}
                   </span>
-                  <p className="text-xs text-slate-500">{doc.description}</p>
+                  <p className="text-xs text-surface-overlay">{doc.description}</p>
                 </div>
               </li>
             ))}
@@ -123,14 +123,14 @@ export function ProjectGuidelines({ assetType }: ProjectGuidelinesProps) {
               <AlertCircle className="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-sm text-gold-400 font-medium">Professional Review Required</p>
-                <p className="text-xs text-slate-400 mt-1">
-                  All documents will be reviewed by our compliance team. <strong className="text-white">Legal opinions</strong> and <strong className="text-white">professional valuations</strong> must be from accredited providers.
+                <p className="text-xs text-surface-overlay mt-1">
+                  All documents will be reviewed by our compliance team. <strong className="text-ink">Legal opinions</strong> and <strong className="text-ink">professional valuations</strong> must be from accredited providers.
                 </p>
               </div>
             </div>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
-            <span className="text-red-400">*</span> Required documents
+          <p className="text-xs text-surface-overlay mt-2">
+            <span className="text-danger">*</span> Required documents
           </p>
         </div>
       ),
@@ -146,40 +146,40 @@ export function ProjectGuidelines({ assetType }: ProjectGuidelinesProps) {
               <Scale className="w-4 h-4 text-gold-400" />
               <span className="text-sm font-medium text-gold-400">Regulatory Compliance</span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-surface-overlay">
               All tokenized assets must comply with securities regulations in relevant jurisdictions.
             </p>
           </div>
           <div>
-            <p className="text-sm text-white font-medium mb-2">Compliance Requirements:</p>
-            <ul className="space-y-2 text-xs text-slate-400">
+            <p className="text-sm text-ink font-medium mb-2">Compliance Requirements:</p>
+            <ul className="space-y-2 text-xs text-surface-overlay">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>KYC/AML verification for asset owners</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Accredited investor verification for token holders</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Securities exemption documentation</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Transfer restrictions and whitelist enforcement</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Ongoing reporting and disclosure requirements</span>
               </li>
             </ul>
           </div>
-          <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+          <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
             <div className="flex items-start gap-2">
-              <Lightbulb className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-slate-400">
-                <strong className="text-amber-400">Pro tip:</strong> Engage legal counsel early in the process to ensure your tokenization structure complies with all applicable regulations.
+              <Lightbulb className="w-4 h-4 text-warning mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-surface-overlay">
+                <strong className="text-warning">Pro tip:</strong> Engage legal counsel early in the process to ensure your tokenization structure complies with all applicable regulations.
               </p>
             </div>
           </div>
@@ -192,52 +192,52 @@ export function ProjectGuidelines({ assetType }: ProjectGuidelinesProps) {
       icon: Shield,
       content: (
         <div className="space-y-3">
-          <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-4 h-4 text-green-400" />
-              <span className="text-sm font-medium text-green-400">Secure & Transparent</span>
+              <Shield className="w-4 h-4 text-success" />
+              <span className="text-sm font-medium text-success">Secure & Transparent</span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-surface-overlay">
               Your asset will be represented as security tokens on the blockchain with full compliance features.
             </p>
           </div>
           <div>
-            <p className="text-sm text-white font-medium mb-2">Process Timeline:</p>
-            <ul className="space-y-3 text-xs text-slate-400">
+            <p className="text-sm text-ink font-medium mb-2">Process Timeline:</p>
+            <ul className="space-y-3 text-xs text-surface-overlay">
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">1</div>
                 <div>
-                  <p className="text-white font-medium">Application Review</p>
-                  <p className="text-slate-500">2-5 business days</p>
+                  <p className="text-ink font-medium">Application Review</p>
+                  <p className="text-surface-overlay">2-5 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">2</div>
                 <div>
-                  <p className="text-white font-medium">Due Diligence</p>
-                  <p className="text-slate-500">5-15 business days</p>
+                  <p className="text-ink font-medium">Due Diligence</p>
+                  <p className="text-surface-overlay">5-15 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">3</div>
                 <div>
-                  <p className="text-white font-medium">Legal Structuring</p>
-                  <p className="text-slate-500">10-20 business days</p>
+                  <p className="text-ink font-medium">Legal Structuring</p>
+                  <p className="text-surface-overlay">10-20 business days</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-gold-500/20 flex items-center justify-center flex-shrink-0 text-gold-400 font-medium">4</div>
                 <div>
-                  <p className="text-white font-medium">Token Deployment</p>
-                  <p className="text-slate-500">1-3 business days</p>
+                  <p className="text-ink font-medium">Token Deployment</p>
+                  <p className="text-surface-overlay">1-3 business days</p>
                 </div>
               </li>
             </ul>
           </div>
-          <div className="flex items-center gap-2 p-3 bg-slate-700/50 rounded-lg">
-            <Clock className="w-4 h-4 text-slate-400" />
-            <p className="text-xs text-slate-400">
-              Total estimated time: <strong className="text-white">3-6 weeks</strong>
+          <div className="flex items-center gap-2 p-3 bg-surface-overlay/50 rounded-lg">
+            <Clock className="w-4 h-4 text-surface-overlay" />
+            <p className="text-xs text-surface-overlay">
+              Total estimated time: <strong className="text-ink">3-6 weeks</strong>
             </p>
           </div>
         </div>
@@ -251,12 +251,12 @@ export function ProjectGuidelines({ assetType }: ProjectGuidelinesProps) {
         <div className="space-y-3">
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                <Users className="w-4 h-4 text-green-400" />
+              <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0">
+                <Users className="w-4 h-4 text-success" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Fractional Ownership</p>
-                <p className="text-xs text-slate-400">Enable investors to own fractions of high-value assets</p>
+                <p className="text-sm text-ink font-medium">Fractional Ownership</p>
+                <p className="text-xs text-surface-overlay">Enable investors to own fractions of high-value assets</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -264,8 +264,8 @@ export function ProjectGuidelines({ assetType }: ProjectGuidelinesProps) {
                 <Globe className="w-4 h-4 text-gold-400" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Global Liquidity</p>
-                <p className="text-xs text-slate-400">Access worldwide investor base 24/7</p>
+                <p className="text-sm text-ink font-medium">Global Liquidity</p>
+                <p className="text-xs text-surface-overlay">Access worldwide investor base 24/7</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -273,26 +273,26 @@ export function ProjectGuidelines({ assetType }: ProjectGuidelinesProps) {
                 <Target className="w-4 h-4 text-gold-400" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Automated Compliance</p>
-                <p className="text-xs text-slate-400">Built-in transfer restrictions and investor verification</p>
+                <p className="text-sm text-ink font-medium">Automated Compliance</p>
+                <p className="text-xs text-surface-overlay">Built-in transfer restrictions and investor verification</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-4 h-4 text-amber-400" />
+              <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-4 h-4 text-warning" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Reduced Costs</p>
-                <p className="text-xs text-slate-400">Lower transaction fees and administrative overhead</p>
+                <p className="text-sm text-ink font-medium">Reduced Costs</p>
+                <p className="text-xs text-surface-overlay">Lower transaction fees and administrative overhead</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-4 h-4 text-cyan-400" />
+              <div className="w-8 h-8 rounded-lg bg-gold/20 flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-4 h-4 text-gold" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Transparent Ownership</p>
-                <p className="text-xs text-slate-400">Immutable record of ownership on blockchain</p>
+                <p className="text-sm text-ink font-medium">Transparent Ownership</p>
+                <p className="text-xs text-surface-overlay">Immutable record of ownership on blockchain</p>
               </div>
             </li>
           </ul>
@@ -302,26 +302,26 @@ export function ProjectGuidelines({ assetType }: ProjectGuidelinesProps) {
   ];
 
   return (
-    <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
-      <div className="p-4 border-b border-slate-700">
-        <h3 className="font-semibold text-white flex items-center gap-2">
+    <div className="bg-surface-overlay/50 rounded-xl border border-surface-overlay overflow-hidden">
+      <div className="p-4 border-b border-surface-overlay">
+        <h3 className="font-semibold text-ink flex items-center gap-2">
           <Info className="w-5 h-5 text-gold-400" />
           Tokenization Guidelines
         </h3>
       </div>
-      <div className="divide-y divide-slate-700">
+      <div className="divide-y divide-surface-overlay">
         {sections.map((section) => (
           <div key={section.id}>
             <button
               onClick={() => setOpenSection(openSection === section.id ? null : section.id)}
-              className="w-full p-4 flex items-center justify-between hover:bg-slate-700/30 transition-colors"
+              className="w-full p-4 flex items-center justify-between hover:bg-surface-overlay/30 transition-colors"
             >
               <div className="flex items-center gap-2">
-                <section.icon className="w-4 h-4 text-slate-400" />
-                <span className="text-sm font-medium text-white">{section.title}</span>
+                <section.icon className="w-4 h-4 text-surface-overlay" />
+                <span className="text-sm font-medium text-ink">{section.title}</span>
               </div>
               <ChevronDown 
-                className={`w-4 h-4 text-slate-400 transition-transform ${
+                className={`w-4 h-4 text-surface-overlay transition-transform ${
                   openSection === section.id ? 'rotate-180' : ''
                 }`} 
               />

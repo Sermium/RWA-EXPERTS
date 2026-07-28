@@ -18,10 +18,10 @@ export default function ContractRow({ label, address, type, explorerUrl }: Contr
 
   const typeColors = {
     core: 'bg-gold-500/20 text-gold-400',
-    registry: 'bg-green-500/20 text-green-400',
+    registry: 'bg-success/20 text-success',
     implementation: 'bg-gold-500/20 text-gold-400',
     module: 'bg-orange-500/20 text-orange-400',
-    token: 'bg-cyan-500/20 text-cyan-400',
+    token: 'bg-gold/20 text-gold',
   };
 
   const handleCopy = async () => {
@@ -61,7 +61,7 @@ export default function ContractRow({ label, address, type, explorerUrl }: Contr
             </a>
             <button
               onClick={handleCopy}
-              className="p-1.5 hover:bg-gray-600 rounded transition-colors"
+              className="p-1.5 hover:bg-border-strong rounded transition-colors"
               title={copied ? 'Copied!' : 'Copy address'}
             >
               {copied ? (

@@ -226,7 +226,7 @@ export default function PlatformContracts() {
 
       {/* Implementation Contracts */}
       <div className="bg-surface rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-gold-500/10 to-pink-500/10">
+        <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-gold-500/10 to-gold/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gold-500/20 flex items-center justify-center">
               <span className="text-xl">ðŸ”§</span>
@@ -279,7 +279,7 @@ export default function PlatformContracts() {
 
       {/* Compliance Modules */}
       <div className="bg-surface rounded-xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-orange-500/10 to-amber-500/10">
+        <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-orange-500/10 to-warning/10">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-warning/20 flex items-center justify-center">
               <span className="text-xl">ðŸ›¡ï¸</span>
@@ -309,9 +309,9 @@ export default function PlatformContracts() {
       {/* Payment Tokens */}
       {tokens && (
         <div className="bg-surface rounded-xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-cyan-500/10 to-teal-500/10">
+          <div className="px-6 py-4 border-b border-border bg-gradient-to-r from-gold/10 to-gold-light/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-gold/20 flex items-center justify-center">
                 <span className="text-xl">ðŸ’°</span>
               </div>
               <div>

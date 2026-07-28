@@ -78,7 +78,7 @@ function StepIndicator({ currentStep }: { currentStep: CheckoutStep }) {
                 getStepStatus(step.key) === 'completed'
                   ? 'bg-success text-ink'
                   : getStepStatus(step.key) === 'current'
-                    ? 'bg-gold-500 text-ink ring-4 ring-purple-500/30'
+                    ? 'bg-gold-500 text-ink ring-4 ring-gold/30'
                     : 'bg-surface-raised text-ink-muted'
               }`}
             >
@@ -247,7 +247,7 @@ function PaymentFormContent({
       <button
         type="submit"
         disabled={!stripe || !cardComplete || isSubmitting}
-        className="w-full py-4 bg-gradient-to-r from-gold-600 to-pink-600 hover:from-gold-500 hover:to-pink-500 disabled:from-surface-overlay disabled:to-surface-overlay disabled:cursor-not-allowed rounded-xl text-ink font-semibold transition flex items-center justify-center gap-2"
+        className="w-full py-4 bg-gradient-to-r from-gold-600 to-gold hover:from-gold-500 hover:to-gold disabled:from-surface-overlay disabled:to-surface-overlay disabled:cursor-not-allowed rounded-xl text-ink font-semibold transition flex items-center justify-center gap-2"
       >
         {isSubmitting ? (
           <>
@@ -375,7 +375,7 @@ export default function StripeInvestment({
     <div className="fixed inset-0 bg-surface-sunken/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-surface rounded-2xl max-w-md w-full border border-border shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-gold-600/20 to-pink-600/20 border-b border-border p-4 sticky top-0 bg-surface/95 backdrop-blur z-10">
+        <div className="bg-gradient-to-r from-gold-600/20 to-gold/20 border-b border-border p-4 sticky top-0 bg-surface/95 backdrop-blur z-10">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-bold text-ink">Invest in {projectName}</h3>
@@ -473,7 +473,7 @@ export default function StripeInvestment({
               )}
 
               {amountNum > 0 && tokenPrice > 0 && (
-                <div className="bg-gradient-to-r from-gold-500/10 to-pink-500/10 border border-gold-500/30 rounded-xl p-4">
+                <div className="bg-gradient-to-r from-gold-500/10 to-gold/10 border border-gold-500/30 rounded-xl p-4">
                   <div className="flex justify-between items-center">
                     <div>
                       <span className="text-ink-muted text-sm">You will receive</span>
@@ -506,7 +506,7 @@ export default function StripeInvestment({
               <button
                 onClick={createPaymentIntent}
                 disabled={!isValidAmount || !isValidEmail || isLoading || loadingEmail}
-                className="w-full py-4 bg-gradient-to-r from-gold-600 to-pink-600 hover:from-gold-500 hover:to-pink-500 disabled:from-surface-overlay disabled:to-surface-overlay disabled:cursor-not-allowed rounded-xl text-ink font-semibold transition"
+                className="w-full py-4 bg-gradient-to-r from-gold-600 to-gold hover:from-gold-500 hover:to-gold disabled:from-surface-overlay disabled:to-surface-overlay disabled:cursor-not-allowed rounded-xl text-ink font-semibold transition"
               >
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">

@@ -74,7 +74,7 @@ export function ApproveModal({
       onClose={onClose}
       title="Approve KYC"
       icon={<CheckCircle className="w-5 h-5 text-success" />}
-      iconBg="bg-green-500/20"
+      iconBg="bg-success/20"
     >
       <div className="space-y-4">
         <div className="p-3 bg-surface/50 rounded-lg">
@@ -91,7 +91,7 @@ export function ApproveModal({
                 onClick={() => setSelectedTier(tier)}
                 className={`p-3 rounded-lg border transition-colors ${
                   selectedTier === tier
-                    ? 'bg-green-500/20 border-green-500/50 text-success'
+                    ? 'bg-success/20 border-success/50 text-success'
                     : 'bg-surface/50 border-border text-ink-muted hover:bg-surface-overlay/50'
                 }`}
               >
@@ -102,7 +102,7 @@ export function ApproveModal({
           </div>
         </div>
 
-        <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+        <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
           <p className="text-sm text-success">
             This will approve the KYC submission and grant {TIER_NAMES[selectedTier]} access level.
           </p>
@@ -112,14 +112,14 @@ export function ApproveModal({
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-gray-600 disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
+            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-border-strong disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleApprove}
             disabled={isProcessing}
-            className="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 disabled:bg-surface-overlay text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-3 bg-success hover:bg-success disabled:bg-surface-overlay text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>
@@ -180,7 +180,7 @@ export function RejectModal({
       onClose={onClose}
       title="Reject KYC"
       icon={<XCircle className="w-5 h-5 text-danger" />}
-      iconBg="bg-red-500/20"
+      iconBg="bg-danger/20"
     >
       <div className="space-y-4">
         <div className="p-3 bg-surface/50 rounded-lg">
@@ -195,7 +195,7 @@ export function RejectModal({
             onChange={(e) => setReason(e.target.value)}
             placeholder="Enter the reason for rejection..."
             rows={3}
-            className="w-full px-4 py-3 bg-surface/50 border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+            className="w-full px-4 py-3 bg-surface/50 border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-danger resize-none"
           />
         </div>
 
@@ -214,7 +214,7 @@ export function RejectModal({
           </div>
         </div>
 
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <div className="p-3 bg-danger/10 border border-danger/20 rounded-lg">
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-danger mt-0.5 flex-shrink-0" />
             <p className="text-sm text-danger">
@@ -227,14 +227,14 @@ export function RejectModal({
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-gray-600 disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
+            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-border-strong disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleReject}
             disabled={isProcessing || !reason.trim()}
-            className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 disabled:bg-surface-overlay text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-3 bg-danger hover:bg-danger disabled:bg-surface-overlay text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>
@@ -295,7 +295,7 @@ export function ResetModal({
       onClose={onClose}
       title="Reset KYC Status"
       icon={<RotateCcw className="w-5 h-5 text-warning" />}
-      iconBg="bg-yellow-500/20"
+      iconBg="bg-warning/20"
     >
       <div className="space-y-4">
         <div className="p-3 bg-surface/50 rounded-lg">
@@ -310,7 +310,7 @@ export function ResetModal({
             onChange={(e) => setReason(e.target.value)}
             placeholder="Enter the reason for reset..."
             rows={3}
-            className="w-full px-4 py-3 bg-surface/50 border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-yellow-500 resize-none"
+            className="w-full px-4 py-3 bg-surface/50 border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-warning resize-none"
           />
         </div>
 
@@ -329,7 +329,7 @@ export function ResetModal({
           </div>
         </div>
 
-        <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+        <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-warning mt-0.5 flex-shrink-0" />
             <p className="text-sm text-warning">
@@ -342,14 +342,14 @@ export function ResetModal({
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-gray-600 disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
+            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-border-strong disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleReset}
             disabled={isProcessing || !reason.trim()}
-            className="flex-1 px-4 py-3 bg-yellow-600 hover:bg-yellow-700 disabled:bg-surface-overlay text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-3 bg-warning hover:bg-warning disabled:bg-surface-overlay text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>
@@ -435,7 +435,7 @@ export function ApproveUpgradeModal({
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-gray-600 disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
+            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-border-strong disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
           >
             Cancel
           </button>
@@ -507,7 +507,7 @@ export function RejectUpgradeModal({
       onClose={onClose}
       title="Reject Tier Upgrade"
       icon={<XCircle className="w-5 h-5 text-danger" />}
-      iconBg="bg-red-500/20"
+      iconBg="bg-danger/20"
     >
       <div className="space-y-4">
         <div className="p-3 bg-surface/50 rounded-lg">
@@ -526,7 +526,7 @@ export function RejectUpgradeModal({
             </div>
             <div className="text-2xl text-ink-faint">→</div>
             <div className="text-center">
-              <div className="px-3 py-2 bg-red-500/20 border border-red-500/30 rounded-lg mb-1">
+              <div className="px-3 py-2 bg-danger/20 border border-danger/30 rounded-lg mb-1">
                 <span className="text-lg font-bold text-danger line-through">Tier {requestedTier}</span>
               </div>
               <span className="text-xs text-danger">{TIER_NAMES[requestedTier]}</span>
@@ -541,7 +541,7 @@ export function RejectUpgradeModal({
             onChange={(e) => setReason(e.target.value)}
             placeholder="Enter the reason for rejecting the upgrade..."
             rows={3}
-            className="w-full px-4 py-3 bg-surface/50 border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"
+            className="w-full px-4 py-3 bg-surface/50 border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-danger resize-none"
           />
         </div>
 
@@ -560,7 +560,7 @@ export function RejectUpgradeModal({
           </div>
         </div>
 
-        <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <div className="p-3 bg-danger/10 border border-danger/20 rounded-lg">
           <div className="flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-danger mt-0.5 flex-shrink-0" />
             <p className="text-sm text-danger">
@@ -573,14 +573,14 @@ export function RejectUpgradeModal({
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-gray-600 disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
+            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-border-strong disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
           >
             Cancel
           </button>
           <button
             onClick={handleReject}
             disabled={isProcessing || !reason.trim()}
-            className="flex-1 px-4 py-3 bg-red-600 hover:bg-red-700 disabled:bg-surface-overlay text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-3 bg-danger hover:bg-danger disabled:bg-surface-overlay text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>
@@ -626,9 +626,9 @@ export function ConfirmActionModal({
   isProcessing
 }: ConfirmActionModalProps) {
   const colorClasses = {
-    red: 'bg-red-600 hover:bg-red-700',
-    green: 'bg-green-600 hover:bg-green-700',
-    yellow: 'bg-yellow-600 hover:bg-yellow-700',
+    red: 'bg-danger hover:bg-danger',
+    green: 'bg-success hover:bg-success',
+    yellow: 'bg-warning hover:bg-warning',
     blue: 'bg-gold-600 hover:bg-gold-700'
   };
 
@@ -640,9 +640,9 @@ export function ConfirmActionModal({
   };
 
   const bgColors = {
-    red: 'bg-red-500/20',
-    green: 'bg-green-500/20',
-    yellow: 'bg-yellow-500/20',
+    red: 'bg-danger/20',
+    green: 'bg-success/20',
+    yellow: 'bg-warning/20',
     blue: 'bg-gold-500/20'
   };
 
@@ -661,7 +661,7 @@ export function ConfirmActionModal({
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-gray-600 disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
+            className="flex-1 px-4 py-3 bg-surface-overlay hover:bg-border-strong disabled:bg-surface-raised text-ink font-medium rounded-lg transition-colors"
           >
             Cancel
           </button>

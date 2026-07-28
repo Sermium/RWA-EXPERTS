@@ -129,8 +129,8 @@ export default function ContactPage() {
           <div className="lg:col-span-2">
             {submitted ? (
               <div className="bg-surface border border-border rounded-2xl p-8 text-center">
-                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2 className="w-8 h-8 text-green-400" />
+                <div className="w-16 h-16 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle2 className="w-8 h-8 text-success" />
                 </div>
                 <h2 className="text-2xl font-bold text-ink mb-4">Message Sent!</h2>
                 <p className="text-ink-muted mb-6">
@@ -251,7 +251,7 @@ export default function ContactPage() {
                         className={`flex items-center gap-2 px-4 py-3 rounded-lg border transition-all ${
                           formData.lookingFor.includes(option.value)
                             ? 'bg-gold/15 border-gold text-gold'
-                            : 'bg-surface-overlay/50 border-border-strong text-ink-muted hover:border-gray-500'
+                            : 'bg-surface-overlay/50 border-border-strong text-ink-muted hover:border-ink-faint'
                         }`}
                       >
                         {option.icon}
@@ -264,7 +264,7 @@ export default function ContactPage() {
                 {/* Project Details */}
                 <div className="bg-surface border border-border rounded-xl p-6">
                   <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
-                    <Briefcase className="w-5 h-5 mr-2 text-green-400" />
+                    <Briefcase className="w-5 h-5 mr-2 text-success" />
                     Project Details
                   </h3>
                   <div className="space-y-4">
@@ -410,12 +410,12 @@ export default function ContactPage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="p-2 bg-green-500/10 rounded-lg text-green-400">
+                  <div className="p-2 bg-success/10 rounded-lg text-success">
                     <MessageSquare className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="text-sm text-ink-faint">Telegram</div>
-                    <a href={SOCIAL.telegram} target="_blank" rel="noopener noreferrer" className="text-ink hover:text-green-400 transition">
+                    <a href={SOCIAL.telegram} target="_blank" rel="noopener noreferrer" className="text-ink hover:text-success transition">
                       {SOCIAL.telegram}@rwaexperts
                     </a>
                   </div>

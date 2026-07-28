@@ -304,7 +304,7 @@ export default function PlatformSettings() {
               <button
                 onClick={handleSave}
                 disabled={saving}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-ink text-sm flex items-center gap-2"
+                className="px-4 py-2 bg-success hover:bg-success disabled:opacity-50 rounded-lg text-ink text-sm flex items-center gap-2"
               >
                 {saving ? (
                   <>
@@ -518,25 +518,25 @@ export default function PlatformSettings() {
                   
                   {/* Native Token Price */}
                   <td className="py-3 px-4">
-                    <span className="text-yellow-400 font-mono">${price.toFixed(2)}</span>
+                    <span className="text-warning font-mono">${price.toFixed(2)}</span>
                   </td>
                   
                   {/* KYC Fee USD - EDITABLE */}
                   <td className="py-3 px-4">
                     {editing ? (
                       <div className="flex items-center gap-1">
-                        <span className="text-green-400">$</span>
+                        <span className="text-success">$</span>
                         <input
                           type="number"
                           step="0.01"
                           min="0"
                           value={kycUsd}
                           onChange={(e) => updateChainFeeUsd(chainId, 'KYC_FEE_USD', e.target.value)}
-                          className="w-20 p-1.5 bg-surface-overlay border border-green-500/50 rounded text-ink text-sm focus:border-green-400 focus:outline-none"
+                          className="w-20 p-1.5 bg-surface-overlay border border-success/50 rounded text-ink text-sm focus:border-success focus:outline-none"
                         />
                       </div>
                     ) : (
-                      <span className="text-green-400 font-semibold">${kycUsd.toFixed(2)}</span>
+                      <span className="text-success font-semibold">${kycUsd.toFixed(2)}</span>
                     )}
                   </td>
                   

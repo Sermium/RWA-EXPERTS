@@ -12,8 +12,8 @@ interface ChainSelectorModalProps {
 }
 
 const chainIcons: Record<number, { icon: LucideIcon; color: string }> = {
-  43113: { icon: Triangle, color: "bg-red-500" },
-  43114: { icon: Triangle, color: "bg-red-500" },
+  43113: { icon: Triangle, color: "bg-danger" },
+  43114: { icon: Triangle, color: "bg-danger" },
   137: { icon: Hexagon, color: "bg-gold-500" },
   80002: { icon: Hexagon, color: "bg-gold-500" },
   1: { icon: Gem, color: "bg-gold-500" },
@@ -22,8 +22,8 @@ const chainIcons: Record<number, { icon: LucideIcon; color: string }> = {
   421614: { icon: CircleDot, color: "bg-gold-600" },
   8453: { icon: Square, color: "bg-gold-400" },
   84532: { icon: Square, color: "bg-gold-400" },
-  10: { icon: Circle, color: "bg-red-600" },
-  56: { icon: Coins, color: "bg-yellow-500" },
+  10: { icon: Circle, color: "bg-danger" },
+  56: { icon: Coins, color: "bg-warning" },
   31337: { icon: Wrench, color: "bg-ink-faint" },
 };
 
@@ -100,7 +100,7 @@ export function ChainSelectorModal({ isOpen, onClose }: ChainSelectorModalProps)
                   `}
                 >
                   <div className={`w-10 h-10 rounded-full ${color} flex items-center justify-center`}>
-                    <ChainIcon className="w-5 h-5 text-white" />
+                    <ChainIcon className="w-5 h-5 text-ink" />
                   </div>
                   <div className="flex-1 text-left">
                     <div className="font-semibold text-ink">
@@ -112,7 +112,7 @@ export function ChainSelectorModal({ isOpen, onClose }: ChainSelectorModalProps)
                   </div>
                   {isSelected && (
                     <div className="w-6 h-6 rounded-full bg-gold-500 flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-4 h-4 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                     </div>

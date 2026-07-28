@@ -96,19 +96,19 @@ const InfoPanel = ({ category }: { category: string }) => {
       icon: FileText,
       content: (
         <div className="space-y-3">
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-surface-overlay">
             Based on your selected asset type ({category || 'not selected'}), you will need:
           </p>
           <ul className="space-y-2">
             {documents.map((doc) => (
               <li key={doc.id} className="flex items-start gap-2">
-                <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${doc.required ? 'bg-red-400' : 'bg-slate-500'}`} />
+                <span className={`mt-1 w-2 h-2 rounded-full flex-shrink-0 ${doc.required ? 'bg-danger' : 'bg-surface-overlay'}`} />
                 <div>
-                  <span className={`text-sm ${doc.required ? 'text-white font-medium' : 'text-slate-400'}`}>
+                  <span className={`text-sm ${doc.required ? 'text-ink font-medium' : 'text-surface-overlay'}`}>
                     {doc.name}
-                    {doc.required && <span className="text-red-400 ml-1">*</span>}
+                    {doc.required && <span className="text-danger ml-1">*</span>}
                   </span>
-                  <p className="text-xs text-slate-500">{doc.description}</p>
+                  <p className="text-xs text-surface-overlay">{doc.description}</p>
                 </div>
               </li>
             ))}
@@ -118,14 +118,14 @@ const InfoPanel = ({ category }: { category: string }) => {
               <AlertCircle className="w-4 h-4 text-gold-400 mt-0.5 flex-shrink-0" />
               <div>
                 <p className="text-sm text-gold-400 font-medium">Don't forget!</p>
-                <p className="text-xs text-slate-400 mt-1">
-                  A detailed <strong className="text-white">Business Plan</strong> and professional <strong className="text-white">Pitch Deck</strong> are required for all projects. These are critical for investor confidence.
+                <p className="text-xs text-surface-overlay mt-1">
+                  A detailed <strong className="text-ink">Business Plan</strong> and professional <strong className="text-ink">Pitch Deck</strong> are required for all projects. These are critical for investor confidence.
                 </p>
               </div>
             </div>
           </div>
-          <p className="text-xs text-slate-500 mt-2">
-            <span className="text-red-400">*</span> Required documents
+          <p className="text-xs text-surface-overlay mt-2">
+            <span className="text-danger">*</span> Required documents
           </p>
         </div>
       ),
@@ -136,41 +136,41 @@ const InfoPanel = ({ category }: { category: string }) => {
       icon: Shield,
       content: (
         <div className="space-y-3">
-          <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-lg">
+          <div className="p-3 bg-success/10 border border-success/20 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
-              <Shield className="w-4 h-4 text-green-400" />
-              <span className="text-sm font-medium text-green-400">100% Escrow Protected</span>
+              <Shield className="w-4 h-4 text-success" />
+              <span className="text-sm font-medium text-success">100% Escrow Protected</span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-surface-overlay">
               All funds raised are held in a secure smart contract escrow until milestones are approved by investors.
             </p>
           </div>
           <div>
-            <p className="text-sm text-white font-medium mb-2">Why Milestones Matter:</p>
-            <ul className="space-y-2 text-xs text-slate-400">
+            <p className="text-sm text-ink font-medium mb-2">Why Milestones Matter:</p>
+            <ul className="space-y-2 text-xs text-surface-overlay">
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Builds investor trust through transparent progress</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Funds released only when milestones are verified</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Reduces risk for both project owners and investors</span>
               </li>
               <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
+                <CheckCircle2 className="w-3 h-3 text-success mt-0.5 flex-shrink-0" />
                 <span>Demonstrates professional project management</span>
               </li>
             </ul>
           </div>
-          <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+          <div className="p-3 bg-warning/10 border border-warning/20 rounded-lg">
             <div className="flex items-start gap-2">
-              <Lightbulb className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-slate-400">
-                <strong className="text-amber-400">Pro tip:</strong> Use 3-5 milestones with clear deliverables. Each milestone should represent a significant project achievement.
+              <Lightbulb className="w-4 h-4 text-warning mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-surface-overlay">
+                <strong className="text-warning">Pro tip:</strong> Use 3-5 milestones with clear deliverables. Each milestone should represent a significant project achievement.
               </p>
             </div>
           </div>
@@ -185,12 +185,12 @@ const InfoPanel = ({ category }: { category: string }) => {
         <div className="space-y-3">
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center flex-shrink-0">
-                <TrendingUp className="w-4 h-4 text-green-400" />
+              <div className="w-8 h-8 rounded-lg bg-success/20 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-4 h-4 text-success" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Clear ROI Projections</p>
-                <p className="text-xs text-slate-400">Realistic returns with supporting data</p>
+                <p className="text-sm text-ink font-medium">Clear ROI Projections</p>
+                <p className="text-xs text-surface-overlay">Realistic returns with supporting data</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -198,8 +198,8 @@ const InfoPanel = ({ category }: { category: string }) => {
                 <FileText className="w-4 h-4 text-gold-400" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Complete Documentation</p>
-                <p className="text-xs text-slate-400">Business plan, pitch deck, legal docs</p>
+                <p className="text-sm text-ink font-medium">Complete Documentation</p>
+                <p className="text-xs text-surface-overlay">Business plan, pitch deck, legal docs</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
@@ -207,26 +207,26 @@ const InfoPanel = ({ category }: { category: string }) => {
                 <Target className="w-4 h-4 text-gold-400" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Defined Milestones</p>
-                <p className="text-xs text-slate-400">Clear goals with measurable outcomes</p>
+                <p className="text-sm text-ink font-medium">Defined Milestones</p>
+                <p className="text-xs text-surface-overlay">Clear goals with measurable outcomes</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                <Shield className="w-4 h-4 text-amber-400" />
+              <div className="w-8 h-8 rounded-lg bg-warning/20 flex items-center justify-center flex-shrink-0">
+                <Shield className="w-4 h-4 text-warning" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Escrow Protection</p>
-                <p className="text-xs text-slate-400">Funds secured until milestones met</p>
+                <p className="text-sm text-ink font-medium">Escrow Protection</p>
+                <p className="text-xs text-surface-overlay">Funds secured until milestones met</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                <Building2 className="w-4 h-4 text-cyan-400" />
+              <div className="w-8 h-8 rounded-lg bg-gold/20 flex items-center justify-center flex-shrink-0">
+                <Building2 className="w-4 h-4 text-gold" />
               </div>
               <div>
-                <p className="text-sm text-white font-medium">Company Credibility</p>
-                <p className="text-xs text-slate-400">Registered entity with track record</p>
+                <p className="text-sm text-ink font-medium">Company Credibility</p>
+                <p className="text-xs text-surface-overlay">Registered entity with track record</p>
               </div>
             </li>
           </ul>
@@ -236,26 +236,26 @@ const InfoPanel = ({ category }: { category: string }) => {
   ];
 
   return (
-    <div className="bg-slate-800/50 rounded-xl border border-slate-700 overflow-hidden">
-      <div className="p-4 border-b border-slate-700">
-        <h3 className="font-semibold text-white flex items-center gap-2">
+    <div className="bg-surface-overlay/50 rounded-xl border border-surface-overlay overflow-hidden">
+      <div className="p-4 border-b border-surface-overlay">
+        <h3 className="font-semibold text-ink flex items-center gap-2">
           <Info className="w-5 h-5 text-gold-400" />
           Project Guidelines
         </h3>
       </div>
-      <div className="divide-y divide-slate-700">
+      <div className="divide-y divide-surface-overlay">
         {sections.map((section) => (
           <div key={section.id}>
             <button
               onClick={() => setOpenSection(openSection === section.id ? null : section.id)}
-              className="w-full p-4 flex items-center justify-between hover:bg-slate-700/30 transition-colors"
+              className="w-full p-4 flex items-center justify-between hover:bg-surface-overlay/30 transition-colors"
             >
               <div className="flex items-center gap-2">
-                <section.icon className="w-4 h-4 text-slate-400" />
-                <span className="text-sm font-medium text-white">{section.title}</span>
+                <section.icon className="w-4 h-4 text-surface-overlay" />
+                <span className="text-sm font-medium text-ink">{section.title}</span>
               </div>
               <ChevronDown 
-                className={`w-4 h-4 text-slate-400 transition-transform ${
+                className={`w-4 h-4 text-surface-overlay transition-transform ${
                   openSection === section.id ? 'rotate-180' : ''
                 }`} 
               />
@@ -373,28 +373,28 @@ function TokenEconomicsCalculator({
 
   if (amountToRaise <= 0) {
     return (
-      <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6 text-center">
-        <Coins className="w-10 h-10 text-gray-600 mx-auto mb-3" />
-        <p className="text-gray-400">Enter the amount to raise to configure token economics</p>
+      <div className="bg-surface-sunken/50 border border-border rounded-xl p-6 text-center">
+        <Coins className="w-10 h-10 text-ink-faint mx-auto mb-3" />
+        <p className="text-ink-muted">Enter the amount to raise to configure token economics</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-6 space-y-6">
+    <div className="bg-surface-sunken/50 border border-border rounded-xl p-6 space-y-6">
       <div className="flex items-center justify-between">
-        <h4 className="text-lg font-semibold text-white flex items-center gap-2">
+        <h4 className="text-lg font-semibold text-ink flex items-center gap-2">
           <Calculator className="w-5 h-5 text-gold-400" />
           Token Economics
         </h4>
-        <div className="flex bg-gray-800 rounded-lg p-1">
+        <div className="flex bg-surface rounded-lg p-1">
           <button
             type="button"
             onClick={() => setInputMode('supply')}
             className={`px-3 py-1 text-sm rounded-md transition-colors ${
               inputMode === 'supply'
-                ? 'bg-gold-600 text-white'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-gold-600 text-ink'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
             Set Supply
@@ -404,8 +404,8 @@ function TokenEconomicsCalculator({
             onClick={() => setInputMode('price')}
             className={`px-3 py-1 text-sm rounded-md transition-colors ${
               inputMode === 'price'
-                ? 'bg-gold-600 text-white'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-gold-600 text-ink'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
             Set Price
@@ -418,8 +418,8 @@ function TokenEconomicsCalculator({
         {inputMode === 'supply' ? (
           <>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white">
-                Total Token Supply <span className="text-red-400">*</span>
+              <label className="text-sm font-medium text-ink">
+                Total Token Supply <span className="text-danger">*</span>
               </label>
               <input
                 type="number"
@@ -427,31 +427,31 @@ function TokenEconomicsCalculator({
                 value={totalSupply || ''}
                 onChange={(e) => handleSupplyChange(parseInt(e.target.value) || 0)}
                 placeholder="e.g., 100000"
-                className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                className="w-full px-4 py-3 bg-surface border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
               />
-              <p className="text-xs text-gray-500">Total number of tokens to mint</p>
+              <p className="text-xs text-ink-faint">Total number of tokens to mint</p>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-400">
+              <label className="text-sm font-medium text-ink-muted">
                 Calculated Token Price
               </label>
-              <div className="px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg">
-                <span className="text-2xl font-bold text-green-400">
+              <div className="px-4 py-3 bg-surface/50 border border-border rounded-lg">
+                <span className="text-2xl font-bold text-success">
                   ${tokenPrice.toFixed(4)}
                 </span>
-                <span className="text-gray-500 ml-2">per token</span>
+                <span className="text-ink-faint ml-2">per token</span>
               </div>
-              <p className="text-xs text-gray-500">Based on funding goal ÷ supply</p>
+              <p className="text-xs text-ink-faint">Based on funding goal ÷ supply</p>
             </div>
           </>
         ) : (
           <>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white">
-                Token Price (USD) <span className="text-red-400">*</span>
+              <label className="text-sm font-medium text-ink">
+                Token Price (USD) <span className="text-danger">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted">$</span>
                 <input
                   type="number"
                   min="0.0001"
@@ -459,22 +459,22 @@ function TokenEconomicsCalculator({
                   value={priceInput}
                   onChange={(e) => handlePriceChange(e.target.value)}
                   placeholder="1.00"
-                  className="w-full pl-8 pr-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                  className="w-full pl-8 pr-4 py-3 bg-surface border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
                 />
               </div>
-              <p className="text-xs text-gray-500">Price per token in USD</p>
+              <p className="text-xs text-ink-faint">Price per token in USD</p>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-400">
+              <label className="text-sm font-medium text-ink-muted">
                 Calculated Total Supply
               </label>
-              <div className="px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg">
+              <div className="px-4 py-3 bg-surface/50 border border-border rounded-lg">
                 <span className="text-2xl font-bold text-gold-400">
                   {totalSupply.toLocaleString()}
                 </span>
-                <span className="text-gray-500 ml-2">tokens</span>
+                <span className="text-ink-faint ml-2">tokens</span>
               </div>
-              <p className="text-xs text-gray-500">Based on funding goal ÷ price</p>
+              <p className="text-xs text-ink-faint">Based on funding goal ÷ price</p>
             </div>
           </>
         )}
@@ -482,7 +482,7 @@ function TokenEconomicsCalculator({
 
       {/* Quick Presets */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-400">Quick Presets</label>
+        <label className="text-sm font-medium text-ink-muted">Quick Presets</label>
         <div className="flex flex-wrap gap-2">
           {[
             { label: '$0.01', price: 0.01 },
@@ -503,11 +503,11 @@ function TokenEconomicsCalculator({
                 className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
                   Math.abs(tokenPrice - preset.price) < 0.001
                     ? 'border-gold-500 bg-gold-500/20 text-gold-400'
-                    : 'border-gray-700 text-gray-400 hover:border-gray-600 hover:text-white'
+                    : 'border-border text-ink-muted hover:border-border-strong hover:text-ink'
                 }`}
               >
                 {preset.label}/token
-                <span className="text-xs text-gray-500 ml-1">({presetSupply.toLocaleString()})</span>
+                <span className="text-xs text-ink-faint ml-1">({presetSupply.toLocaleString()})</span>
               </button>
             )
           })}
@@ -517,7 +517,7 @@ function TokenEconomicsCalculator({
       {/* Token Distribution Breakdown */}
       {totalSupply > 0 && (
         <div className="space-y-4">
-          <h5 className="text-sm font-medium text-white">Token Distribution</h5>
+          <h5 className="text-sm font-medium text-ink">Token Distribution</h5>
 
           {/* Info banner when platform fee comes from investors */}
           {platformFeeFromInvestors && (
@@ -537,11 +537,11 @@ function TokenEconomicsCalculator({
               style={{ width: `${investorEffectivePercentage}%` }}
             >
               {investorEffectivePercentage >= 15 && (
-                <span className="text-xs text-white font-medium">{investorEffectivePercentage.toFixed(1)}%</span>
+                <span className="text-xs text-ink font-medium">{investorEffectivePercentage.toFixed(1)}%</span>
               )}
             </div>
             <div 
-              className="bg-amber-500 flex items-center justify-center"
+              className="bg-warning flex items-center justify-center"
               style={{ width: `${PLATFORM_TOKEN_FEE_PERCENT}%` }}
               title={`Platform: ${PLATFORM_TOKEN_FEE_PERCENT}%`}
             />
@@ -551,7 +551,7 @@ function TokenEconomicsCalculator({
                 style={{ width: `${ownerPercentage}%` }}
               >
                 {ownerPercentage >= 15 && (
-                  <span className="text-xs text-white font-medium">{ownerPercentage.toFixed(1)}%</span>
+                  <span className="text-xs text-ink font-medium">{ownerPercentage.toFixed(1)}%</span>
                 )}
               </div>
             )}
@@ -559,13 +559,13 @@ function TokenEconomicsCalculator({
 
           {/* Legend */}
           <div className={`grid gap-4 ${ownerPercentage > 0 ? 'grid-cols-3' : 'grid-cols-2'}`}>
-            <div className="bg-gray-800/50 rounded-lg p-3">
+            <div className="bg-surface/50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
                 <div className="w-3 h-3 rounded-full bg-gold-500" />
-                <span className="text-xs text-gray-400">Investors</span>
+                <span className="text-xs text-ink-muted">Investors</span>
               </div>
-              <p className="text-lg font-bold text-white">{investorTokens.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-lg font-bold text-ink">{investorTokens.toLocaleString()}</p>
+              <p className="text-xs text-ink-faint">
                 {investorEffectivePercentage.toFixed(1)}% · ${(investorTokens * tokenPrice).toLocaleString()}
               </p>
               {platformFeeFromInvestors && (
@@ -574,24 +574,24 @@ function TokenEconomicsCalculator({
                 </p>
               )}
             </div>
-            <div className="bg-gray-800/50 rounded-lg p-3">
+            <div className="bg-surface/50 rounded-lg p-3">
               <div className="flex items-center gap-2 mb-1">
-                <div className="w-3 h-3 rounded-full bg-amber-500" />
-                <span className="text-xs text-gray-400">Platform</span>
+                <div className="w-3 h-3 rounded-full bg-warning" />
+                <span className="text-xs text-ink-muted">Platform</span>
               </div>
-              <p className="text-lg font-bold text-white">{platformFeeTokens.toLocaleString()}</p>
-              <p className="text-xs text-gray-500">
+              <p className="text-lg font-bold text-ink">{platformFeeTokens.toLocaleString()}</p>
+              <p className="text-xs text-ink-faint">
                 {PLATFORM_TOKEN_FEE_PERCENT}% · ${(platformFeeTokens * tokenPrice).toLocaleString()}
               </p>
             </div>
             {ownerPercentage > 0 && (
-              <div className="bg-gray-800/50 rounded-lg p-3">
+              <div className="bg-surface/50 rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-3 h-3 rounded-full bg-gold-500" />
-                  <span className="text-xs text-gray-400">Project Owner</span>
+                  <span className="text-xs text-ink-muted">Project Owner</span>
                 </div>
-                <p className="text-lg font-bold text-white">{ownerTokens.toLocaleString()}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-lg font-bold text-ink">{ownerTokens.toLocaleString()}</p>
+                <p className="text-xs text-ink-faint">
                   {ownerPercentage.toFixed(1)}% · ${(ownerTokens * tokenPrice).toLocaleString()}
                 </p>
               </div>
@@ -599,8 +599,8 @@ function TokenEconomicsCalculator({
           </div>
 
           {/* Platform Fees Summary */}
-          <div className="bg-amber-900/20 border border-amber-700/50 rounded-lg p-4 space-y-3">
-            <h5 className="text-sm font-medium text-amber-300 flex items-center gap-2">
+          <div className="bg-warning/20 border border-warning/50 rounded-lg p-4 space-y-3">
+            <h5 className="text-sm font-medium text-warning flex items-center gap-2">
               <Info className="w-4 h-4" />
               Platform Fees
             </h5>
@@ -609,10 +609,10 @@ function TokenEconomicsCalculator({
               {/* Token Fee */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Token Fee ({PLATFORM_TOKEN_FEE_PERCENT}%)</span>
-                  <span className="text-white font-medium">{platformFeeTokens.toLocaleString()} tokens</span>
+                  <span className="text-ink-muted">Token Fee ({PLATFORM_TOKEN_FEE_PERCENT}%)</span>
+                  <span className="text-ink font-medium">{platformFeeTokens.toLocaleString()} tokens</span>
                 </div>
-                <div className="text-xs text-gray-500 space-y-1 pl-3 border-l-2 border-gray-700">
+                <div className="text-xs text-ink-faint space-y-1 pl-3 border-l-2 border-border">
                   <div className="flex justify-between">
                     <span>→ Liquidity (50%)</span>
                     <span>{tokensToLiquidity.toLocaleString()}</span>
@@ -623,7 +623,7 @@ function TokenEconomicsCalculator({
                   </div>
                 </div>
                 {platformFeeFromInvestors && (
-                  <p className="text-xs text-amber-400 italic">
+                  <p className="text-xs text-warning italic">
                     * Deducted from investor allocation
                   </p>
                 )}
@@ -632,10 +632,10 @@ function TokenEconomicsCalculator({
               {/* USDT Fee */}
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span className="text-gray-400">Fundraise Fee ({PLATFORM_RAISE_FEE_PERCENT}%)</span>
-                  <span className="text-white font-medium">${platformRaiseFee.toLocaleString()}</span>
+                  <span className="text-ink-muted">Fundraise Fee ({PLATFORM_RAISE_FEE_PERCENT}%)</span>
+                  <span className="text-ink font-medium">${platformRaiseFee.toLocaleString()}</span>
                 </div>
-                <div className="text-xs text-gray-500 space-y-1 pl-3 border-l-2 border-gray-700">
+                <div className="text-xs text-ink-faint space-y-1 pl-3 border-l-2 border-border">
                   <div className="flex justify-between">
                     <span>→ Fee Receiver (34%)</span>
                     <span>${feeToReceiver.toLocaleString()}</span>
@@ -652,10 +652,10 @@ function TokenEconomicsCalculator({
               </div>
             </div>
 
-            <div className="pt-3 border-t border-amber-700/30">
+            <div className="pt-3 border-t border-warning/30">
               <div className="flex justify-between items-center">
-                <span className="text-gray-300">Net to Project (after fees)</span>
-                <span className="text-green-400 font-bold text-lg">${netToProject.toLocaleString()}</span>
+                <span className="text-ink-muted">Net to Project (after fees)</span>
+                <span className="text-success font-bold text-lg">${netToProject.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -664,16 +664,16 @@ function TokenEconomicsCalculator({
           <div className="bg-gold-900/20 border border-gold-700/50 rounded-lg p-4">
             <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <p className="text-sm text-gray-400">Total Supply</p>
-                <p className="text-xl font-bold text-white">{totalSupply.toLocaleString()}</p>
+                <p className="text-sm text-ink-muted">Total Supply</p>
+                <p className="text-xl font-bold text-ink">{totalSupply.toLocaleString()}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-400">Token Price</p>
+                <p className="text-sm text-ink-muted">Token Price</p>
                 <p className="text-xl font-bold text-gold-400">${tokenPrice.toFixed(4)}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-400">Funding Goal</p>
-                <p className="text-xl font-bold text-green-400">${amountToRaise.toLocaleString()}</p>
+                <p className="text-sm text-ink-muted">Funding Goal</p>
+                <p className="text-xl font-bold text-success">${amountToRaise.toLocaleString()}</p>
               </div>
             </div>
           </div>
@@ -930,8 +930,8 @@ export default function StepProjectDetails({
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Project & Financial Details</h2>
-        <p className="text-gray-400">
+        <h2 className="text-2xl font-bold text-ink mb-2">Project & Financial Details</h2>
+        <p className="text-ink-muted">
           Provide information about your project and funding requirements
         </p>
       </div>
@@ -941,15 +941,15 @@ export default function StepProjectDetails({
         <div className="space-y-8">
           {/* Basic Information */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-gray-700 pb-2">
+            <h3 className="text-lg font-semibold text-ink flex items-center gap-2 border-b border-border pb-2">
               <Briefcase className="w-5 h-5 text-gold-400" />
               Basic Information
             </h3>
 
             {/* Project Name with availability check */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white">
-                Project Name <span className="text-red-400">*</span>
+              <label className="text-sm font-medium text-ink">
+                Project Name <span className="text-danger">*</span>
               </label>
               <div className="relative">
                 <input
@@ -958,55 +958,55 @@ export default function StepProjectDetails({
                   value={data.projectName}
                   onChange={(e) => updateData({ projectName: e.target.value })}
                   placeholder="Enter your project name"
-                  className={`w-full px-4 py-3 pr-12 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
+                  className={`w-full px-4 py-3 pr-12 bg-surface-sunken border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
                     errors.projectName || nameAvailable === false 
-                      ? 'border-red-500' 
+                      ? 'border-danger' 
                       : nameAvailable === true 
-                        ? 'border-green-500' 
-                        : 'border-gray-700'
+                        ? 'border-success' 
+                        : 'border-border'
                   }`}
                 />
                 {/* Status indicator */}
                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
                   {isCheckingName && (
-                    <Loader2 className="w-5 h-5 text-gray-400 animate-spin" />
+                    <Loader2 className="w-5 h-5 text-ink-muted animate-spin" />
                   )}
                   {!isCheckingName && nameAvailable === true && (
-                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <CheckCircle className="w-5 h-5 text-success" />
                   )}
                   {!isCheckingName && nameAvailable === false && (
-                    <AlertCircle className="w-5 h-5 text-red-500" />
+                    <AlertCircle className="w-5 h-5 text-danger" />
                   )}
                 </div>
               </div>
               {/* Status messages */}
               {isCheckingName && (
-                <p className="text-xs text-gray-400 flex items-center gap-1">
+                <p className="text-xs text-ink-muted flex items-center gap-1">
                   <Loader2 className="w-3 h-3 animate-spin" />
                   Checking availability...
                 </p>
               )}
               {!isCheckingName && nameAvailable === true && (
-                <p className="text-xs text-green-400 flex items-center gap-1">
+                <p className="text-xs text-success flex items-center gap-1">
                   <CheckCircle className="w-3 h-3" />
                   This name is available
                 </p>
               )}
               {!isCheckingName && nameCheckError && (
-                <p className="text-xs text-red-400 flex items-center gap-1">
+                <p className="text-xs text-danger flex items-center gap-1">
                   <AlertCircle className="w-3 h-3" />
                   {nameCheckError}
                 </p>
               )}
               {errors.projectName && !nameCheckError && (
-                <p className="text-xs text-red-400">{errors.projectName}</p>
+                <p className="text-xs text-danger">{errors.projectName}</p>
               )}
             </div>
 
             {/* Category */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white">
-                Category <span className="text-red-400">*</span>
+              <label className="text-sm font-medium text-ink">
+                Category <span className="text-danger">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {CATEGORIES.map((cat) => (
@@ -1017,51 +1017,51 @@ export default function StepProjectDetails({
                     className={`p-4 rounded-xl border-2 transition-all text-left ${
                       data.category === cat.id
                         ? 'border-gold-500 bg-gold-500/10'
-                        : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+                        : 'border-surface-overlay hover:border-surface-overlay bg-surface-overlay/50'
                     }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                        data.category === cat.id ? 'bg-gold-500/20' : 'bg-slate-700'
+                        data.category === cat.id ? 'bg-gold-500/20' : 'bg-surface-overlay'
                       }`}>
                         <cat.icon className={`w-5 h-5 ${
-                          data.category === cat.id ? 'text-gold-400' : 'text-slate-400'
+                          data.category === cat.id ? 'text-gold-400' : 'text-surface-overlay'
                         }`} />
                       </div>
                       <div>
-                        <p className="font-medium text-white">{cat.id}</p>
-                        <p className="text-xs text-slate-400">{cat.description}</p>
+                        <p className="font-medium text-ink">{cat.id}</p>
+                        <p className="text-xs text-surface-overlay">{cat.description}</p>
                       </div>
                     </div>
                   </button>
                 ))}
               </div>
               {errors.category && (
-                <p className="text-xs text-red-400">{errors.category}</p>
+                <p className="text-xs text-danger">{errors.category}</p>
               )}
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white">
-                Description <span className="text-red-400">*</span>
+              <label className="text-sm font-medium text-ink">
+                Description <span className="text-danger">*</span>
               </label>
               <textarea
                 value={data.description}
                 onChange={(e) => updateData({ description: e.target.value })}
                 placeholder="Describe your project in detail. What is it? What problem does it solve? Why should investors be interested?"
                 rows={5}
-                className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 resize-none ${
-                  errors.description ? 'border-red-500' : 'border-gray-700'
+                className={`w-full px-4 py-3 bg-surface-sunken border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 resize-none ${
+                  errors.description ? 'border-danger' : 'border-border'
                 }`}
               />
               <div className="flex justify-between">
                 {errors.description ? (
-                  <p className="text-xs text-red-400">{errors.description}</p>
+                  <p className="text-xs text-danger">{errors.description}</p>
                 ) : (
-                  <p className="text-xs text-gray-500">Minimum 100 characters</p>
+                  <p className="text-xs text-ink-faint">Minimum 100 characters</p>
                 )}
-                <p className={`text-xs ${data.description.length >= 100 ? 'text-green-400' : 'text-gray-500'}`}>
+                <p className={`text-xs ${data.description.length >= 100 ? 'text-success' : 'text-ink-faint'}`}>
                   {data.description.length}/100
                 </p>
               </div>
@@ -1069,7 +1069,7 @@ export default function StepProjectDetails({
 
             {/* Website */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white flex items-center gap-2">
+              <label className="text-sm font-medium text-ink flex items-center gap-2">
                 <Globe className="w-4 h-4" />
                 Website (Optional)
               </label>
@@ -1095,14 +1095,14 @@ export default function StepProjectDetails({
                   }
                 }}
                 placeholder="https://example.com"
-                className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
+                className="w-full bg-surface-overlay border border-border-strong rounded-lg px-4 py-3 text-ink placeholder-ink-faint focus:outline-none focus:ring-2 focus:ring-gold-500 focus:border-transparent"
               />
             </div>
           </div>
 
           {/* Company Information */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-gray-700 pb-2">
+            <h3 className="text-lg font-semibold text-ink flex items-center gap-2 border-b border-border pb-2">
               <Building2 className="w-5 h-5 text-gold-400" />
               Company Information
             </h3>
@@ -1110,26 +1110,26 @@ export default function StepProjectDetails({
             <div className="grid md:grid-cols-2 gap-4">
               {/* Company Name */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white">
-                  Company / Entity Name <span className="text-red-400">*</span>
+                <label className="text-sm font-medium text-ink">
+                  Company / Entity Name <span className="text-danger">*</span>
                 </label>
                 <input
                   type="text"
                   value={data.companyName}
                   onChange={(e) => updateData({ companyName: e.target.value })}
                   placeholder="Legal entity name"
-                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
-                    errors.companyName ? 'border-red-500' : 'border-gray-700'
+                  className={`w-full px-4 py-3 bg-surface-sunken border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+                    errors.companyName ? 'border-danger' : 'border-border'
                   }`}
                 />
                 {errors.companyName && (
-                  <p className="text-xs text-red-400">{errors.companyName}</p>
+                  <p className="text-xs text-danger">{errors.companyName}</p>
                 )}
               </div>
 
               {/* Registration Number */}
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white flex items-center gap-2">
+                <label className="text-sm font-medium text-ink flex items-center gap-2">
                   <Hash className="w-4 h-4" />
                   Registration Number
                 </label>
@@ -1138,22 +1138,22 @@ export default function StepProjectDetails({
                   value={data.registrationNumber}
                   onChange={(e) => updateData({ registrationNumber: e.target.value })}
                   placeholder="Company registration number"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
                 />
               </div>
             </div>
 
             {/* Jurisdiction */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white flex items-center gap-2">
+              <label className="text-sm font-medium text-ink flex items-center gap-2">
                 <MapPin className="w-4 h-4" />
-                Jurisdiction <span className="text-red-400">*</span>
+                Jurisdiction <span className="text-danger">*</span>
               </label>
               <select
                 value={data.jurisdiction}
                 onChange={(e) => updateData({ jurisdiction: e.target.value })}
-                className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white focus:outline-none focus:border-gold-500 ${
-                  errors.jurisdiction ? 'border-red-500' : 'border-gray-700'
+                className={`w-full px-4 py-3 bg-surface-sunken border rounded-lg text-ink focus:outline-none focus:border-gold-500 ${
+                  errors.jurisdiction ? 'border-danger' : 'border-border'
                 }`}
               >
                 <option value="">Select jurisdiction</option>
@@ -1162,26 +1162,26 @@ export default function StepProjectDetails({
                 ))}
               </select>
               {errors.jurisdiction && (
-                <p className="text-xs text-red-400">{errors.jurisdiction}</p>
+                <p className="text-xs text-danger">{errors.jurisdiction}</p>
               )}
             </div>
           </div>
 
           {/* Financial Details */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-gray-700 pb-2">
-              <DollarSign className="w-5 h-5 text-green-400" />
+            <h3 className="text-lg font-semibold text-ink flex items-center gap-2 border-b border-border pb-2">
+              <DollarSign className="w-5 h-5 text-success" />
               Financial Details
             </h3>
 
             {/* Currency and Amount */}
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Currency</label>
+                <label className="text-sm font-medium text-ink">Currency</label>
                 <select
                   value={data.localCurrency}
                   onChange={(e) => updateData({ localCurrency: e.target.value })}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-gold-500"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink focus:outline-none focus:border-gold-500"
                 >
                   {CURRENCIES.map((c) => (
                     <option key={c.value} value={c.value}>
@@ -1192,11 +1192,11 @@ export default function StepProjectDetails({
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white">
-                  Amount to Raise <span className="text-red-400">*</span>
+                <label className="text-sm font-medium text-ink">
+                  Amount to Raise <span className="text-danger">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted">
                     {selectedCurrency?.symbol}
                   </span>
                   <input
@@ -1204,16 +1204,16 @@ export default function StepProjectDetails({
                     value={data.amountToRaiseLocal || ''}
                     onChange={(e) => updateData({ amountToRaiseLocal: parseFloat(e.target.value) || 0 })}
                     placeholder="0"
-                    className={`w-full pl-12 pr-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
-                      errors.amountToRaiseLocal ? 'border-red-500' : 'border-gray-700'
+                    className={`w-full pl-12 pr-4 py-3 bg-surface-sunken border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+                      errors.amountToRaiseLocal ? 'border-danger' : 'border-border'
                     }`}
                   />
                 </div>
                 {errors.amountToRaiseLocal && (
-                  <p className="text-xs text-red-400">{errors.amountToRaiseLocal}</p>
+                  <p className="text-xs text-danger">{errors.amountToRaiseLocal}</p>
                 )}
                 {data.localCurrency !== 'USD' && data.amountToRaise > 0 && (
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-ink-faint">
                     ≈ ${data.amountToRaise.toLocaleString()} USD
                     {isLoadingRate && ' (loading rate...)'}
                   </p>
@@ -1224,9 +1224,9 @@ export default function StepProjectDetails({
             {/* Investor Share and ROI */}
             <div className="grid md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white flex items-center gap-2">
+                <label className="text-sm font-medium text-ink flex items-center gap-2">
                   <Percent className="w-4 h-4" />
-                  Investor Share % <span className="text-red-400">*</span>
+                  Investor Share % <span className="text-danger">*</span>
                 </label>
                 <input
                   type="number"
@@ -1241,19 +1241,19 @@ export default function StepProjectDetails({
                     }
                   }}
                   placeholder="30"
-                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
-                    errors.investorSharePercentage ? 'border-red-500' : 'border-gray-700'
+                  className={`w-full px-4 py-3 bg-surface-sunken border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+                    errors.investorSharePercentage ? 'border-danger' : 'border-border'
                   }`}
                 />
                 {errors.investorSharePercentage && (
-                  <p className="text-xs text-red-400">{errors.investorSharePercentage}</p>
+                  <p className="text-xs text-danger">{errors.investorSharePercentage}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white flex items-center gap-2">
+                <label className="text-sm font-medium text-ink flex items-center gap-2">
                   <TrendingUp className="w-4 h-4" />
-                  Projected ROI % <span className="text-red-400">*</span>
+                  Projected ROI % <span className="text-danger">*</span>
                 </label>
                 <input
                   type="number"
@@ -1261,19 +1261,19 @@ export default function StepProjectDetails({
                   value={data.projectedROI || ''}
                   onChange={(e) => updateData({ projectedROI: parseFloat(e.target.value) || 0 })}
                   placeholder="25"
-                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
-                    errors.projectedROI ? 'border-red-500' : 'border-gray-700'
+                  className={`w-full px-4 py-3 bg-surface-sunken border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+                    errors.projectedROI ? 'border-danger' : 'border-border'
                   }`}
                 />
                 {errors.projectedROI && (
-                  <p className="text-xs text-red-400">{errors.projectedROI}</p>
+                  <p className="text-xs text-danger">{errors.projectedROI}</p>
                 )}
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white flex items-center gap-2">
+                <label className="text-sm font-medium text-ink flex items-center gap-2">
                   <Calendar className="w-4 h-4" />
-                  ROI Timeline (months) <span className="text-red-400">*</span>
+                  ROI Timeline (months) <span className="text-danger">*</span>
                 </label>
                 <input
                   type="number"
@@ -1281,19 +1281,19 @@ export default function StepProjectDetails({
                   value={data.roiTimelineMonths || ''}
                   onChange={(e) => updateData({ roiTimelineMonths: parseInt(e.target.value) || 0 })}
                   placeholder="12"
-                  className={`w-full px-4 py-3 bg-gray-900 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 ${
-                    errors.roiTimelineMonths ? 'border-red-500' : 'border-gray-700'
+                  className={`w-full px-4 py-3 bg-surface-sunken border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+                    errors.roiTimelineMonths ? 'border-danger' : 'border-border'
                   }`}
                 />
                 {errors.roiTimelineMonths && (
-                  <p className="text-xs text-red-400">{errors.roiTimelineMonths}</p>
+                  <p className="text-xs text-danger">{errors.roiTimelineMonths}</p>
                 )}
               </div>
             </div>
 
             {/* Revenue Model */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-white">
+              <label className="text-sm font-medium text-ink">
                 Revenue Model
               </label>
               <textarea
@@ -1301,39 +1301,39 @@ export default function StepProjectDetails({
                 onChange={(e) => updateData({ revenueModel: e.target.value })}
                 placeholder="Explain how the project will generate returns for investors..."
                 rows={3}
-                className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 resize-none"
+                className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 resize-none"
               />
             </div>
           </div>
 
           {/* Token Economics */}
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white flex items-center gap-2 border-b border-gray-700 pb-2">
-              <Coins className="w-5 h-5 text-amber-400" />
+            <h3 className="text-lg font-semibold text-ink flex items-center gap-2 border-b border-border pb-2">
+              <Coins className="w-5 h-5 text-warning" />
               Token Configuration
             </h3>
 
             <div className="grid md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Token Name</label>
+                <label className="text-sm font-medium text-ink">Token Name</label>
                 <input
                   type="text"
                   value={data.tokenName}
                   onChange={(e) => updateData({ tokenName: e.target.value })}
                   placeholder="e.g., Dubai Property Token"
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-white">Token Symbol</label>
+                <label className="text-sm font-medium text-ink">Token Symbol</label>
                 <input
                   type="text"
                   value={data.tokenSymbol}
                   onChange={(e) => updateData({ tokenSymbol: e.target.value.toUpperCase() })}
                   placeholder="e.g., DPT"
                   maxLength={5}
-                  className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 uppercase"
+                  className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 uppercase"
                 />
               </div>
             </div>
@@ -1346,7 +1346,7 @@ export default function StepProjectDetails({
               onSupplyChange={handleSupplyChange}
             />
             {errors.totalSupply && (
-              <p className="text-xs text-red-400">{errors.totalSupply}</p>
+              <p className="text-xs text-danger">{errors.totalSupply}</p>
             )}
           </div>
         </div>
@@ -1358,14 +1358,14 @@ export default function StepProjectDetails({
       </div>
 
       {/* Navigation */}
-      <div className="flex justify-end pt-6 border-t border-gray-700">
+      <div className="flex justify-end pt-6 border-t border-border">
         <button
           onClick={handleNext}
           disabled={isCheckingName || nameAvailable === false}
           className={`px-8 py-3 font-semibold rounded-lg transition-colors ${
             isCheckingName || nameAvailable === false
-              ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-              : 'bg-gold-600 hover:bg-gold-700 text-white'
+              ? 'bg-border-strong text-ink-muted cursor-not-allowed'
+              : 'bg-gold-600 hover:bg-gold-700 text-ink'
           }`}
           type="button"
         >

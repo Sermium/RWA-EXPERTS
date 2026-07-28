@@ -128,7 +128,7 @@ const ChainBadge = ({ chainId, currentChainId }: { chainId?: number; currentChai
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${
       isWrongChain 
-        ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
+        ? 'bg-warning/20 text-warning border border-warning/30' 
         : 'bg-gold-500/20 text-gold-300'
     }`}>
       {isWrongChain && <AlertTriangle className="w-3 h-3" />}
@@ -156,7 +156,7 @@ const ChainGatedActions = ({
     return (
       <button
         onClick={() => onSwitchChain(targetChainId)}
-        className="flex-1 px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-ink rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
+        className="flex-1 px-3 py-2 bg-warning hover:bg-warning text-ink rounded-lg text-sm transition-colors flex items-center justify-center gap-1"
       >
         <RefreshCw className="w-4 h-4" />
         Switch to {chainConfig?.name || 'Polygon Amoy'}
@@ -188,17 +188,17 @@ const ProjectCard = ({
   const getStatusColor = (status: string): string => {
     switch (status?.toLowerCase()) {
       case 'deployed':
-        return 'bg-green-500/20 text-green-400';
+        return 'bg-success/20 text-success';
       case 'approved':
         return 'bg-gold-500/20 text-gold-400';
       case 'pending':
-        return 'bg-yellow-500/20 text-yellow-400';
+        return 'bg-warning/20 text-warning';
       case 'rejected':
-        return 'bg-red-500/20 text-red-400';
+        return 'bg-danger/20 text-danger';
       case 'draft':
-        return 'bg-gray-500/20 text-ink-muted';
+        return 'bg-ink-faint/20 text-ink-muted';
       default:
-        return 'bg-gray-500/20 text-ink-muted';
+        return 'bg-ink-faint/20 text-ink-muted';
     }
   };
 
@@ -218,7 +218,7 @@ const ProjectCard = ({
   return (
     <div className={`bg-surface/50 rounded-xl p-5 border transition-all ${
       isRejected 
-        ? 'border-red-500/30 hover:border-red-500/50' 
+        ? 'border-danger/30 hover:border-danger/50' 
         : 'border-border/50 hover:border-border-strong/50'
     }`}>
       <div className="flex items-start justify-between mb-4">
@@ -263,11 +263,11 @@ const ProjectCard = ({
 
       {/* Rejection Reason Banner */}
       {isRejected && project.rejectionReason && (
-        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+        <div className="mb-4 p-3 bg-danger/10 border border-danger/20 rounded-lg">
           <div className="flex items-start gap-2">
-            <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-4 h-4 text-danger flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-red-400 mb-1">Rejection Reason:</p>
+              <p className="text-xs font-medium text-danger mb-1">Rejection Reason:</p>
               <p className="text-xs text-ink-muted line-clamp-2">{project.rejectionReason}</p>
             </div>
           </div>
@@ -293,8 +293,8 @@ const ProjectCard = ({
       </div>
 
       {needsChainSwitch && chainInfo && (
-        <div className="mb-4 p-2 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
-          <p className="text-xs text-yellow-400">
+        <div className="mb-4 p-2 bg-warning/10 border border-warning/30 rounded-lg">
+          <p className="text-xs text-warning">
             Switch to {chainInfo.name} to manage this project
           </p>
         </div>
@@ -329,7 +329,7 @@ const ProjectCard = ({
             {needsChainSwitch && chainInfo && (
               <button
                 onClick={() => onSwitchChain(project.chainId!)}
-                className="py-2 px-3 bg-yellow-600 hover:bg-yellow-700 rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
+                className="py-2 px-3 bg-warning hover:bg-warning rounded-lg text-sm font-medium transition-colors flex items-center gap-1"
               >
                 <RefreshCw className="w-4 h-4" />
                 Switch
@@ -399,20 +399,20 @@ function InvestmentCard({ investment, currentChainId, onSwitchChain }: Investmen
       <td className="px-6 py-4 text-ink-muted">{formatNumber(tokens)}</td>
       <td className="px-6 py-4 text-ink-muted">{formatCurrency(amount)}</td>
       <td className="px-6 py-4 text-ink font-medium">{formatCurrency(currentValue)}</td>
-      <td className={`px-6 py-4 font-medium ${roi >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+      <td className={`px-6 py-4 font-medium ${roi >= 0 ? 'text-success' : 'text-danger'}`}>
         {roi >= 0 ? '+' : ''}{roi.toFixed(2)}%
       </td>
       <td className="px-6 py-4">
         {isWrongChain ? (
           <button
             onClick={() => onSwitchChain(investmentChainId)}
-            className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs flex items-center gap-1 hover:bg-yellow-500/30 transition-colors"
+            className="px-3 py-1 bg-warning/20 text-warning rounded-full text-xs flex items-center gap-1 hover:bg-warning/30 transition-colors"
           >
             <RefreshCw className="w-3 h-3" />
             Switch
           </button>
         ) : (
-          <span className="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs">
+          <span className="px-2 py-1 bg-success/20 text-success rounded-full text-xs">
             {investment.status || 'active'}
           </span>
         )}
@@ -438,10 +438,10 @@ function TokenAllocationsSection({ address }: { address: string }) {
 
   if (loading) {
     return (
-      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+      <div className="bg-surface-overlay/50 rounded-xl p-6 border border-surface-overlay">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-slate-700 rounded w-1/3"></div>
-          <div className="h-20 bg-slate-700 rounded"></div>
+          <div className="h-6 bg-surface-overlay rounded w-1/3"></div>
+          <div className="h-20 bg-surface-overlay rounded"></div>
         </div>
       </div>
     );
@@ -449,13 +449,13 @@ function TokenAllocationsSection({ address }: { address: string }) {
 
   if (!data || !data.summary || data.summary.totalTokens === 0) {
     return (
-      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+      <div className="bg-surface-overlay/50 rounded-xl p-6 border border-surface-overlay">
         <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <Coins className="w-5 h-5 text-gold-400" />
           Token Allocations
         </h3>
-        <div className="text-center py-8 text-slate-400">
-          <Coins className="w-12 h-12 mx-auto mb-3 text-slate-600" />
+        <div className="text-center py-8 text-surface-overlay">
+          <Coins className="w-12 h-12 mx-auto mb-3 text-surface-overlay" />
           <p>No token allocations yet</p>
           <Link href="/raise" className="text-gold-400 hover:text-gold-300 mt-2 inline-block">
             Invest now →
@@ -470,7 +470,7 @@ function TokenAllocationsSection({ address }: { address: string }) {
   const valueAtTGE = summary.totalTokens * TGE_PRICE;
 
   return (
-    <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+    <div className="bg-surface-overlay/50 rounded-xl p-6 border border-surface-overlay">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
         <Coins className="w-5 h-5 text-gold-400" />
         Token Allocations
@@ -478,46 +478,46 @@ function TokenAllocationsSection({ address }: { address: string }) {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <div className="bg-slate-900/50 rounded-lg p-3">
-          <div className="text-xs text-slate-500">Total Tokens</div>
+        <div className="bg-surface-overlay/50 rounded-lg p-3">
+          <div className="text-xs text-surface-overlay">Total Tokens</div>
           <div className="text-xl font-bold text-gold-400">
             {summary.totalTokens.toLocaleString()}
           </div>
-          <div className="text-xs text-slate-500">RWA</div>
+          <div className="text-xs text-surface-overlay">RWA</div>
         </div>
-        <div className="bg-slate-900/50 rounded-lg p-3">
-          <div className="text-xs text-slate-500">Purchased</div>
+        <div className="bg-surface-overlay/50 rounded-lg p-3">
+          <div className="text-xs text-surface-overlay">Purchased</div>
           <div className="text-xl font-bold text-gold-400">
             {summary.purchasedTokens.toLocaleString()}
           </div>
-          <div className="text-xs text-slate-500">RWA</div>
+          <div className="text-xs text-surface-overlay">RWA</div>
         </div>
-        <div className="bg-slate-900/50 rounded-lg p-3">
-          <div className="text-xs text-slate-500">Bonus Tokens</div>
-          <div className="text-xl font-bold text-green-400">
+        <div className="bg-surface-overlay/50 rounded-lg p-3">
+          <div className="text-xs text-surface-overlay">Bonus Tokens</div>
+          <div className="text-xl font-bold text-success">
             {summary.bonusTokens.toLocaleString()}
           </div>
-          <div className="text-xs text-slate-500">From referrals</div>
+          <div className="text-xs text-surface-overlay">From referrals</div>
         </div>
-        <div className="bg-slate-900/50 rounded-lg p-3">
-          <div className="text-xs text-slate-500">Value at TGE</div>
-          <div className="text-xl font-bold text-emerald-400">
+        <div className="bg-surface-overlay/50 rounded-lg p-3">
+          <div className="text-xs text-surface-overlay">Value at TGE</div>
+          <div className="text-xl font-bold text-success">
             ${valueAtTGE.toLocaleString()}
           </div>
-          <div className="text-xs text-slate-500">@ $0.01/token</div>
+          <div className="text-xs text-surface-overlay">@ $0.01/token</div>
         </div>
       </div>
 
       {/* Status Breakdown */}
       <div className="flex flex-wrap gap-2 mb-4">
         {summary.confirmedTokens > 0 && (
-          <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-1">
+          <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm flex items-center gap-1">
             <CheckCircle className="w-4 h-4" />
             {summary.confirmedTokens.toLocaleString()} Confirmed
           </span>
         )}
         {summary.pendingTokens > 0 && (
-          <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm flex items-center gap-1">
+          <span className="px-3 py-1 bg-warning/20 text-warning rounded-full text-sm flex items-center gap-1">
             <Clock className="w-4 h-4" />
             {summary.pendingTokens.toLocaleString()} Pending
           </span>
@@ -532,13 +532,13 @@ function TokenAllocationsSection({ address }: { address: string }) {
 
       {/* Vesting Info */}
       {vestingMonths > 0 && (
-        <div className="border-t border-slate-700 pt-4 mt-4">
+        <div className="border-t border-surface-overlay pt-4 mt-4">
           <button
             onClick={() => setShowVesting(!showVesting)}
             className="flex items-center justify-between w-full text-left"
           >
             <span className="font-medium flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-slate-400" />
+              <Calendar className="w-4 h-4 text-surface-overlay" />
               Vesting Schedule ({vestingMonths} months, no cliff)
             </span>
             {showVesting ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -546,19 +546,19 @@ function TokenAllocationsSection({ address }: { address: string }) {
           
           {showVesting && vestingSchedule && (
             <div className="mt-4 space-y-2">
-              <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
+              <div className="h-4 bg-surface-overlay rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-gradient-to-r from-gold-500 to-gold-light-500"
                   style={{ width: '0%' }} // Update based on actual vesting progress
                 />
               </div>
-              <div className="grid grid-cols-4 gap-2 text-xs text-slate-400 mt-4">
+              <div className="grid grid-cols-4 gap-2 text-xs text-surface-overlay mt-4">
                 <div>Month 1: {(summary.confirmedTokens / vestingMonths).toLocaleString()} RWA</div>
                 <div>Month {Math.floor(vestingMonths/4)}: {((summary.confirmedTokens / vestingMonths) * Math.floor(vestingMonths/4)).toLocaleString()} RWA</div>
                 <div>Month {Math.floor(vestingMonths/2)}: {((summary.confirmedTokens / vestingMonths) * Math.floor(vestingMonths/2)).toLocaleString()} RWA</div>
                 <div>Month {vestingMonths}: {summary.confirmedTokens.toLocaleString()} RWA (100%)</div>
               </div>
-              <p className="text-xs text-slate-500 mt-2">
+              <p className="text-xs text-surface-overlay mt-2">
                 Linear vesting: ~{(summary.confirmedTokens / vestingMonths).toLocaleString()} tokens unlock each month starting at TGE.
               </p>
             </div>
@@ -568,24 +568,24 @@ function TokenAllocationsSection({ address }: { address: string }) {
 
       {/* Recent Allocations */}
       {allocations && allocations.length > 0 && (
-        <div className="border-t border-slate-700 pt-4 mt-4">
+        <div className="border-t border-surface-overlay pt-4 mt-4">
           <h4 className="font-medium mb-3">Recent Allocations</h4>
           <div className="space-y-2 max-h-60 overflow-y-auto">
             {allocations.slice(0, 10).map((alloc: any) => (
-              <div key={alloc.id} className="flex items-center justify-between p-2 bg-slate-900/50 rounded-lg text-sm">
+              <div key={alloc.id} className="flex items-center justify-between p-2 bg-surface-overlay/50 rounded-lg text-sm">
                 <div className="flex items-center gap-2">
                   <span className={`px-2 py-0.5 rounded text-xs ${
                     alloc.type === 'purchase' ? 'bg-gold-500/20 text-gold-400' :
-                    alloc.type === 'referral_bonus' ? 'bg-green-500/20 text-green-400' :
+                    alloc.type === 'referral_bonus' ? 'bg-success/20 text-success' :
                     'bg-gold-500/20 text-gold-400'
                   }`}>
                     {alloc.type === 'purchase' ? 'Purchase' : alloc.type === 'referral_bonus' ? 'Referral' : 'Bonus'}
                   </span>
-                  <span className="text-slate-400">{alloc.fundraising_rounds?.display_name}</span>
+                  <span className="text-surface-overlay">{alloc.fundraising_rounds?.display_name}</span>
                 </div>
                 <div className="text-right">
                   <div className="font-medium">{parseFloat(alloc.tokens_amount).toLocaleString()} RWA</div>
-                  <div className="text-xs text-slate-500">${parseFloat(alloc.tokens_usd_value).toLocaleString()}</div>
+                  <div className="text-xs text-surface-overlay">${parseFloat(alloc.tokens_usd_value).toLocaleString()}</div>
                 </div>
               </div>
             ))}
@@ -631,10 +631,10 @@ function ReferralStatsSection({ address }: { address: string }) {
 
   if (loading) {
     return (
-      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+      <div className="bg-surface-overlay/50 rounded-xl p-6 border border-surface-overlay">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-slate-700 rounded w-1/3"></div>
-          <div className="h-20 bg-slate-700 rounded"></div>
+          <div className="h-6 bg-surface-overlay rounded w-1/3"></div>
+          <div className="h-20 bg-surface-overlay rounded"></div>
         </div>
       </div>
     );
@@ -647,19 +647,19 @@ function ReferralStatsSection({ address }: { address: string }) {
   const { code, stats, referrals, isActive } = data;
 
   return (
-    <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+    <div className="bg-surface-overlay/50 rounded-xl p-6 border border-surface-overlay">
       <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
         <Gift className="w-5 h-5 text-gold-400" />
         Referral Program
-        {!isActive && <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">Inactive</span>}
+        {!isActive && <span className="text-xs bg-danger/20 text-danger px-2 py-0.5 rounded">Inactive</span>}
       </h3>
 
       {/* Referral Code & Link */}
       <div className="grid md:grid-cols-2 gap-3 mb-6">
         <div>
-          <label className="text-xs text-slate-500 mb-1 block">Your Referral Code</label>
+          <label className="text-xs text-surface-overlay mb-1 block">Your Referral Code</label>
           <div className="flex items-center gap-2">
-            <div className="flex-1 px-3 py-2 bg-slate-900 rounded-lg font-mono text-lg font-bold text-gold-400 tracking-wider">
+            <div className="flex-1 px-3 py-2 bg-surface-overlay rounded-lg font-mono text-lg font-bold text-gold-400 tracking-wider">
               {code}
             </div>
             <button
@@ -671,9 +671,9 @@ function ReferralStatsSection({ address }: { address: string }) {
           </div>
         </div>
         <div>
-          <label className="text-xs text-slate-500 mb-1 block">Referral Link</label>
+          <label className="text-xs text-surface-overlay mb-1 block">Referral Link</label>
           <div className="flex items-center gap-2">
-            <div className="flex-1 px-3 py-2 bg-slate-900 rounded-lg text-sm text-slate-400 truncate">
+            <div className="flex-1 px-3 py-2 bg-surface-overlay rounded-lg text-sm text-surface-overlay truncate">
               {typeof window !== 'undefined' ? `${window.location.origin}/raise?ref=${code}` : ''}
             </div>
             <button
@@ -688,27 +688,27 @@ function ReferralStatsSection({ address }: { address: string }) {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+        <div className="bg-surface-overlay/50 rounded-lg p-3 text-center">
           <div className="text-2xl font-bold text-gold-400">{stats?.totalReferrals || 0}</div>
-          <div className="text-xs text-slate-500">Referrals</div>
+          <div className="text-xs text-surface-overlay">Referrals</div>
         </div>
-        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
-          <div className="text-2xl font-bold text-green-400">
+        <div className="bg-surface-overlay/50 rounded-lg p-3 text-center">
+          <div className="text-2xl font-bold text-success">
             ${(stats?.totalInvestmentAmount || 0).toLocaleString()}
           </div>
-          <div className="text-xs text-slate-500">Total Invested</div>
+          <div className="text-xs text-surface-overlay">Total Invested</div>
         </div>
-        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+        <div className="bg-surface-overlay/50 rounded-lg p-3 text-center">
           <div className="text-2xl font-bold text-gold-400">
             {(stats?.totalBonusTokens || 0).toLocaleString()}
           </div>
-          <div className="text-xs text-slate-500">Bonus Tokens</div>
+          <div className="text-xs text-surface-overlay">Bonus Tokens</div>
         </div>
-        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
-          <div className="text-2xl font-bold text-emerald-400">
+        <div className="bg-surface-overlay/50 rounded-lg p-3 text-center">
+          <div className="text-2xl font-bold text-success">
             ${((stats?.totalBonusTokens || 0) * 0.01).toLocaleString()}
           </div>
-          <div className="text-xs text-slate-500">Value at TGE</div>
+          <div className="text-xs text-surface-overlay">Value at TGE</div>
         </div>
       </div>
 
@@ -716,13 +716,13 @@ function ReferralStatsSection({ address }: { address: string }) {
       {(stats?.pendingBonusTokens > 0 || stats?.confirmedBonusTokens > 0) && (
         <div className="flex flex-wrap gap-2 mb-4">
           {stats.confirmedBonusTokens > 0 && (
-            <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-1">
+            <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm flex items-center gap-1">
               <CheckCircle className="w-4 h-4" />
               {stats.confirmedBonusTokens.toLocaleString()} Confirmed
             </span>
           )}
           {stats.pendingBonusTokens > 0 && (
-            <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm flex items-center gap-1">
+            <span className="px-3 py-1 bg-warning/20 text-warning rounded-full text-sm flex items-center gap-1">
               <Clock className="w-4 h-4" />
               {stats.pendingBonusTokens.toLocaleString()} Pending
             </span>
@@ -732,11 +732,11 @@ function ReferralStatsSection({ address }: { address: string }) {
 
       {/* Referrals List */}
       {referrals && referrals.length > 0 && (
-        <div className="border-t border-slate-700 pt-4 mt-4">
+        <div className="border-t border-surface-overlay pt-4 mt-4">
           <h4 className="font-medium mb-3">Your Referrals ({referrals.length})</h4>
           <div className="space-y-2 max-h-60 overflow-y-auto">
             {referrals.map((ref: any, idx: number) => (
-              <div key={idx} className="flex items-center justify-between p-3 bg-slate-900/50 rounded-lg">
+              <div key={idx} className="flex items-center justify-between p-3 bg-surface-overlay/50 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-gold-500/20 flex items-center justify-center">
                     <Users className="w-4 h-4 text-gold-400" />
@@ -745,14 +745,14 @@ function ReferralStatsSection({ address }: { address: string }) {
                     <div className="font-mono text-sm">
                       {ref.wallet_address.slice(0, 6)}...{ref.wallet_address.slice(-4)}
                     </div>
-                    <div className="text-xs text-slate-500">
+                    <div className="text-xs text-surface-overlay">
                       {ref.investments?.length || 0} investment(s) • Joined {new Date(ref.first_investment).toLocaleDateString()}
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-medium text-green-400">+{(ref.total_tokens * 0.05).toLocaleString()} RWA</div>
-                  <div className="text-xs text-slate-500">5% of {ref.total_tokens.toLocaleString()}</div>
+                  <div className="font-medium text-success">+{(ref.total_tokens * 0.05).toLocaleString()} RWA</div>
+                  <div className="text-xs text-surface-overlay">5% of {ref.total_tokens.toLocaleString()}</div>
                 </div>
               </div>
             ))}
@@ -762,7 +762,7 @@ function ReferralStatsSection({ address }: { address: string }) {
 
       {/* No referrals yet */}
       {(!referrals || referrals.length === 0) && (
-        <div className="text-center py-4 text-slate-400">
+        <div className="text-center py-4 text-surface-overlay">
           <p>No referrals yet. Share your code to start earning!</p>
         </div>
       )}
@@ -1207,11 +1207,11 @@ export default function DashboardClient() {
   // KYC tier config
   const getKYCConfig = () => {
     const configs: Record<string, { color: string; icon: typeof Shield }> = {
-      'None': { color: 'bg-red-500/20 text-red-400 border-red-500/30', icon: XCircle },
-      'Bronze': { color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', icon: Shield },
+      'None': { color: 'bg-danger/20 text-danger border-danger/30', icon: XCircle },
+      'Bronze': { color: 'bg-warning/20 text-warning border-warning/30', icon: Shield },
       'Silver': { color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', icon: Shield },
       'Gold': { color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', icon: Award },
-      'Diamond': { color: 'bg-green-500/20 text-green-400 border-green-500/30', icon: CheckCircle },
+      'Diamond': { color: 'bg-success/20 text-success border-success/30', icon: CheckCircle },
     };
     return configs[tier] || configs['None'];
   };
@@ -1264,22 +1264,22 @@ export default function DashboardClient() {
             <p className="text-ink-muted mt-1">Manage your investments and projects</p>
           </div>
           <div className="flex items-center gap-2 px-3 py-1.5 bg-surface rounded-lg border border-border">
-            <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-success rounded-full animate-pulse" />
             <span className="text-sm text-ink-muted">{currentChainName}</span>
           </div>
         </div>
 
         {/* KYC Banner */}
         {tier === 'None' && (
-          <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl flex items-center justify-between">
+          <div className="p-4 bg-danger/10 border border-danger/30 rounded-xl flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <AlertCircle className="w-5 h-5 text-red-400" />
+              <AlertCircle className="w-5 h-5 text-danger" />
               <div>
                 <p className="text-ink font-medium">KYC Verification Required</p>
                 <p className="text-sm text-ink-muted">Complete verification to start investing</p>
               </div>
             </div>
-            <Link href="/kyc" className="px-4 py-2 bg-red-500 hover:bg-red-600 text-ink rounded-lg text-sm font-medium transition-colors">
+            <Link href="/kyc" className="px-4 py-2 bg-danger hover:bg-danger text-ink rounded-lg text-sm font-medium transition-colors">
               Verify Now
             </Link>
           </div>
@@ -1352,10 +1352,10 @@ export default function DashboardClient() {
               <div className="bg-surface rounded-xl p-5 border border-border">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-ink-muted text-sm">Current Value</span>
-                  <TrendingUp className="w-5 h-5 text-green-400" />
+                  <TrendingUp className="w-5 h-5 text-success" />
                 </div>
                 <p className="text-2xl font-bold text-ink mb-2">{formatCurrency(investorStats.currentValue)}</p>
-                <div className={`flex items-center gap-1 text-sm ${investorStats.totalReturns >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <div className={`flex items-center gap-1 text-sm ${investorStats.totalReturns >= 0 ? 'text-success' : 'text-danger'}`}>
                   {investorStats.totalReturns >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
                   {formatCurrency(Math.abs(investorStats.totalReturns))} <span className="text-ink-faint">returns</span>
                 </div>
@@ -1366,7 +1366,7 @@ export default function DashboardClient() {
                   <span className="text-ink-muted text-sm">Global ROI</span>
                   <PieChart className="w-5 h-5 text-gold-400" />
                 </div>
-                <p className={`text-2xl font-bold ${investorStats.globalROI >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <p className={`text-2xl font-bold ${investorStats.globalROI >= 0 ? 'text-success' : 'text-danger'}`}>
                   {investorStats.globalROI >= 0 ? '+' : ''}{investorStats.globalROI.toFixed(2)}%
                 </p>
                 <p className="text-xs text-ink-faint mt-2">Since first investment</p>
@@ -1375,13 +1375,13 @@ export default function DashboardClient() {
               <div className="bg-surface rounded-xl p-5 border border-border">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-ink-muted text-sm">Pending Dividends</span>
-                  <Banknote className="w-5 h-5 text-yellow-400" />
+                  <Banknote className="w-5 h-5 text-warning" />
                 </div>
                 <p className="text-2xl font-bold text-ink mb-1">{formatCurrency(investorStats.pendingDividends)}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-green-400">+{investorStats.pendingYield.toFixed(2)}% yield</span>
+                  <span className="text-xs text-success">+{investorStats.pendingYield.toFixed(2)}% yield</span>
                   {investorStats.pendingDividends > 0 && (
-                    <button className="text-xs px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded hover:bg-yellow-500/30 transition-colors">Claim</button>
+                    <button className="text-xs px-2 py-1 bg-warning/20 text-warning rounded hover:bg-warning/30 transition-colors">Claim</button>
                   )}
                 </div>
               </div>
@@ -1503,14 +1503,14 @@ export default function DashboardClient() {
               </div>
               <div className="bg-surface-overlay/50 rounded-lg p-4">
                 <div className="text-xs text-ink-faint mb-1">Referral Bonus</div>
-                <div className="text-xl font-bold text-green-400">
+                <div className="text-xl font-bold text-success">
                   {tokenAllocations.summary.bonusTokens.toLocaleString()}
                 </div>
                 <div className="text-xs text-ink-faint">RWA</div>
               </div>
               <div className="bg-surface-overlay/50 rounded-lg p-4">
                 <div className="text-xs text-ink-faint mb-1">Value at TGE</div>
-                <div className="text-xl font-bold text-emerald-400">
+                <div className="text-xl font-bold text-success">
                   ${(tokenAllocations.summary.totalTokens * 0.01).toLocaleString()}
                 </div>
                 <div className="text-xs text-ink-faint">@ $0.01/token</div>
@@ -1520,13 +1520,13 @@ export default function DashboardClient() {
             {/* Status Tags */}
             <div className="flex flex-wrap gap-2 mb-4">
               {tokenAllocations.summary.confirmedTokens > 0 && (
-                <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm flex items-center gap-1">
+                <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm flex items-center gap-1">
                   <CheckCircle className="w-4 h-4" />
                   {tokenAllocations.summary.confirmedTokens.toLocaleString()} Confirmed
                 </span>
               )}
               {tokenAllocations.summary.pendingTokens > 0 && (
-                <span className="px-3 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-sm flex items-center gap-1">
+                <span className="px-3 py-1 bg-warning/20 text-warning rounded-full text-sm flex items-center gap-1">
                   <Clock className="w-4 h-4" />
                   {tokenAllocations.summary.pendingTokens.toLocaleString()} Pending
                 </span>
@@ -1564,7 +1564,7 @@ export default function DashboardClient() {
                       <div className="flex items-center gap-2">
                         <span className={`px-2 py-0.5 rounded text-xs ${
                           alloc.type === 'purchase' ? 'bg-gold-500/20 text-gold-400' :
-                          alloc.type === 'referral_bonus' ? 'bg-green-500/20 text-green-400' :
+                          alloc.type === 'referral_bonus' ? 'bg-success/20 text-success' :
                           'bg-gold-500/20 text-gold-400'
                         }`}>
                           {alloc.type === 'purchase' ? 'Purchase' : alloc.type === 'referral_bonus' ? 'Referral' : 'Bonus'}
@@ -1662,7 +1662,7 @@ export default function DashboardClient() {
                   <div className="bg-surface rounded-xl p-5 border border-border">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-ink-muted text-sm">Total Raised</span>
-                      <DollarSign className="w-5 h-5 text-green-400" />
+                      <DollarSign className="w-5 h-5 text-success" />
                     </div>
                     <p className="text-2xl font-bold text-ink">{formatCurrency(ownerStats.totalRaised)}</p>
                     <p className="text-xs text-ink-faint mt-2">From token sales</p>
@@ -1674,13 +1674,13 @@ export default function DashboardClient() {
                       <BarChart3 className="w-5 h-5 text-gold-400" />
                     </div>
                     <p className="text-2xl font-bold text-ink">{formatCurrency(ownerStats.currentValue)}</p>
-                    <p className="text-xs text-green-400 mt-2">+{ownerStats.totalYield.toFixed(2)}% yield</p>
+                    <p className="text-xs text-success mt-2">+{ownerStats.totalYield.toFixed(2)}% yield</p>
                   </div>
 
                   <div className="bg-surface rounded-xl p-5 border border-border">
                     <div className="flex items-center justify-between mb-3">
                       <span className="text-ink-muted text-sm">Dividends Distributed</span>
-                      <Users className="w-5 h-5 text-yellow-400" />
+                      <Users className="w-5 h-5 text-warning" />
                     </div>
                     <p className="text-2xl font-bold text-ink">{formatCurrency(ownerStats.dividendsDistributed)}</p>
                     <p className="text-xs text-ink-faint mt-2">To investors</p>
@@ -1689,9 +1689,9 @@ export default function DashboardClient() {
 
                 {/* Chain Info Banner */}
                 {projectsOnOtherChains > 0 && (
-                  <div className="p-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl flex items-center justify-between">
+                  <div className="p-4 bg-warning/10 border border-warning/30 rounded-xl flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <AlertTriangle className="w-5 h-5 text-yellow-400" />
+                      <AlertTriangle className="w-5 h-5 text-warning" />
                       <div>
                         <p className="text-ink font-medium">
                           {projectsOnOtherChains} project{projectsOnOtherChains !== 1 ? 's' : ''} on other chains
@@ -1811,14 +1811,14 @@ export default function DashboardClient() {
               </div>
 
               {linkError && (
-                <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm flex items-center gap-2">
+                <div className="mb-4 p-3 bg-danger/10 border border-danger/30 rounded-lg text-danger text-sm flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 flex-shrink-0" />
                   {linkError}
                 </div>
               )}
 
               {linkSuccess && (
-                <div className="mb-4 p-3 bg-green-500/10 border border-green-500/30 rounded-lg text-green-400 text-sm flex items-center gap-2">
+                <div className="mb-4 p-3 bg-success/10 border border-success/30 rounded-lg text-success text-sm flex items-center gap-2">
                   <CheckCircle className="w-4 h-4 flex-shrink-0" />
                   Wallet linked successfully! The new wallet now shares your KYC verification.
                 </div>
@@ -1837,7 +1837,7 @@ export default function DashboardClient() {
                   >
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-full flex items-center justify-center text-lg ${
-                        wallet.isPrimary ? "bg-amber-500/20" : "bg-border-strong"
+                        wallet.isPrimary ? "bg-warning/20" : "bg-border-strong"
                       }`}>
                         {wallet.isPrimary ? "ðŸ‘‘" : "ðŸ‘›"}
                       </div>
@@ -1848,7 +1848,7 @@ export default function DashboardClient() {
                             <span className="px-2 py-0.5 bg-gold-500/20 text-gold-400 text-xs rounded-full">Current</span>
                           )}
                           {wallet.isPrimary && (
-                            <span className="px-2 py-0.5 bg-amber-500/20 text-amber-400 text-xs rounded-full">Primary</span>
+                            <span className="px-2 py-0.5 bg-warning/20 text-warning text-xs rounded-full">Primary</span>
                           )}
                         </div>
                         <p className="text-xs text-ink-faint">Linked {new Date(wallet.linkedAt).toLocaleDateString()}</p>
@@ -1877,12 +1877,12 @@ export default function DashboardClient() {
                       <div className="flex items-center justify-center gap-3">
                         <p className="text-3xl font-mono font-bold text-ink tracking-widest">{linkCode.code}</p>
                         <button onClick={copyCode} className="p-2 hover:bg-surface-overlay rounded-lg transition-colors">
-                          {copiedCode ? <Check className="w-5 h-5 text-green-400" /> : <Copy className="w-5 h-5 text-ink-muted" />}
+                          {copiedCode ? <Check className="w-5 h-5 text-success" /> : <Copy className="w-5 h-5 text-ink-muted" />}
                         </button>
                       </div>
                       <p className="text-ink-faint text-sm mt-3 flex items-center justify-center gap-1">
                         <Clock className="w-4 h-4" />
-                        Expires in <span className={timeLeft < 60 ? "text-red-400" : "text-ink"}>{formatTime(timeLeft)}</span>
+                        Expires in <span className={timeLeft < 60 ? "text-danger" : "text-ink"}>{formatTime(timeLeft)}</span>
                       </p>
                     </div>
                   ) : (
@@ -1919,7 +1919,7 @@ export default function DashboardClient() {
                     <button
                       onClick={handleUseLinkCode}
                       disabled={codeInput.length !== 8 || isLinking}
-                      className="px-6 py-3 bg-green-600 hover:bg-green-500 disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center gap-2"
+                      className="px-6 py-3 bg-success hover:bg-success disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center gap-2"
                     >
                       {isLinking ? <Loader2 className="w-5 h-5 animate-spin" /> : <Check className="w-5 h-5" />}
                       Link
@@ -1940,11 +1940,11 @@ export default function DashboardClient() {
             <div className="bg-surface rounded-xl border border-border p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-ink flex items-center gap-2">
-                  <Share2 className="w-5 h-5 text-green-400" />
+                  <Share2 className="w-5 h-5 text-success" />
                   Referral Program
                 </h3>
                 {referralStats && referralStats.totalReferrals > 0 && (
-                  <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+                  <span className="px-3 py-1 bg-success/20 text-success rounded-full text-sm">
                     {referralStats.totalReferrals} referral{referralStats.totalReferrals !== 1 ? 's' : ''}
                   </span>
                 )}
@@ -1965,7 +1965,7 @@ export default function DashboardClient() {
                           <p className="text-xs text-ink-muted">Invested</p>
                         </div>
                         <div className="bg-surface-overlay/50 rounded-lg p-3 text-center">
-                          <p className="text-2xl font-bold text-green-400">{referralStats.totalBonusTokens.toLocaleString()}</p>
+                          <p className="text-2xl font-bold text-success">{referralStats.totalBonusTokens.toLocaleString()}</p>
                           <p className="text-xs text-ink-muted">Bonus Tokens</p>
                         </div>
                       </div>
@@ -1986,7 +1986,7 @@ export default function DashboardClient() {
                             setCopiedReferral(true);
                             setTimeout(() => setCopiedReferral(false), 2000);
                           }}
-                          className="px-4 py-3 bg-green-600 hover:bg-green-700 text-ink rounded-lg text-sm transition-colors flex items-center gap-2"
+                          className="px-4 py-3 bg-success hover:bg-success text-ink rounded-lg text-sm transition-colors flex items-center gap-2"
                         >
                           {copiedReferral ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                           {copiedReferral ? 'Copied!' : 'Copy'}
@@ -2052,7 +2052,7 @@ export default function DashboardClient() {
                 <div className="text-center py-6">
                   <Share2 className="w-12 h-12 text-ink-faint mx-auto mb-3" />
                   <p className="text-ink-muted mb-4">Complete KYC to access the referral program</p>
-                  <Link href="/kyc" className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-ink rounded-lg text-sm transition-colors">
+                  <Link href="/kyc" className="inline-flex items-center gap-2 px-4 py-2 bg-success hover:bg-success text-ink rounded-lg text-sm transition-colors">
                     Get Started <ChevronRight className="w-4 h-4" />
                   </Link>
                 </div>
@@ -2074,7 +2074,7 @@ export default function DashboardClient() {
           
           <Link href="/kyc" className="flex items-center justify-between p-4 bg-surface hover:bg-gray-750 rounded-xl border border-border transition-colors group">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-500/20 rounded-lg"><Shield className="w-5 h-5 text-green-400" /></div>
+              <div className="p-2 bg-success/20 rounded-lg"><Shield className="w-5 h-5 text-success" /></div>
               <span className="text-ink font-medium">KYC Verification</span>
             </div>
             <ChevronRight className="w-5 h-5 text-ink-faint group-hover:text-ink transition-colors" />

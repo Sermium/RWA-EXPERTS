@@ -553,11 +553,11 @@ export const PROJECT_STATUS_NAMES: Record<number, string> = {
  * Project status colors
  */
 export const PROJECT_STATUS_COLORS: Record<number, { bg: string; text: string; border: string }> = {
-  0: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', border: 'border-yellow-500/30' },
-  1: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
-  2: { bg: 'bg-green-500/20', text: 'text-green-400', border: 'border-green-500/30' },
-  3: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' },
-  4: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
+  0: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' },
+  1: { bg: 'bg-gold/20', text: 'text-gold', border: 'border-gold/30' },
+  2: { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' },
+  3: { bg: 'bg-gold/20', text: 'text-gold', border: 'border-gold/30' },
+  4: { bg: 'bg-danger/20', text: 'text-danger', border: 'border-danger/30' },
   5: { bg: 'bg-orange-500/20', text: 'text-orange-400', border: 'border-orange-500/30' },
 };
 
@@ -572,7 +572,7 @@ export const getProjectStatusName = (status: number): string => {
  * Get project status colors
  */
 export const getProjectStatusColors = (status: number): { bg: string; text: string; border: string } => {
-  return PROJECT_STATUS_COLORS[status] || { bg: 'bg-gray-500/20', text: 'text-gray-400', border: 'border-gray-500/30' };
+  return PROJECT_STATUS_COLORS[status] || { bg: 'bg-ink-faint/20', text: 'text-ink-muted', border: 'border-ink-faint/30' };
 };
 
 // ============================================================================

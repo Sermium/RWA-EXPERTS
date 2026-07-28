@@ -102,7 +102,7 @@ function StripePaymentForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="p-4 bg-gray-800 rounded-xl border border-gray-700">
+      <div className="p-4 bg-surface rounded-xl border border-border">
         <PaymentElement />
       </div>
       
@@ -111,7 +111,7 @@ function StripePaymentForm({
           type="button"
           onClick={onCancel}
           disabled={isProcessing}
-          className="flex-1 py-3 rounded-xl border border-gray-600 text-gray-300 hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+          className="flex-1 py-3 rounded-xl border border-border-strong text-ink-muted hover:bg-surface transition-colors flex items-center justify-center gap-2"
         >
           <X className="w-4 h-4" />
           Cancel
@@ -119,7 +119,7 @@ function StripePaymentForm({
         <button
           type="submit"
           disabled={!stripe || isProcessing}
-          className="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-500 to-gold-light-500 hover:from-gold-600 hover:to-gold-light-600 text-white font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+          className="flex-1 py-3 rounded-xl bg-gradient-to-r from-gold-500 to-gold-light-500 hover:from-gold-600 hover:to-gold-light-600 text-ink font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
         >
           {isProcessing ? (
             <>
@@ -338,9 +338,9 @@ export function Step4Review({
   const useCase = USE_CASES.find(u => u.value === formData.useCase);
 
   const Section = ({ title, step, children }: { title: string; step: number; children: React.ReactNode }) => (
-    <div className="bg-gray-700/30 rounded-xl p-4">
+    <div className="bg-surface-overlay/30 rounded-xl p-4">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-medium text-white">{title}</h3>
+        <h3 className="text-lg font-medium text-ink">{title}</h3>
         <button
           onClick={() => onEdit(step)}
           className="flex items-center gap-1 text-gold-400 hover:text-gold-300 text-sm"
@@ -355,16 +355,16 @@ export function Step4Review({
 
   const Field = ({ label, value }: { label: string; value: string | undefined }) => (
     <div>
-      <span className="text-gray-400 text-sm">{label}:</span>
-      <span className="ml-2 text-white">{value || '-'}</span>
+      <span className="text-ink-muted text-sm">{label}:</span>
+      <span className="ml-2 text-ink">{value || '-'}</span>
     </div>
   );
 
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-white mb-2">Review Your Application</h2>
-        <p className="text-gray-400 text-sm">
+        <h2 className="text-xl font-semibold text-ink mb-2">Review Your Application</h2>
+        <p className="text-ink-muted text-sm">
           Please review all information and complete payment to submit
         </p>
       </div>
@@ -377,8 +377,8 @@ export function Step4Review({
           <Field label="Location" value={formData.assetLocation} />
           <Field label="Estimated Value" value={`$${formData.estimatedValue} ${formData.currency}`} />
           <div className="col-span-2">
-            <span className="text-gray-400 text-sm">Description:</span>
-            <p className="mt-1 text-white text-sm">{formData.assetDescription}</p>
+            <span className="text-ink-muted text-sm">Description:</span>
+            <p className="mt-1 text-ink text-sm">{formData.assetDescription}</p>
           </div>
           {formData.website && <Field label="Website" value={formData.website} />}
         </div>
@@ -391,7 +391,7 @@ export function Step4Review({
             <img src={logoFile.url} alt="Logo" className="w-12 h-12 rounded-lg object-cover" />
           )}
           <div>
-            <p className="text-white font-medium">{formData.tokenName}</p>
+            <p className="text-ink font-medium">{formData.tokenName}</p>
             <p className="text-gold-400 text-sm">${formData.tokenSymbol}</p>
           </div>
         </div>
@@ -400,9 +400,9 @@ export function Step4Review({
           <Field label="Price Per Token" value={`$${formData.pricePerToken}`} />
           {useCase && <Field label="Use Case" value={useCase.label} />}
         </div>
-        <div className="mt-3 pt-3 border-t border-gray-600">
-          <span className="text-gray-400 text-sm">Total Valuation:</span>
-          <span className="ml-2 text-green-400 font-medium">
+        <div className="mt-3 pt-3 border-t border-border-strong">
+          <span className="text-ink-muted text-sm">Total Valuation:</span>
+          <span className="ml-2 text-success font-medium">
             ${(parseFloat(formData.totalSupply?.replace(/,/g, '') || '0') * parseFloat(formData.pricePerToken?.replace(/,/g, '') || '0')).toLocaleString('en-US', { minimumFractionDigits: 2 })}
           </span>
         </div>
@@ -413,15 +413,15 @@ export function Step4Review({
         <div className="space-y-2">
           {documents.map((doc, index) => (
             <div key={index} className="flex items-center gap-2 text-sm">
-              <CheckCircle className="w-4 h-4 text-green-400" />
-              <span className="text-white">{doc.name}</span>
-              <span className="text-gray-500">
+              <CheckCircle className="w-4 h-4 text-success" />
+              <span className="text-ink">{doc.name}</span>
+              <span className="text-ink-faint">
                 ({DOCUMENT_TYPES.find(t => t.value === doc.type)?.label})
               </span>
             </div>
           ))}
           {documents.length === 0 && (
-            <p className="text-gray-500 text-sm">No documents uploaded</p>
+            <p className="text-ink-faint text-sm">No documents uploaded</p>
           )}
         </div>
       </Section>
@@ -439,25 +439,25 @@ export function Step4Review({
       <div className="bg-gradient-to-r from-gold-500/10 to-gold-light-500/10 border border-gold-500/30 rounded-xl p-5">
         <div className="flex items-center gap-2 mb-4">
           <CreditCard className="w-5 h-5 text-gold-400" />
-          <h3 className="text-lg font-medium text-white">Tokenization Package</h3>
+          <h3 className="text-lg font-medium text-ink">Tokenization Package</h3>
         </div>
 
         {/* Package Options */}
         <div className="space-y-3 mb-6">
           {/* Base - Always included */}
-          <div className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+          <div className="flex items-center justify-between p-3 bg-surface/50 rounded-lg border border-border">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-gold-500/20 flex items-center justify-center">
                 <Coins className="w-5 h-5 text-gold-400" />
               </div>
               <div>
-                <p className="text-white font-medium">Token Creation</p>
-                <p className="text-gray-400 text-xs">ERC-20 Security Token + NFT Certificate</p>
+                <p className="text-ink font-medium">Token Creation</p>
+                <p className="text-ink-muted text-xs">ERC-20 Security Token + NFT Certificate</p>
               </div>
             </div>
             <div className="text-right">
-              <p className="text-white font-semibold">${PRICING.base}</p>
-              <p className="text-green-400 text-xs">Included</p>
+              <p className="text-ink font-semibold">${PRICING.base}</p>
+              <p className="text-success text-xs">Included</p>
             </div>
           </div>
 
@@ -465,29 +465,29 @@ export function Step4Review({
           <label className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
             includeEscrow 
               ? 'bg-gold-500/10 border-gold-500/50' 
-              : 'bg-gray-800/50 border-gray-700 hover:border-gray-600'
+              : 'bg-surface/50 border-border hover:border-border-strong'
           }`}>
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                includeEscrow ? 'bg-gold-500/20' : 'bg-gray-700'
+                includeEscrow ? 'bg-gold-500/20' : 'bg-surface-overlay'
               }`}>
                 <Shield className="w-5 h-5 text-gold-400" />
               </div>
               <div>
-                <p className="text-white font-medium">Escrow Vault</p>
-                <p className="text-gray-400 text-xs">Secure fund management & milestone releases</p>
+                <p className="text-ink font-medium">Escrow Vault</p>
+                <p className="text-ink-muted text-xs">Secure fund management & milestone releases</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-white font-semibold">+${PRICING.escrow}</p>
+                <p className="text-ink font-semibold">+${PRICING.escrow}</p>
               </div>
               <input
                 type="checkbox"
                 checked={includeEscrow}
                 onChange={(e) => setIncludeEscrow(e.target.checked)}
                 disabled={paymentStep !== 'idle' || showStripeForm}
-                className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-gold-500 focus:ring-purple-500"
+                className="w-5 h-5 rounded border-border-strong bg-surface-overlay text-gold-500 focus:ring-gold"
               />
             </div>
           </label>
@@ -495,30 +495,30 @@ export function Step4Review({
           {/* Dividend Option */}
           <label className={`flex items-center justify-between p-3 rounded-lg border cursor-pointer transition-all ${
             includeDividend 
-              ? 'bg-green-500/10 border-green-500/50' 
-              : 'bg-gray-800/50 border-gray-700 hover:border-gray-600'
+              ? 'bg-success/10 border-success/50' 
+              : 'bg-surface/50 border-border hover:border-border-strong'
           }`}>
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                includeDividend ? 'bg-green-500/20' : 'bg-gray-700'
+                includeDividend ? 'bg-success/20' : 'bg-surface-overlay'
               }`}>
-                <PiggyBank className="w-5 h-5 text-green-400" />
+                <PiggyBank className="w-5 h-5 text-success" />
               </div>
               <div>
-                <p className="text-white font-medium">Dividend Engine</p>
-                <p className="text-gray-400 text-xs">Automated profit distribution to token holders</p>
+                <p className="text-ink font-medium">Dividend Engine</p>
+                <p className="text-ink-muted text-xs">Automated profit distribution to token holders</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <div className="text-right">
-                <p className="text-white font-semibold">+${PRICING.dividend}</p>
+                <p className="text-ink font-semibold">+${PRICING.dividend}</p>
               </div>
               <input
                 type="checkbox"
                 checked={includeDividend}
                 onChange={(e) => setIncludeDividend(e.target.checked)}
                 disabled={paymentStep !== 'idle' || showStripeForm}
-                className="w-5 h-5 rounded border-gray-600 bg-gray-700 text-green-500 focus:ring-green-500"
+                className="w-5 h-5 rounded border-border-strong bg-surface-overlay text-success focus:ring-success"
               />
             </div>
           </label>
@@ -527,7 +527,7 @@ export function Step4Review({
         {/* Payment Method Selection */}
         {!showStripeForm && paymentStep !== 'done' && (
           <div className="mb-6">
-            <p className="text-sm text-gray-400 mb-3">Payment Method</p>
+            <p className="text-sm text-ink-muted mb-3">Payment Method</p>
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => setPaymentMethod('crypto')}
@@ -535,18 +535,18 @@ export function Step4Review({
                 className={`p-4 rounded-xl border-2 transition-all ${
                   paymentMethod === 'crypto'
                     ? 'border-gold-500 bg-gold-500/10'
-                    : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                    : 'border-border bg-surface/50 hover:border-border-strong'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    paymentMethod === 'crypto' ? 'bg-gold-500/20' : 'bg-gray-700'
+                    paymentMethod === 'crypto' ? 'bg-gold-500/20' : 'bg-surface-overlay'
                   }`}>
                     <Wallet className="w-5 h-5 text-gold-400" />
                   </div>
                   <div className="text-left">
-                    <p className="text-white font-medium">Crypto</p>
-                    <p className="text-gray-400 text-xs">USDC or USDT</p>
+                    <p className="text-ink font-medium">Crypto</p>
+                    <p className="text-ink-muted text-xs">USDC or USDT</p>
                   </div>
                 </div>
               </button>
@@ -557,18 +557,18 @@ export function Step4Review({
                 className={`p-4 rounded-xl border-2 transition-all ${
                   paymentMethod === 'stripe'
                     ? 'border-gold-500 bg-gold-500/10'
-                    : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                    : 'border-border bg-surface/50 hover:border-border-strong'
                 } ${!stripePromise ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    paymentMethod === 'stripe' ? 'bg-gold-500/20' : 'bg-gray-700'
+                    paymentMethod === 'stripe' ? 'bg-gold-500/20' : 'bg-surface-overlay'
                   }`}>
                     <Building2 className="w-5 h-5 text-gold-400" />
                   </div>
                   <div className="text-left">
-                    <p className="text-white font-medium">Card / Bank</p>
-                    <p className="text-gray-400 text-xs">Via Stripe</p>
+                    <p className="text-ink font-medium">Card / Bank</p>
+                    <p className="text-ink-muted text-xs">Via Stripe</p>
                   </div>
                 </div>
               </button>
@@ -577,23 +577,23 @@ export function Step4Review({
         )}
 
         {/* Total & Currency Selection */}
-        <div className="border-t border-gray-700 pt-4">
+        <div className="border-t border-border pt-4">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <p className="text-gray-400 text-sm">Total Amount</p>
-              <p className="text-3xl font-bold text-white">${totalAmount.toLocaleString()}</p>
+              <p className="text-ink-muted text-sm">Total Amount</p>
+              <p className="text-3xl font-bold text-ink">${totalAmount.toLocaleString()}</p>
             </div>
             
             {/* Currency Toggle - Only for crypto */}
             {paymentMethod === 'crypto' && !showStripeForm && paymentStep !== 'done' && (
-              <div className="flex bg-gray-800 rounded-lg p-1">
+              <div className="flex bg-surface rounded-lg p-1">
                 <button
                   onClick={() => setSelectedCurrency('USDC')}
                   disabled={paymentStep !== 'idle'}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                     selectedCurrency === 'USDC'
-                      ? 'bg-gold-500 text-white'
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-gold-500 text-ink'
+                      : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   USDC
@@ -603,8 +603,8 @@ export function Step4Review({
                   disabled={paymentStep !== 'idle'}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
                     selectedCurrency === 'USDT'
-                      ? 'bg-green-500 text-white'
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-success text-ink'
+                      : 'text-ink-muted hover:text-ink'
                   }`}
                 >
                   USDT
@@ -617,13 +617,13 @@ export function Step4Review({
           {paymentMethod === 'crypto' && !showStripeForm && paymentStep !== 'done' && (
             <>
               {!isConnected ? (
-                <div className="mb-4 p-3 bg-amber-500/10 border border-amber-500/30 rounded-lg">
-                  <p className="text-amber-400 text-sm">Please connect your wallet to pay with crypto.</p>
+                <div className="mb-4 p-3 bg-warning/10 border border-warning/30 rounded-lg">
+                  <p className="text-warning text-sm">Please connect your wallet to pay with crypto.</p>
                 </div>
               ) : (
                 <div className="flex items-center justify-between mb-4 text-sm">
-                  <span className="text-gray-400">Your {selectedCurrency} Balance:</span>
-                  <span className={hasEnoughBalance ? 'text-green-400' : 'text-red-400'}>
+                  <span className="text-ink-muted">Your {selectedCurrency} Balance:</span>
+                  <span className={hasEnoughBalance ? 'text-success' : 'text-danger'}>
                     ${userBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     {!hasEnoughBalance && ' (Insufficient)'}
                   </span>
@@ -634,22 +634,22 @@ export function Step4Review({
 
           {/* Fee Recipient Loading/Error - Only for crypto */}
           {paymentMethod === 'crypto' && !showStripeForm && isLoadingRecipient && (
-            <div className="mb-4 p-3 bg-gray-800/50 rounded-lg flex items-center gap-2">
-              <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />
-              <span className="text-gray-400 text-sm">Loading payment details...</span>
+            <div className="mb-4 p-3 bg-surface/50 rounded-lg flex items-center gap-2">
+              <Loader2 className="w-4 h-4 text-ink-muted animate-spin" />
+              <span className="text-ink-muted text-sm">Loading payment details...</span>
             </div>
           )}
 
           {paymentMethod === 'crypto' && !showStripeForm && !isLoadingRecipient && !feeRecipient && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 text-sm">Payment recipient not configured. Please contact support.</p>
+            <div className="mb-4 p-3 bg-danger/10 border border-danger/30 rounded-lg">
+              <p className="text-danger text-sm">Payment recipient not configured. Please contact support.</p>
             </div>
           )}
 
           {/* Payment Error */}
           {paymentError && (
-            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 text-sm">{paymentError}</p>
+            <div className="mb-4 p-3 bg-danger/10 border border-danger/30 rounded-lg">
+              <p className="text-danger text-sm">{paymentError}</p>
             </div>
           )}
 
@@ -671,12 +671,12 @@ export function Step4Review({
           {!showStripeForm && (
             <>
               {paymentStep === 'done' ? (
-                <div className="flex items-center justify-center gap-2 p-4 bg-green-500/10 border border-green-500/30 rounded-xl">
-                  <CheckCircle className="w-6 h-6 text-green-400" />
+                <div className="flex items-center justify-center gap-2 p-4 bg-success/10 border border-success/30 rounded-xl">
+                  <CheckCircle className="w-6 h-6 text-success" />
                   <div>
-                    <p className="text-green-400 font-medium">Payment Complete!</p>
+                    <p className="text-success font-medium">Payment Complete!</p>
                     {txHash && (
-                      <p className="text-gray-400 text-xs">
+                      <p className="text-ink-muted text-xs">
                         Tx: {txHash.slice(0, 10)}...{txHash.slice(-8)}
                       </p>
                     )}
@@ -694,8 +694,8 @@ export function Step4Review({
                   className={`w-full py-4 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
                     (paymentMethod === 'stripe') || 
                     (paymentMethod === 'crypto' && hasEnoughBalance && feeRecipient && isConnected)
-                      ? 'bg-gradient-to-r from-gold-500 to-gold-light-500 hover:from-gold-600 hover:to-gold-light-600 text-white'
-                      : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                      ? 'bg-gradient-to-r from-gold-500 to-gold-light-500 hover:from-gold-600 hover:to-gold-light-600 text-ink'
+                      : 'bg-surface-overlay text-ink-faint cursor-not-allowed'
                   }`}
                 >
                   {isLoadingRecipient && paymentMethod === 'crypto' ? (
@@ -729,7 +729,7 @@ export function Step4Review({
             </>
           )}
 
-          <p className="text-gray-500 text-xs text-center mt-3">
+          <p className="text-ink-faint text-xs text-center mt-3">
             {paymentMethod === 'crypto' 
               ? "Payment is processed on-chain. You'll need to approve the transaction in your wallet."
               : "Secure payment powered by Stripe."
@@ -739,8 +739,8 @@ export function Step4Review({
       </div>
 
       {/* Terms */}
-      <div className="p-4 bg-gray-800/50 border border-gray-700 rounded-xl">
-        <p className="text-gray-400 text-sm">
+      <div className="p-4 bg-surface/50 border border-border rounded-xl">
+        <p className="text-ink-muted text-sm">
           By submitting this application, you confirm that all provided information is accurate 
           and you have the legal rights to tokenize this asset. The tokenization fee is non-refundable.
         </p>

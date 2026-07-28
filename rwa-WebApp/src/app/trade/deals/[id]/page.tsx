@@ -284,14 +284,14 @@ const getStageProgress = (stage: DealStage): number => {
 
 const getStatusColor = (status: string) => {
   const colors: Record<string, string> = {
-    pending: 'bg-yellow-500/10 text-warning border-yellow-500/20',
+    pending: 'bg-warning/10 text-warning border-warning/20',
     in_progress: 'bg-gold-500/10 text-gold-400 border-gold-500/20',
-    completed: 'bg-green-500/10 text-success border-green-500/20',
-    verified: 'bg-green-500/10 text-success border-green-500/20',
-    rejected: 'bg-red-500/10 text-danger border-red-500/20',
-    failed: 'bg-red-500/10 text-danger border-red-500/20',
+    completed: 'bg-success/10 text-success border-success/20',
+    verified: 'bg-success/10 text-success border-success/20',
+    rejected: 'bg-danger/10 text-danger border-danger/20',
+    failed: 'bg-danger/10 text-danger border-danger/20',
   };
-  return colors[status] || 'bg-gray-500/10 text-ink-muted border-gray-500/20';
+  return colors[status] || 'bg-ink-faint/10 text-ink-muted border-ink-faint/20';
 };
 
 // =============================================================================
@@ -309,8 +309,8 @@ function StageProgress({ stage, stages }: { stage: DealStage; stages: typeof DEA
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-ink">Deal Progress</h3>
         <span className={`px-3 py-1 rounded-full text-sm font-medium border ${
-          stage === 'completed' ? 'bg-green-500/10 text-success border-green-500/20' :
-          stage === 'disputed' ? 'bg-red-500/10 text-danger border-red-500/20' :
+          stage === 'completed' ? 'bg-success/10 text-success border-success/20' :
+          stage === 'disputed' ? 'bg-danger/10 text-danger border-danger/20' :
           'bg-gold-500/10 text-gold-400 border-gold-500/20'
         }`}>
           {stageInfo.label}
@@ -320,7 +320,7 @@ function StageProgress({ stage, stages }: { stage: DealStage; stages: typeof DEA
       <div className="relative">
         <div className="h-2 bg-surface-overlay rounded-full overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-gold-500 to-cyan-500 transition-all duration-500"
+            className="h-full bg-gradient-to-r from-gold-500 to-gold transition-all duration-500"
             style={{ width: `${getStageProgress(stage)}%` }}
           />
         </div>
@@ -339,7 +339,7 @@ function StageProgress({ stage, stages }: { stage: DealStage; stages: typeof DEA
           return (
             <div key={category} className="text-center">
               <div className={`w-full h-1 rounded-full mb-2 ${
-                isPast ? 'bg-green-500' : isActive ? 'bg-gold-500' : 'bg-surface-overlay'
+                isPast ? 'bg-success' : isActive ? 'bg-gold-500' : 'bg-surface-overlay'
               }`} />
               <span className={`text-xs capitalize ${
                 isPast ? 'text-success' : isActive ? 'text-gold-400' : 'text-ink-faint'
@@ -379,7 +379,7 @@ function MilestoneCard({
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center">
           <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 ${
-            milestone.status === 'completed' ? 'bg-green-500/20 text-success' :
+            milestone.status === 'completed' ? 'bg-success/20 text-success' :
             milestone.status === 'in_progress' ? 'bg-gold-500/20 text-gold-400' :
             'bg-surface-overlay text-ink-muted'
           }`}>
@@ -478,10 +478,10 @@ function TimelineItem({ event }: { event: TimelineEvent }) {
   const typeColors = {
     stage_change: 'bg-gold-500/20 text-gold-400',
     document_upload: 'bg-gold-500/20 text-gold-400',
-    payment: 'bg-green-500/20 text-success',
-    milestone: 'bg-cyan-500/20 text-cyan-400',
-    message: 'bg-gray-500/20 text-ink-muted',
-    dispute: 'bg-red-500/20 text-danger',
+    payment: 'bg-success/20 text-success',
+    milestone: 'bg-gold/20 text-gold',
+    message: 'bg-ink-faint/20 text-ink-muted',
+    dispute: 'bg-danger/20 text-danger',
   };
 
   return (
@@ -571,8 +571,8 @@ export default function DealDetailPage() {
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-3xl font-bold text-ink">{deal.title}</h1>
                 <span className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                  deal.stage === 'completed' ? 'bg-green-500/10 text-success border-green-500/20' :
-                  deal.stage === 'disputed' ? 'bg-red-500/10 text-danger border-red-500/20' :
+                  deal.stage === 'completed' ? 'bg-success/10 text-success border-success/20' :
+                  deal.stage === 'disputed' ? 'bg-danger/10 text-danger border-danger/20' :
                   'bg-gold-500/10 text-gold-400 border-gold-500/20'
                 }`}>
                   {DEAL_STAGES[deal.stage].label}
@@ -673,7 +673,7 @@ export default function DealDetailPage() {
                 {/* Trade Terms */}
                 <div className="bg-surface/50 rounded-xl p-6 border border-border/50">
                   <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
-                    <Ship className="h-5 w-5 mr-2 text-cyan-400" />
+                    <Ship className="h-5 w-5 mr-2 text-gold" />
                     Trade Terms
                   </h3>
                   <div className="grid md:grid-cols-2 gap-4">
@@ -833,7 +833,7 @@ export default function DealDetailPage() {
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-sm text-ink-faint">Buyer</p>
                     {deal.buyer.kycStatus === 'verified' && (
-                      <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/10 text-success border border-green-500/20">
+                      <span className="px-2 py-0.5 rounded-full text-xs bg-success/10 text-success border border-success/20">
                         Verified
                       </span>
                     )}
@@ -845,7 +845,7 @@ export default function DealDetailPage() {
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-sm text-ink-faint">Seller</p>
                     {deal.seller.kycStatus === 'verified' && (
-                      <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/10 text-success border border-green-500/20">
+                      <span className="px-2 py-0.5 rounded-full text-xs bg-success/10 text-success border border-success/20">
                         Verified
                       </span>
                     )}
@@ -888,16 +888,16 @@ export default function DealDetailPage() {
                     Upload Document
                   </button>
                   {isBuyer && deal.escrow.milestones.some(m => m.status === 'in_progress') && (
-                    <button className="w-full px-4 py-3 bg-green-500 text-ink rounded-lg hover:bg-green-600 transition-colors flex items-center justify-center">
+                    <button className="w-full px-4 py-3 bg-success text-ink rounded-lg hover:bg-success transition-colors flex items-center justify-center">
                       <Check className="h-4 w-4 mr-2" />
                       Approve Milestone
                     </button>
                   )}
-                  <button className="w-full px-4 py-3 bg-surface-overlay text-ink rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center">
+                  <button className="w-full px-4 py-3 bg-surface-overlay text-ink rounded-lg hover:bg-border-strong transition-colors flex items-center justify-center">
                     <MessageSquare className="h-4 w-4 mr-2" />
                     Send Message
                   </button>
-                  <button className="w-full px-4 py-3 bg-red-500/10 text-danger rounded-lg hover:bg-red-500/20 transition-colors flex items-center justify-center">
+                  <button className="w-full px-4 py-3 bg-danger/10 text-danger rounded-lg hover:bg-danger/20 transition-colors flex items-center justify-center">
                     <AlertTriangle className="h-4 w-4 mr-2" />
                     Raise Dispute
                   </button>

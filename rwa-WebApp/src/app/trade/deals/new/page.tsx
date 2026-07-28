@@ -208,7 +208,7 @@ function StepIndicator({
               <div className={`
                 w-12 h-12 rounded-full flex items-center justify-center border-2 transition-all
                 ${isCompleted 
-                  ? 'bg-green-500 border-green-500 text-ink' 
+                  ? 'bg-success border-success text-ink' 
                   : isCurrent 
                     ? 'bg-gold-500 border-gold-500 text-ink'
                     : 'bg-surface-raised border-border text-ink-faint'
@@ -224,7 +224,7 @@ function StepIndicator({
             </div>
             {index < steps.length - 1 && (
               <div className={`w-16 md:w-24 h-0.5 mx-2 ${
-                index < currentIndex ? 'bg-green-500' : 'bg-surface-overlay'
+                index < currentIndex ? 'bg-success' : 'bg-surface-overlay'
               }`} />
             )}
           </div>
@@ -298,7 +298,7 @@ function InputField({
             w-full px-4 py-3 bg-surface-sunken border rounded-xl text-ink placeholder-ink-faint 
             focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all
             ${icon ? 'pl-10' : ''}
-            ${error ? 'border-red-500' : 'border-border'}
+            ${error ? 'border-danger' : 'border-border'}
           `}
         />
       </div>
@@ -342,7 +342,7 @@ function SelectField({
           className={`
             w-full px-4 py-3 bg-surface-sunken border rounded-xl text-ink appearance-none cursor-pointer
             focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all
-            ${error ? 'border-red-500' : 'border-border'}
+            ${error ? 'border-danger' : 'border-border'}
           `}
         >
           <option value="" disabled>{placeholder}</option>
@@ -392,7 +392,7 @@ function TextAreaField({
         className={`
           w-full px-4 py-3 bg-surface-sunken border rounded-xl text-ink placeholder-ink-faint 
           focus:ring-2 focus:ring-gold-500 focus:border-transparent outline-none transition-all resize-none
-          ${error ? 'border-red-500' : 'border-border'}
+          ${error ? 'border-danger' : 'border-border'}
         `}
       />
       {error && <p className="mt-1 text-xs text-danger">{error}</p>}
@@ -483,27 +483,27 @@ function KYCAuthorizationBanner({
         <>
           {/* Errors */}
           {authResult.errors.length > 0 && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4">
+            <div className="bg-danger/10 border border-danger/30 rounded-xl p-4">
               <div className="flex items-start">
                 <AlertTriangle className="h-5 w-5 text-danger mt-0.5 mr-3 flex-shrink-0" />
                 <div className="flex-1">
                   <p className="text-danger font-semibold mb-2">Authorization Issues</p>
                   <ul className="space-y-1">
                     {authResult.errors.map((error, i) => (
-                      <li key={i} className="text-sm text-red-300 flex items-start">
+                      <li key={i} className="text-sm text-danger flex items-start">
                         <span className="mr-2">•</span>
                         {error}
                       </li>
                     ))}
                   </ul>
                   {authResult.requiredUpgrade && (
-                    <div className="mt-3 pt-3 border-t border-red-500/20">
+                    <div className="mt-3 pt-3 border-t border-danger/20">
                       <p className="text-sm text-ink-muted mb-2">
                         Required KYC level for this deal: <span className="text-ink font-semibold">{KYC_LEVEL_INFO[authResult.requiredUpgrade].label}</span>
                       </p>
                       <button
                         onClick={onUpgradeClick}
-                        className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-danger rounded-lg text-sm font-medium transition-colors flex items-center"
+                        className="px-4 py-2 bg-danger/20 hover:bg-danger/30 text-danger rounded-lg text-sm font-medium transition-colors flex items-center"
                       >
                         <TrendingUp className="h-4 w-4 mr-2" />
                         Upgrade KYC Level
@@ -517,14 +517,14 @@ function KYCAuthorizationBanner({
 
           {/* Warnings */}
           {authResult.warnings.length > 0 && authResult.errors.length === 0 && (
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+            <div className="bg-warning/10 border border-warning/30 rounded-xl p-4">
               <div className="flex items-start">
                 <AlertCircle className="h-5 w-5 text-warning mt-0.5 mr-3 flex-shrink-0" />
                 <div>
                   <p className="text-warning font-semibold mb-2">Warnings</p>
                   <ul className="space-y-1">
                     {authResult.warnings.map((warning, i) => (
-                      <li key={i} className="text-sm text-yellow-300 flex items-start">
+                      <li key={i} className="text-sm text-warning flex items-start">
                         <span className="mr-2">•</span>
                         {warning}
                       </li>
@@ -537,7 +537,7 @@ function KYCAuthorizationBanner({
 
           {/* Success */}
           {authResult.authorized && authResult.errors.length === 0 && (
-            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+            <div className="bg-success/10 border border-success/30 rounded-xl p-4">
               <div className="flex items-center">
                 <CheckCircle2 className="h-5 w-5 text-success mr-3" />
                 <div>
@@ -1248,7 +1248,7 @@ function MilestonesStep({
         </div>
         <div className="h-3 bg-surface-overlay rounded-full overflow-hidden">
           <div 
-            className={`h-full transition-all ${totalPercentage === 100 ? 'bg-green-500' : totalPercentage > 100 ? 'bg-red-500' : 'bg-gold-500'}`}
+            className={`h-full transition-all ${totalPercentage === 100 ? 'bg-success' : totalPercentage > 100 ? 'bg-danger' : 'bg-gold-500'}`}
             style={{ width: `${Math.min(totalPercentage, 100)}%` }}
           />
         </div>
@@ -1264,14 +1264,14 @@ function MilestonesStep({
 
       {/* Milestone Validation Warnings */}
       {milestoneValidation && !milestoneValidation.valid && (
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+        <div className="bg-warning/10 border border-warning/30 rounded-xl p-4">
           <div className="flex items-start">
             <AlertCircle className="h-5 w-5 text-warning mt-0.5 mr-3 flex-shrink-0" />
             <div>
               <p className="text-warning font-semibold mb-2">Milestone Configuration Issues</p>
               <ul className="space-y-1">
                 {milestoneValidation.errors.map((error, i) => (
-                  <li key={i} className="text-sm text-yellow-300 flex items-start">
+                  <li key={i} className="text-sm text-warning flex items-start">
                     <span className="mr-2">•</span>
                     {error}
                   </li>
@@ -1360,7 +1360,7 @@ function MilestonesStep({
       </div>
 
       {errors['milestones'] && (
-        <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center">
+        <div className="bg-danger/10 border border-danger/20 rounded-xl p-4 flex items-center">
           <AlertCircle className="h-5 w-5 text-danger mr-3" />
           <p className="text-danger text-sm">{errors['milestones']}</p>
         </div>
@@ -1392,8 +1392,8 @@ function ReviewStep({
       {authResult && (
         <div className={`rounded-xl p-4 border ${
           authResult.authorized 
-            ? 'bg-green-500/10 border-green-500/30' 
-            : 'bg-red-500/10 border-red-500/30'
+            ? 'bg-success/10 border-success/30' 
+            : 'bg-danger/10 border-danger/30'
         }`}>
           <div className="flex items-center">
             {authResult.authorized ? (
@@ -1537,7 +1537,7 @@ function ReviewStep({
             </span>
           )}
           {data.terms.insuranceRequired && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-500/10 text-success border border-green-500/20">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-success/10 text-success border border-success/20">
               <Shield className="h-3 w-3 mr-1" />
               Insurance Required
             </span>
@@ -1967,7 +1967,7 @@ export default function NewDealPage() {
 
         {/* Error Display */}
         {errors.submit && (
-          <div className="mb-6 bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center">
+          <div className="mb-6 bg-danger/10 border border-danger/20 rounded-xl p-4 flex items-center">
             <AlertCircle className="h-5 w-5 text-danger mr-3" />
             <p className="text-danger">{errors.submit}</p>
           </div>
@@ -1990,7 +1990,7 @@ export default function NewDealPage() {
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting || !authResult?.authorized}
-              className="px-8 py-3 bg-gradient-to-r from-gold-500 to-cyan-500 text-ink font-semibold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              className="px-8 py-3 bg-gradient-to-r from-gold-500 to-gold text-ink font-semibold rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
             >
               {isSubmitting ? (
                 <>

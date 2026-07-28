@@ -123,7 +123,7 @@ export default function EditApplicationPage() {
     return (
       <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-4">
         <div className="text-center">
-          <AlertCircle className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
+          <AlertCircle className="w-12 h-12 text-warning mx-auto mb-4" />
           <p className="text-ink">Please connect your wallet</p>
         </div>
       </div>

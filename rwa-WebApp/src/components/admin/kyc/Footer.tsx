@@ -34,7 +34,7 @@ export function Footer({
             <span className="text-ink-faint">|</span>
             <span>{chainName}</span>
             {isTestnet && (
-              <span className="px-1.5 py-0.5 text-xs bg-yellow-500/20 text-warning rounded">
+              <span className="px-1.5 py-0.5 text-xs bg-warning/20 text-warning rounded">
                 Testnet
               </span>
             )}

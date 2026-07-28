@@ -131,16 +131,16 @@ function LogoUpload({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-white flex items-center gap-2">
-          Project Logo <span className="text-red-400">*</span>
+        <label className="text-sm font-medium text-ink flex items-center gap-2">
+          Project Logo <span className="text-danger">*</span>
         </label>
         {uploadedUrl && (
-          <span className="text-xs text-green-400 flex items-center gap-1">
+          <span className="text-xs text-success flex items-center gap-1">
             <CheckCircle className="w-3 h-3" /> Uploaded
           </span>
         )}
       </div>
-      <p className="text-xs text-gray-500">Square image, recommended 500×500px</p>
+      <p className="text-xs text-ink-faint">Square image, recommended 500×500px</p>
 
       <div
         onDrop={handleDrop}
@@ -151,8 +151,8 @@ function LogoUpload({
           dragOver
             ? 'border-gold-500 bg-gold-500/10'
             : displayUrl
-            ? 'border-gray-600'
-            : 'border-dashed border-gray-600 hover:border-gray-500 cursor-pointer'
+            ? 'border-border-strong'
+            : 'border-dashed border-border-strong hover:border-ink-faint cursor-pointer'
         }`}
       >
         {displayUrl ? (
@@ -168,7 +168,7 @@ function LogoUpload({
             {/* Overlay with actions */}
             <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
               {uploading ? (
-                <Loader2 className="w-8 h-8 text-white animate-spin" />
+                <Loader2 className="w-8 h-8 text-ink animate-spin" />
               ) : (
                 <>
                   <button
@@ -179,17 +179,17 @@ function LogoUpload({
                     className="p-2 bg-gold-600 hover:bg-gold-700 rounded-full transition-colors"
                     type="button"
                   >
-                    <Upload className="w-5 h-5 text-white" />
+                    <Upload className="w-5 h-5 text-ink" />
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
                       onRemove()
                     }}
-                    className="p-2 bg-red-600 hover:bg-red-700 rounded-full transition-colors"
+                    className="p-2 bg-danger hover:bg-danger rounded-full transition-colors"
                     type="button"
                   >
-                    <Trash2 className="w-5 h-5 text-white" />
+                    <Trash2 className="w-5 h-5 text-ink" />
                   </button>
                 </>
               )}
@@ -197,7 +197,7 @@ function LogoUpload({
             {/* Upload status indicator */}
             {uploading && (
               <div className="absolute bottom-2 left-2 right-2 bg-black/70 rounded-lg px-2 py-1">
-                <p className="text-xs text-white text-center">Uploading...</p>
+                <p className="text-xs text-ink text-center">Uploading...</p>
               </div>
             )}
           </>
@@ -207,13 +207,13 @@ function LogoUpload({
               <Loader2 className="w-10 h-10 text-gold-400 animate-spin" />
             ) : (
               <>
-                <div className="w-16 h-16 rounded-full bg-gray-700 flex items-center justify-center mb-3">
-                  <ImageIcon className="w-8 h-8 text-gray-500" />
+                <div className="w-16 h-16 rounded-full bg-surface-overlay flex items-center justify-center mb-3">
+                  <ImageIcon className="w-8 h-8 text-ink-faint" />
                 </div>
-                <p className="text-sm text-gray-400 text-center">
+                <p className="text-sm text-ink-muted text-center">
                   Drop logo here
                 </p>
-                <p className="text-xs text-gray-600 mt-1">or click to browse</p>
+                <p className="text-xs text-ink-faint mt-1">or click to browse</p>
               </>
             )}
           </div>
@@ -236,7 +236,7 @@ function LogoUpload({
       </div>
 
       {error && (
-        <p className="text-xs text-red-400 flex items-center gap-1">
+        <p className="text-xs text-danger flex items-center gap-1">
           <AlertCircle className="w-3 h-3" /> {error}
         </p>
       )}
@@ -295,14 +295,14 @@ function BannerUpload({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-white">Banner Image</label>
+        <label className="text-sm font-medium text-ink">Banner Image</label>
         {uploadedUrl && (
-          <span className="text-xs text-green-400 flex items-center gap-1">
+          <span className="text-xs text-success flex items-center gap-1">
             <CheckCircle className="w-3 h-3" /> Uploaded
           </span>
         )}
       </div>
-      <p className="text-xs text-gray-500">Wide image, recommended 1500×500px (3:1 ratio)</p>
+      <p className="text-xs text-ink-faint">Wide image, recommended 1500×500px (3:1 ratio)</p>
 
       <div
         onDrop={handleDrop}
@@ -313,8 +313,8 @@ function BannerUpload({
           dragOver
             ? 'border-gold-500 bg-gold-500/10'
             : displayUrl
-            ? 'border-gray-600'
-            : 'border-dashed border-gray-600 hover:border-gray-500 cursor-pointer'
+            ? 'border-border-strong'
+            : 'border-dashed border-border-strong hover:border-ink-faint cursor-pointer'
         }`}
         style={{ aspectRatio: '3 / 1' }}
       >
@@ -331,7 +331,7 @@ function BannerUpload({
             {/* Overlay with actions */}
             <div className="absolute inset-0 bg-black/60 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
               {uploading ? (
-                <Loader2 className="w-8 h-8 text-white animate-spin" />
+                <Loader2 className="w-8 h-8 text-ink animate-spin" />
               ) : (
                 <>
                   <button
@@ -342,24 +342,24 @@ function BannerUpload({
                     className="p-3 bg-gold-600 hover:bg-gold-700 rounded-full transition-colors"
                     type="button"
                   >
-                    <Upload className="w-6 h-6 text-white" />
+                    <Upload className="w-6 h-6 text-ink" />
                   </button>
                   <button
                     onClick={(e) => {
                       e.stopPropagation()
                       onRemove()
                     }}
-                    className="p-3 bg-red-600 hover:bg-red-700 rounded-full transition-colors"
+                    className="p-3 bg-danger hover:bg-danger rounded-full transition-colors"
                     type="button"
                   >
-                    <Trash2 className="w-6 h-6 text-white" />
+                    <Trash2 className="w-6 h-6 text-ink" />
                   </button>
                 </>
               )}
             </div>
             {uploading && (
               <div className="absolute bottom-3 left-3 right-3 bg-black/70 rounded-lg px-3 py-2">
-                <p className="text-sm text-white text-center">Uploading...</p>
+                <p className="text-sm text-ink text-center">Uploading...</p>
               </div>
             )}
           </>
@@ -369,9 +369,9 @@ function BannerUpload({
               <Loader2 className="w-10 h-10 text-gold-400 animate-spin" />
             ) : (
               <>
-                <ImageIcon className="w-10 h-10 text-gray-500 mb-2" />
-                <p className="text-sm text-gray-400">Drop banner image here or click to browse</p>
-                <p className="text-xs text-gray-600 mt-1">3:1 aspect ratio recommended</p>
+                <ImageIcon className="w-10 h-10 text-ink-faint mb-2" />
+                <p className="text-sm text-ink-muted">Drop banner image here or click to browse</p>
+                <p className="text-xs text-ink-faint mt-1">3:1 aspect ratio recommended</p>
               </>
             )}
           </div>
@@ -394,7 +394,7 @@ function BannerUpload({
       </div>
 
       {error && (
-        <p className="text-xs text-red-400 flex items-center gap-1">
+        <p className="text-xs text-danger flex items-center gap-1">
           <AlertCircle className="w-3 h-3" /> {error}
         </p>
       )}
@@ -450,18 +450,18 @@ function ProjectImagesUpload({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-white">Project Images</label>
-        <span className="text-xs text-gray-500">{totalCount}/{maxImages} images</span>
+        <label className="text-sm font-medium text-ink">Project Images</label>
+        <span className="text-xs text-ink-faint">{totalCount}/{maxImages} images</span>
       </div>
-      <p className="text-xs text-gray-500">Add photos showcasing your project</p>
+      <p className="text-xs text-ink-faint">Add photos showcasing your project</p>
 
       {/* Horizontal scroll container */}
-      <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-transparent">
+      <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-border-strong scrollbar-track-transparent">
         {/* Uploaded images */}
         {uploadedUrls.map((url, index) => (
           <div
             key={`uploaded-${index}`}
-            className="relative flex-shrink-0 w-40 h-40 rounded-xl overflow-hidden border-2 border-green-600/50 group"
+            className="relative flex-shrink-0 w-40 h-40 rounded-xl overflow-hidden border-2 border-success/50 group"
           >
             <img
               src={url}
@@ -469,15 +469,15 @@ function ProjectImagesUpload({
               className="w-full h-full object-cover"
             />
             <div className="absolute top-2 right-2">
-              <CheckCircle className="w-5 h-5 text-green-400 drop-shadow-lg" />
+              <CheckCircle className="w-5 h-5 text-success drop-shadow-lg" />
             </div>
             <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
               <button
                 onClick={() => onRemove(index, true)}
-                className="p-2 bg-red-600 hover:bg-red-700 rounded-full transition-colors"
+                className="p-2 bg-danger hover:bg-danger rounded-full transition-colors"
                 type="button"
               >
-                <Trash2 className="w-5 h-5 text-white" />
+                <Trash2 className="w-5 h-5 text-ink" />
               </button>
             </div>
           </div>
@@ -487,7 +487,7 @@ function ProjectImagesUpload({
         {previewUrls.map((url, index) => (
           <div
             key={`pending-${index}`}
-            className="relative flex-shrink-0 w-40 h-40 rounded-xl overflow-hidden border-2 border-yellow-600/50 group"
+            className="relative flex-shrink-0 w-40 h-40 rounded-xl overflow-hidden border-2 border-warning/50 group"
           >
             <img
               src={url}
@@ -496,17 +496,17 @@ function ProjectImagesUpload({
             />
             {uploading && currentUploadIndex === index ? (
               <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center">
-                <Loader2 className="w-8 h-8 text-white animate-spin mb-2" />
-                <span className="text-xs text-white">Uploading...</span>
+                <Loader2 className="w-8 h-8 text-ink animate-spin mb-2" />
+                <span className="text-xs text-ink">Uploading...</span>
               </div>
             ) : (
               <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                 <button
                   onClick={() => onRemove(index, false)}
-                  className="p-2 bg-red-600 hover:bg-red-700 rounded-full transition-colors"
+                  className="p-2 bg-danger hover:bg-danger rounded-full transition-colors"
                   type="button"
                 >
-                  <Trash2 className="w-5 h-5 text-white" />
+                  <Trash2 className="w-5 h-5 text-ink" />
                 </button>
               </div>
             )}
@@ -517,10 +517,10 @@ function ProjectImagesUpload({
         {canAddMore && (
           <div
             onClick={() => inputRef.current?.click()}
-            className="flex-shrink-0 w-40 h-40 rounded-xl border-2 border-dashed border-gray-600 hover:border-gray-500 hover:bg-gray-800/50 flex flex-col items-center justify-center cursor-pointer transition-colors"
+            className="flex-shrink-0 w-40 h-40 rounded-xl border-2 border-dashed border-border-strong hover:border-ink-faint hover:bg-surface/50 flex flex-col items-center justify-center cursor-pointer transition-colors"
           >
-            <Plus className="w-8 h-8 text-gray-500 mb-2" />
-            <p className="text-sm text-gray-500">Add Image</p>
+            <Plus className="w-8 h-8 text-ink-faint mb-2" />
+            <p className="text-sm text-ink-faint">Add Image</p>
           </div>
         )}
 
@@ -590,18 +590,18 @@ function SingleFileUpload({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-white flex items-center gap-2">
+        <label className="text-sm font-medium text-ink flex items-center gap-2">
           {label}
-          {required && <span className="text-red-400">*</span>}
+          {required && <span className="text-danger">*</span>}
         </label>
         {isUploaded && (
-          <span className="text-xs text-green-400 flex items-center gap-1">
+          <span className="text-xs text-success flex items-center gap-1">
             <CheckCircle className="w-3 h-3" /> Uploaded
           </span>
         )}
       </div>
       
-      <p className="text-xs text-gray-500">{description}</p>
+      <p className="text-xs text-ink-faint">{description}</p>
 
       {!hasFile ? (
         <div
@@ -612,14 +612,14 @@ function SingleFileUpload({
           className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors ${
             dragOver 
               ? 'border-gold-500 bg-gold-500/10' 
-              : 'border-gray-600 hover:border-gray-500'
+              : 'border-border-strong hover:border-ink-faint'
           }`}
         >
-          <Upload className="w-8 h-8 text-gray-500 mx-auto mb-2" />
-          <p className="text-sm text-gray-400">
+          <Upload className="w-8 h-8 text-ink-faint mx-auto mb-2" />
+          <p className="text-sm text-ink-muted">
             Drop file here or <span className="text-gold-400">browse</span>
           </p>
-          <p className="text-xs text-gray-600 mt-1">
+          <p className="text-xs text-ink-faint mt-1">
             Max size: {formatFileSize(maxSize)}
           </p>
           <input
@@ -634,36 +634,36 @@ function SingleFileUpload({
           />
         </div>
       ) : (
-        <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-4 flex items-center justify-between">
+        <div className="bg-surface-sunken/50 border border-border rounded-xl p-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {uploading ? (
               <Loader2 className="w-5 h-5 text-gold-400 animate-spin" />
             ) : isUploaded ? (
-              <CheckCircle className="w-5 h-5 text-green-400" />
+              <CheckCircle className="w-5 h-5 text-success" />
             ) : (
-              <FileText className="w-5 h-5 text-gray-400" />
+              <FileText className="w-5 h-5 text-ink-muted" />
             )}
             <div>
-              <p className="text-sm text-white truncate max-w-[200px]">
+              <p className="text-sm text-ink truncate max-w-[200px]">
                 {file?.name || 'Uploaded file'}
               </p>
               {file && (
-                <p className="text-xs text-gray-500">{formatFileSize(file.size)}</p>
+                <p className="text-xs text-ink-faint">{formatFileSize(file.size)}</p>
               )}
             </div>
           </div>
           <button
             onClick={(e) => { e.stopPropagation(); onRemove() }}
-            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
             type="button"
           >
-            <Trash2 className="w-4 h-4 text-gray-400 hover:text-red-400" />
+            <Trash2 className="w-4 h-4 text-ink-muted hover:text-danger" />
           </button>
         </div>
       )}
 
       {error && (
-        <p className="text-xs text-red-400 flex items-center gap-1">
+        <p className="text-xs text-danger flex items-center gap-1">
           <AlertCircle className="w-3 h-3" /> {error}
         </p>
       )}
@@ -704,16 +704,16 @@ function LegalDocumentsSection({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white">Legal Documents</h3>
-        <span className="text-sm text-gray-400">
+        <h3 className="text-lg font-semibold text-ink">Legal Documents</h3>
+        <span className="text-sm text-ink-muted">
           {category || 'Select a category to see requirements'}
         </span>
       </div>
 
       {!category ? (
-        <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-xl p-4 flex items-start gap-3">
-          <Info className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-          <p className="text-yellow-300 text-sm">
+        <div className="bg-warning/20 border border-warning/50 rounded-xl p-4 flex items-start gap-3">
+          <Info className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
+          <p className="text-warning text-sm">
             Please select a project category in Step 1 to see the required legal documents.
           </p>
         </div>
@@ -729,56 +729,56 @@ function LegalDocumentsSection({
                 key={doc.id}
                 className={`border rounded-xl overflow-hidden transition-colors ${
                   status === 'uploaded'
-                    ? 'border-green-700/50 bg-green-900/10'
+                    ? 'border-success/50 bg-success/10'
                     : doc.required
-                    ? 'border-red-700/50 bg-red-900/10'
-                    : 'border-gray-700 bg-gray-900/30'
+                    ? 'border-danger/50 bg-danger/10'
+                    : 'border-border bg-surface-sunken/30'
                 }`}
               >
                 {/* Header */}
                 <div
                   onClick={() => setExpandedDoc(isExpanded ? null : doc.id)}
-                  className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-800/50 transition-colors"
+                  className="p-4 flex items-center justify-between cursor-pointer hover:bg-surface/50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     {status === 'uploaded' ? (
-                      <CheckCircle className="w-5 h-5 text-green-400" />
+                      <CheckCircle className="w-5 h-5 text-success" />
                     ) : doc.required ? (
-                      <AlertCircle className="w-5 h-5 text-red-400" />
+                      <AlertCircle className="w-5 h-5 text-danger" />
                     ) : (
-                      <File className="w-5 h-5 text-gray-500" />
+                      <File className="w-5 h-5 text-ink-faint" />
                     )}
                     <div>
-                      <p className="text-white font-medium flex items-center gap-2">
+                      <p className="text-ink font-medium flex items-center gap-2">
                         {doc.name}
-                        {doc.required && <span className="text-red-400 text-xs">Required</span>}
+                        {doc.required && <span className="text-danger text-xs">Required</span>}
                       </p>
-                      <p className="text-xs text-gray-500">{doc.description}</p>
+                      <p className="text-xs text-ink-faint">{doc.description}</p>
                     </div>
                   </div>
                   {isExpanded ? (
-                    <ChevronUp className="w-5 h-5 text-gray-400" />
+                    <ChevronUp className="w-5 h-5 text-ink-muted" />
                   ) : (
-                    <ChevronDown className="w-5 h-5 text-gray-400" />
+                    <ChevronDown className="w-5 h-5 text-ink-muted" />
                   )}
                 </div>
 
                 {/* Expanded Content */}
                 {isExpanded && (
-                  <div className="px-4 pb-4 border-t border-gray-700/50">
+                  <div className="px-4 pb-4 border-t border-border/50">
                     <div className="pt-4">
                       {status === 'uploaded' ? (
-                        <div className="flex items-center justify-between bg-gray-800 rounded-lg p-3">
+                        <div className="flex items-center justify-between bg-surface rounded-lg p-3">
                           <div className="flex items-center gap-3">
-                            <FileText className="w-5 h-5 text-green-400" />
-                            <span className="text-sm text-white">Document uploaded</span>
+                            <FileText className="w-5 h-5 text-success" />
+                            <span className="text-sm text-ink">Document uploaded</span>
                           </div>
                           <button
                             onClick={(e) => {
                               e.stopPropagation()
                               onDocumentRemove(doc.id)
                             }}
-                            className="px-3 py-1 text-sm text-red-400 hover:bg-red-900/30 rounded transition-colors"
+                            className="px-3 py-1 text-sm text-danger hover:bg-danger/30 rounded transition-colors"
                             type="button"
                           >
                             Remove
@@ -787,17 +787,17 @@ function LegalDocumentsSection({
                       ) : (
                         <div
                           onClick={() => inputRefs.current[doc.id]?.click()}
-                          className="border-2 border-dashed border-gray-600 hover:border-gray-500 rounded-lg p-6 text-center cursor-pointer transition-colors"
+                          className="border-2 border-dashed border-border-strong hover:border-ink-faint rounded-lg p-6 text-center cursor-pointer transition-colors"
                         >
                           {isThisUploading ? (
                             <Loader2 className="w-8 h-8 text-gold-400 animate-spin mx-auto" />
                           ) : (
                             <>
-                              <Upload className="w-8 h-8 text-gray-500 mx-auto mb-2" />
-                              <p className="text-sm text-gray-400">
+                              <Upload className="w-8 h-8 text-ink-faint mx-auto mb-2" />
+                              <p className="text-sm text-ink-muted">
                                 Click to upload or drag and drop
                               </p>
-                              <p className="text-xs text-gray-600 mt-1">
+                              <p className="text-xs text-ink-faint mt-1">
                                 PDF, DOC, DOCX (max 50MB)
                               </p>
                             </>
@@ -1055,21 +1055,21 @@ export default function StepMediaLegal({
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Media & Legal Documents</h2>
-        <p className="text-gray-400">
+        <h2 className="text-2xl font-bold text-ink mb-2">Media & Legal Documents</h2>
+        <p className="text-ink-muted">
           Upload project media and required legal documentation
         </p>
       </div>
 
       {/* Upload Error */}
       {uploadError && (
-        <div className="bg-red-900/20 border border-red-700 rounded-xl p-4 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0" />
+        <div className="bg-danger/20 border border-danger rounded-xl p-4 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-danger flex-shrink-0" />
           <div>
-            <p className="text-red-400">{uploadError}</p>
+            <p className="text-danger">{uploadError}</p>
             <button
               onClick={() => setUploadError(null)}
-              className="text-sm text-red-300 hover:text-red-200 mt-1"
+              className="text-sm text-danger hover:text-danger mt-1"
               type="button"
             >
               Dismiss
@@ -1080,7 +1080,7 @@ export default function StepMediaLegal({
 
       {/* Media Section */}
       <div className="space-y-6">
-        <h3 className="text-lg font-semibold text-white border-b border-gray-700 pb-2">
+        <h3 className="text-lg font-semibold text-ink border-b border-border pb-2">
           Project Media
         </h3>
 
@@ -1129,7 +1129,7 @@ export default function StepMediaLegal({
 
         {/* Video URL */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-white flex items-center gap-2">
+          <label className="text-sm font-medium text-ink flex items-center gap-2">
             <Video className="w-4 h-4" />
             Video URL (Optional)
           </label>
@@ -1138,14 +1138,14 @@ export default function StepMediaLegal({
             value={data.videoUrl}
             onChange={(e) => updateData({ videoUrl: e.target.value })}
             placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
-            className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+            className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
           />
-          <p className="text-xs text-gray-500">YouTube or Vimeo link</p>
+          <p className="text-xs text-ink-faint">YouTube or Vimeo link</p>
         </div>
       </div>
 
       {/* Legal Documents Section */}
-      <div className="pt-6 border-t border-gray-700">
+      <div className="pt-6 border-t border-border">
         <LegalDocumentsSection
           category={data.category}
           requiredDocuments={requiredDocuments}
@@ -1159,15 +1159,15 @@ export default function StepMediaLegal({
 
       {/* Missing Documents Warning */}
       {missingDocs.length > 0 && (
-        <div className="bg-red-900/20 border border-red-700/50 rounded-xl p-4">
+        <div className="bg-danger/20 border border-danger/50 rounded-xl p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-danger flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-red-400 font-medium">Missing Required Documents</p>
+              <p className="text-danger font-medium">Missing Required Documents</p>
               <ul className="mt-2 space-y-1">
                 {missingDocs.map((doc) => (
-                  <li key={doc} className="text-sm text-red-300 flex items-center gap-2">
-                    <span className="w-1.5 h-1.5 bg-red-400 rounded-full" />
+                  <li key={doc} className="text-sm text-danger flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 bg-danger rounded-full" />
                     {doc}
                   </li>
                 ))}
@@ -1178,15 +1178,15 @@ export default function StepMediaLegal({
       )}
 
       {/* Terms & Conditions */}
-      <div className="pt-6 border-t border-gray-700">
+      <div className="pt-6 border-t border-border">
         <label className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"
             checked={data.termsAccepted}
             onChange={handleTermsChange}
-            className="mt-1 w-5 h-5 rounded border-gray-600 bg-gray-800 text-gold-600 focus:ring-gold-500 focus:ring-offset-gray-900"
+            className="mt-1 w-5 h-5 rounded border-border-strong bg-surface text-gold-600 focus:ring-gold-500 focus:ring-offset-surface-sunken"
           />
-          <span className="text-sm text-gray-300">
+          <span className="text-sm text-ink-muted">
             I confirm that all uploaded documents are accurate and legally valid. I agree to the{' '}
             <a href="/terms" target="_blank" className="text-gold-400 hover:underline">
               Terms of Service
@@ -1196,7 +1196,7 @@ export default function StepMediaLegal({
               Privacy Policy
             </a>
             . I understand that providing false information may result in project rejection and potential legal action.
-            <span className="text-red-400 ml-1">*</span>
+            <span className="text-danger ml-1">*</span>
           </span>
         </label>
       </div>
@@ -1205,7 +1205,7 @@ export default function StepMediaLegal({
       <div className="flex justify-between pt-6">
         <button
           onClick={onBack}
-          className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          className="px-6 py-3 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
           type="button"
         >
           Back
@@ -1226,7 +1226,7 @@ export default function StepMediaLegal({
             onNext()
           }}
           disabled={!canProceed() || isUploading}
-          className="px-8 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center gap-2"
+          className="px-8 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-semibold rounded-lg transition-colors flex items-center gap-2"
           type="button"
         >
           {isUploading ? (

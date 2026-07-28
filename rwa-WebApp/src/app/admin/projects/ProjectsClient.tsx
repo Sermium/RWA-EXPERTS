@@ -57,12 +57,12 @@ interface ProjectMetadata {
 // ============================================
 
 const LOCAL_STATUS_COLORS: Record<number, string> = {
-  0: 'bg-gray-500/20 text-ink-muted',
+  0: 'bg-ink-faint/20 text-ink-muted',
   1: 'bg-warning/20 text-warning',
   2: 'bg-gold-500/20 text-gold-400',
   3: 'bg-success/20 text-success',
   4: 'bg-gold-500/20 text-gold-400',
-  5: 'bg-emerald-500/20 text-emerald-400',
+  5: 'bg-success/20 text-success',
   6: 'bg-danger/20 text-danger',
   7: 'bg-warning/20 text-warning',
 };
@@ -100,7 +100,7 @@ function NetworkBadge({
 }) {
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-raised/50 rounded-lg">
-      <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-yellow-400' : 'bg-green-400'}`} />
+      <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-warning' : 'bg-success'}`} />
       <span className="text-sm text-ink-muted">{chainName}</span>
       {isTestnet && (
         <span className="text-xs px-1.5 py-0.5 bg-warning/20 text-warning rounded">
@@ -539,7 +539,7 @@ export default function ProjectsClient() {
                         <div className="flex gap-2">
                           <button
                             onClick={() => openDetailModal(project)}
-                            className="px-3 py-1.5 bg-surface-overlay hover:bg-gray-500 text-ink text-sm rounded-lg transition flex items-center gap-1"
+                            className="px-3 py-1.5 bg-surface-overlay hover:bg-ink-faint text-ink text-sm rounded-lg transition flex items-center gap-1"
                           >
                             <Eye className="w-3 h-3" />
                             View
@@ -548,7 +548,7 @@ export default function ProjectsClient() {
                           {activeStatuses.includes(project.status) && (
                             <button
                               onClick={() => openCancelModal(project)}
-                              className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-ink text-sm rounded-lg transition flex items-center gap-1"
+                              className="px-3 py-1.5 bg-danger hover:bg-danger text-ink text-sm rounded-lg transition flex items-center gap-1"
                             >
                               <Ban className="w-3 h-3" />
                               Cancel
@@ -796,7 +796,7 @@ export default function ProjectsClient() {
                   <button
                     onClick={handleActivate}
                     disabled={processing}
-                    className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-surface-overlay text-ink rounded-lg transition flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-2 bg-success hover:bg-success disabled:bg-surface-overlay text-ink rounded-lg transition flex items-center justify-center gap-2"
                   >
                     {processing ? (
                       <>
@@ -818,7 +818,7 @@ export default function ProjectsClient() {
                       setShowDetailModal(false);
                       openCancelModal(selectedProject);
                     }}
-                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-ink rounded-lg transition flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-2 bg-danger hover:bg-danger text-ink rounded-lg transition flex items-center justify-center gap-2"
                   >
                     <Ban className="w-4 h-4" />
                     Cancel Project
@@ -903,7 +903,7 @@ export default function ProjectsClient() {
                   <button
                     onClick={handleCancel}
                     disabled={processing}
-                    className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-surface-overlay text-ink rounded-lg transition flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-2 bg-danger hover:bg-danger disabled:bg-surface-overlay text-ink rounded-lg transition flex items-center justify-center gap-2"
                   >
                     {processing ? (
                       <>

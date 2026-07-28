@@ -165,27 +165,27 @@ export function TokenBanner({
 
   return (
     <div className="relative rounded-xl overflow-visible">
-      <div className="absolute inset-0 bg-gradient-to-br from-gold-900/40 via-purple-900/30 to-gray-900 rounded-xl"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-gold-900/40 via-gold-light/30 to-surface-sunken rounded-xl"></div>
       
-      <div className="relative p-6 border border-gray-700/50 rounded-xl backdrop-blur-sm">
+      <div className="relative p-6 border border-border/50 rounded-xl backdrop-blur-sm">
         <div className="flex flex-col lg:flex-row lg:items-start gap-6">
           
           {/* Token Identity */}
           <div className="flex items-start gap-4">
             <div className="relative">
               {tokenImageLoading ? (
-                <div className="w-16 h-16 bg-gray-800 rounded-2xl flex items-center justify-center">
+                <div className="w-16 h-16 bg-surface rounded-2xl flex items-center justify-center">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gold-500"></div>
                 </div>
               ) : tokenImage ? (
-                <img src={tokenImage} alt="Token" className="w-16 h-16 rounded-2xl object-cover border border-gray-700" onError={() => setTokenImage(null)} />
+                <img src={tokenImage} alt="Token" className="w-16 h-16 rounded-2xl object-cover border border-border" onError={() => setTokenImage(null)} />
               ) : (
                 <div className="w-16 h-16 bg-gradient-to-br from-gold-500 to-gold-light-600 rounded-2xl flex items-center justify-center text-2xl font-bold">
                   {(selectedListedToken?.symbol || selectedSecurityToken?.symbol || '?')[0]}
                 </div>
               )}
-              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-gray-900">
-                <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-success rounded-full flex items-center justify-center border-2 border-surface-sunken">
+                <svg className="w-3 h-3 text-ink" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
               </div>
@@ -194,10 +194,10 @@ export function TokenBanner({
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <h2 className="text-2xl font-bold">{selectedListedToken?.symbol || selectedSecurityToken?.symbol}</h2>
-                <span className="text-gray-400">/USDC</span>
-                <span className="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded-full">{selectedListedToken ? 'RWA' : 'Security'}</span>
+                <span className="text-ink-muted">/USDC</span>
+                <span className="text-xs bg-success/20 text-success px-2 py-1 rounded-full">{selectedListedToken ? 'RWA' : 'Security'}</span>
               </div>
-              <p className="text-gray-400 text-sm">{selectedListedToken?.name || selectedSecurityToken?.name}</p>
+              <p className="text-ink-muted text-sm">{selectedListedToken?.name || selectedSecurityToken?.name}</p>
               {selectedListedToken?.token_address && (
                 <a href={`${explorerUrl}/token/${selectedListedToken.token_address}`} target="_blank" rel="noopener noreferrer" className="text-xs text-gold-400 hover:text-gold-300 flex items-center gap-1 mt-2">
                   <span className="font-mono">{selectedListedToken.token_address.slice(0, 6)}...{selectedListedToken.token_address.slice(-4)}</span>
@@ -210,43 +210,43 @@ export function TokenBanner({
           {/* Stats */}
           <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
             {/* Price */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-              <span className="text-xs text-gray-500 uppercase">Price</span>
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
+              <span className="text-xs text-ink-faint uppercase">Price</span>
               <div className="text-xl font-bold mt-1">${price.toFixed(4)}</div>
-              <span className="text-xs text-gray-500">{securityOrderBook.bestBid > 0 ? 'Market' : 'Initial'}</span>
+              <span className="text-xs text-ink-faint">{securityOrderBook.bestBid > 0 ? 'Market' : 'Initial'}</span>
             </div>
             
             {/* Market Cap */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-              <span className="text-xs text-gray-500 uppercase">Market Cap</span>
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
+              <span className="text-xs text-ink-faint uppercase">Market Cap</span>
               <div className="text-xl font-bold mt-1">
                 {onChainData.loading ? (
-                  <div className="animate-pulse bg-gray-700 h-7 w-20 rounded"></div>
+                  <div className="animate-pulse bg-surface-overlay h-7 w-20 rounded"></div>
                 ) : (
                   `$${formatSupply(marketCap)}`
                 )}
               </div>
-              <span className="text-xs text-gray-500">Price × Supply</span>
+              <span className="text-xs text-ink-faint">Price × Supply</span>
             </div>
             
             {/* Total Supply */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-              <span className="text-xs text-gray-500 uppercase">Total Supply</span>
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
+              <span className="text-xs text-ink-faint uppercase">Total Supply</span>
               <div className="text-xl font-bold mt-1">
                 {onChainData.loading ? (
-                  <div className="animate-pulse bg-gray-700 h-7 w-20 rounded"></div>
+                  <div className="animate-pulse bg-surface-overlay h-7 w-20 rounded"></div>
                 ) : (
                   formatSupply(totalSupply)
                 )}
               </div>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-ink-faint">
                 {onChainData.totalSupply ? 'On-chain' : 'Database'} • {selectedListedToken?.symbol}
               </span>
             </div>
             
             {/* Owner with Balance */}
-            <div className="bg-gray-800/50 rounded-xl p-4 border border-gray-700/50">
-              <span className="text-xs text-gray-500 uppercase">Token Owner</span>
+            <div className="bg-surface/50 rounded-xl p-4 border border-border/50">
+              <span className="text-xs text-ink-faint uppercase">Token Owner</span>
               {selectedListedToken?.projects?.owner_address ? (
                 <>
                   <a
@@ -259,25 +259,25 @@ export function TokenBanner({
                   </a>
                   
                   {/* Owner Balance */}
-                  <div className="mt-2 pt-2 border-t border-gray-700/50">
+                  <div className="mt-2 pt-2 border-t border-border/50">
                     {onChainData.loading ? (
                       <div className="flex items-center gap-2">
                         <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-gold-500"></div>
-                        <span className="text-xs text-gray-500">Loading...</span>
+                        <span className="text-xs text-ink-faint">Loading...</span>
                       </div>
                     ) : ownerBalance !== null ? (
                       <div>
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-gray-500">Balance:</span>
-                          <span className="text-sm font-medium text-white">
+                          <span className="text-xs text-ink-faint">Balance:</span>
+                          <span className="text-sm font-medium text-ink">
                             {formatSupply(ownerBalance)}
                           </span>
                         </div>
                         {ownerPercentage && (
                           <div className="flex items-center justify-between mt-1">
-                            <span className="text-xs text-gray-500">Ownership:</span>
+                            <span className="text-xs text-ink-faint">Ownership:</span>
                             <span className={`text-xs font-medium ${
-                              parseFloat(ownerPercentage) > 50 ? 'text-yellow-400' : 'text-green-400'
+                              parseFloat(ownerPercentage) > 50 ? 'text-warning' : 'text-success'
                             }`}>
                               {ownerPercentage}%
                             </span>
@@ -285,19 +285,19 @@ export function TokenBanner({
                         )}
                       </div>
                     ) : (
-                      <span className="text-xs text-gray-500">Balance unavailable</span>
+                      <span className="text-xs text-ink-faint">Balance unavailable</span>
                     )}
                   </div>
                 </>
               ) : (
-                <span className="text-sm text-gray-500 mt-1 block">N/A</span>
+                <span className="text-sm text-ink-faint mt-1 block">N/A</span>
               )}
             </div>
           </div>
 
           {/* Documents Dropdown */}
           <div className="lg:w-56 documents-dropdown relative">
-            <button onClick={() => setShowDocuments(!showDocuments)} className="w-full flex items-center justify-between gap-2 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700 rounded-xl px-4 py-3">
+            <button onClick={() => setShowDocuments(!showDocuments)} className="w-full flex items-center justify-between gap-2 bg-surface/80 hover:bg-surface-overlay/80 border border-border rounded-xl px-4 py-3">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                 <span className="font-medium">Documents</span>
@@ -305,50 +305,50 @@ export function TokenBanner({
                   <span className="text-xs bg-gold-500/20 text-gold-400 px-2 py-0.5 rounded-full">{selectedListedToken?.documents?.files?.length}</span>
                 )}
               </div>
-              <svg className={`w-4 h-4 text-gray-400 transition-transform ${showDocuments ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              <svg className={`w-4 h-4 text-ink-muted transition-transform ${showDocuments ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
             </button>
 
             {showDocuments && (
-              <div className="absolute right-0 mt-2 w-72 bg-gray-800 border border-gray-700 rounded-xl shadow-2xl z-50 overflow-hidden" style={{ maxHeight: '400px' }}>
+              <div className="absolute right-0 mt-2 w-72 bg-surface border border-border rounded-xl shadow-2xl z-50 overflow-hidden" style={{ maxHeight: '400px' }}>
                 <div className="overflow-y-auto" style={{ maxHeight: '380px' }}>
                   {selectedListedToken?.projects?.metadata_uri && (
-                    <a href={selectedListedToken.projects.metadata_uri} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700/50 border-b border-gray-700/50">
+                    <a href={selectedListedToken.projects.metadata_uri} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-surface-overlay/50 border-b border-border/50">
                       <div className="w-8 h-8 bg-gold-500/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" /></svg></div>
-                      <div className="flex-1"><div className="text-sm font-medium">Token Metadata</div><div className="text-xs text-gray-500">IPFS</div></div>
-                      <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                      <div className="flex-1"><div className="text-sm font-medium">Token Metadata</div><div className="text-xs text-ink-faint">IPFS</div></div>
+                      <svg className="w-4 h-4 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                     </a>
                   )}
                   {selectedListedToken?.projects?.nft_address && (
-                    <a href={`${explorerUrl}/token/${selectedListedToken.projects.nft_address}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700/50 border-b border-gray-700/50">
-                      <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg></div>
-                      <div className="flex-1"><div className="text-sm font-medium">Asset NFT</div><div className="text-xs text-gray-500">Contract</div></div>
-                      <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                    <a href={`${explorerUrl}/token/${selectedListedToken.projects.nft_address}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-surface-overlay/50 border-b border-border/50">
+                      <div className="w-8 h-8 bg-success/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg></div>
+                      <div className="flex-1"><div className="text-sm font-medium">Asset NFT</div><div className="text-xs text-ink-faint">Contract</div></div>
+                      <svg className="w-4 h-4 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                     </a>
                   )}
                   {selectedListedToken?.documents?.website && (
-                    <a href={selectedListedToken.documents.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700/50 border-b border-gray-700/50">
+                    <a href={selectedListedToken.documents.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-surface-overlay/50 border-b border-border/50">
                       <div className="w-8 h-8 bg-gold-500/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" /></svg></div>
-                      <div className="flex-1"><div className="text-sm font-medium">Website</div><div className="text-xs text-gray-500 truncate">{selectedListedToken.documents.website.replace(/^https?:\/\//, '')}</div></div>
-                      <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                      <div className="flex-1"><div className="text-sm font-medium">Website</div><div className="text-xs text-ink-faint truncate">{selectedListedToken.documents.website.replace(/^https?:\/\//, '')}</div></div>
+                      <svg className="w-4 h-4 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                     </a>
                   )}
                   {selectedListedToken?.documents?.files?.map((doc, i) => (
-                    <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700/50 border-b border-gray-700/50 last:border-0">
+                    <a key={i} href={doc.url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-4 py-3 hover:bg-surface-overlay/50 border-b border-border/50 last:border-0">
                       <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center"><svg className="w-4 h-4 text-orange-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg></div>
-                      <div className="flex-1"><div className="text-sm font-medium capitalize">{doc.type?.replace(/_/g, ' ')}</div><div className="text-xs text-gray-500">{doc.mimeType?.split('/')[1]?.toUpperCase()} • {(doc.size / 1024).toFixed(0)} KB</div></div>
-                      <svg className="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                      <div className="flex-1"><div className="text-sm font-medium capitalize">{doc.type?.replace(/_/g, ' ')}</div><div className="text-xs text-ink-faint">{doc.mimeType?.split('/')[1]?.toUpperCase()} • {(doc.size / 1024).toFixed(0)} KB</div></div>
+                      <svg className="w-4 h-4 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
                     </a>
                   ))}
                   {!selectedListedToken?.projects?.metadata_uri && !selectedListedToken?.documents?.files?.length && !selectedListedToken?.documents?.website && (
-                    <div className="px-4 py-6 text-center text-gray-500 text-sm">No documents available</div>
+                    <div className="px-4 py-6 text-center text-ink-faint text-sm">No documents available</div>
                   )}
                 </div>
               </div>
             )}
             
             {(selectedListedToken?.asset_description || selectedListedToken?.projects?.description) && (
-              <div className="mt-3 p-3 bg-gray-800/30 rounded-lg border border-gray-700/30">
-                <p className="text-xs text-gray-400 line-clamp-3">{selectedListedToken?.asset_description || selectedListedToken?.projects?.description}</p>
+              <div className="mt-3 p-3 bg-surface/30 rounded-lg border border-border/30">
+                <p className="text-xs text-ink-muted line-clamp-3">{selectedListedToken?.asset_description || selectedListedToken?.projects?.description}</p>
               </div>
             )}
           </div>

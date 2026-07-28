@@ -32,9 +32,9 @@ export function NetworkBadge({
     <div className={`inline-flex items-center gap-2 ${sizeClasses[size]} rounded-full border ${
       isConnected 
         ? isTestnet 
-          ? 'bg-yellow-500/20 border-yellow-500/30 text-yellow-400'
-          : 'bg-green-500/20 border-green-500/30 text-green-400'
-        : 'bg-red-500/20 border-red-500/30 text-red-400'
+          ? 'bg-warning/20 border-warning/30 text-warning'
+          : 'bg-success/20 border-success/30 text-success'
+        : 'bg-danger/20 border-danger/30 text-danger'
     }`}>
       {isConnected ? (
         <Wifi size={iconSize[size]} />
@@ -43,7 +43,7 @@ export function NetworkBadge({
       )}
       <span className="font-medium">{chainName}</span>
       {isTestnet && isConnected && (
-        <span className="px-1.5 py-0.5 text-xs bg-yellow-500/30 rounded text-yellow-300">
+        <span className="px-1.5 py-0.5 text-xs bg-warning/30 rounded text-warning">
           Testnet
         </span>
       )}

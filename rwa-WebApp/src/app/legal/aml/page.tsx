@@ -73,7 +73,7 @@ export default function AMLPolicyPage() {
             <h3 className="text-lg font-medium text-ink-muted mt-6 mb-3">2.2 KYC Tiers</h3>
             <div className="space-y-3">
               <div className="bg-surface rounded-lg p-4 flex items-start gap-3">
-                <Medal className="w-6 h-6 text-amber-600 flex-shrink-0" />
+                <Medal className="w-6 h-6 text-warning flex-shrink-0" />
                 <div>
                   <h4 className="text-ink font-medium">Bronze Tier</h4>
                   <p className="text-ink-muted text-sm">Basic identity verification - Government ID, selfie verification</p>
@@ -94,7 +94,7 @@ export default function AMLPolicyPage() {
                 </div>
               </div>
               <div className="bg-surface rounded-lg p-4 flex items-start gap-3">
-                <Gem className="w-6 h-6 text-cyan-400 flex-shrink-0" />
+                <Gem className="w-6 h-6 text-gold flex-shrink-0" />
                 <div>
                   <h4 className="text-ink font-medium">Diamond Tier</h4>
                   <p className="text-ink-muted text-sm">Institutional verification - Corporate documentation, beneficial ownership</p>

@@ -283,8 +283,8 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
       <div className="bg-gradient-to-r from-gold-500/10 to-gold-light-500/10 rounded-xl p-6 border border-gold-500/20">
         <div className="flex items-start justify-between">
           <div>
-            <h3 className="text-xl font-semibold text-white mb-2">Project Milestones</h3>
-            <p className="text-gray-400">
+            <h3 className="text-xl font-semibold text-ink mb-2">Project Milestones</h3>
+            <p className="text-ink-muted">
               Define the milestones for your <span className="text-gold-400 font-medium">{data.category || 'project'}</span>. 
               Funds will be released progressively as each milestone is approved by investors.
             </p>
@@ -298,11 +298,11 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
 
         {/* Auto-loaded notification */}
         {hasAutoLoaded && data.milestones.length > 0 && (
-          <div className="mt-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg flex items-center gap-3">
-            <svg className="w-5 h-5 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+          <div className="mt-4 p-3 bg-success/10 border border-success/20 rounded-lg flex items-center gap-3">
+            <svg className="w-5 h-5 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
-            <p className="text-sm text-green-400">
+            <p className="text-sm text-success">
               We've pre-loaded a suggested milestone template for <strong>{data.category}</strong> projects. 
               Feel free to customize it to match your specific needs.
             </p>
@@ -311,30 +311,30 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
         
         {/* Funding Summary */}
         <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="text-xs text-gray-400">Total Funding</div>
-            <div className="text-lg font-bold text-white">${data.amountToRaise.toLocaleString()}</div>
+          <div className="bg-surface/50 rounded-lg p-3">
+            <div className="text-xs text-ink-muted">Total Funding</div>
+            <div className="text-lg font-bold text-ink">${data.amountToRaise.toLocaleString()}</div>
             {data.localCurrency !== 'USD' && (
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-ink-faint">
                 {formatCurrencyAmount(data.amountToRaiseLocal, data.localCurrency)}
               </div>
             )}
           </div>
-          <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="text-xs text-gray-400">Milestones</div>
-            <div className="text-lg font-bold text-white">{data.milestones.length}</div>
-            <div className="text-xs text-gray-500">Minimum 2 required</div>
+          <div className="bg-surface/50 rounded-lg p-3">
+            <div className="text-xs text-ink-muted">Milestones</div>
+            <div className="text-lg font-bold text-ink">{data.milestones.length}</div>
+            <div className="text-xs text-ink-faint">Minimum 2 required</div>
           </div>
-          <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="text-xs text-gray-400">Allocated</div>
-            <div className={`text-lg font-bold ${totalPercentage === 100 ? 'text-green-400' : totalPercentage > 100 ? 'text-red-400' : 'text-yellow-400'}`}>
+          <div className="bg-surface/50 rounded-lg p-3">
+            <div className="text-xs text-ink-muted">Allocated</div>
+            <div className={`text-lg font-bold ${totalPercentage === 100 ? 'text-success' : totalPercentage > 100 ? 'text-danger' : 'text-warning'}`}>
               {totalPercentage}%
             </div>
-            <div className="text-xs text-gray-500">{100 - totalPercentage}% remaining</div>
+            <div className="text-xs text-ink-faint">{100 - totalPercentage}% remaining</div>
           </div>
-          <div className="bg-gray-800/50 rounded-lg p-3">
-            <div className="text-xs text-gray-400">Status</div>
-            <div className={`text-lg font-bold ${isValid ? 'text-green-400' : 'text-yellow-400'}`}>
+          <div className="bg-surface/50 rounded-lg p-3">
+            <div className="text-xs text-ink-muted">Status</div>
+            <div className={`text-lg font-bold ${isValid ? 'text-success' : 'text-warning'}`}>
               {isValid ? 'Ready' : 'Incomplete'}
             </div>
           </div>
@@ -342,17 +342,17 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
       </div>
 
       {/* Category-specific tips */}
-      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
+      <div className="bg-warning/10 border border-warning/20 rounded-xl p-4">
         <div className="flex items-start gap-3">
-          <svg className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
           </svg>
           <div>
-            <p className="text-amber-400 font-medium mb-2">Tips for {data.category || 'Your Project'} Milestones</p>
-            <ul className="text-sm text-amber-400/80 space-y-1">
+            <p className="text-warning font-medium mb-2">Tips for {data.category || 'Your Project'} Milestones</p>
+            <ul className="text-sm text-warning/80 space-y-1">
               {getCategoryTips().map((tip, index) => (
                 <li key={index} className="flex items-center gap-2">
-                  <span className="w-1 h-1 bg-amber-400 rounded-full" />
+                  <span className="w-1 h-1 bg-warning rounded-full" />
                   {tip}
                 </li>
               ))}
@@ -364,11 +364,11 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-3">
         <div className="flex-1 min-w-[200px]">
-          <label className="block text-sm text-gray-400 mb-2">Change Template</label>
+          <label className="block text-sm text-ink-muted mb-2">Change Template</label>
           <div className="flex gap-2">
             <select
               onChange={(e) => e.target.value && applyTemplate(e.target.value)}
-              className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white"
+              className="flex-1 bg-surface border border-border-strong rounded-lg px-4 py-2 text-ink"
               value=""
             >
               <option value="">Select a different template...</option>
@@ -385,7 +385,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                     applySuggestedTemplate();
                   }
                 }}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors whitespace-nowrap"
+                className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors whitespace-nowrap"
                 title={`Reset to ${data.category} template`}
               >
                 Reset
@@ -397,7 +397,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
         <div className="flex items-end gap-2">
           <button
             onClick={addMilestone}
-            className="px-4 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg transition-colors flex items-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -408,7 +408,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
           {data.milestones.length >= 2 && (
             <button
               onClick={distributeEvenly}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+              className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
             >
               Distribute Evenly
             </button>
@@ -419,21 +419,21 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
       {/* Milestones List */}
       <div className="space-y-4">
         {data.milestones.length === 0 ? (
-          <div className="text-center py-12 bg-gray-800/30 rounded-xl border border-dashed border-gray-600">
-            <svg className="w-12 h-12 mx-auto text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center py-12 bg-surface/30 rounded-xl border border-dashed border-border-strong">
+            <svg className="w-12 h-12 mx-auto text-ink-faint mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
-            <p className="text-gray-400 mb-4">Loading milestones...</p>
+            <p className="text-ink-muted mb-4">Loading milestones...</p>
             <div className="flex justify-center gap-3">
               <button
                 onClick={applySuggestedTemplate}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-success hover:bg-success text-ink rounded-lg transition-colors"
               >
                 Load {data.category || 'Suggested'} Template
               </button>
               <button
                 onClick={addMilestone}
-                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
               >
                 Create Custom
               </button>
@@ -447,8 +447,8 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
             return (
               <div
                 key={milestone.id}
-                className={`bg-gray-800 rounded-xl border transition-all ${
-                  isExpanded ? 'border-gold-500' : 'border-gray-700'
+                className={`bg-surface rounded-xl border transition-all ${
+                  isExpanded ? 'border-gold-500' : 'border-border'
                 }`}
               >
                 {/* Milestone Header */}
@@ -461,9 +461,9 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                       <span className="text-gold-400 font-bold">{index + 1}</span>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">{milestone.title || 'Untitled Milestone'}</h4>
-                      <div className="flex items-center gap-3 text-sm text-gray-400">
-                        <span className="text-green-400 font-medium">{milestone.percentageOfFunds}%</span>
+                      <h4 className="font-semibold text-ink">{milestone.title || 'Untitled Milestone'}</h4>
+                      <div className="flex items-center gap-3 text-sm text-ink-muted">
+                        <span className="text-success font-medium">{milestone.percentageOfFunds}%</span>
                         <span>•</span>
                         <span>${amounts.usd.toLocaleString()}</span>
                         {data.localCurrency !== 'USD' && (
@@ -483,9 +483,9 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                   </div>
                   
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500">{milestone.deliverables.length} deliverables</span>
+                    <span className="text-xs text-ink-faint">{milestone.deliverables.length} deliverables</span>
                     <svg
-                      className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                      className={`w-5 h-5 text-ink-muted transition-transform ${isExpanded ? 'rotate-180' : ''}`}
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -497,39 +497,39 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
 
                 {/* Expanded Content */}
                 {isExpanded && (
-                  <div className="px-4 pb-4 space-y-4 border-t border-gray-700 pt-4">
+                  <div className="px-4 pb-4 space-y-4 border-t border-border pt-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Title */}
                       <div>
-                        <label className="block text-sm text-gray-400 mb-1">Title</label>
+                        <label className="block text-sm text-ink-muted mb-1">Title</label>
                         <input
                           type="text"
                           value={milestone.title}
                           onChange={(e) => updateMilestone(milestone.id, { title: e.target.value })}
-                          className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                          className="w-full bg-surface-overlay border border-border-strong rounded-lg px-3 py-2 text-ink"
                           placeholder="Milestone title"
                         />
                       </div>
                       
                       {/* Target Date */}
                       <div>
-                        <label className="block text-sm text-gray-400 mb-1">Target Date</label>
+                        <label className="block text-sm text-ink-muted mb-1">Target Date</label>
                         <input
                           type="date"
                           value={milestone.targetDate}
                           onChange={(e) => updateMilestone(milestone.id, { targetDate: e.target.value })}
-                          className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+                          className="w-full bg-surface-overlay border border-border-strong rounded-lg px-3 py-2 text-ink"
                         />
                       </div>
                     </div>
                     
                     {/* Description */}
                     <div>
-                      <label className="block text-sm text-gray-400 mb-1">Description</label>
+                      <label className="block text-sm text-ink-muted mb-1">Description</label>
                       <textarea
                         value={milestone.description}
                         onChange={(e) => updateMilestone(milestone.id, { description: e.target.value })}
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white resize-none"
+                        className="w-full bg-surface-overlay border border-border-strong rounded-lg px-3 py-2 text-ink resize-none"
                         rows={2}
                         placeholder="Describe what will be achieved in this milestone..."
                       />
@@ -538,7 +538,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                     {/* Percentage & Amount */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div>
-                        <label className="block text-sm text-gray-400 mb-1">Percentage of Funds</label>
+                        <label className="block text-sm text-ink-muted mb-1">Percentage of Funds</label>
                         <div className="relative">
                           <input
                             type="number"
@@ -546,23 +546,23 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                             onChange={(e) => updateMilestone(milestone.id, { 
                               percentageOfFunds: Math.min(100, Math.max(0, parseInt(e.target.value) || 0)) 
                             })}
-                            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 pr-8 text-white"
+                            className="w-full bg-surface-overlay border border-border-strong rounded-lg px-3 py-2 pr-8 text-ink"
                             min="1"
                             max="100"
                           />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span>
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted">%</span>
                         </div>
                       </div>
                       <div>
-                        <label className="block text-sm text-gray-400 mb-1">Amount (USD)</label>
-                        <div className="bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-green-400 font-medium">
+                        <label className="block text-sm text-ink-muted mb-1">Amount (USD)</label>
+                        <div className="bg-surface-overlay/50 border border-border-strong rounded-lg px-3 py-2 text-success font-medium">
                           ${amounts.usd.toLocaleString()}
                         </div>
                       </div>
                       {data.localCurrency !== 'USD' && (
                         <div>
-                          <label className="block text-sm text-gray-400 mb-1">Amount ({data.localCurrency})</label>
-                          <div className="bg-gray-700/50 border border-gray-600 rounded-lg px-3 py-2 text-gold-400 font-medium">
+                          <label className="block text-sm text-ink-muted mb-1">Amount ({data.localCurrency})</label>
+                          <div className="bg-surface-overlay/50 border border-border-strong rounded-lg px-3 py-2 text-gold-400 font-medium">
                             {formatCurrencyAmount(amounts.local, data.localCurrency)}
                           </div>
                         </div>
@@ -571,20 +571,20 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
 
                     {/* Deliverables */}
                     <div>
-                      <label className="block text-sm text-gray-400 mb-2">
+                      <label className="block text-sm text-ink-muted mb-2">
                         Deliverables 
-                        <span className="text-gray-500 ml-2">(Proof of milestone completion)</span>
+                        <span className="text-ink-faint ml-2">(Proof of milestone completion)</span>
                       </label>
                       <div className="space-y-2">
                         {milestone.deliverables.map((deliverable, dIndex) => (
-                          <div key={dIndex} className="flex items-center gap-2 bg-gray-700/50 rounded-lg px-3 py-2">
-                            <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                          <div key={dIndex} className="flex items-center gap-2 bg-surface-overlay/50 rounded-lg px-3 py-2">
+                            <svg className="w-4 h-4 text-success flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
-                            <span className="flex-1 text-gray-300">{deliverable}</span>
+                            <span className="flex-1 text-ink-muted">{deliverable}</span>
                             <button
                               onClick={() => removeDeliverable(milestone.id, dIndex)}
-                              className="text-gray-500 hover:text-red-400 transition-colors"
+                              className="text-ink-faint hover:text-danger transition-colors"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -599,12 +599,12 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                             value={newDeliverable[milestone.id] || ''}
                             onChange={(e) => setNewDeliverable({ ...newDeliverable, [milestone.id]: e.target.value })}
                             onKeyPress={(e) => e.key === 'Enter' && addDeliverable(milestone.id)}
-                            className="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400"
+                            className="flex-1 bg-surface-overlay border border-border-strong rounded-lg px-3 py-2 text-ink placeholder-ink-faint"
                             placeholder="Add a deliverable (e.g., inspection report, certificate, documentation)..."
                           />
                           <button
                             onClick={() => addDeliverable(milestone.id)}
-                            className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg transition-colors"
+                            className="px-4 py-2 bg-border-strong hover:bg-ink-faint text-ink rounded-lg transition-colors"
                           >
                             Add
                           </button>
@@ -616,7 +616,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
                     <div className="flex justify-end pt-2">
                       <button
                         onClick={() => removeMilestone(milestone.id)}
-                        className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors flex items-center gap-2"
+                        className="px-4 py-2 bg-danger/20 hover:bg-danger/30 text-danger rounded-lg transition-colors flex items-center gap-2"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -634,22 +634,22 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
 
       {/* Progress Bar Visualization */}
       {data.milestones.length > 0 && (
-        <div className="bg-gray-800/50 rounded-xl p-4">
-          <div className="text-sm text-gray-400 mb-3">Funds Distribution</div>
-          <div className="h-8 bg-gray-700 rounded-lg overflow-hidden flex">
+        <div className="bg-surface/50 rounded-xl p-4">
+          <div className="text-sm text-ink-muted mb-3">Funds Distribution</div>
+          <div className="h-8 bg-surface-overlay rounded-lg overflow-hidden flex">
             {data.milestones.map((milestone, index) => {
               const colors = [
                 'bg-gold-500',
-                'bg-green-500',
+                'bg-success',
                 'bg-gold-500',
-                'bg-amber-500',
-                'bg-pink-500',
-                'bg-cyan-500',
+                'bg-warning',
+                'bg-gold',
+                'bg-gold',
               ];
               return (
                 <div
                   key={milestone.id}
-                  className={`${colors[index % colors.length]} flex items-center justify-center text-xs font-medium text-white transition-all`}
+                  className={`${colors[index % colors.length]} flex items-center justify-center text-xs font-medium text-ink transition-all`}
                   style={{ width: `${milestone.percentageOfFunds}%` }}
                   title={`${milestone.title}: ${milestone.percentageOfFunds}%`}
                 >
@@ -659,7 +659,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
             })}
             {totalPercentage < 100 && (
               <div 
-                className="bg-gray-600 flex items-center justify-center text-xs text-gray-400"
+                className="bg-border-strong flex items-center justify-center text-xs text-ink-muted"
                 style={{ width: `${100 - totalPercentage}%` }}
               >
                 {100 - totalPercentage >= 10 && `${100 - totalPercentage}%`}
@@ -670,14 +670,14 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
             {data.milestones.map((milestone, index) => {
               const colors = [
                 'bg-gold-500',
-                'bg-green-500',
+                'bg-success',
                 'bg-gold-500',
-                'bg-amber-500',
-                'bg-pink-500',
-                'bg-cyan-500',
+                'bg-warning',
+                'bg-gold',
+                'bg-gold',
               ];
               return (
-                <div key={milestone.id} className="flex items-center gap-2 text-xs text-gray-400">
+                <div key={milestone.id} className="flex items-center gap-2 text-xs text-ink-muted">
                   <span className={`w-3 h-3 rounded ${colors[index % colors.length]}`} />
                   <span>{milestone.title || `Milestone ${index + 1}`}</span>
                 </div>
@@ -689,13 +689,13 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
 
       {/* Validation Message */}
       {data.milestones.length > 0 && !isValid && (
-        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 flex items-start gap-3">
-          <svg className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 flex items-start gap-3">
+          <svg className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
           <div>
-            <p className="text-yellow-400 font-medium">Please fix the following:</p>
-            <ul className="text-sm text-yellow-400/80 mt-1 list-disc list-inside">
+            <p className="text-warning font-medium">Please fix the following:</p>
+            <ul className="text-sm text-warning/80 mt-1 list-disc list-inside">
               {data.milestones.length < 2 && <li>At least 2 milestones are required</li>}
               {totalPercentage !== 100 && (
                 <li>
@@ -712,7 +712,7 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
       <div className="flex justify-between pt-4">
         <button
           onClick={onBack}
-          className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          className="px-6 py-3 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
         >
           Back
         </button>
@@ -721,8 +721,8 @@ export default function StepMilestones({ data, updateData, onNext, onBack }: Ste
           disabled={!isValid}
           className={`px-8 py-3 rounded-lg font-semibold transition-all ${
             isValid
-              ? 'bg-gold-600 hover:bg-gold-700 text-white'
-              : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+              ? 'bg-gold-600 hover:bg-gold-700 text-ink'
+              : 'bg-surface-overlay text-ink-muted cursor-not-allowed'
           }`}
         >
           Continue to Media & Legal

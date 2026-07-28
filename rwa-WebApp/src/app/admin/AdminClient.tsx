@@ -750,8 +750,8 @@ export default function AdminClient() {
       <div className="min-h-screen bg-surface-sunken">
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-md mx-auto bg-surface border border-border rounded-xl p-8 text-center">
-            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-red-400" />
+            <div className="w-16 h-16 bg-danger/20 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Shield className="w-8 h-8 text-danger" />
             </div>
             <h2 className="text-2xl font-bold text-ink mb-4">Access Denied</h2>
             <p className="text-ink-muted mb-4">You don&apos;t have permission to access the admin panel on {chainName}.</p>
@@ -790,7 +790,7 @@ export default function AdminClient() {
         </div>
         <div className="bg-surface rounded-lg p-4 border border-border">
           <div className="text-ink-muted text-sm">Total Value</div>
-          <div className="text-2xl font-bold text-green-400">${allocationStats.totalValue.toLocaleString()}</div>
+          <div className="text-2xl font-bold text-success">${allocationStats.totalValue.toLocaleString()}</div>
         </div>
         <div className="bg-surface rounded-lg p-4 border border-border">
           <div className="text-ink-muted text-sm">Confirmed</div>
@@ -798,7 +798,7 @@ export default function AdminClient() {
         </div>
         <div className="bg-surface rounded-lg p-4 border border-border">
           <div className="text-ink-muted text-sm">Pending</div>
-          <div className="text-2xl font-bold text-yellow-400">{allocationStats.byStatus.pending.toLocaleString()}</div>
+          <div className="text-2xl font-bold text-warning">{allocationStats.byStatus.pending.toLocaleString()}</div>
         </div>
       </div>
 
@@ -836,7 +836,7 @@ export default function AdminClient() {
             <button
               onClick={handleMarkDistributed}
               disabled={isDistributing}
-              className="px-4 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-sm flex items-center gap-2 text-ink disabled:opacity-50"
+              className="px-4 py-2 bg-success hover:bg-success rounded-lg text-sm flex items-center gap-2 text-ink disabled:opacity-50"
             >
               {isDistributing ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle className="w-4 h-4" />}
               Mark {selectedAllocations.length} Distributed
@@ -894,12 +894,12 @@ export default function AdminClient() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right font-mono text-ink">{parseFloat(alloc.token_amount).toLocaleString()}</td>
-                  <td className="px-4 py-3 text-right text-green-400">${parseFloat(alloc.usd_value || 0).toLocaleString()}</td>
+                  <td className="px-4 py-3 text-right text-success">${parseFloat(alloc.usd_value || 0).toLocaleString()}</td>
                   <td className="px-4 py-3 text-center">
                     <span className={`px-2 py-1 rounded text-xs ${
-                      alloc.status === 'distributed' ? 'bg-green-500/20 text-green-400' :
+                      alloc.status === 'distributed' ? 'bg-success/20 text-success' :
                       alloc.status === 'confirmed' ? 'bg-gold-500/20 text-gold-400' :
-                      'bg-yellow-500/20 text-yellow-400'
+                      'bg-warning/20 text-warning'
                     }`}>
                       {alloc.status}
                     </span>
@@ -1007,26 +1007,26 @@ export default function AdminClient() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-          <QuickStatCard label="Crowdfunding" value={crowdfundingStats.pendingReview > 0 ? `${crowdfundingStats.pendingReview} pending` : crowdfundingStats.total} onClick={() => setActiveTab('crowdfunding')} color={crowdfundingStats.pendingReview > 0 ? "text-yellow-400" : "text-ink"} hoverBorder="hover:border-gold-500/50" />
-          <QuickStatCard label="Pending KYC" value={kycStats.pending} onClick={() => setActiveTab('kyc')} color="text-yellow-400" hoverBorder="hover:border-yellow-500/50" />
+          <QuickStatCard label="Crowdfunding" value={crowdfundingStats.pendingReview > 0 ? `${crowdfundingStats.pendingReview} pending` : crowdfundingStats.total} onClick={() => setActiveTab('crowdfunding')} color={crowdfundingStats.pendingReview > 0 ? "text-warning" : "text-ink"} hoverBorder="hover:border-gold-500/50" />
+          <QuickStatCard label="Pending KYC" value={kycStats.pending} onClick={() => setActiveTab('kyc')} color="text-warning" hoverBorder="hover:border-warning/50" />
           <QuickStatCard label="Token Requests" value={tokenizationStats.pending} onClick={() => setActiveTab('tokenization')} color="text-gold-400" hoverBorder="hover:border-gold-500/50" />
-          <QuickStatCard label="Active Trades" value={tradeStats.activeDeals} onClick={() => setActiveTab('trade')} color="text-cyan-400" hoverBorder="hover:border-cyan-500/50" />
-          <QuickStatCard label="Open Disputes" value={disputeStats.pending + disputeStats.inMediation} onClick={() => setActiveTab('disputes')} color="text-red-400" hoverBorder="hover:border-red-500/50" />
-          <QuickStatCard label="Trade Volume" value={formatVolume(tradeStats.totalVolume)} onClick={() => setActiveTab('trade')} color="text-green-400" hoverBorder="hover:border-green-500/50" />
+          <QuickStatCard label="Active Trades" value={tradeStats.activeDeals} onClick={() => setActiveTab('trade')} color="text-gold" hoverBorder="hover:border-gold/50" />
+          <QuickStatCard label="Open Disputes" value={disputeStats.pending + disputeStats.inMediation} onClick={() => setActiveTab('disputes')} color="text-danger" hoverBorder="hover:border-danger/50" />
+          <QuickStatCard label="Trade Volume" value={formatVolume(tradeStats.totalVolume)} onClick={() => setActiveTab('trade')} color="text-success" hoverBorder="hover:border-success/50" />
         </div>
 
         {/* Network Warning */}
         {!projectNFTAddress && (
-          <div className="mb-6 p-4 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
+          <div className="mb-6 p-4 bg-warning/20 border border-warning/30 rounded-lg">
             <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" />
+              <AlertTriangle className="w-5 h-5 text-warning mt-0.5 flex-shrink-0" />
               <div>
-                <p className="text-yellow-400 font-medium">Limited functionality on {chainName}</p>
-                <p className="text-yellow-300/70 text-sm mt-1">Some contracts are not deployed on this network.</p>
+                <p className="text-warning font-medium">Limited functionality on {chainName}</p>
+                <p className="text-warning/70 text-sm mt-1">Some contracts are not deployed on this network.</p>
                 {deployedChains.length > 1 && (
                   <div className="flex flex-wrap gap-2 mt-3">
                     {deployedChains.filter(chain => chain.id !== chainId).slice(0, 3).map(chain => (
-                      <button key={chain.id} onClick={() => switchToChain(chain.id)} className="px-3 py-1.5 bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-300 text-sm rounded-lg transition-colors">
+                      <button key={chain.id} onClick={() => switchToChain(chain.id)} className="px-3 py-1.5 bg-warning/20 hover:bg-warning/30 text-warning text-sm rounded-lg transition-colors">
                         Switch to {chain.name}
                       </button>
                     ))}
@@ -1054,10 +1054,10 @@ export default function AdminClient() {
               <span>Chain ID: {chainId}</span>
               <span>•</span>
               <span>Currency: {nativeCurrency || 'ETH'}</span>
-              {isTestnet && (<><span>•</span><span className="text-yellow-400">Testnet</span></>)}
+              {isTestnet && (<><span>•</span><span className="text-warning">Testnet</span></>)}
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/admin/docs" className="flex items-center gap-1 text-cyan-400 hover:text-cyan-300">
+              <Link href="/admin/docs" className="flex items-center gap-1 text-gold hover:text-gold">
                 <Book className="w-4 h-4" />Admin Docs
               </Link>
               {explorerUrl && (

@@ -526,7 +526,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
         <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 flex items-center gap-3">
           <AlertCircle className="w-5 h-5 text-danger flex-shrink-0" />
           <p className="text-danger flex-1">{error}</p>
-          <button onClick={() => setError('')} className="text-danger hover:text-red-300">
+          <button onClick={() => setError('')} className="text-danger hover:text-danger">
             <X className="w-4 h-4" />
           </button>
         </div>
@@ -650,7 +650,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                                   href={getProjectPageUrl(app.id)}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="px-3 py-1.5 bg-green-600 hover:bg-success text-ink text-sm rounded-lg transition inline-flex items-center gap-1"
+                                  className="px-3 py-1.5 bg-success hover:bg-success text-ink text-sm rounded-lg transition inline-flex items-center gap-1"
                                 >
                                   <ExternalLink className="w-4 h-4" />
                                   View Live
@@ -662,7 +662,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                                   href={getProjectPageUrl(app.id)}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="px-3 py-1.5 bg-surface-overlay hover:bg-gray-500 text-ink text-sm rounded-lg transition inline-flex items-center gap-1"
+                                  className="px-3 py-1.5 bg-surface-overlay hover:bg-ink-faint text-ink text-sm rounded-lg transition inline-flex items-center gap-1"
                                   title="Preview project page"
                                 >
                                   <Eye className="w-4 h-4" />
@@ -732,8 +732,8 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     rel="noopener noreferrer"
                     className={`px-3 py-1 text-sm rounded-lg transition inline-flex items-center gap-1 ${
                       selectedApp.status === 'completed'
-                        ? 'bg-green-600 hover:bg-success text-ink'
-                        : 'bg-surface-overlay hover:bg-gray-500 text-ink-muted'
+                        ? 'bg-success hover:bg-success text-ink'
+                        : 'bg-surface-overlay hover:bg-ink-faint text-ink-muted'
                     }`}
                   >
                     <ExternalLink className="w-3 h-3" />
@@ -827,7 +827,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                         <span className={`px-2 py-1 rounded text-xs font-medium ${
                           onChainStatus.requiresApproval
                             ? 'bg-warning/20 text-warning'
-                            : 'bg-gray-500/20 text-ink-muted'
+                            : 'bg-ink-faint/20 text-ink-muted'
                         }`}>
                           {onChainStatus.requiresApproval ? 'Yes' : 'No (Open Deployment)'}
                         </span>
@@ -852,7 +852,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                           <button
                             onClick={handleManualOnChainApproval}
                             disabled={updating}
-                            className="px-3 py-1.5 bg-green-600 hover:bg-success disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
+                            className="px-3 py-1.5 bg-success hover:bg-success disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
                           >
                             {updating ? <Loader2 className="w-3 h-3 animate-spin" /> : <CheckCircle2 className="w-3 h-3" />}
                             Approve On-Chain
@@ -861,7 +861,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                           <button
                             onClick={handleManualOnChainRevoke}
                             disabled={updating}
-                            className="px-3 py-1.5 bg-red-600 hover:bg-danger disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
+                            className="px-3 py-1.5 bg-danger hover:bg-danger disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
                           >
                             {updating ? <Loader2 className="w-3 h-3 animate-spin" /> : <XCircle className="w-3 h-3" />}
                             Revoke On-Chain
@@ -870,7 +870,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                         <button
                           onClick={() => checkOnChainApproval(selectedApp.user_address, selectedApp.chain_id)}
                           disabled={onChainStatus.checking}
-                          className="px-3 py-1.5 bg-surface-overlay hover:bg-gray-500 disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
+                          className="px-3 py-1.5 bg-surface-overlay hover:bg-ink-faint disabled:opacity-50 text-ink text-sm rounded-lg transition flex items-center gap-1"
                         >
                           <RefreshCw className={`w-3 h-3 ${onChainStatus.checking ? 'animate-spin' : ''}`} />
                           Refresh
@@ -1075,7 +1075,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                 return (
                   <div className="bg-surface-raised/50 rounded-lg p-4">
                     <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
-                      <FileText className="w-4 h-4 text-cyan-400" />
+                      <FileText className="w-4 h-4 text-gold" />
                       Documents ({docs.length})
                     </h4>
                     <div className="space-y-2">
@@ -1222,7 +1222,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                       rows={3}
                       className={`w-full px-4 py-2 bg-surface-raised border rounded-lg text-ink focus:outline-none resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
                         newStatus === 'rejected' && !adminNotes.trim()
-                          ? 'border-danger focus:border-red-400'
+                          ? 'border-danger focus:border-danger'
                           : 'border-border-strong focus:border-gold-500'
                       }`}
                       placeholder={
@@ -1248,7 +1248,7 @@ export default function TokenizationManagement({ onRefresh }: TokenizationManage
                     href={getProjectPageUrl(selectedApp.id)}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-4 py-2 bg-green-600 hover:bg-success text-ink rounded-lg transition inline-flex items-center gap-2"
+                    className="px-4 py-2 bg-success hover:bg-success text-ink rounded-lg transition inline-flex items-center gap-2"
                   >
                     <ExternalLink className="w-4 h-4" />
                     View Live Project

@@ -29,7 +29,7 @@ export default function InvestorGuidePage() {
 
       {/* Overview */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Overview</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">Overview</h2>
         <p className="text-ink-muted mb-6">
           {COMPANY.name} gives you access to investment opportunities in real estate, commodities, 
           company equity, and collectibles—starting from just $100. This guide explains how to 
@@ -53,12 +53,12 @@ export default function InvestorGuidePage() {
 
       {/* Getting Started */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">1. Getting Started</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">1. Getting Started</h2>
         
         <div className="space-y-6">
           <div className="bg-surface border border-border rounded-lg p-6">
             <div className="flex items-center gap-3 mb-4">
-              <Wallet className="w-6 h-6 text-cyan-400" />
+              <Wallet className="w-6 h-6 text-gold" />
               <h3 className="text-lg font-semibold text-ink">Connect Your Wallet</h3>
             </div>
             <p className="text-ink-muted mb-4">
@@ -82,7 +82,7 @@ export default function InvestorGuidePage() {
 
           <div className="bg-surface border border-border rounded-lg p-6">
             <div className="flex items-center gap-3 mb-4">
-              <ShieldCheck className="w-6 h-6 text-cyan-400" />
+              <ShieldCheck className="w-6 h-6 text-gold" />
               <h3 className="text-lg font-semibold text-ink">Complete KYC Verification</h3>
             </div>
             <p className="text-ink-muted mb-4">
@@ -127,11 +127,11 @@ export default function InvestorGuidePage() {
 
       {/* Finding Projects */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">2. Finding Projects</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">2. Finding Projects</h2>
         
         <div className="bg-surface border border-border rounded-lg p-6 mb-6">
           <div className="flex items-center gap-3 mb-4">
-            <Search className="w-6 h-6 text-cyan-400" />
+            <Search className="w-6 h-6 text-gold" />
             <h3 className="text-lg font-semibold text-ink">Browse & Filter</h3>
           </div>
           <p className="text-ink-muted mb-4">
@@ -163,7 +163,7 @@ export default function InvestorGuidePage() {
 
       {/* Due Diligence */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">3. Due Diligence</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">3. Due Diligence</h2>
         
         <p className="text-ink-muted mb-6">
           Before investing, thoroughly research each project. Here's what to check:
@@ -237,13 +237,13 @@ export default function InvestorGuidePage() {
 
       {/* Making an Investment */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">4. Making an Investment</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">4. Making an Investment</h2>
         
         <div className="bg-surface border border-border rounded-lg p-6">
           <ol className="space-y-6">
             <li className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-cyan-400 font-bold text-sm">1</span>
+              <div className="w-8 h-8 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-gold font-bold text-sm">1</span>
               </div>
               <div>
                 <h3 className="font-semibold text-ink">Select Project</h3>
@@ -251,8 +251,8 @@ export default function InvestorGuidePage() {
               </div>
             </li>
             <li className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-cyan-400 font-bold text-sm">2</span>
+              <div className="w-8 h-8 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-gold font-bold text-sm">2</span>
               </div>
               <div>
                 <h3 className="font-semibold text-ink">Enter Amount</h3>
@@ -260,8 +260,8 @@ export default function InvestorGuidePage() {
               </div>
             </li>
             <li className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-cyan-400 font-bold text-sm">3</span>
+              <div className="w-8 h-8 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-gold font-bold text-sm">3</span>
               </div>
               <div>
                 <h3 className="font-semibold text-ink">Review Terms</h3>
@@ -269,8 +269,8 @@ export default function InvestorGuidePage() {
               </div>
             </li>
             <li className="flex items-start gap-4">
-              <div className="w-8 h-8 bg-cyan-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <span className="text-cyan-400 font-bold text-sm">4</span>
+              <div className="w-8 h-8 bg-gold/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-gold font-bold text-sm">4</span>
               </div>
               <div>
                 <h3 className="font-semibold text-ink">Confirm Transaction</h3>
@@ -292,7 +292,7 @@ export default function InvestorGuidePage() {
 
       {/* Returns & Risks */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">5. Returns & Risks</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">5. Returns & Risks</h2>
         
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           <div className="bg-surface border border-border rounded-lg p-6">
@@ -336,14 +336,14 @@ export default function InvestorGuidePage() {
           <p className="text-ink-muted text-sm">
             Tokenized assets are speculative investments. Only invest what you can afford to lose. 
             Past performance does not guarantee future results. Read our full 
-            <a href="/legal/risk-disclosures" className="text-cyan-400 hover:underline ml-1">Risk Disclosures</a>.
+            <a href="/legal/risk-disclosures" className="text-gold hover:underline ml-1">Risk Disclosures</a>.
           </p>
         </div>
       </section>
 
       {/* Fees */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">6. Fees for Investors</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">6. Fees for Investors</h2>
         
         <div className="bg-surface border border-border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
@@ -391,7 +391,7 @@ export default function InvestorGuidePage() {
       </section>
 
       {/* Support */}
-      <section className="bg-gradient-to-r from-cyan-500/10 to-gold-light-500/10 border border-cyan-500/20 rounded-xl p-8">
+      <section className="bg-gradient-to-r from-gold/10 to-gold-light-500/10 border border-gold/20 rounded-xl p-8">
         <h2 className="text-2xl font-semibold text-ink mb-4">Need Help?</h2>
         <p className="text-ink-muted mb-6">
           Our community and support team are here to help you invest with confidence.
@@ -399,15 +399,15 @@ export default function InvestorGuidePage() {
         <div className="grid md:grid-cols-3 gap-4 text-center">
           <div>
             <h3 className="font-semibold text-ink">Discord</h3>
-            <p className="text-cyan-400 text-sm">#investor-support</p>
+            <p className="text-gold text-sm">#investor-support</p>
           </div>
           <div>
             <h3 className="font-semibold text-ink">Email</h3>
-            <p className="text-cyan-400 text-sm">{CONTACT.support}</p>
+            <p className="text-gold text-sm">{CONTACT.support}</p>
           </div>
           <div>
             <h3 className="font-semibold text-ink">FAQ</h3>
-            <a href="/docs/faq" className="text-cyan-400 text-sm hover:underline">View common questions</a>
+            <a href="/docs/faq" className="text-gold text-sm hover:underline">View common questions</a>
           </div>
         </div>
       </section>

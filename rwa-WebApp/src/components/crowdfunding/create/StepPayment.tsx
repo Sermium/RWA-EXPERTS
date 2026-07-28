@@ -105,7 +105,7 @@ function CardPaymentForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="bg-gray-700 border border-gray-600 rounded-lg p-4">
+      <div className="bg-surface-overlay border border-border-strong rounded-lg p-4">
         <CardElement
           options={{
             style: {
@@ -125,7 +125,7 @@ function CardPaymentForm({
       </div>
 
       {error && (
-        <div className="flex items-center gap-2 text-red-400 text-sm">
+        <div className="flex items-center gap-2 text-danger text-sm">
           <AlertCircle className="w-4 h-4" />
           {error}
         </div>
@@ -134,7 +134,7 @@ function CardPaymentForm({
       <button
         type="submit"
         disabled={!stripe || processing}
-        className="w-full px-6 py-4 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
+        className="w-full px-6 py-4 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
       >
         {processing ? (
           <>
@@ -149,7 +149,7 @@ function CardPaymentForm({
         )}
       </button>
 
-      <div className="flex items-center justify-center gap-2 text-xs text-gray-500">
+      <div className="flex items-center justify-center gap-2 text-xs text-ink-faint">
         <Shield className="w-4 h-4" />
         Secured by Stripe
       </div>
@@ -296,10 +296,10 @@ function CryptoPaymentForm({
 
   if (availableTokens.length === 0) {
     return (
-      <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-6 text-center">
-        <AlertCircle className="w-12 h-12 text-amber-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">Chain Not Supported</h3>
-        <p className="text-amber-400/80">
+      <div className="bg-warning/10 border border-warning/30 rounded-lg p-6 text-center">
+        <AlertCircle className="w-12 h-12 text-warning mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-ink mb-2">Chain Not Supported</h3>
+        <p className="text-warning/80">
           Crypto payments are not available on {chainInfo?.name || 'this chain'}. 
           Please switch to a supported chain or use card payment.
         </p>
@@ -311,7 +311,7 @@ function CryptoPaymentForm({
     <div className="space-y-6">
       {/* Token Selection */}
       <div>
-        <label className="block text-sm text-gray-400 mb-2">Select Token</label>
+        <label className="block text-sm text-ink-muted mb-2">Select Token</label>
         <div className="flex gap-3">
           {availableTokens.map((token) => {
             const isSelected = selectedToken === token;
@@ -322,20 +322,20 @@ function CryptoPaymentForm({
                 className={`flex-1 p-4 rounded-xl border-2 transition-all ${
                   isSelected
                     ? 'border-gold-500 bg-gold-500/10'
-                    : 'border-gray-700 bg-gray-800 hover:border-gray-600'
+                    : 'border-border bg-surface hover:border-border-strong'
                 }`}
               >
                 <div className="flex items-center justify-center gap-2">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                    token === 'USDT' ? 'bg-green-500/20' : 'bg-gold-500/20'
+                    token === 'USDT' ? 'bg-success/20' : 'bg-gold-500/20'
                   }`}>
                     <span className={`text-sm font-bold ${
-                      token === 'USDT' ? 'text-green-400' : 'text-gold-400'
+                      token === 'USDT' ? 'text-success' : 'text-gold-400'
                     }`}>
                       {token === 'USDT' ? '₮' : '$'}
                     </span>
                   </div>
-                  <span className="text-white font-medium">{token}</span>
+                  <span className="text-ink font-medium">{token}</span>
                 </div>
               </button>
             );
@@ -346,26 +346,26 @@ function CryptoPaymentForm({
       {/* Wallet Balance */}
       <div className={`p-4 rounded-xl border ${
         hasEnoughBalance 
-          ? 'bg-green-500/5 border-green-500/20' 
-          : 'bg-red-500/5 border-red-500/20'
+          ? 'bg-success/5 border-success/20' 
+          : 'bg-danger/5 border-danger/20'
       }`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Wallet className={`w-5 h-5 ${hasEnoughBalance ? 'text-green-400' : 'text-red-400'}`} />
-            <span className="text-gray-400">Your {selectedToken} Balance</span>
+            <Wallet className={`w-5 h-5 ${hasEnoughBalance ? 'text-success' : 'text-danger'}`} />
+            <span className="text-ink-muted">Your {selectedToken} Balance</span>
           </div>
           <div className="text-right">
             {isBalanceLoading ? (
               <div className="flex items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
-                <span className="text-gray-400">Loading...</span>
+                <Loader2 className="w-4 h-4 animate-spin text-ink-muted" />
+                <span className="text-ink-muted">Loading...</span>
               </div>
             ) : (
               <div>
-                <span className={`text-lg font-bold ${hasEnoughBalance ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`text-lg font-bold ${hasEnoughBalance ? 'text-success' : 'text-danger'}`}>
                   {balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
-                <span className={`ml-1 ${hasEnoughBalance ? 'text-green-400' : 'text-red-400'}`}>
+                <span className={`ml-1 ${hasEnoughBalance ? 'text-success' : 'text-danger'}`}>
                   {selectedToken}
                 </span>
               </div>
@@ -374,7 +374,7 @@ function CryptoPaymentForm({
         </div>
         
         {!hasEnoughBalance && !isBalanceLoading && (
-          <div className="mt-2 flex items-center gap-2 text-red-400 text-sm">
+          <div className="mt-2 flex items-center gap-2 text-danger text-sm">
             <AlertCircle className="w-4 h-4" />
             <span>
               Insufficient balance. You need {amount} {selectedToken} but only have {balance.toFixed(2)} {selectedToken}
@@ -383,7 +383,7 @@ function CryptoPaymentForm({
         )}
         
         {hasEnoughBalance && !isBalanceLoading && (
-          <div className="mt-2 flex items-center gap-2 text-green-400 text-sm">
+          <div className="mt-2 flex items-center gap-2 text-success text-sm">
             <CheckCircle className="w-4 h-4" />
             <span>
               Sufficient balance for this payment
@@ -393,20 +393,20 @@ function CryptoPaymentForm({
       </div>
 
       {/* Payment Details */}
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-4 space-y-4">
+      <div className="bg-surface border border-border rounded-xl p-4 space-y-4">
         <div className="flex items-center justify-between">
-          <span className="text-gray-400">Amount</span>
-          <span className="text-xl font-bold text-white">{amount} {selectedToken}</span>
+          <span className="text-ink-muted">Amount</span>
+          <span className="text-xl font-bold text-ink">{amount} {selectedToken}</span>
         </div>
         
         <div className="flex items-center justify-between">
-          <span className="text-gray-400">Network</span>
-          <span className="text-white">{chainInfo?.name || `Chain ${chainId}`}</span>
+          <span className="text-ink-muted">Network</span>
+          <span className="text-ink">{chainInfo?.name || `Chain ${chainId}`}</span>
         </div>
 
         <div className="flex items-center justify-between">
-          <span className="text-gray-400">Remaining after payment</span>
-          <span className={`font-medium ${hasEnoughBalance ? 'text-gray-300' : 'text-red-400'}`}>
+          <span className="text-ink-muted">Remaining after payment</span>
+          <span className={`font-medium ${hasEnoughBalance ? 'text-ink-muted' : 'text-danger'}`}>
             {hasEnoughBalance 
               ? `${(balance - amount).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${selectedToken}`
               : 'Insufficient funds'
@@ -414,9 +414,9 @@ function CryptoPaymentForm({
           </span>
         </div>
 
-        <div className="border-t border-gray-700 pt-4">
+        <div className="border-t border-border pt-4">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-gray-400 text-sm">Payment Address (Fee Receiver)</span>
+            <span className="text-ink-muted text-sm">Payment Address (Fee Receiver)</span>
             <button
               onClick={copyAddress}
               className="text-gold-400 hover:text-gold-300 text-sm flex items-center gap-1"
@@ -425,7 +425,7 @@ function CryptoPaymentForm({
               {copied ? 'Copied!' : 'Copy'}
             </button>
           </div>
-          <div className="bg-gray-900 rounded-lg p-3 font-mono text-sm text-gray-300 break-all">
+          <div className="bg-surface-sunken rounded-lg p-3 font-mono text-sm text-ink-muted break-all">
             {feeReceiverWallet}
           </div>
         </div>
@@ -440,25 +440,25 @@ function CryptoPaymentForm({
       )}
 
       {isConfirming && (
-        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4 flex items-center gap-3">
-          <Loader2 className="w-5 h-5 text-amber-400 animate-spin" />
+        <div className="bg-warning/10 border border-warning/30 rounded-lg p-4 flex items-center gap-3">
+          <Loader2 className="w-5 h-5 text-warning animate-spin" />
           <div>
-            <p className="text-amber-400 font-medium">Transaction submitted!</p>
-            <p className="text-amber-400/80 text-sm">Waiting for confirmation...</p>
+            <p className="text-warning font-medium">Transaction submitted!</p>
+            <p className="text-warning/80 text-sm">Waiting for confirmation...</p>
           </div>
         </div>
       )}
 
       {isConfirmed && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4 flex items-center gap-3">
-          <CheckCircle className="w-5 h-5 text-green-400" />
+        <div className="bg-success/10 border border-success/30 rounded-lg p-4 flex items-center gap-3">
+          <CheckCircle className="w-5 h-5 text-success" />
           <div>
-            <p className="text-green-400 font-medium">Payment confirmed!</p>
+            <p className="text-success font-medium">Payment confirmed!</p>
             <a
               href={`${chainInfo?.explorerUrl || 'https://etherscan.io'}/tx/${txHash}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-green-400/80 text-sm flex items-center gap-1 hover:underline"
+              className="text-success/80 text-sm flex items-center gap-1 hover:underline"
             >
               View transaction <ExternalLink className="w-3 h-3" />
             </a>
@@ -472,10 +472,10 @@ function CryptoPaymentForm({
         disabled={isWritePending || isConfirming || isConfirmed || !tokenAddress || !hasEnoughBalance}
         className={`w-full px-6 py-4 font-semibold rounded-lg transition-colors flex items-center justify-center gap-2 ${
           !hasEnoughBalance
-            ? 'bg-red-600/50 cursor-not-allowed text-red-200'
+            ? 'bg-danger/50 cursor-not-allowed text-danger'
             : isWritePending || isConfirming || isConfirmed
-              ? 'bg-gray-600 cursor-not-allowed text-white'
-              : 'bg-gold-600 hover:bg-gold-700 text-white'
+              ? 'bg-border-strong cursor-not-allowed text-ink'
+              : 'bg-gold-600 hover:bg-gold-700 text-ink'
         }`}
       >
         {isWritePending ? (
@@ -506,7 +506,7 @@ function CryptoPaymentForm({
         )}
       </button>
 
-      <p className="text-xs text-gray-500 text-center">
+      <p className="text-xs text-ink-faint text-center">
         Make sure you have enough {selectedToken} in your wallet to cover the payment plus gas fees.
       </p>
     </div>
@@ -683,7 +683,7 @@ export default function StepPayment({
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <Loader2 className="w-12 h-12 text-gold-500 animate-spin mb-4" />
-        <p className="text-gray-400">Preparing your application...</p>
+        <p className="text-ink-muted">Preparing your application...</p>
       </div>
     );
   }
@@ -692,34 +692,34 @@ export default function StepPayment({
     <div className="max-w-2xl mx-auto">
       {/* Header */}
       <div className="text-center mb-8">
-        <h2 className="text-2xl font-bold text-white mb-2">Submission Fee</h2>
-        <p className="text-gray-400">Pay the submission fee to submit your project for review</p>
+        <h2 className="text-2xl font-bold text-ink mb-2">Submission Fee</h2>
+        <p className="text-ink-muted">Pay the submission fee to submit your project for review</p>
       </div>
 
       {/* Fee Summary */}
-      <div className="bg-gray-800 border border-gray-700 rounded-xl p-6 mb-8">
+      <div className="bg-surface border border-border rounded-xl p-6 mb-8">
         <div className="flex items-center justify-between mb-4">
-          <span className="text-gray-400">Project Submission Fee</span>
-          <span className="text-2xl font-bold text-white">${submissionFee.toLocaleString()}</span>
+          <span className="text-ink-muted">Project Submission Fee</span>
+          <span className="text-2xl font-bold text-ink">${submissionFee.toLocaleString()}</span>
         </div>
 
-        <div className="border-t border-gray-700 pt-4">
-          <p className="text-sm text-gray-400 mb-3">This fee covers:</p>
+        <div className="border-t border-border pt-4">
+          <p className="text-sm text-ink-muted mb-3">This fee covers:</p>
           <ul className="space-y-2 text-sm">
-            <li className="flex items-center gap-2 text-gray-300">
-              <CheckCircle className="w-4 h-4 text-green-400" />
+            <li className="flex items-center gap-2 text-ink-muted">
+              <CheckCircle className="w-4 h-4 text-success" />
               Document verification and compliance review
             </li>
-            <li className="flex items-center gap-2 text-gray-300">
-              <CheckCircle className="w-4 h-4 text-green-400" />
+            <li className="flex items-center gap-2 text-ink-muted">
+              <CheckCircle className="w-4 h-4 text-success" />
               Smart contract deployment (upon approval)
             </li>
-            <li className="flex items-center gap-2 text-gray-300">
-              <CheckCircle className="w-4 h-4 text-green-400" />
+            <li className="flex items-center gap-2 text-ink-muted">
+              <CheckCircle className="w-4 h-4 text-success" />
               Platform listing and marketing support
             </li>
-            <li className="flex items-center gap-2 text-gray-300">
-              <CheckCircle className="w-4 h-4 text-green-400" />
+            <li className="flex items-center gap-2 text-ink-muted">
+              <CheckCircle className="w-4 h-4 text-success" />
               Ongoing technical support
             </li>
           </ul>
@@ -728,36 +728,36 @@ export default function StepPayment({
 
       {/* Error Display */}
       {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6 flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-red-400">{error}</p>
+        <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 mb-6 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-danger flex-shrink-0 mt-0.5" />
+          <p className="text-danger">{error}</p>
         </div>
       )}
 
       {/* Payment Method Selection */}
       {!paymentMethod && (
         <div className="space-y-4">
-          <p className="text-sm text-gray-400 mb-4">Select payment method:</p>
+          <p className="text-sm text-ink-muted mb-4">Select payment method:</p>
 
           <button
             onClick={() => handleMethodSelect('card')}
             disabled={isLoading || !applicationId}
-            className="w-full p-4 bg-gray-800 hover:bg-gray-750 border border-gray-700 hover:border-gold-500 rounded-xl transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full p-4 bg-surface hover:bg-gray-750 border border-border hover:border-gold-500 rounded-xl transition-all flex items-center gap-4 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <div className="w-12 h-12 bg-gold-500/20 rounded-lg flex items-center justify-center">
               <CreditCard className="w-6 h-6 text-gold-400" />
             </div>
             <div className="text-left flex-1">
-              <p className="text-white font-medium">Credit / Debit Card</p>
-              <p className="text-sm text-gray-400">Visa, Mastercard, Amex</p>
+              <p className="text-ink font-medium">Credit / Debit Card</p>
+              <p className="text-sm text-ink-muted">Visa, Mastercard, Amex</p>
             </div>
-            <span className="text-gray-400">→</span>
+            <span className="text-ink-muted">→</span>
           </button>
 
           <button
             onClick={() => handleMethodSelect('crypto')}
             disabled={isLoading || !applicationId || !cryptoAvailable}
-            className={`w-full p-4 bg-gray-800 border border-gray-700 rounded-xl transition-all flex items-center gap-4 ${
+            className={`w-full p-4 bg-surface border border-border rounded-xl transition-all flex items-center gap-4 ${
               cryptoAvailable 
                 ? 'hover:bg-gray-750 hover:border-gold-500' 
                 : 'opacity-50 cursor-not-allowed'
@@ -767,8 +767,8 @@ export default function StepPayment({
               <Wallet className="w-6 h-6 text-gold-400" />
             </div>
             <div className="text-left flex-1">
-              <p className="text-white font-medium">Cryptocurrency</p>
-              <p className="text-sm text-gray-400">
+              <p className="text-ink font-medium">Cryptocurrency</p>
+              <p className="text-sm text-ink-muted">
                 {cryptoAvailable 
                   ? `USDT, USDC on ${getChainById(chainId)?.name || 'current chain'}`
                   : 'Not available on this chain'
@@ -776,14 +776,14 @@ export default function StepPayment({
               </p>
             </div>
             {cryptoAvailable ? (
-              <span className="text-gray-400">→</span>
+              <span className="text-ink-muted">→</span>
             ) : (
-              <span className="px-2 py-1 bg-gray-700 text-gray-400 text-xs rounded">Unavailable</span>
+              <span className="px-2 py-1 bg-surface-overlay text-ink-muted text-xs rounded">Unavailable</span>
             )}
           </button>
 
           {!applicationId && (
-            <p className="text-sm text-amber-400 text-center mt-4">
+            <p className="text-sm text-warning text-center mt-4">
               <Loader2 className="w-4 h-4 inline animate-spin mr-2" />
               Creating application...
             </p>
@@ -800,7 +800,7 @@ export default function StepPayment({
               setClientSecret(null);
               setError(null);
             }}
-            className="text-sm text-gray-400 hover:text-white flex items-center gap-1"
+            className="text-sm text-ink-muted hover:text-ink flex items-center gap-1"
           >
             ← Change payment method
           </button>
@@ -808,7 +808,7 @@ export default function StepPayment({
           {isLoading ? (
             <div className="flex flex-col items-center py-8">
               <Loader2 className="w-8 h-8 text-gold-500 animate-spin mb-3" />
-              <p className="text-gray-400">Loading payment form...</p>
+              <p className="text-ink-muted">Loading payment form...</p>
             </div>
           ) : clientSecret && stripePromise ? (
             <Elements stripe={stripePromise} options={{ clientSecret }}>
@@ -820,15 +820,15 @@ export default function StepPayment({
               />
             </Elements>
           ) : !stripePromise ? (
-            <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-4">
-              <p className="text-amber-400">
+            <div className="bg-warning/10 border border-warning/30 rounded-lg p-4">
+              <p className="text-warning">
                 Stripe is not configured. Please add NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY to your environment variables.
               </p>
             </div>
           ) : (
             <div className="flex flex-col items-center py-8">
               <Loader2 className="w-8 h-8 text-gold-500 animate-spin mb-3" />
-              <p className="text-gray-400">Initializing payment...</p>
+              <p className="text-ink-muted">Initializing payment...</p>
             </div>
           )}
         </div>
@@ -842,7 +842,7 @@ export default function StepPayment({
               setPaymentMethod(null);
               setError(null);
             }}
-            className="text-sm text-gray-400 hover:text-white flex items-center gap-1"
+            className="text-sm text-ink-muted hover:text-ink flex items-center gap-1"
           >
             ← Change payment method
           </button>
@@ -857,10 +857,10 @@ export default function StepPayment({
       )}
 
       {/* Back Button */}
-      <div className="mt-8 pt-6 border-t border-gray-700">
+      <div className="mt-8 pt-6 border-t border-border">
         <button
           onClick={onBack}
-          className="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          className="px-6 py-3 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
         >
           Back to Review
         </button>

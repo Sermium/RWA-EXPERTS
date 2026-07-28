@@ -154,14 +154,14 @@ export default function TokenomicsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-900 to-black text-ink">
+    <div className="min-h-screen bg-gradient-to-b from-surface-sunken via-surface-sunken to-black text-ink">
       {/* Hero Section */}
       <section className="relative py-16 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-gold-600/20 via-purple-600/20 to-pink-600/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-gold-600/20 via-gold-light/20 to-gold/20" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="text-center mb-10">
             <h1 className="text-4xl md:text-5xl font-bold mb-3">
-              <span className="bg-gradient-to-r from-gold-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-gold-400 via-gold-light to-gold bg-clip-text text-transparent">
                 Tokenomics & Business Plan
               </span>
             </h1>
@@ -177,7 +177,7 @@ export default function TokenomicsPage() {
               { value: '$24.7M', label: 'Y5 EBITDA', color: 'text-success' },
               { value: '$1.5B', label: 'Y5 TVL', color: 'text-gold-400' },
               { value: '$247M', label: 'Y5 Valuation', color: 'text-warning' },
-              { value: '80%', label: 'Dividend Payout', color: 'text-pink-400' },
+              { value: '80%', label: 'Dividend Payout', color: 'text-gold' },
             ].map((stat, i) => (
               <div key={i} className="bg-surface/50 backdrop-blur rounded-xl p-3 text-center border border-border">
                 <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
@@ -215,7 +215,7 @@ export default function TokenomicsPage() {
           <p className="text-center text-ink-muted mb-10">Total Supply: 1,000,000,000 RWA</p>
           
           <div className="max-w-6xl mx-auto">
-            <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-6 md:p-8 border border-border/50 backdrop-blur">
+            <div className="bg-gradient-to-br from-surface/60 to-surface-sunken/60 rounded-2xl p-6 md:p-8 border border-border/50 backdrop-blur">
               <div className="flex flex-col lg:flex-row items-center gap-8">
                 
                 {/* Animated Donut Chart */}
@@ -402,7 +402,7 @@ export default function TokenomicsPage() {
                 { month: 20, label: 'Airdrop', color: 'text-success' },
                 { month: 40, label: 'Investors', color: 'text-gold-400' },
                 { month: 50, label: 'Team', color: 'text-gold-400' },
-                { month: 100, label: '100%', color: 'text-teal-400' },
+                { month: 100, label: '100%', color: 'text-gold' },
               ].map((m, i) => (
                 <div key={i} className="flex items-center gap-1.5">
                   <CheckCircle className={`w-3 h-3 ${m.color}`} />
@@ -422,7 +422,7 @@ export default function TokenomicsPage() {
           <p className="text-center text-ink-muted mb-6 text-sm">Revenue, costs, and profitability</p>
           
           {/* Break-even */}
-          <div className="bg-gradient-to-r from-green-500/10 to-gold-light-500/10 rounded-xl p-4 border border-success/30 max-w-3xl mx-auto mb-8">
+          <div className="bg-gradient-to-r from-success/10 to-gold-light-500/10 rounded-xl p-4 border border-success/30 max-w-3xl mx-auto mb-8">
             <div className="grid grid-cols-4 gap-3 text-center">
               {[
                 { value: 'Month 28', label: 'Break-even' },
@@ -703,8 +703,8 @@ export default function TokenomicsPage() {
               { icon: Vote, color: 'text-gold-400', title: 'Governance', desc: 'Vote on upgrades' },
               { icon: Percent, color: 'text-gold-400', title: 'Fee Discounts', desc: 'Up to 50% off' },
               { icon: Rocket, color: 'text-warning', title: 'Priority', desc: 'Early access' },
-              { icon: Lock, color: 'text-teal-400', title: 'Staking', desc: 'Extra rewards' },
-              { icon: Shield, color: 'text-pink-400', title: 'Insurance', desc: 'Protection pool' },
+              { icon: Lock, color: 'text-gold', title: 'Staking', desc: 'Extra rewards' },
+              { icon: Shield, color: 'text-gold', title: 'Insurance', desc: 'Protection pool' },
             ].map((item, i) => (
               <div key={i} className="bg-surface/50 rounded-xl p-3 border border-border">
                 <item.icon className={`w-6 h-6 ${item.color} mb-2`} />
@@ -738,7 +738,7 @@ export default function TokenomicsPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-12 bg-gradient-to-r from-gold-600/20 via-purple-600/20 to-pink-600/20">
+      <section className="py-12 bg-gradient-to-r from-gold-600/20 via-gold-light/20 to-gold/20">
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-2xl font-bold mb-2">Ready to Invest?</h2>
           <p className="text-ink-muted mb-6 text-sm">Join our Pre-Seed round</p>

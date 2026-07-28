@@ -46,10 +46,10 @@ interface StatusCounts {
 }
 
 const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
-  pending_review: { label: 'Pending Review', color: 'text-yellow-400', bg: 'bg-yellow-500/20' },
-  published: { label: 'Published', color: 'text-emerald-400', bg: 'bg-emerald-500/20' },
-  rejected: { label: 'Rejected', color: 'text-red-400', bg: 'bg-red-500/20' },
-  draft: { label: 'Draft', color: 'text-ink-muted', bg: 'bg-gray-500/20' },
+  pending_review: { label: 'Pending Review', color: 'text-warning', bg: 'bg-warning/20' },
+  published: { label: 'Published', color: 'text-success', bg: 'bg-success/20' },
+  rejected: { label: 'Rejected', color: 'text-danger', bg: 'bg-danger/20' },
+  draft: { label: 'Draft', color: 'text-ink-muted', bg: 'bg-ink-faint/20' },
   archived: { label: 'Archived', color: 'text-ink-faint', bg: 'bg-border-strong/20' }
 };
 
@@ -151,12 +151,12 @@ export default function BlogManagement() {
             onClick={() => setFilter(key)}
             className={`p-4 rounded-xl border transition-all ${
               filter === key 
-                ? 'bg-emerald-500/20 border-emerald-500/50' 
+                ? 'bg-success/20 border-success/50' 
                 : 'bg-surface/50 border-border hover:border-border-strong'
             }`}
           >
             <div className="flex items-center gap-3">
-              <Icon className={`w-5 h-5 ${filter === key ? 'text-emerald-400' : 'text-ink-muted'}`} />
+              <Icon className={`w-5 h-5 ${filter === key ? 'text-success' : 'text-ink-muted'}`} />
               <div className="text-left">
                 <p className="text-2xl font-bold text-ink">{counts[key as keyof StatusCounts]}</p>
                 <p className="text-sm text-ink-muted">{label}</p>
@@ -174,14 +174,14 @@ export default function BlogManagement() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search posts by title or author..."
-          className="w-full pl-12 pr-4 py-3 bg-surface border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500"
+          className="w-full pl-12 pr-4 py-3 bg-surface border border-border rounded-lg text-ink placeholder-ink-faint focus:border-success"
         />
       </div>
 
       {/* Posts List */}
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="w-8 h-8 text-emerald-400 animate-spin" />
+          <Loader2 className="w-8 h-8 text-success animate-spin" />
         </div>
       ) : filteredPosts.length === 0 ? (
         <div className="text-center py-12 text-ink-muted">
@@ -202,7 +202,7 @@ export default function BlogManagement() {
                     </span>
                     <span className="text-ink-faint text-sm">{post.category}</span>
                     {post.featured && (
-                      <span className="px-2 py-1 rounded text-xs font-medium bg-yellow-500/20 text-yellow-400">
+                      <span className="px-2 py-1 rounded text-xs font-medium bg-warning/20 text-warning">
                         Featured
                       </span>
                     )}
@@ -231,8 +231,8 @@ export default function BlogManagement() {
                   </div>
 
                   {post.rejection_reason && (
-                    <div className="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-                      <p className="text-red-400 text-sm">
+                    <div className="mt-3 p-3 bg-danger/10 border border-danger/30 rounded-lg">
+                      <p className="text-danger text-sm">
                         <strong>Rejection reason:</strong> {post.rejection_reason}
                       </p>
                     </div>
@@ -246,7 +246,7 @@ export default function BlogManagement() {
                       <button
                         onClick={() => handleAction(post.id, 'approve')}
                         disabled={actionLoading === post.id}
-                        className="p-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 rounded-lg transition-colors"
+                        className="p-2 bg-success/20 hover:bg-success/30 text-success rounded-lg transition-colors"
                         title="Approve"
                       >
                         <Check className="w-5 h-5" />
@@ -254,7 +254,7 @@ export default function BlogManagement() {
                       <button
                         onClick={() => setSelectedPost(post)}
                         disabled={actionLoading === post.id}
-                        className="p-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+                        className="p-2 bg-danger/20 hover:bg-danger/30 text-danger rounded-lg transition-colors"
                         title="Reject"
                       >
                         <X className="w-5 h-5" />
@@ -278,7 +278,7 @@ export default function BlogManagement() {
                         disabled={actionLoading === post.id}
                         className={`p-2 rounded-lg transition-colors ${
                           post.featured 
-                            ? 'bg-yellow-500/20 text-yellow-400 hover:bg-yellow-500/30' 
+                            ? 'bg-warning/20 text-warning hover:bg-warning/30' 
                             : 'bg-surface-overlay text-ink-muted hover:bg-border-strong'
                         }`}
                         title={post.featured ? 'Remove from featured' : 'Feature'}
@@ -291,7 +291,7 @@ export default function BlogManagement() {
                   <button
                     onClick={() => handleDelete(post.id)}
                     disabled={actionLoading === post.id}
-                    className="p-2 bg-surface-overlay hover:bg-red-500/20 text-ink-muted hover:text-red-400 rounded-lg transition-colors"
+                    className="p-2 bg-surface-overlay hover:bg-danger/20 text-ink-muted hover:text-danger rounded-lg transition-colors"
                     title="Delete"
                   >
                     <Trash2 className="w-5 h-5" />
@@ -316,7 +316,7 @@ export default function BlogManagement() {
               onChange={(e) => setRejectionReason(e.target.value)}
               placeholder="Provide a reason for rejection..."
               rows={4}
-              className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-ink placeholder-ink-faint focus:border-red-500 mb-4"
+              className="w-full px-4 py-3 bg-surface border border-border rounded-lg text-ink placeholder-ink-faint focus:border-danger mb-4"
             />
             <div className="flex justify-end gap-3">
               <button
@@ -331,7 +331,7 @@ export default function BlogManagement() {
               <button
                 onClick={() => handleAction(selectedPost.id, 'reject', rejectionReason)}
                 disabled={actionLoading === selectedPost.id}
-                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-ink rounded-lg transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-danger hover:bg-danger text-ink rounded-lg transition-colors flex items-center gap-2"
               >
                 {actionLoading === selectedPost.id && <Loader2 className="w-4 h-4 animate-spin" />}
                 Reject Article

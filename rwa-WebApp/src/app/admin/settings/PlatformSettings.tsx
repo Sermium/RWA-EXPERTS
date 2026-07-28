@@ -330,7 +330,7 @@ export default function PlatformSettings() {
       suffix: 'USD',
       icon: DollarSign,
       description: 'Fee to submit a crowdfunding application',
-      color: 'from-green-500/10 to-emerald-500/10',
+      color: 'from-success/10 to-success/10',
       isBps: false,
     },
     {
@@ -339,7 +339,7 @@ export default function PlatformSettings() {
       suffix: 'USD',
       icon: Coins,
       description: 'Fee to submit a tokenization application',
-      color: 'from-gold-500/10 to-cyan-500/10',
+      color: 'from-gold-500/10 to-gold/10',
       isBps: false,
     },
     {
@@ -348,7 +348,7 @@ export default function PlatformSettings() {
       suffix: 'BPS',
       icon: Lock,
       description: 'Fee on escrow transactions (100 BPS = 1%)',
-      color: 'from-gold-500/10 to-pink-500/10',
+      color: 'from-gold-500/10 to-gold/10',
       isBps: true,
     },
     {
@@ -357,7 +357,7 @@ export default function PlatformSettings() {
       suffix: 'BPS',
       icon: Banknote,
       description: 'Platform fee on raised USDT (100 BPS = 1%)',
-      color: 'from-yellow-500/10 to-orange-500/10',
+      color: 'from-warning/10 to-orange-500/10',
       isBps: true,
     },
     {
@@ -366,7 +366,7 @@ export default function PlatformSettings() {
       suffix: 'BPS',
       icon: Ticket,
       description: 'Platform fee on project tokens (100 BPS = 1%)',
-      color: 'from-red-500/10 to-rose-500/10',
+      color: 'from-danger/10 to-rose-500/10',
       isBps: true,
     },
   ];
@@ -420,7 +420,7 @@ export default function PlatformSettings() {
               <button
                 onClick={handleSavePlatformFees}
                 disabled={savingPlatform}
-                className="px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-sm text-ink transition-colors disabled:opacity-50 flex items-center gap-2"
+                className="px-4 py-2 bg-success hover:bg-success rounded-lg text-sm text-ink transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 {savingPlatform && (
                   <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
@@ -645,7 +645,7 @@ export default function PlatformSettings() {
                         <button
                           onClick={handleSaveChainFees}
                           disabled={savingChain}
-                          className="px-2 py-1 bg-green-600 hover:bg-green-700 rounded text-xs text-ink transition-colors disabled:opacity-50 flex items-center gap-1"
+                          className="px-2 py-1 bg-success hover:bg-success rounded text-xs text-ink transition-colors disabled:opacity-50 flex items-center gap-1"
                         >
                           {savingChain && (
                             <div className="animate-spin w-3 h-3 border border-white border-t-transparent rounded-full" />

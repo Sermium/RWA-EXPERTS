@@ -191,10 +191,10 @@ export default function AdminAllocationsPage() {
 
   const getStatusBadge = (status: string) => {
     const styles: Record<string, { bg: string; text: string; icon: any }> = {
-      pending: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: Clock },
-      confirmed: { bg: 'bg-green-500/20', text: 'text-green-400', icon: CheckCircle },
+      pending: { bg: 'bg-warning/20', text: 'text-warning', icon: Clock },
+      confirmed: { bg: 'bg-success/20', text: 'text-success', icon: CheckCircle },
       distributed: { bg: 'bg-gold-500/20', text: 'text-gold-400', icon: Send },
-      cancelled: { bg: 'bg-red-500/20', text: 'text-red-400', icon: XCircle },
+      cancelled: { bg: 'bg-danger/20', text: 'text-danger', icon: XCircle },
     };
     const style = styles[status] || styles.pending;
     const Icon = style.icon;
@@ -209,7 +209,7 @@ export default function AdminAllocationsPage() {
   const getTypeBadge = (type: string) => {
     const styles: Record<string, string> = {
       purchase: 'bg-gold-500/20 text-gold-400',
-      referral_bonus: 'bg-green-500/20 text-green-400',
+      referral_bonus: 'bg-success/20 text-success',
       platform_bonus: 'bg-gold-500/20 text-gold-400',
     };
     const labels: Record<string, string> = {
@@ -254,13 +254,13 @@ export default function AdminAllocationsPage() {
 
         {/* Messages */}
         {successMessage && (
-          <div className="p-4 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400 flex items-center gap-2">
+          <div className="p-4 bg-success/20 border border-success/30 rounded-lg text-success flex items-center gap-2">
             <CheckCircle className="w-5 h-5" />
             {successMessage}
           </div>
         )}
         {errorMessage && (
-          <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 flex items-center gap-2">
+          <div className="p-4 bg-danger/20 border border-danger/30 rounded-lg text-danger flex items-center gap-2">
             <AlertCircle className="w-5 h-5" />
             {errorMessage}
           </div>
@@ -282,8 +282,8 @@ export default function AdminAllocationsPage() {
             </div>
             <div className="bg-surface rounded-xl p-4 border border-border">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-green-500/20 rounded-lg">
-                  <DollarSign className="w-5 h-5 text-green-400" />
+                <div className="p-2 bg-success/20 rounded-lg">
+                  <DollarSign className="w-5 h-5 text-success" />
                 </div>
                 <div>
                   <p className="text-ink-muted text-sm">Total Value</p>
@@ -304,8 +304,8 @@ export default function AdminAllocationsPage() {
             </div>
             <div className="bg-surface rounded-xl p-4 border border-border">
               <div className="flex items-center gap-3">
-                <div className="p-2 bg-yellow-500/20 rounded-lg">
-                  <Clock className="w-5 h-5 text-yellow-400" />
+                <div className="p-2 bg-warning/20 rounded-lg">
+                  <Clock className="w-5 h-5 text-warning" />
                 </div>
                 <div>
                   <p className="text-ink-muted text-sm">Pending</p>

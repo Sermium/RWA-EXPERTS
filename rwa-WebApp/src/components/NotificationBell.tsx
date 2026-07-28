@@ -41,24 +41,24 @@ const NOTIFICATION_ICONS: Record<NotificationType, React.ReactNode> = {
 };
 
 const NOTIFICATION_COLORS: Record<NotificationType, string> = {
-  trade_update: 'bg-cyan-500/20 text-cyan-400',
-  payment_received: 'bg-green-500/20 text-green-400',
+  trade_update: 'bg-gold/20 text-gold',
+  payment_received: 'bg-success/20 text-success',
   payment_sent: 'bg-gold-500/20 text-gold-400',
   document_uploaded: 'bg-gold-500/20 text-gold-400',
-  document_verified: 'bg-green-500/20 text-green-400',
-  milestone_completed: 'bg-green-500/20 text-green-400',
-  dispute_opened: 'bg-red-500/20 text-red-400',
+  document_verified: 'bg-success/20 text-success',
+  milestone_completed: 'bg-success/20 text-success',
+  dispute_opened: 'bg-danger/20 text-danger',
   dispute_update: 'bg-orange-500/20 text-orange-400',
   message_received: 'bg-gold-500/20 text-gold-400',
-  kyc_update: 'bg-yellow-500/20 text-yellow-400',
-  system_alert: 'bg-gray-500/20 text-gray-400',
+  kyc_update: 'bg-warning/20 text-warning',
+  system_alert: 'bg-ink-faint/20 text-ink-muted',
 };
 
 const PRIORITY_COLORS: Record<string, string> = {
-  low: 'border-gray-700',
-  medium: 'border-gray-600',
-  high: 'border-yellow-500/50',
-  critical: 'border-red-500/50 bg-red-500/5',
+  low: 'border-border',
+  medium: 'border-border-strong',
+  high: 'border-warning/50',
+  critical: 'border-danger/50 bg-danger/5',
 };
 
 // =============================================================================
@@ -87,7 +87,7 @@ function NotificationItem({
     <div
       onClick={handleClick}
       className={`
-        p-4 border-b border-gray-700/50 hover:bg-gray-800/50 transition-colors cursor-pointer
+        p-4 border-b border-border/50 hover:bg-surface/50 transition-colors cursor-pointer
         ${!notification.read ? 'bg-gold-500/5' : ''}
         ${PRIORITY_COLORS[notification.priority]}
       `}
@@ -98,15 +98,15 @@ function NotificationItem({
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between">
-            <p className={`text-sm font-medium ${notification.read ? 'text-gray-300' : 'text-white'}`}>
+            <p className={`text-sm font-medium ${notification.read ? 'text-ink-muted' : 'text-ink'}`}>
               {notification.title}
             </p>
             {!notification.read && (
               <div className="w-2 h-2 rounded-full bg-gold-500 flex-shrink-0 mt-1.5" />
             )}
           </div>
-          <p className="text-sm text-gray-400 mt-0.5 line-clamp-2">{notification.message}</p>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-sm text-ink-muted mt-0.5 line-clamp-2">{notification.message}</p>
+          <p className="text-xs text-ink-faint mt-1">
             {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
           </p>
         </div>
@@ -164,7 +164,7 @@ export default function NotificationBell() {
         onClick={() => setIsOpen(!isOpen)}
         className={`
           relative p-2 rounded-lg transition-colors
-          ${isOpen ? 'bg-gray-700 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800'}
+          ${isOpen ? 'bg-surface-overlay text-ink' : 'text-ink-muted hover:text-ink hover:bg-surface'}
         `}
       >
         {unreadCount > 0 ? (
@@ -175,24 +175,24 @@ export default function NotificationBell() {
         
         {/* Unread Badge */}
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-bold text-white bg-red-500 rounded-full">
+          <span className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-xs font-bold text-ink bg-danger rounded-full">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
 
         {/* Connection Status */}
-        <span className={`absolute bottom-0 right-0 w-2 h-2 rounded-full border border-gray-900 ${
-          connected ? 'bg-green-500' : connecting ? 'bg-yellow-500' : 'bg-red-500'
+        <span className={`absolute bottom-0 right-0 w-2 h-2 rounded-full border border-surface-sunken ${
+          connected ? 'bg-success' : connecting ? 'bg-warning' : 'bg-danger'
         }`} />
       </button>
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-96 bg-gray-800 border border-gray-700 rounded-xl shadow-xl overflow-hidden z-50">
+        <div className="absolute right-0 mt-2 w-96 bg-surface border border-border rounded-xl shadow-xl overflow-hidden z-50">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b border-gray-700">
+          <div className="flex items-center justify-between p-4 border-b border-border">
             <div className="flex items-center gap-2">
-              <h3 className="text-white font-semibold">Notifications</h3>
+              <h3 className="text-ink font-semibold">Notifications</h3>
               {unreadCount > 0 && (
                 <span className="px-2 py-0.5 text-xs font-medium bg-gold-500/20 text-gold-400 rounded-full">
                   {unreadCount} new
@@ -203,7 +203,7 @@ export default function NotificationBell() {
               {unreadCount > 0 && (
                 <button
                   onClick={markAllAsRead}
-                  className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                  className="p-1.5 text-ink-muted hover:text-ink hover:bg-surface-overlay rounded-lg transition-colors"
                   title="Mark all as read"
                 >
                   <CheckCheck className="h-4 w-4" />
@@ -212,7 +212,7 @@ export default function NotificationBell() {
               <Link
                 href="/settings/notifications"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-1.5 text-ink-muted hover:text-ink hover:bg-surface-overlay rounded-lg transition-colors"
                 title="Notification settings"
               >
                 <Settings className="h-4 w-4" />
@@ -225,13 +225,13 @@ export default function NotificationBell() {
             {connecting ? (
               <div className="p-8 text-center">
                 <Loader2 className="h-6 w-6 text-gold-500 animate-spin mx-auto mb-2" />
-                <p className="text-gray-400 text-sm">Connecting...</p>
+                <p className="text-ink-muted text-sm">Connecting...</p>
               </div>
             ) : notifications.length === 0 ? (
               <div className="p-8 text-center">
-                <Bell className="h-8 w-8 text-gray-600 mx-auto mb-2" />
-                <p className="text-gray-400">No notifications yet</p>
-                <p className="text-gray-500 text-sm mt-1">
+                <Bell className="h-8 w-8 text-ink-faint mx-auto mb-2" />
+                <p className="text-ink-muted">No notifications yet</p>
+                <p className="text-ink-faint text-sm mt-1">
                   We'll notify you when something happens
                 </p>
               </div>
@@ -249,11 +249,11 @@ export default function NotificationBell() {
 
           {/* Footer */}
           {notifications.length > 0 && (
-            <div className="p-3 border-t border-gray-700 bg-gray-900/50">
+            <div className="p-3 border-t border-border bg-surface-sunken/50">
               <Link
                 href="/notifications"
                 onClick={() => setIsOpen(false)}
-                className="flex items-center justify-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+                className="flex items-center justify-center gap-2 text-sm text-ink-muted hover:text-ink transition-colors"
               >
                 View all notifications
                 <ExternalLink className="h-4 w-4" />

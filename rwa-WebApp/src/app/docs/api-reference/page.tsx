@@ -19,28 +19,28 @@ export default function ApiReferencePage() {
 
       {/* Overview */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Overview</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">Overview</h2>
         
         <div className="bg-surface border border-border rounded-lg p-6 mb-6">
           <h3 className="font-semibold text-ink mb-4">Base URL</h3>
-          <code className="bg-surface-sunken px-3 py-2 rounded text-cyan-400 block">
+          <code className="bg-surface-sunken px-3 py-2 rounded text-gold block">
             {LINKS.api}
           </code>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4">
           <div className="bg-surface border border-border rounded-lg p-4">
-            <Lock className="w-6 h-6 text-cyan-400 mb-2" />
+            <Lock className="w-6 h-6 text-gold mb-2" />
             <h4 className="font-semibold text-ink">Authentication</h4>
             <p className="text-sm text-ink-muted mt-1">Wallet signature + API key</p>
           </div>
           <div className="bg-surface border border-border rounded-lg p-4">
-            <Code className="w-6 h-6 text-cyan-400 mb-2" />
+            <Code className="w-6 h-6 text-gold mb-2" />
             <h4 className="font-semibold text-ink">Format</h4>
             <p className="text-sm text-ink-muted mt-1">JSON request/response</p>
           </div>
           <div className="bg-surface border border-border rounded-lg p-4">
-            <Clock className="w-6 h-6 text-cyan-400 mb-2" />
+            <Clock className="w-6 h-6 text-gold mb-2" />
             <h4 className="font-semibold text-ink">Rate Limit</h4>
             <p className="text-sm text-ink-muted mt-1">100 requests/minute</p>
           </div>
@@ -49,7 +49,7 @@ export default function ApiReferencePage() {
 
       {/* Authentication */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Authentication</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">Authentication</h2>
         
         <p className="text-ink-muted mb-4">
           All authenticated endpoints require two headers:
@@ -78,7 +78,7 @@ x-api-key: your-api-key (for partner integrations)`}
 
       {/* Tokenization Endpoints */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Tokenization Endpoints</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">Tokenization Endpoints</h2>
         
         {/* POST /api/tokenization/apply */}
         <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
@@ -180,7 +180,7 @@ x-api-key: your-api-key (for partner integrations)`}
 
       {/* Projects Endpoints */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Projects Endpoints</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">Projects Endpoints</h2>
         
         {/* GET /api/projects/list */}
         <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
@@ -203,22 +203,22 @@ x-api-key: your-api-key (for partner integrations)`}
                 </thead>
                 <tbody className="text-ink-muted">
                   <tr className="border-b border-border/50">
-                    <td className="py-2 px-3 font-mono text-cyan-400">asset_type</td>
+                    <td className="py-2 px-3 font-mono text-gold">asset_type</td>
                     <td className="py-2 px-3">string</td>
                     <td className="py-2 px-3">Filter by asset type</td>
                   </tr>
                   <tr className="border-b border-border/50">
-                    <td className="py-2 px-3 font-mono text-cyan-400">status</td>
+                    <td className="py-2 px-3 font-mono text-gold">status</td>
                     <td className="py-2 px-3">string</td>
                     <td className="py-2 px-3">funding, funded, closed</td>
                   </tr>
                   <tr className="border-b border-border/50">
-                    <td className="py-2 px-3 font-mono text-cyan-400">limit</td>
+                    <td className="py-2 px-3 font-mono text-gold">limit</td>
                     <td className="py-2 px-3">number</td>
                     <td className="py-2 px-3">Results per page (default: 20)</td>
                   </tr>
                   <tr>
-                    <td className="py-2 px-3 font-mono text-cyan-400">offset</td>
+                    <td className="py-2 px-3 font-mono text-gold">offset</td>
                     <td className="py-2 px-3">number</td>
                     <td className="py-2 px-3">Pagination offset</td>
                   </tr>
@@ -269,7 +269,7 @@ x-api-key: your-api-key (for partner integrations)`}
 
       {/* KYC Endpoints */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">KYC Endpoints</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">KYC Endpoints</h2>
         
         {/* GET /api/kyc/status/[address] */}
         <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
@@ -324,7 +324,7 @@ x-api-key: your-api-key (for partner integrations)`}
 
       {/* IPFS Endpoints */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">IPFS Endpoints</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">IPFS Endpoints</h2>
         
         {/* POST /api/ipfs/upload */}
         <div className="bg-surface border border-border rounded-lg mb-6 overflow-hidden">
@@ -337,10 +337,10 @@ x-api-key: your-api-key (for partner integrations)`}
             
             <h4 className="font-semibold text-ink mb-2">Request</h4>
             <p className="text-sm text-ink-muted mb-4">
-              Content-Type: <code className="text-cyan-400">multipart/form-data</code>
+              Content-Type: <code className="text-gold">multipart/form-data</code>
             </p>
             <ul className="text-sm text-ink-muted space-y-1 mb-4">
-              <li>• Field name: <code className="text-cyan-400">file</code></li>
+              <li>• Field name: <code className="text-gold">file</code></li>
               <li>• Max size: 50MB</li>
               <li>• Allowed types: PDF, PNG, JPG, JPEG</li>
             </ul>
@@ -366,7 +366,7 @@ x-api-key: your-api-key (for partner integrations)`}
 
       {/* Error Codes */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Error Codes</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">Error Codes</h2>
         
         <div className="bg-surface border border-border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
@@ -429,7 +429,7 @@ x-api-key: your-api-key (for partner integrations)`}
 
       {/* Rate Limits */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-6">Rate Limits</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-6">Rate Limits</h2>
         
         <div className="bg-surface border border-border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
@@ -473,7 +473,7 @@ X-RateLimit-Reset: 1709971200`}
       </section>
 
       {/* Support */}
-      <section className="bg-gradient-to-r from-cyan-500/10 to-gold-light-500/10 border border-cyan-500/20 rounded-xl p-8">
+      <section className="bg-gradient-to-r from-gold/10 to-gold-light-500/10 border border-gold/20 rounded-xl p-8">
         <h2 className="text-2xl font-semibold text-ink mb-4">API Support</h2>
         <p className="text-ink-muted mb-6">
           Need help with integration? Our developer team is here to assist.
@@ -481,15 +481,15 @@ X-RateLimit-Reset: 1709971200`}
         <div className="grid md:grid-cols-3 gap-4 text-center">
           <div>
             <h3 className="font-semibold text-ink">Discord</h3>
-            <p className="text-cyan-400 text-sm">{SOCIAL.discord}</p>
+            <p className="text-gold text-sm">{SOCIAL.discord}</p>
           </div>
           <div>
             <h3 className="font-semibold text-ink">Email</h3>
-            <p className="text-cyan-400 text-sm">{CONTACT.api}</p>
+            <p className="text-gold text-sm">{CONTACT.api}</p>
           </div>
           <div>
             <h3 className="font-semibold text-ink">Partners</h3>
-            <p className="text-cyan-400 text-sm">{CONTACT.partners}</p>
+            <p className="text-gold text-sm">{CONTACT.partners}</p>
           </div>
         </div>
       </section>

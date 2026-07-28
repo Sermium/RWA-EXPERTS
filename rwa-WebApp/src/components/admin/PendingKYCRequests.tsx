@@ -54,7 +54,7 @@ interface KYCSubmission {
 const TIER_NAMES = ['None', 'Bronze', 'Silver', 'Gold', 'Diamond'];
 const TIER_COLORS: Record<string, string> = {
   'None': 'bg-surface-overlay',
-  'Bronze': 'bg-amber-600',
+  'Bronze': 'bg-warning',
   'Silver': 'bg-border-strong',
   'Gold': 'bg-warning',
   'Diamond': 'bg-gold-500'

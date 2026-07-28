@@ -117,10 +117,10 @@ function ContractRow({ label, address, type, explorerUrl, icon }: ContractRowPro
       badge: 'bg-gold-500/20 text-gold-300'
     },
     info: {
-      bg: 'bg-gray-500/10',
-      border: 'border-gray-500/20',
+      bg: 'bg-ink-faint/10',
+      border: 'border-ink-faint/20',
       label: 'text-ink-muted',
-      badge: 'bg-gray-500/20 text-ink-muted'
+      badge: 'bg-ink-faint/20 text-ink-muted'
     }
   };
 
@@ -310,12 +310,12 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
 
           {/* Error State */}
           {!loading && error && (
-            <div className="bg-red-500/20 border border-red-500/30 rounded-lg p-4">
+            <div className="bg-danger/20 border border-danger/30 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-danger mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-danger font-medium">Failed to load deployment</p>
-                  <p className="text-red-300/70 text-sm mt-1">{error}</p>
+                  <p className="text-danger/70 text-sm mt-1">{error}</p>
                 </div>
               </div>
             </div>
@@ -323,12 +323,12 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
 
           {/* Factory Not Deployed */}
           {!loading && !error && !factoryAddress && (
-            <div className="bg-yellow-500/20 border border-yellow-500/30 rounded-lg p-4">
+            <div className="bg-warning/20 border border-warning/30 rounded-lg p-4">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="w-5 h-5 text-warning mt-0.5 flex-shrink-0" />
                 <div>
                   <p className="text-warning font-medium">Factory not deployed</p>
-                  <p className="text-yellow-300/70 text-sm mt-1">
+                  <p className="text-warning/70 text-sm mt-1">
                     The RWALaunchpadFactory contract is not deployed on {chainName}.
                   </p>
                 </div>
@@ -444,8 +444,8 @@ export default function ProjectContractsModal({ project, onClose }: ProjectContr
                       </div>
                       <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium ${
                         deployment.active 
-                          ? 'bg-green-500/20 text-green-300 border border-green-500/30' 
-                          : 'bg-red-500/20 text-red-300 border border-red-500/30'
+                          ? 'bg-success/20 text-success border border-success/30' 
+                          : 'bg-danger/20 text-danger border border-danger/30'
                       }`}>
                         <div className={`w-1.5 h-1.5 rounded-full ${deployment.active ? 'bg-success' : 'bg-danger'}`} />
                         {deployment.active ? 'Active' : 'Inactive'}

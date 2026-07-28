@@ -14,18 +14,18 @@ export const TIER_NAMES: Record<number, string> = {
 };
 
 export const TIER_COLORS: Record<number, string> = {
-  0: 'bg-gray-500',
-  1: 'bg-blue-500',
+  0: 'bg-ink-faint',
+  1: 'bg-gold',
   2: 'bg-success',
-  3: 'bg-purple-500',
+  3: 'bg-gold',
   4: 'bg-warning'
 };
 
 export const TIER_BADGE_COLORS: Record<number, { bg: string; text: string; border: string }> = {
-  0: { bg: 'bg-gray-500/20', text: 'text-ink-muted', border: 'border-gray-500/30' },
-  1: { bg: 'bg-blue-500/20', text: 'text-blue-400', border: 'border-blue-500/30' },
+  0: { bg: 'bg-ink-faint/20', text: 'text-ink-muted', border: 'border-ink-faint/30' },
+  1: { bg: 'bg-gold/20', text: 'text-gold', border: 'border-gold/30' },
   2: { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' },
-  3: { bg: 'bg-purple-500/20', text: 'text-purple-400', border: 'border-purple-500/30' },
+  3: { bg: 'bg-gold/20', text: 'text-gold', border: 'border-gold/30' },
   4: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' }
 };
 
@@ -46,7 +46,7 @@ export const STATUS_COLORS: Record<number, string> = {
 };
 
 export const STATUS_BADGE_COLORS: Record<number, { bg: string; text: string; border: string }> = {
-  0: { bg: 'bg-gray-500/20', text: 'text-ink-muted', border: 'border-gray-500/30' },
+  0: { bg: 'bg-ink-faint/20', text: 'text-ink-muted', border: 'border-ink-faint/30' },
   1: { bg: 'bg-warning/20', text: 'text-warning', border: 'border-warning/30' },
   2: { bg: 'bg-success/20', text: 'text-success', border: 'border-success/30' },
   3: { bg: 'bg-danger/20', text: 'text-danger', border: 'border-danger/30' },

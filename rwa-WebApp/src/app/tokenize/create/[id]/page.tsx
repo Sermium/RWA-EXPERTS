@@ -793,10 +793,10 @@ export default function TokenCreatePage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-gold-500 mx-auto mb-4" />
-          <p className="text-gray-400">Loading application...</p>
+          <p className="text-ink-muted">Loading application...</p>
         </div>
       </div>
     );
@@ -805,11 +805,11 @@ export default function TokenCreatePage() {
   // Not connected
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="bg-gray-800 rounded-2xl p-8 max-w-md text-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <div className="bg-surface rounded-2xl p-8 max-w-md text-center">
           <Wallet className="h-16 w-16 text-gold-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Connect Wallet</h2>
-          <p className="text-gray-400 mb-6">Please connect your wallet to create tokens.</p>
+          <h2 className="text-2xl font-bold text-ink mb-2">Connect Wallet</h2>
+          <p className="text-ink-muted mb-6">Please connect your wallet to create tokens.</p>
         </div>
       </div>
     );
@@ -818,23 +818,23 @@ export default function TokenCreatePage() {
   // Network not supported
   if (!isDeployed) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="bg-gray-800 rounded-2xl p-8 max-w-md text-center">
-          <Globe className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Network Not Supported</h2>
-          <p className="text-gray-400 mb-6">Token creation is not available on {chainName}.</p>
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <div className="bg-surface rounded-2xl p-8 max-w-md text-center">
+          <Globe className="h-16 w-16 text-warning mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Network Not Supported</h2>
+          <p className="text-ink-muted mb-6">Token creation is not available on {chainName}.</p>
           <div className="space-y-2">
             {deployedChains.map((chainInfo) => (
               <button
                 key={chainInfo.chain.id}
                 onClick={() => handleSwitchNetwork(chainInfo.chain.id)}
                 disabled={isSwitching}
-                className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2"
               >
                 {isSwitching && <Loader2 className="h-4 w-4 animate-spin" />}
                 Switch to {chainInfo.name}
                 {chainInfo.testnet && (
-                  <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">Testnet</span>
+                  <span className="text-xs bg-warning/20 text-warning px-2 py-0.5 rounded">Testnet</span>
                 )}
               </button>
             ))}
@@ -847,15 +847,15 @@ export default function TokenCreatePage() {
   // Wrong chain warning
   if (isWrongChain) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="bg-gray-800 rounded-2xl p-8 max-w-md text-center">
-          <AlertTriangle className="h-16 w-16 text-yellow-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Wrong Network</h2>
-          <p className="text-gray-400 mb-6">Please switch to {chainName} to continue.</p>
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <div className="bg-surface rounded-2xl p-8 max-w-md text-center">
+          <AlertTriangle className="h-16 w-16 text-warning mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Wrong Network</h2>
+          <p className="text-ink-muted mb-6">Please switch to {chainName} to continue.</p>
           <button
             onClick={() => handleSwitchNetwork(chainId)}
             disabled={isSwitching}
-            className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 px-4 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isSwitching && <Loader2 className="h-4 w-4 animate-spin" />}
             Switch to {chainName}
@@ -868,11 +868,11 @@ export default function TokenCreatePage() {
   // Error state
   if (error && !application) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="bg-gray-800 rounded-2xl p-8 max-w-md text-center">
-          <AlertCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-white mb-2">Error</h2>
-          <p className="text-gray-400 mb-6">{error}</p>
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
+        <div className="bg-surface rounded-2xl p-8 max-w-md text-center">
+          <AlertCircle className="h-16 w-16 text-danger mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-ink mb-2">Error</h2>
+          <p className="text-ink-muted mb-6">{error}</p>
           <Link href={backUrl} className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300">
             <ArrowLeft className="h-4 w-4" /> {backLabel}
           </Link>
@@ -884,33 +884,33 @@ export default function TokenCreatePage() {
   // Success state
   if (deploymentStatus === 'success' && deployedContracts) {
     return (
-      <div className="min-h-screen bg-gray-900 py-12">
+      <div className="min-h-screen bg-surface-sunken py-12">
         <div className="max-w-2xl mx-auto px-4">
-          <div className="bg-gray-800 rounded-2xl p-8 text-center">
-            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle2 className="h-10 w-10 text-green-500" />
+          <div className="bg-surface rounded-2xl p-8 text-center">
+            <div className="w-20 h-20 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle2 className="h-10 w-10 text-success" />
             </div>
             
-            <h2 className="text-3xl font-bold text-white mb-2">Token Created!</h2>
-            <p className="text-gray-400 mb-8">
+            <h2 className="text-3xl font-bold text-ink mb-2">Token Created!</h2>
+            <p className="text-ink-muted mb-8">
               Your {formData.tokenName} token has been successfully deployed on {chainName}.
             </p>
 
             <div className="flex items-center justify-center gap-2 mb-6">
               <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                isTestnet ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'
+                isTestnet ? 'bg-warning/20 text-warning' : 'bg-success/20 text-success'
               }`}>
                 {chainName} {isTestnet ? '(Testnet)' : '(Mainnet)'}
               </span>
             </div>
 
-            <div className="bg-gray-900 rounded-xl p-6 mb-8 text-left">
-              <h3 className="text-lg font-semibold text-white mb-4">Deployed Contracts</h3>
+            <div className="bg-surface-sunken rounded-xl p-6 mb-8 text-left">
+              <h3 className="text-lg font-semibold text-ink mb-4">Deployed Contracts</h3>
               
               <div className="space-y-3">
                 {deployedContracts.nftContract && deployedContracts.nftContract !== zeroAddress && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-400">NFT Contract</span>
+                    <span className="text-ink-muted">NFT Contract</span>
                     <a href={getAddressUrl(deployedContracts.nftContract)} target="_blank" rel="noopener noreferrer"
                       className="text-gold-400 hover:text-gold-300 flex items-center gap-1 font-mono text-sm">
                       {deployedContracts.nftContract.slice(0, 8)}...{deployedContracts.nftContract.slice(-6)}
@@ -921,7 +921,7 @@ export default function TokenCreatePage() {
                 
                 {deployedContracts.tokenContract && deployedContracts.tokenContract !== zeroAddress && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-400">Token Contract</span>
+                    <span className="text-ink-muted">Token Contract</span>
                     <a href={getAddressUrl(deployedContracts.tokenContract)} target="_blank" rel="noopener noreferrer"
                       className="text-gold-400 hover:text-gold-300 flex items-center gap-1 font-mono text-sm">
                       {deployedContracts.tokenContract.slice(0, 8)}...{deployedContracts.tokenContract.slice(-6)}
@@ -932,7 +932,7 @@ export default function TokenCreatePage() {
                 
                 {deployedContracts.escrowContract && deployedContracts.escrowContract !== zeroAddress && (
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-400">Escrow Contract</span>
+                    <span className="text-ink-muted">Escrow Contract</span>
                     <a href={getAddressUrl(deployedContracts.escrowContract)} target="_blank" rel="noopener noreferrer"
                       className="text-gold-400 hover:text-gold-300 flex items-center gap-1 font-mono text-sm">
                       {deployedContracts.escrowContract.slice(0, 8)}...{deployedContracts.escrowContract.slice(-6)}
@@ -943,9 +943,9 @@ export default function TokenCreatePage() {
               </div>
 
               {txHash && (
-                <div className="mt-4 pt-4 border-t border-gray-700">
+                <div className="mt-4 pt-4 border-t border-border">
                   <div className="flex items-center justify-between">
-                    <span className="text-gray-400">Transaction</span>
+                    <span className="text-ink-muted">Transaction</span>
                     <a href={getTxUrl(txHash)} target="_blank" rel="noopener noreferrer"
                       className="text-gold-400 hover:text-gold-300 flex items-center gap-1 font-mono text-sm">
                       {txHash.slice(0, 10)}...{txHash.slice(-8)}
@@ -957,7 +957,7 @@ export default function TokenCreatePage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Link href={backUrl} className="flex-1 py-3 px-6 bg-gold-600 hover:bg-gold-700 rounded-lg text-white font-medium transition-colors text-center">
+              <Link href={backUrl} className="flex-1 py-3 px-6 bg-gold-600 hover:bg-gold-700 rounded-lg text-ink font-medium transition-colors text-center">
                 Back to Dashboard
               </Link>
               {deployedContracts?.tokenContract && deployedContracts.tokenContract !== zeroAddress && (
@@ -965,7 +965,7 @@ export default function TokenCreatePage() {
                   href={getAddressUrl(deployedContracts.tokenContract)} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex-1 py-3 px-6 bg-gray-700 hover:bg-gray-600 rounded-lg text-white font-medium transition-colors text-center flex items-center justify-center gap-2"
+                  className="flex-1 py-3 px-6 bg-surface-overlay hover:bg-border-strong rounded-lg text-ink font-medium transition-colors text-center flex items-center justify-center gap-2"
                 >
                   View Token on Explorer
                   <ExternalLink className="w-4 h-4" />
@@ -980,21 +980,21 @@ export default function TokenCreatePage() {
 
   // Main form
   return (
-    <div className="min-h-screen bg-gray-900 py-12">
+    <div className="min-h-screen bg-surface-sunken py-12">
       <div className="max-w-4xl mx-auto px-4">
         {/* Header */}
         <div className="mb-8">
-          <Link href={backUrl} className="inline-flex items-center gap-2 text-gray-400 hover:text-white mb-4">
+          <Link href={backUrl} className="inline-flex items-center gap-2 text-ink-muted hover:text-ink mb-4">
             <ArrowLeft className="h-4 w-4" /> {backLabel}
           </Link>
           
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-white">Create Token</h1>
-              <p className="text-gray-400 mt-1">Deploy your tokenized asset on {chainName}</p>
+              <h1 className="text-3xl font-bold text-ink">Create Token</h1>
+              <p className="text-ink-muted mt-1">Deploy your tokenized asset on {chainName}</p>
             </div>
             
-            <div className={`px-4 py-2 rounded-lg ${isTestnet ? 'bg-yellow-500/20 text-yellow-400' : 'bg-green-500/20 text-green-400'}`}>
+            <div className={`px-4 py-2 rounded-lg ${isTestnet ? 'bg-warning/20 text-warning' : 'bg-success/20 text-success'}`}>
               <div className="flex items-center gap-2">
                 <Globe className="h-4 w-4" />
                 <span className="font-medium">{chainName}</span>
@@ -1013,17 +1013,17 @@ export default function TokenCreatePage() {
                   onClick={() => setCurrentStep(step.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
                     currentStep === step.id
-                      ? 'bg-gold-600 text-white'
+                      ? 'bg-gold-600 text-ink'
                       : currentStep > step.id
-                      ? 'bg-green-600/20 text-green-400'
-                      : 'bg-gray-800 text-gray-400'
+                      ? 'bg-success/20 text-success'
+                      : 'bg-surface text-ink-muted'
                   }`}
                 >
                   <step.icon className="h-5 w-5" />
                   <span className="hidden sm:inline">{step.name}</span>
                 </button>
                 {index < STEPS.length - 1 && (
-                  <div className={`w-8 h-0.5 mx-2 ${currentStep > step.id ? 'bg-green-500' : 'bg-gray-700'}`} />
+                  <div className={`w-8 h-0.5 mx-2 ${currentStep > step.id ? 'bg-success' : 'bg-surface-overlay'}`} />
                 )}
               </div>
             ))}
@@ -1032,46 +1032,46 @@ export default function TokenCreatePage() {
 
         {/* Error Banner */}
         {error && (
-          <div className="mb-6 bg-red-500/20 border border-red-500 rounded-lg p-4 flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
-            <div className="flex-1"><p className="text-red-400">{error}</p></div>
-            <button onClick={() => setError(null)} className="text-red-400 hover:text-red-300">×</button>
+          <div className="mb-6 bg-danger/20 border border-danger rounded-lg p-4 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-danger flex-shrink-0 mt-0.5" />
+            <div className="flex-1"><p className="text-danger">{error}</p></div>
+            <button onClick={() => setError(null)} className="text-danger hover:text-danger">×</button>
           </div>
         )}
 
         {/* Form Content */}
-        <div className="bg-gray-800 rounded-2xl p-8">
+        <div className="bg-surface rounded-2xl p-8">
           {/* Step 1: Token Details */}
           {currentStep === 1 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-white mb-4">Token Details</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Token Details</h2>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-gray-400 mb-2">Token Name *</label>
+                  <label className="block text-ink-muted mb-2">Token Name *</label>
                   <input
                     type="text"
                     value={formData.tokenName}
                     onChange={(e) => handleInputChange('tokenName', e.target.value)}
                     placeholder="e.g., Real Estate Token"
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                    className="w-full bg-surface-sunken border border-border rounded-lg px-4 py-3 text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-gray-400 mb-2">Token Symbol *</label>
+                  <label className="block text-ink-muted mb-2">Token Symbol *</label>
                   <input
                     type="text"
                     value={formData.tokenSymbol}
                     onChange={(e) => handleInputChange('tokenSymbol', e.target.value.toUpperCase())}
                     placeholder="e.g., RET"
                     maxLength={8}
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                    className="w-full bg-surface-sunken border border-border rounded-lg px-4 py-3 text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-gray-400 mb-2">Total Supply *</label>
+                  <label className="block text-ink-muted mb-2">Total Supply *</label>
                   <input
                     type="text"
                     value={formatNumber(formData.totalSupply)}
@@ -1080,12 +1080,12 @@ export default function TokenCreatePage() {
                       handleInputChange('totalSupply', rawValue);
                     }}
                     placeholder="1,000,000"
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                    className="w-full bg-surface-sunken border border-border rounded-lg px-4 py-3 text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
                   />
                 </div>
                 
                 <div>
-                  <label className="block text-gray-400 mb-2">Price per Token (USDC) *</label>
+                  <label className="block text-ink-muted mb-2">Price per Token (USDC) *</label>
                   <input
                     type="text"
                     value={formData.pricePerToken}
@@ -1094,24 +1094,24 @@ export default function TokenCreatePage() {
                       handleInputChange('pricePerToken', rawValue);
                     }}
                     placeholder="1.00"
-                    className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                    className="w-full bg-surface-sunken border border-border rounded-lg px-4 py-3 text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
                   />
                 </div>
               </div>
               
               <div>
-                <label className="block text-gray-400 mb-2">Description</label>
+                <label className="block text-ink-muted mb-2">Description</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => handleInputChange('description', e.target.value)}
                   placeholder="Describe your tokenized asset..."
                   rows={4}
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gold-500 resize-none"
+                  className="w-full bg-surface-sunken border border-border rounded-lg px-4 py-3 text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 resize-none"
                 />
               </div>
 
-              <div className="mt-6 p-4 bg-gray-900 rounded-lg">
-                <h3 className="text-sm font-medium text-gray-400 mb-3">Selected Features (from application)</h3>
+              <div className="mt-6 p-4 bg-surface-sunken rounded-lg">
+                <h3 className="text-sm font-medium text-ink-muted mb-3">Selected Features (from application)</h3>
                 <div className="flex flex-wrap gap-2">
                   {formData.useEscrow && (
                     <span className="px-3 py-1 bg-gold-500/20 text-gold-400 rounded-full text-sm">Escrow Enabled</span>
@@ -1120,7 +1120,7 @@ export default function TokenCreatePage() {
                     <span className="px-3 py-1 bg-gold-500/20 text-gold-400 rounded-full text-sm">Dividends Enabled</span>
                   )}
                   {!formData.useEscrow && !formData.addDividends && (
-                    <span className="px-3 py-1 bg-gray-500/20 text-gray-400 rounded-full text-sm">Standard Token</span>
+                    <span className="px-3 py-1 bg-ink-faint/20 text-ink-muted rounded-full text-sm">Standard Token</span>
                   )}
                 </div>
               </div>
@@ -1130,14 +1130,14 @@ export default function TokenCreatePage() {
           {/* Step 2: Media & Files */}
           {currentStep === 2 && (
           <div className="space-y-8">
-            <h2 className="text-xl font-semibold text-white mb-4">Media & Documents</h2>
+            <h2 className="text-xl font-semibold text-ink mb-4">Media & Documents</h2>
             
             {/* Logo & Banner Section - Inline */}
             <div className="flex gap-6">
               {/* Token Logo - Square 1:1 */}
               <div className="flex-shrink-0">
-                <label className="block text-gray-400 mb-2">Token Logo (1:1)</label>
-                <div className="w-40 h-40 border-2 border-dashed border-gray-700 rounded-lg flex items-center justify-center overflow-hidden bg-gray-900">
+                <label className="block text-ink-muted mb-2">Token Logo (1:1)</label>
+                <div className="w-40 h-40 border-2 border-dashed border-border rounded-lg flex items-center justify-center overflow-hidden bg-surface-sunken">
                   {formData.imageUrl ? (
                     <img
                       src={formData.imageUrl}
@@ -1150,8 +1150,8 @@ export default function TokenCreatePage() {
                         <Loader2 className="h-8 w-8 text-gold-500 mx-auto animate-spin" />
                       ) : (
                         <>
-                          <ImageIcon className="h-8 w-8 text-gray-500 mx-auto mb-2" />
-                          <p className="text-gray-500 text-xs">400x400</p>
+                          <ImageIcon className="h-8 w-8 text-ink-faint mx-auto mb-2" />
+                          <p className="text-ink-faint text-xs">400x400</p>
                         </>
                       )}
                     </div>
@@ -1159,11 +1159,11 @@ export default function TokenCreatePage() {
                 </div>
                 <div className="mt-2 flex items-center gap-2">
                   {formData.imageUrl && (
-                    <span className="text-xs text-green-400 bg-green-500/20 px-2 py-1 rounded">
+                    <span className="text-xs text-success bg-success/20 px-2 py-1 rounded">
                       {application?.logo_url || application?.logo_ipfs ? 'Loaded' : 'New'}
                     </span>
                   )}
-                  <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded text-white text-xs transition-colors">
+                  <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-surface-overlay hover:bg-border-strong rounded text-ink text-xs transition-colors">
                     {uploadingImage ? (
                       <Loader2 className="w-3 h-3 animate-spin" />
                     ) : (
@@ -1183,8 +1183,8 @@ export default function TokenCreatePage() {
 
               {/* Token Banner - 3:1 ratio */}
               <div className="flex-1 min-w-0">
-                <label className="block text-gray-400 mb-2">Project Banner (3:1)</label>
-                <div className="w-full h-40 border-2 border-dashed border-gray-700 rounded-lg flex items-center justify-center overflow-hidden bg-gray-900">
+                <label className="block text-ink-muted mb-2">Project Banner (3:1)</label>
+                <div className="w-full h-40 border-2 border-dashed border-border rounded-lg flex items-center justify-center overflow-hidden bg-surface-sunken">
                   {formData.bannerUrl ? (
                     <img
                       src={formData.bannerUrl}
@@ -1197,8 +1197,8 @@ export default function TokenCreatePage() {
                         <Loader2 className="h-8 w-8 text-gold-500 mx-auto animate-spin" />
                       ) : (
                         <>
-                          <ImageIcon className="h-8 w-8 text-gray-500 mx-auto mb-2" />
-                          <p className="text-gray-500 text-xs">1200x400 recommended</p>
+                          <ImageIcon className="h-8 w-8 text-ink-faint mx-auto mb-2" />
+                          <p className="text-ink-faint text-xs">1200x400 recommended</p>
                         </>
                       )}
                     </div>
@@ -1206,11 +1206,11 @@ export default function TokenCreatePage() {
                 </div>
                 <div className="mt-2 flex items-center gap-2">
                   {formData.bannerUrl && (
-                    <span className="text-xs text-green-400 bg-green-500/20 px-2 py-1 rounded">
+                    <span className="text-xs text-success bg-success/20 px-2 py-1 rounded">
                       {application?.banner_url || application?.banner_ipfs ? 'Loaded' : 'New'}
                     </span>
                   )}
-                  <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-gray-700 hover:bg-gray-600 rounded text-white text-xs transition-colors">
+                  <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-surface-overlay hover:bg-border-strong rounded text-ink text-xs transition-colors">
                     {uploadingBanner ? (
                       <Loader2 className="w-3 h-3 animate-spin" />
                     ) : (
@@ -1231,11 +1231,11 @@ export default function TokenCreatePage() {
 
               {/* Existing Documents from Application */}
               {existingDocuments.length > 0 && (
-                <div className="bg-gray-800/50 rounded-xl p-6 border border-gray-700">
-                  <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-green-400" />
+                <div className="bg-surface/50 rounded-xl p-6 border border-border">
+                  <h3 className="text-lg font-medium text-ink mb-4 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-success" />
                     Application Documents
-                    <span className="ml-auto bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-full">
+                    <span className="ml-auto bg-success/20 text-success text-xs px-2 py-1 rounded-full">
                       {existingDocuments.length} documents
                     </span>
                   </h3>
@@ -1243,19 +1243,19 @@ export default function TokenCreatePage() {
                   {existingDocuments.length > 0 ? (
                     <div className="space-y-3">
                       {existingDocuments.map((doc, idx) => (
-                        <div key={idx} className="flex items-center gap-4 p-3 bg-gray-700/50 rounded-lg">
+                        <div key={idx} className="flex items-center gap-4 p-3 bg-surface-overlay/50 rounded-lg">
                           <FileText className="w-5 h-5 text-gold-400 flex-shrink-0" />
                           <div className="flex-1 min-w-0">
-                            <p className="text-white text-sm truncate">{doc.name}</p>
+                            <p className="text-ink text-sm truncate">{doc.name}</p>
                             <div className="flex items-center gap-2 mt-1">
                               <span className="text-xs text-gold-400 bg-gold-500/20 px-2 py-0.5 rounded">
                                 {formatDocumentType(doc.type)}
                               </span>
                               {doc.size && (
-                                <span className="text-xs text-gray-500">{formatFileSize(doc.size)}</span>
+                                <span className="text-xs text-ink-faint">{formatFileSize(doc.size)}</span>
                               )}
                               {doc.mimeType && (
-                                <span className="text-xs text-gray-500">{doc.mimeType.split('/')[1]?.toUpperCase()}</span>
+                                <span className="text-xs text-ink-faint">{doc.mimeType.split('/')[1]?.toUpperCase()}</span>
                               )}
                             </div>
                           </div>
@@ -1267,7 +1267,7 @@ export default function TokenCreatePage() {
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
-                          <span className="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                          <span className="bg-success/20 text-success text-xs px-2 py-1 rounded-full flex items-center gap-1">
                             <Shield className="w-3 h-3" />
                             NFT
                           </span>
@@ -1275,7 +1275,7 @@ export default function TokenCreatePage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-center py-4">No documents from application</p>
+                    <p className="text-ink-faint text-center py-4">No documents from application</p>
                   )}
                   
                   <div className="mt-4 p-3 bg-gold-500/10 border border-gold-500/30 rounded-lg">
@@ -1290,25 +1290,25 @@ export default function TokenCreatePage() {
               {/* Additional Documents */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-medium text-white flex items-center gap-2">
+                  <h3 className="text-lg font-medium text-ink flex items-center gap-2">
                     <Plus className="w-5 h-5 text-gold-400" />
                     Additional Legal Documents
                   </h3>
-                  <span className="text-sm text-gray-400">
+                  <span className="text-sm text-ink-muted">
                     {newDocuments.length} additional document{newDocuments.length !== 1 ? 's' : ''}
                   </span>
                 </div>
 
                 {/* New Documents List */}
                 {newDocuments.length > 0 && (
-                  <div className="bg-gray-900 rounded-xl p-4 space-y-2 mb-4">
+                  <div className="bg-surface-sunken rounded-xl p-4 space-y-2 mb-4">
                     {newDocuments.map((doc, idx) => (
-                      <div key={idx} className="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
+                      <div key={idx} className="flex items-center justify-between p-3 bg-surface rounded-lg">
                         <div className="flex items-center gap-3">
                           <FileText className="w-5 h-5 text-gold-400" />
                           <div>
-                            <p className="text-white text-sm">{doc.name}</p>
-                            <p className="text-gray-500 text-xs capitalize">
+                            <p className="text-ink text-sm">{doc.name}</p>
+                            <p className="text-ink-faint text-xs capitalize">
                               {doc.category?.replace(/_/g, ' ')}
                             </p>
                           </div>
@@ -1319,7 +1319,7 @@ export default function TokenCreatePage() {
                             className="text-gold-400 hover:text-gold-300">
                             <ExternalLink className="w-4 h-4" />
                           </a>
-                          <button onClick={() => removeNewDocument(idx)} className="text-red-400 hover:text-red-300">
+                          <button onClick={() => removeNewDocument(idx)} className="text-danger hover:text-danger">
                             <XCircle className="w-4 h-4" />
                           </button>
                         </div>
@@ -1329,13 +1329,13 @@ export default function TokenCreatePage() {
                 )}
 
                 {/* Upload New Document */}
-                <div className="border-2 border-dashed border-gray-700 rounded-lg p-6">
+                <div className="border-2 border-dashed border-border rounded-lg p-6">
                   <div className="flex flex-col md:flex-row items-center gap-4">
                     <div className="flex-1 w-full">
                       <select
                         value={selectedDocCategory}
                         onChange={(e) => setSelectedDocCategory(e.target.value)}
-                        className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-gold-500"
+                        className="w-full bg-surface-sunken border border-border rounded-lg px-4 py-3 text-ink focus:outline-none focus:border-gold-500"
                       >
                         <option value="">Select document type...</option>
                         {DOCUMENT_CATEGORIES.map(cat => (
@@ -1343,10 +1343,10 @@ export default function TokenCreatePage() {
                         ))}
                       </select>
                     </div>
-                    <label className={`cursor-pointer px-6 py-3 rounded-lg text-white font-medium transition-colors flex items-center gap-2 ${
+                    <label className={`cursor-pointer px-6 py-3 rounded-lg text-ink font-medium transition-colors flex items-center gap-2 ${
                       selectedDocCategory 
                         ? 'bg-gold-600 hover:bg-gold-700' 
-                        : 'bg-gray-600 cursor-not-allowed'
+                        : 'bg-border-strong cursor-not-allowed'
                     }`}>
                       {uploadingDoc ? (
                         <>
@@ -1368,7 +1368,7 @@ export default function TokenCreatePage() {
                       />
                     </label>
                   </div>
-                  <p className="text-gray-500 text-sm text-center mt-4">
+                  <p className="text-ink-faint text-sm text-center mt-4">
                     PDF, DOC, DOCX, or images up to 50MB. All documents will be linked in the NFT metadata.
                   </p>
                 </div>
@@ -1391,58 +1391,58 @@ export default function TokenCreatePage() {
           {/* Step 3: Review & Deploy */}
           {currentStep === 3 && (
             <div className="space-y-6">
-              <h2 className="text-xl font-semibold text-white mb-4">Review & Deploy</h2>
+              <h2 className="text-xl font-semibold text-ink mb-4">Review & Deploy</h2>
               
               {/* Summary */}
-              <div className="bg-gray-900 rounded-xl p-6 space-y-4">
-                <h3 className="text-lg font-medium text-white">Token Summary</h3>
+              <div className="bg-surface-sunken rounded-xl p-6 space-y-4">
+                <h3 className="text-lg font-medium text-ink">Token Summary</h3>
                 
                 {/* Token Preview */}
                 {formData.imageUrl && (
-                  <div className="flex items-center gap-4 pb-4 border-b border-gray-700">
+                  <div className="flex items-center gap-4 pb-4 border-b border-border">
                     <img src={formData.imageUrl} alt="Token" className="w-16 h-16 rounded-lg object-cover" />
                     <div>
-                      <p className="text-white font-semibold">{formData.tokenName}</p>
-                      <p className="text-gray-400">${formData.tokenSymbol}</p>
+                      <p className="text-ink font-semibold">{formData.tokenName}</p>
+                      <p className="text-ink-muted">${formData.tokenSymbol}</p>
                     </div>
                   </div>
                 )}
                 
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-gray-400">Name</p>
-                    <p className="text-white">{formData.tokenName || '-'}</p>
+                    <p className="text-ink-muted">Name</p>
+                    <p className="text-ink">{formData.tokenName || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Symbol</p>
-                    <p className="text-white">{formData.tokenSymbol || '-'}</p>
+                    <p className="text-ink-muted">Symbol</p>
+                    <p className="text-ink">{formData.tokenSymbol || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Total Supply</p>
-                    <p className="text-white">{formatNumber(formData.totalSupply)}</p>
+                    <p className="text-ink-muted">Total Supply</p>
+                    <p className="text-ink">{formatNumber(formData.totalSupply)}</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Price per Token</p>
-                    <p className="text-white">${parseFloat(formData.pricePerToken).toLocaleString('en-US', { minimumFractionDigits: 2 })} USDC</p>
+                    <p className="text-ink-muted">Price per Token</p>
+                    <p className="text-ink">${parseFloat(formData.pricePerToken).toLocaleString('en-US', { minimumFractionDigits: 2 })} USDC</p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Total Value</p>
-                    <p className="text-white font-semibold">
+                    <p className="text-ink-muted">Total Value</p>
+                    <p className="text-ink font-semibold">
                       {formatCurrency(parseFloat(formData.totalSupply.replace(/,/g, '')) * parseFloat(formData.pricePerToken))}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Network</p>
-                    <p className="text-white flex items-center gap-2">
+                    <p className="text-ink-muted">Network</p>
+                    <p className="text-ink flex items-center gap-2">
                       {chainName}
                       {isTestnet && (
-                        <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded">Testnet</span>
+                        <span className="text-xs bg-warning/20 text-warning px-2 py-0.5 rounded">Testnet</span>
                       )}
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Features</p>
-                    <p className="text-white">
+                    <p className="text-ink-muted">Features</p>
+                    <p className="text-ink">
                       {formData.useEscrow ? 'Escrow' : ''}
                       {formData.useEscrow && formData.addDividends ? ', ' : ''}
                       {formData.addDividends ? 'Dividends' : ''}
@@ -1450,22 +1450,22 @@ export default function TokenCreatePage() {
                     </p>
                   </div>
                   <div>
-                    <p className="text-gray-400">Documents</p>
-                    <p className="text-white">{allDocuments.length} document{allDocuments.length !== 1 ? 's' : ''} included</p>
+                    <p className="text-ink-muted">Documents</p>
+                    <p className="text-ink">{allDocuments.length} document{allDocuments.length !== 1 ? 's' : ''} included</p>
                   </div>
                 </div>
 
                 {formData.useEscrow && (
-                  <div className="mt-4 pt-4 border-t border-gray-700">
-                    <h4 className="text-sm font-medium text-gray-400 mb-2">Escrow Details</h4>
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <h4 className="text-sm font-medium text-ink-muted mb-2">Escrow Details</h4>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div>
-                        <p className="text-gray-400">Funding Goal</p>
-                        <p className="text-white">{formatCurrency(formData.fundingGoal, 0)} USDC</p>
+                        <p className="text-ink-muted">Funding Goal</p>
+                        <p className="text-ink">{formatCurrency(formData.fundingGoal, 0)} USDC</p>
                       </div>
                       <div>
-                        <p className="text-gray-400">Deadline</p>
-                        <p className="text-white">{formData.fundingDeadline || 'Not set'}</p>
+                        <p className="text-ink-muted">Deadline</p>
+                        <p className="text-ink">{formData.fundingDeadline || 'Not set'}</p>
                       </div>
                     </div>
                   </div>
@@ -1473,11 +1473,11 @@ export default function TokenCreatePage() {
               </div>
 
               {/* Payment Confirmed Badge */}
-              <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 flex items-center gap-3">
-                <CheckCircle2 className="h-5 w-5 text-green-500" />
+              <div className="bg-success/10 border border-success/30 rounded-xl p-4 flex items-center gap-3">
+                <CheckCircle2 className="h-5 w-5 text-success" />
                 <div>
-                  <p className="text-green-400 font-medium">Payment Confirmed</p>
-                  <p className="text-green-400/70 text-sm">
+                  <p className="text-success font-medium">Payment Confirmed</p>
+                  <p className="text-success/70 text-sm">
                     Fee of {formatCurrency(application?.fee_amount || 0, 0)} {application?.fee_currency || 'USDC'} has been paid
                   </p>
                 </div>
@@ -1485,19 +1485,19 @@ export default function TokenCreatePage() {
               
               {/* Transaction Status */}
               {(isDeploying || deploymentStatus !== 'idle') && (
-                <div className="bg-gray-900 rounded-xl p-6">
-                  <h3 className="text-lg font-medium text-white mb-4">Deployment Progress</h3>
+                <div className="bg-surface-sunken rounded-xl p-6">
+                  <h3 className="text-lg font-medium text-ink mb-4">Deployment Progress</h3>
                   
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
                       {deploymentStatus === 'uploading' ? (
                         <Loader2 className="h-5 w-5 text-gold-500 animate-spin" />
                       ) : deploymentStatus !== 'idle' ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        <CheckCircle2 className="h-5 w-5 text-success" />
                       ) : (
-                        <div className="h-5 w-5 rounded-full border-2 border-gray-600" />
+                        <div className="h-5 w-5 rounded-full border-2 border-border-strong" />
                       )}
-                      <span className={deploymentStatus === 'uploading' ? 'text-white' : 'text-gray-400'}>
+                      <span className={deploymentStatus === 'uploading' ? 'text-ink' : 'text-ink-muted'}>
                         Uploading metadata & documents to IPFS
                       </span>
                     </div>
@@ -1506,18 +1506,18 @@ export default function TokenCreatePage() {
                       {deploymentStatus === 'deploying' || isConfirming ? (
                         <Loader2 className="h-5 w-5 text-gold-500 animate-spin" />
                       ) : deploymentStatus === 'success' ? (
-                        <CheckCircle2 className="h-5 w-5 text-green-500" />
+                        <CheckCircle2 className="h-5 w-5 text-success" />
                       ) : (
-                        <div className="h-5 w-5 rounded-full border-2 border-gray-600" />
+                        <div className="h-5 w-5 rounded-full border-2 border-border-strong" />
                       )}
-                      <span className={deploymentStatus === 'deploying' ? 'text-white' : 'text-gray-400'}>
+                      <span className={deploymentStatus === 'deploying' ? 'text-ink' : 'text-ink-muted'}>
                         Deploying contracts
                       </span>
                     </div>
                   </div>
                   
                   {txHash && (
-                    <div className="mt-4 pt-4 border-t border-gray-700">
+                    <div className="mt-4 pt-4 border-t border-border">
                       <a href={getTxUrl(txHash)} target="_blank" rel="noopener noreferrer"
                         className="text-gold-400 hover:text-gold-300 flex items-center gap-2 text-sm">
                         View transaction on Explorer
@@ -1531,11 +1531,11 @@ export default function TokenCreatePage() {
           )}
 
           {/* Navigation */}
-          <div className="flex justify-between mt-8 pt-6 border-t border-gray-700">
+          <div className="flex justify-between mt-8 pt-6 border-t border-border">
             <button
               onClick={() => setCurrentStep(prev => Math.max(1, prev - 1))}
               disabled={currentStep === 1 || isDeploying}
-              className="px-6 py-3 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-500 rounded-lg text-white font-medium transition-colors"
+              className="px-6 py-3 bg-surface-overlay hover:bg-border-strong disabled:bg-surface disabled:text-ink-faint rounded-lg text-ink font-medium transition-colors"
             >
               Previous
             </button>
@@ -1548,7 +1548,7 @@ export default function TokenCreatePage() {
                   setCurrentStep(prev => Math.min(3, prev + 1));
                 }}
                 disabled={!isStepValid(currentStep)}
-                className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg text-white font-medium transition-colors"
+                className="px-6 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:text-ink-muted rounded-lg text-ink font-medium transition-colors"
               >
                 Next
               </button>
@@ -1556,7 +1556,7 @@ export default function TokenCreatePage() {
               <button
                 onClick={handleDeploy}
                 disabled={isDeploying || !isStepValid(3)}
-                className="px-8 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 disabled:text-gray-400 rounded-lg text-white font-medium transition-colors flex items-center gap-2"
+                className="px-8 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:text-ink-muted rounded-lg text-ink font-medium transition-colors flex items-center gap-2"
               >
                 {isDeploying || isWritePending || isConfirming ? (
                   <>

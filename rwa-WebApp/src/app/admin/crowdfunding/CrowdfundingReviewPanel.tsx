@@ -97,11 +97,11 @@ function getCategoryIcon(category: string) {
 
 function getCategoryColor(category: string): string {
   const colors: Record<string, string> = {
-    'Real Estate': 'from-gold-500 to-cyan-500',
-    'Infrastructure': 'from-orange-500 to-amber-500',
-    'Business Equity': 'from-gold-500 to-pink-500',
-    'Revenue Based': 'from-green-500 to-emerald-500',
-    'Art & Collectibles': 'from-rose-500 to-red-500',
+    'Real Estate': 'from-gold-500 to-gold',
+    'Infrastructure': 'from-orange-500 to-warning',
+    'Business Equity': 'from-gold-500 to-gold',
+    'Revenue Based': 'from-success to-success',
+    'Art & Collectibles': 'from-rose-500 to-danger',
   };
   return colors[category] || 'from-surface-overlay to-surface-raised';
 }
@@ -125,10 +125,10 @@ function StatCard({
 }) {
   const colorClasses = {
     blue: 'bg-gold-500/10 border-gold-500/20 text-gold-400',
-    green: 'bg-green-500/10 border-green-500/20 text-green-400',
-    yellow: 'bg-yellow-500/10 border-yellow-500/20 text-yellow-400',
+    green: 'bg-success/10 border-success/20 text-success',
+    yellow: 'bg-warning/10 border-warning/20 text-warning',
     purple: 'bg-gold-500/10 border-gold-500/20 text-gold-400',
-    cyan: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-400',
+    cyan: 'bg-gold/10 border-gold/20 text-gold',
   };
 
   return (
@@ -661,7 +661,7 @@ function ReviewModal({ application, onClose, onReview }: ReviewModalProps) {
                     <p className="text-xs text-ink-muted mb-1">Investor Share</p>
                     <p className="text-2xl font-bold text-ink">{application.investorSharePercent}%</p>
                   </div>
-                  <div className="bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 rounded-xl p-5 text-center">
+                  <div className="bg-gradient-to-br from-success/10 to-success/5 border border-success/20 rounded-xl p-5 text-center">
                     <TrendingUp className="w-6 h-6 text-success mx-auto mb-2" />
                     <p className="text-xs text-ink-muted mb-1">Projected ROI</p>
                     <p className="text-2xl font-bold text-success">{application.projectedROI}%</p>
@@ -717,7 +717,7 @@ function ReviewModal({ application, onClose, onReview }: ReviewModalProps) {
                     </div>
                     <div className="flex h-4 rounded-full overflow-hidden bg-surface-overlay">
                       {application.milestones.map((m, i) => {
-                        const colors = ['bg-gold-500', 'bg-green-500', 'bg-gold-500', 'bg-cyan-500', 'bg-pink-500', 'bg-orange-500'];
+                        const colors = ['bg-gold-500', 'bg-success', 'bg-gold-500', 'bg-gold', 'bg-gold', 'bg-orange-500'];
                         return (
                           <div
                             key={i}
@@ -863,8 +863,8 @@ function ReviewModal({ application, onClose, onReview }: ReviewModalProps) {
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-4 bg-surface-overlay/50 hover:bg-surface-overlay rounded-xl transition-colors group"
                     >
-                      <div className="p-2 bg-red-500/20 rounded-lg">
-                        <Play className="w-5 h-5 text-red-400" />
+                      <div className="p-2 bg-danger/20 rounded-lg">
+                        <Play className="w-5 h-5 text-danger" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-ink font-medium">Video</p>
@@ -880,8 +880,8 @@ function ReviewModal({ application, onClose, onReview }: ReviewModalProps) {
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-4 bg-surface-overlay/50 hover:bg-surface-overlay rounded-xl transition-colors group"
                     >
-                      <div className="p-2 bg-green-500/20 rounded-lg">
-                        <Globe className="w-5 h-5 text-green-400" />
+                      <div className="p-2 bg-success/20 rounded-lg">
+                        <Globe className="w-5 h-5 text-success" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-ink font-medium">Website</p>
@@ -1175,7 +1175,7 @@ export default function CrowdfundingReviewPanel({ onRefresh }: CrowdfundingRevie
         <div 
           onClick={() => setFilter('all')}
           className={`bg-surface rounded-xl p-4 border cursor-pointer transition-all ${
-            filter === 'all' ? 'border-gold-500 ring-2 ring-blue-500/20' : 'border-border hover:border-border-strong'
+            filter === 'all' ? 'border-gold-500 ring-2 ring-gold/20' : 'border-border hover:border-border-strong'
           }`}
         >
           <p className="text-sm text-ink-muted mb-1">Total</p>

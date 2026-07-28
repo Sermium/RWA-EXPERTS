@@ -296,8 +296,8 @@ function VerticalCarousel({ children }: { children: React.ReactNode }) {
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Fade edges */}
-      <div className="absolute left-0 right-0 top-0 h-16 bg-gradient-to-b from-gray-800/80 to-transparent z-10 pointer-events-none" />
-      <div className="absolute left-0 right-0 bottom-0 h-16 bg-gradient-to-t from-gray-800/80 to-transparent z-10 pointer-events-none" />
+      <div className="absolute left-0 right-0 top-0 h-16 bg-gradient-to-b from-surface/80 to-transparent z-10 pointer-events-none" />
+      <div className="absolute left-0 right-0 bottom-0 h-16 bg-gradient-to-t from-surface/80 to-transparent z-10 pointer-events-none" />
       
       {/* Up Arrow */}
       <div className="absolute top-2 left-1/2 -translate-x-1/2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

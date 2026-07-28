@@ -415,10 +415,10 @@ export default function CreateProjectPage() {
             <div
               className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-colors ${
                 currentStep > step.id
-                  ? 'bg-green-600 border-green-600 text-white'
+                  ? 'bg-success border-success text-ink'
                   : currentStep === step.id
-                  ? 'bg-gold-600 border-gold-600 text-white'
-                  : 'bg-gray-700 border-gray-600 text-gray-400'
+                  ? 'bg-gold-600 border-gold-600 text-ink'
+                  : 'bg-surface-overlay border-border-strong text-ink-muted'
               }`}
             >
               {currentStep > step.id ? (
@@ -432,7 +432,7 @@ export default function CreateProjectPage() {
             {index < STEPS.length - 1 && (
               <div
                 className={`w-full h-1 mx-2 ${
-                  currentStep > step.id ? 'bg-green-600' : 'bg-gray-700'
+                  currentStep > step.id ? 'bg-success' : 'bg-surface-overlay'
                 }`}
                 style={{ minWidth: '40px' }}
               />
@@ -441,8 +441,8 @@ export default function CreateProjectPage() {
         ))}
       </div>
       <div className="mt-4 text-center">
-        <h2 className="text-xl font-semibold text-white">{STEPS[currentStep - 1].name}</h2>
-        <p className="text-gray-400 text-sm">{STEPS[currentStep - 1].description}</p>
+        <h2 className="text-xl font-semibold text-ink">{STEPS[currentStep - 1].name}</h2>
+        <p className="text-ink-muted text-sm">{STEPS[currentStep - 1].description}</p>
       </div>
     </div>
   );
@@ -454,26 +454,26 @@ export default function CreateProjectPage() {
   const renderStep1 = () => (
     <div className="space-y-6">
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Project Name *</label>
+        <label className="block text-ink-muted text-sm font-medium mb-2">Project Name *</label>
         <input
           type="text"
           value={formData.name}
           onChange={(e) => updateFormData('name', e.target.value)}
           placeholder="Enter your project name"
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
-            errors.name ? 'border-red-500' : 'border-gray-600'
+          className={`w-full px-4 py-3 bg-surface-overlay border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+            errors.name ? 'border-danger' : 'border-border-strong'
           }`}
         />
-        {errors.name && <p className="mt-1 text-red-400 text-sm">{errors.name}</p>}
+        {errors.name && <p className="mt-1 text-danger text-sm">{errors.name}</p>}
       </div>
 
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Category *</label>
+        <label className="block text-ink-muted text-sm font-medium mb-2">Category *</label>
         <select
           value={formData.category}
           onChange={(e) => updateFormData('category', e.target.value)}
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-gold-500 ${
-            errors.category ? 'border-red-500' : 'border-gray-600'
+          className={`w-full px-4 py-3 bg-surface-overlay border rounded-lg text-ink focus:outline-none focus:border-gold-500 ${
+            errors.category ? 'border-danger' : 'border-border-strong'
           }`}
         >
           <option value="">Select a category</option>
@@ -481,23 +481,23 @@ export default function CreateProjectPage() {
             <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
-        {errors.category && <p className="mt-1 text-red-400 text-sm">{errors.category}</p>}
+        {errors.category && <p className="mt-1 text-danger text-sm">{errors.category}</p>}
       </div>
 
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Description *</label>
+        <label className="block text-ink-muted text-sm font-medium mb-2">Description *</label>
         <textarea
           value={formData.description}
           onChange={(e) => updateFormData('description', e.target.value)}
           placeholder="Describe your project in detail (minimum 50 characters)"
           rows={6}
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 resize-none ${
-            errors.description ? 'border-red-500' : 'border-gray-600'
+          className={`w-full px-4 py-3 bg-surface-overlay border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 resize-none ${
+            errors.description ? 'border-danger' : 'border-border-strong'
           }`}
         />
         <div className="flex justify-between mt-1">
-          {errors.description && <p className="text-red-400 text-sm">{errors.description}</p>}
-          <p className="text-gray-500 text-sm ml-auto">{formData.description.length} characters</p>
+          {errors.description && <p className="text-danger text-sm">{errors.description}</p>}
+          <p className="text-ink-faint text-sm ml-auto">{formData.description.length} characters</p>
         </div>
       </div>
     </div>
@@ -506,14 +506,14 @@ export default function CreateProjectPage() {
   const renderStep2 = () => (
     <div className="space-y-6">
       {/* Currency Selection */}
-      <div className="bg-gray-700/50 rounded-lg p-4 mb-6">
+      <div className="bg-surface-overlay/50 rounded-lg p-4 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-white font-medium">Local Currency</h3>
-            <p className="text-gray-400 text-sm">Select the currency for your business plan and documents</p>
+            <h3 className="text-ink font-medium">Local Currency</h3>
+            <p className="text-ink-muted text-sm">Select the currency for your business plan and documents</p>
           </div>
           {ratesLoading && (
-            <div className="flex items-center text-gray-400 text-sm">
+            <div className="flex items-center text-ink-muted text-sm">
               <div className="animate-spin w-4 h-4 border-2 border-gold-500 border-t-transparent rounded-full mr-2" />
               Loading rates...
             </div>
@@ -523,7 +523,7 @@ export default function CreateProjectPage() {
         <select
           value={formData.localCurrency}
           onChange={(e) => updateFormData('localCurrency', e.target.value)}
-          className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
+          className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-gold-500"
         >
           {SUPPORTED_CURRENCIES.map(currency => (
             <option key={currency.code} value={currency.code}>
@@ -533,7 +533,7 @@ export default function CreateProjectPage() {
         </select>
 
         {exchangeRates && formData.localCurrency !== 'USD' && (
-          <p className="mt-2 text-gray-400 text-sm">
+          <p className="mt-2 text-ink-muted text-sm">
             Exchange rate: 1 USD = {exchangeRates.rates[formData.localCurrency]?.toFixed(4)} {formData.localCurrency}
           </p>
         )}
@@ -541,10 +541,10 @@ export default function CreateProjectPage() {
 
       {/* Funding Goal */}
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Funding Goal *</label>
+        <label className="block text-ink-muted text-sm font-medium mb-2">Funding Goal *</label>
         <div className="flex gap-4">
           <div className="flex-1 relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">
               {getCurrentCurrencySymbol()}
             </span>
             <input
@@ -552,27 +552,27 @@ export default function CreateProjectPage() {
               value={formData.fundingGoalLocal}
               onChange={(e) => updateFormData('fundingGoalLocal', e.target.value)}
               placeholder="0"
-              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
-                errors.fundingGoalLocal ? 'border-red-500' : 'border-gray-600'
+              className={`w-full px-4 py-3 pl-10 bg-surface-overlay border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+                errors.fundingGoalLocal ? 'border-danger' : 'border-border-strong'
               }`}
             />
           </div>
           {formData.localCurrency !== 'USD' && formData.fundingGoalLocal && (
-            <div className="flex items-center px-4 py-3 bg-gray-600 rounded-lg min-w-[150px]">
-              <span className="text-gray-400 text-sm">≈</span>
-              <span className="text-white ml-2">{getUSDEquivalent(formData.fundingGoalLocal)}</span>
+            <div className="flex items-center px-4 py-3 bg-border-strong rounded-lg min-w-[150px]">
+              <span className="text-ink-muted text-sm">≈</span>
+              <span className="text-ink ml-2">{getUSDEquivalent(formData.fundingGoalLocal)}</span>
             </div>
           )}
         </div>
-        {errors.fundingGoalLocal && <p className="mt-1 text-red-400 text-sm">{errors.fundingGoalLocal}</p>}
+        {errors.fundingGoalLocal && <p className="mt-1 text-danger text-sm">{errors.fundingGoalLocal}</p>}
       </div>
 
       {/* Min/Max Investment */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-gray-300 text-sm font-medium mb-2">Minimum Investment *</label>
+          <label className="block text-ink-muted text-sm font-medium mb-2">Minimum Investment *</label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">
               {getCurrentCurrencySymbol()}
             </span>
             <input
@@ -580,21 +580,21 @@ export default function CreateProjectPage() {
               value={formData.minInvestmentLocal}
               onChange={(e) => updateFormData('minInvestmentLocal', e.target.value)}
               placeholder="0"
-              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
-                errors.minInvestmentLocal ? 'border-red-500' : 'border-gray-600'
+              className={`w-full px-4 py-3 pl-10 bg-surface-overlay border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+                errors.minInvestmentLocal ? 'border-danger' : 'border-border-strong'
               }`}
             />
           </div>
           {formData.localCurrency !== 'USD' && formData.minInvestmentLocal && (
-            <p className="mt-1 text-gray-400 text-sm">≈ {getUSDEquivalent(formData.minInvestmentLocal)}</p>
+            <p className="mt-1 text-ink-muted text-sm">≈ {getUSDEquivalent(formData.minInvestmentLocal)}</p>
           )}
-          {errors.minInvestmentLocal && <p className="mt-1 text-red-400 text-sm">{errors.minInvestmentLocal}</p>}
+          {errors.minInvestmentLocal && <p className="mt-1 text-danger text-sm">{errors.minInvestmentLocal}</p>}
         </div>
 
         <div>
-          <label className="block text-gray-300 text-sm font-medium mb-2">Maximum Investment (Optional)</label>
+          <label className="block text-ink-muted text-sm font-medium mb-2">Maximum Investment (Optional)</label>
           <div className="relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">
               {getCurrentCurrencySymbol()}
             </span>
             <input
@@ -602,19 +602,19 @@ export default function CreateProjectPage() {
               value={formData.maxInvestmentLocal}
               onChange={(e) => updateFormData('maxInvestmentLocal', e.target.value)}
               placeholder="No limit"
-              className="w-full px-4 py-3 pl-10 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500"
+              className="w-full px-4 py-3 pl-10 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
             />
           </div>
           {formData.localCurrency !== 'USD' && formData.maxInvestmentLocal && (
-            <p className="mt-1 text-gray-400 text-sm">≈ {getUSDEquivalent(formData.maxInvestmentLocal)}</p>
+            <p className="mt-1 text-ink-muted text-sm">≈ {getUSDEquivalent(formData.maxInvestmentLocal)}</p>
           )}
         </div>
       </div>
 
       {/* Accepted Payment Tokens */}
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Accepted Payment Tokens *</label>
-        <p className="text-gray-400 text-sm mb-3">Select which cryptocurrencies investors can use</p>
+        <label className="block text-ink-muted text-sm font-medium mb-2">Accepted Payment Tokens *</label>
+        <p className="text-ink-muted text-sm mb-3">Select which cryptocurrencies investors can use</p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {ACCEPTED_PAYMENT_TOKENS.map(token => (
             <label
@@ -622,7 +622,7 @@ export default function CreateProjectPage() {
               className={`flex items-center p-3 rounded-lg border cursor-pointer transition-colors ${
                 formData.acceptedTokens.includes(token.symbol)
                   ? 'bg-gold-600/20 border-gold-500'
-                  : 'bg-gray-700 border-gray-600 hover:border-gray-500'
+                  : 'bg-surface-overlay border-border-strong hover:border-ink-faint'
               }`}
             >
               <input
@@ -637,12 +637,12 @@ export default function CreateProjectPage() {
                 }}
                 className="sr-only"
               />
-              <span className="text-white font-medium">{token.symbol}</span>
-              <span className="text-gray-400 text-sm ml-auto">{token.name}</span>
+              <span className="text-ink font-medium">{token.symbol}</span>
+              <span className="text-ink-muted text-sm ml-auto">{token.name}</span>
             </label>
           ))}
         </div>
-        {errors.acceptedTokens && <p className="mt-2 text-red-400 text-sm">{errors.acceptedTokens}</p>}
+        {errors.acceptedTokens && <p className="mt-2 text-danger text-sm">{errors.acceptedTokens}</p>}
       </div>
     </div>
   );
@@ -652,22 +652,22 @@ export default function CreateProjectPage() {
     
     return (
       <div className="space-y-6">
-        <div className="bg-gray-700/50 rounded-lg p-4">
+        <div className="bg-surface-overlay/50 rounded-lg p-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-white font-medium">Project Milestones</h3>
-              <p className="text-gray-400 text-sm">Define milestones and the percentage of funds released at each stage</p>
+              <h3 className="text-ink font-medium">Project Milestones</h3>
+              <p className="text-ink-muted text-sm">Define milestones and the percentage of funds released at each stage</p>
             </div>
             <div className="flex items-center gap-4">
               <div className={`px-3 py-1 rounded-full text-sm ${
-                totalPercentage === 100 ? 'bg-green-600 text-white' : 
-                totalPercentage > 100 ? 'bg-red-600 text-white' : 'bg-yellow-600 text-black'
+                totalPercentage === 100 ? 'bg-success text-ink' : 
+                totalPercentage > 100 ? 'bg-danger text-ink' : 'bg-warning text-black'
               }`}>
                 {totalPercentage}% / 100%
               </div>
               <button
                 onClick={addMilestone}
-                className="px-4 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg transition-colors text-sm"
+                className="px-4 py-2 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg transition-colors text-sm"
               >
                 + Add Milestone
               </button>
@@ -676,20 +676,20 @@ export default function CreateProjectPage() {
         </div>
 
         {errors.milestones && (
-          <div className="bg-red-900/30 border border-red-600 rounded-lg p-3">
-            <p className="text-red-400 text-sm">{errors.milestones}</p>
+          <div className="bg-danger/30 border border-danger rounded-lg p-3">
+            <p className="text-danger text-sm">{errors.milestones}</p>
           </div>
         )}
 
         {formData.milestones.length === 0 ? (
-          <div className="text-center py-12 bg-gray-700/30 rounded-lg">
-            <svg className="w-12 h-12 mx-auto text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center py-12 bg-surface-overlay/30 rounded-lg">
+            <svg className="w-12 h-12 mx-auto text-ink-faint mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
-            <p className="text-gray-400 mb-4">No milestones defined yet</p>
+            <p className="text-ink-muted mb-4">No milestones defined yet</p>
             <button
               onClick={addMilestone}
-              className="px-6 py-2 bg-gold-600 hover:bg-gold-700 text-white rounded-lg transition-colors"
+              className="px-6 py-2 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg transition-colors"
             >
               Add Your First Milestone
             </button>
@@ -706,10 +706,10 @@ export default function CreateProjectPage() {
             )}
             
             {formData.milestones.map((milestone, index) => (
-              <div key={milestone.id} className="bg-gray-700/50 rounded-lg p-4 border border-gray-600">
+              <div key={milestone.id} className="bg-surface-overlay/50 rounded-lg p-4 border border-border-strong">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold-600 text-white font-medium text-sm">
+                    <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gold-600 text-ink font-medium text-sm">
                       {index + 1}
                     </span>
                     <input
@@ -717,12 +717,12 @@ export default function CreateProjectPage() {
                       value={milestone.title}
                       onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
                       placeholder="Milestone title"
-                      className="bg-transparent text-white text-lg font-medium focus:outline-none border-b border-transparent hover:border-gray-500 focus:border-gold-500"
+                      className="bg-transparent text-ink text-lg font-medium focus:outline-none border-b border-transparent hover:border-ink-faint focus:border-gold-500"
                     />
                   </div>
                   <button
                     onClick={() => removeMilestone(milestone.id)}
-                    className="text-gray-400 hover:text-red-400 transition-colors"
+                    className="text-ink-muted hover:text-danger transition-colors"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -732,7 +732,7 @@ export default function CreateProjectPage() {
 
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className="block text-gray-400 text-sm mb-1">Fund Release %</label>
+                    <label className="block text-ink-muted text-sm mb-1">Fund Release %</label>
                     <div className="relative">
                       <input
                         type="number"
@@ -740,12 +740,12 @@ export default function CreateProjectPage() {
                         onChange={(e) => updateMilestone(milestone.id, 'percentage', Math.min(100, Math.max(0, parseInt(e.target.value) || 0)))}
                         min="0"
                         max="100"
-                        className="w-full px-4 py-2 pr-8 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
+                        className="w-full px-4 py-2 pr-8 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-gold-500"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span>
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-muted">%</span>
                     </div>
                     {formData.fundingGoalLocal && (
-                      <p className="text-gray-500 text-xs mt-1">
+                      <p className="text-ink-faint text-xs mt-1">
                         ≈ {formatCurrency(
                           (parseFloat(formData.fundingGoalLocal) * milestone.percentage) / 100,
                           formData.localCurrency
@@ -754,29 +754,29 @@ export default function CreateProjectPage() {
                     )}
                   </div>
                   <div>
-                    <label className="block text-gray-400 text-sm mb-1">Target Date</label>
+                    <label className="block text-ink-muted text-sm mb-1">Target Date</label>
                     <input
                       type="date"
                       value={milestone.targetDate}
                       onChange={(e) => updateMilestone(milestone.id, 'targetDate', e.target.value)}
-                      className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
+                      className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-gold-500"
                     />
                   </div>
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-gray-400 text-sm mb-1">Description</label>
+                  <label className="block text-ink-muted text-sm mb-1">Description</label>
                   <textarea
                     value={milestone.description}
                     onChange={(e) => updateMilestone(milestone.id, 'description', e.target.value)}
                     placeholder="Describe what will be accomplished in this milestone"
                     rows={2}
-                    className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 resize-none"
+                    className="w-full px-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 resize-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-400 text-sm mb-2">Deliverables</label>
+                  <label className="block text-ink-muted text-sm mb-2">Deliverables</label>
                   <div className="space-y-2">
                     {milestone.deliverables.map((deliverable, dIndex) => (
                       <div key={dIndex} className="flex gap-2">
@@ -785,12 +785,12 @@ export default function CreateProjectPage() {
                           value={deliverable}
                           onChange={(e) => updateDeliverable(milestone.id, dIndex, e.target.value)}
                           placeholder={`Deliverable ${dIndex + 1}`}
-                          className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 text-sm"
+                          className="flex-1 px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 text-sm"
                         />
                         {milestone.deliverables.length > 1 && (
                           <button
                             onClick={() => removeDeliverable(milestone.id, dIndex)}
-                            className="px-2 text-gray-400 hover:text-red-400"
+                            className="px-2 text-ink-muted hover:text-danger"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -814,18 +814,18 @@ export default function CreateProjectPage() {
 
         {/* Milestone Summary */}
         {formData.milestones.length > 0 && (
-          <div className="bg-gray-700/30 rounded-lg p-4">
-            <h4 className="text-white font-medium mb-3">Milestone Summary</h4>
+          <div className="bg-surface-overlay/30 rounded-lg p-4">
+            <h4 className="text-ink font-medium mb-3">Milestone Summary</h4>
             <div className="space-y-2">
               {formData.milestones.map((m, i) => (
                 <div key={m.id} className="flex items-center justify-between text-sm">
-                  <span className="text-gray-300">{i + 1}. {m.title || 'Untitled'}</span>
-                  <span className="text-white font-medium">{m.percentage}%</span>
+                  <span className="text-ink-muted">{i + 1}. {m.title || 'Untitled'}</span>
+                  <span className="text-ink font-medium">{m.percentage}%</span>
                 </div>
               ))}
-              <div className="border-t border-gray-600 pt-2 mt-2 flex items-center justify-between">
-                <span className="text-gray-300 font-medium">Total</span>
-                <span className={`font-bold ${totalPercentage === 100 ? 'text-green-400' : 'text-red-400'}`}>
+              <div className="border-t border-border-strong pt-2 mt-2 flex items-center justify-between">
+                <span className="text-ink-muted font-medium">Total</span>
+                <span className={`font-bold ${totalPercentage === 100 ? 'text-success' : 'text-danger'}`}>
                   {totalPercentage}%
                 </span>
               </div>
@@ -841,30 +841,30 @@ export default function CreateProjectPage() {
       {/* Timeline */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-gray-300 text-sm font-medium mb-2">Funding Start Date *</label>
+          <label className="block text-ink-muted text-sm font-medium mb-2">Funding Start Date *</label>
           <input
             type="date"
             value={formData.startDate}
             onChange={(e) => updateFormData('startDate', e.target.value)}
             min={new Date().toISOString().split('T')[0]}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-gold-500 ${
-              errors.startDate ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-lg text-ink focus:outline-none focus:border-gold-500 ${
+              errors.startDate ? 'border-danger' : 'border-border-strong'
             }`}
           />
-          {errors.startDate && <p className="mt-1 text-red-400 text-sm">{errors.startDate}</p>}
+          {errors.startDate && <p className="mt-1 text-danger text-sm">{errors.startDate}</p>}
         </div>
         <div>
-          <label className="block text-gray-300 text-sm font-medium mb-2">Funding End Date *</label>
+          <label className="block text-ink-muted text-sm font-medium mb-2">Funding End Date *</label>
           <input
             type="date"
             value={formData.endDate}
             onChange={(e) => updateFormData('endDate', e.target.value)}
             min={formData.startDate || new Date().toISOString().split('T')[0]}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white focus:outline-none focus:border-gold-500 ${
-              errors.endDate ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-lg text-ink focus:outline-none focus:border-gold-500 ${
+              errors.endDate ? 'border-danger' : 'border-border-strong'
             }`}
           />
-          {errors.endDate && <p className="mt-1 text-red-400 text-sm">{errors.endDate}</p>}
+          {errors.endDate && <p className="mt-1 text-danger text-sm">{errors.endDate}</p>}
         </div>
       </div>
 
@@ -879,8 +879,8 @@ export default function CreateProjectPage() {
 
       {/* Documents */}
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Business Plan</label>
-        <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
+        <label className="block text-ink-muted text-sm font-medium mb-2">Business Plan</label>
+        <div className="border-2 border-dashed border-border-strong rounded-lg p-6 text-center hover:border-ink-faint transition-colors">
           <input
             type="file"
             accept=".pdf,.doc,.docx"
@@ -891,24 +891,24 @@ export default function CreateProjectPage() {
           <label htmlFor="businessPlan" className="cursor-pointer">
             {formData.businessPlan ? (
               <div className="flex items-center justify-center gap-3">
-                <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-white">{formData.businessPlan.name}</span>
+                <span className="text-ink">{formData.businessPlan.name}</span>
                 <button
                   onClick={(e) => { e.preventDefault(); updateFormData('businessPlan', null); }}
-                  className="text-red-400 hover:text-red-300"
+                  className="text-danger hover:text-danger"
                 >
                   Remove
                 </button>
               </div>
             ) : (
               <>
-                <svg className="w-12 h-12 mx-auto text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-12 h-12 mx-auto text-ink-faint mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <p className="text-gray-400">Click to upload or drag and drop</p>
-                <p className="text-gray-500 text-sm">PDF, DOC, DOCX (max 10MB)</p>
+                <p className="text-ink-muted">Click to upload or drag and drop</p>
+                <p className="text-ink-faint text-sm">PDF, DOC, DOCX (max 10MB)</p>
               </>
             )}
           </label>
@@ -916,8 +916,8 @@ export default function CreateProjectPage() {
       </div>
 
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Financial Projections</label>
-        <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
+        <label className="block text-ink-muted text-sm font-medium mb-2">Financial Projections</label>
+        <div className="border-2 border-dashed border-border-strong rounded-lg p-6 text-center hover:border-ink-faint transition-colors">
           <input
             type="file"
             accept=".pdf,.doc,.docx,.xlsx,.xls"
@@ -928,24 +928,24 @@ export default function CreateProjectPage() {
           <label htmlFor="financialProjections" className="cursor-pointer">
             {formData.financialProjections ? (
               <div className="flex items-center justify-center gap-3">
-                <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-white">{formData.financialProjections.name}</span>
+                <span className="text-ink">{formData.financialProjections.name}</span>
                 <button
                   onClick={(e) => { e.preventDefault(); updateFormData('financialProjections', null); }}
-                  className="text-red-400 hover:text-red-300"
+                  className="text-danger hover:text-danger"
                 >
                   Remove
                 </button>
               </div>
             ) : (
               <>
-                <svg className="w-12 h-12 mx-auto text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-12 h-12 mx-auto text-ink-faint mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <p className="text-gray-400">Click to upload or drag and drop</p>
-                <p className="text-gray-500 text-sm">PDF, DOC, XLSX (max 10MB)</p>
+                <p className="text-ink-muted">Click to upload or drag and drop</p>
+                <p className="text-ink-faint text-sm">PDF, DOC, XLSX (max 10MB)</p>
               </>
             )}
           </label>
@@ -953,8 +953,8 @@ export default function CreateProjectPage() {
       </div>
 
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Legal Documents (Optional)</label>
-        <div className="border-2 border-dashed border-gray-600 rounded-lg p-6 text-center hover:border-gray-500 transition-colors">
+        <label className="block text-ink-muted text-sm font-medium mb-2">Legal Documents (Optional)</label>
+        <div className="border-2 border-dashed border-border-strong rounded-lg p-6 text-center hover:border-ink-faint transition-colors">
           <input
             type="file"
             accept=".pdf,.doc,.docx"
@@ -965,24 +965,24 @@ export default function CreateProjectPage() {
           <label htmlFor="legalDocuments" className="cursor-pointer">
             {formData.legalDocuments ? (
               <div className="flex items-center justify-center gap-3">
-                <svg className="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-8 h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-white">{formData.legalDocuments.name}</span>
+                <span className="text-ink">{formData.legalDocuments.name}</span>
                 <button
                   onClick={(e) => { e.preventDefault(); updateFormData('legalDocuments', null); }}
-                  className="text-red-400 hover:text-red-300"
+                  className="text-danger hover:text-danger"
                 >
                   Remove
                 </button>
               </div>
             ) : (
               <>
-                <svg className="w-12 h-12 mx-auto text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-12 h-12 mx-auto text-ink-faint mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                 </svg>
-                <p className="text-gray-400">Click to upload or drag and drop</p>
-                <p className="text-gray-500 text-sm">PDF, DOC, DOCX (max 10MB)</p>
+                <p className="text-ink-muted">Click to upload or drag and drop</p>
+                <p className="text-ink-faint text-sm">PDF, DOC, DOCX (max 10MB)</p>
               </>
             )}
           </label>
@@ -993,9 +993,9 @@ export default function CreateProjectPage() {
 
   const renderStep5 = () => (
     <div className="space-y-6">
-      <div className="bg-gray-700/50 rounded-lg p-4 mb-6">
-        <h3 className="text-white font-medium mb-2">Security Token Configuration</h3>
-        <p className="text-gray-400 text-sm">
+      <div className="bg-surface-overlay/50 rounded-lg p-4 mb-6">
+        <h3 className="text-ink font-medium mb-2">Security Token Configuration</h3>
+        <p className="text-ink-muted text-sm">
           Configure the security token that will represent ownership in your project. 
           Investors will receive these tokens when they invest.
         </p>
@@ -1003,53 +1003,53 @@ export default function CreateProjectPage() {
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-gray-300 text-sm font-medium mb-2">Token Name *</label>
+          <label className="block text-ink-muted text-sm font-medium mb-2">Token Name *</label>
           <input
             type="text"
             value={formData.tokenName}
             onChange={(e) => updateFormData('tokenName', e.target.value)}
             placeholder="e.g., Project Alpha Token"
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
-              errors.tokenName ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+              errors.tokenName ? 'border-danger' : 'border-border-strong'
             }`}
           />
-          {errors.tokenName && <p className="mt-1 text-red-400 text-sm">{errors.tokenName}</p>}
+          {errors.tokenName && <p className="mt-1 text-danger text-sm">{errors.tokenName}</p>}
         </div>
         <div>
-          <label className="block text-gray-300 text-sm font-medium mb-2">Token Symbol *</label>
+          <label className="block text-ink-muted text-sm font-medium mb-2">Token Symbol *</label>
           <input
             type="text"
             value={formData.tokenSymbol}
             onChange={(e) => updateFormData('tokenSymbol', e.target.value.toUpperCase())}
             placeholder="e.g., ALPHA"
             maxLength={6}
-            className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 uppercase ${
-              errors.tokenSymbol ? 'border-red-500' : 'border-gray-600'
+            className={`w-full px-4 py-3 bg-surface-overlay border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 uppercase ${
+              errors.tokenSymbol ? 'border-danger' : 'border-border-strong'
             }`}
           />
-          {errors.tokenSymbol && <p className="mt-1 text-red-400 text-sm">{errors.tokenSymbol}</p>}
+          {errors.tokenSymbol && <p className="mt-1 text-danger text-sm">{errors.tokenSymbol}</p>}
         </div>
       </div>
 
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Total Token Supply *</label>
+        <label className="block text-ink-muted text-sm font-medium mb-2">Total Token Supply *</label>
         <input
           type="number"
           value={formData.totalSupply}
           onChange={(e) => updateFormData('totalSupply', e.target.value)}
           placeholder="e.g., 1000000"
-          className={`w-full px-4 py-3 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
-            errors.totalSupply ? 'border-red-500' : 'border-gray-600'
+          className={`w-full px-4 py-3 bg-surface-overlay border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+            errors.totalSupply ? 'border-danger' : 'border-border-strong'
           }`}
         />
-        {errors.totalSupply && <p className="mt-1 text-red-400 text-sm">{errors.totalSupply}</p>}
+        {errors.totalSupply && <p className="mt-1 text-danger text-sm">{errors.totalSupply}</p>}
       </div>
 
       <div>
-        <label className="block text-gray-300 text-sm font-medium mb-2">Price Per Token ({formData.localCurrency}) *</label>
+        <label className="block text-ink-muted text-sm font-medium mb-2">Price Per Token ({formData.localCurrency}) *</label>
         <div className="flex gap-4">
           <div className="flex-1 relative">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted">
               {getCurrentCurrencySymbol()}
             </span>
             <input
@@ -1058,33 +1058,33 @@ export default function CreateProjectPage() {
               onChange={(e) => updateFormData('pricePerTokenLocal', e.target.value)}
               placeholder="0.00"
               step="0.01"
-              className={`w-full px-4 py-3 pl-10 bg-gray-700 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-gold-500 ${
-                errors.pricePerTokenLocal ? 'border-red-500' : 'border-gray-600'
+              className={`w-full px-4 py-3 pl-10 bg-surface-overlay border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 ${
+                errors.pricePerTokenLocal ? 'border-danger' : 'border-border-strong'
               }`}
             />
           </div>
           {formData.localCurrency !== 'USD' && formData.pricePerTokenLocal && (
-            <div className="flex items-center px-4 py-3 bg-gray-600 rounded-lg min-w-[120px]">
-              <span className="text-gray-400 text-sm">≈</span>
-              <span className="text-white ml-2">{getUSDEquivalent(formData.pricePerTokenLocal)}</span>
+            <div className="flex items-center px-4 py-3 bg-border-strong rounded-lg min-w-[120px]">
+              <span className="text-ink-muted text-sm">≈</span>
+              <span className="text-ink ml-2">{getUSDEquivalent(formData.pricePerTokenLocal)}</span>
             </div>
           )}
         </div>
-        {errors.pricePerTokenLocal && <p className="mt-1 text-red-400 text-sm">{errors.pricePerTokenLocal}</p>}
+        {errors.pricePerTokenLocal && <p className="mt-1 text-danger text-sm">{errors.pricePerTokenLocal}</p>}
       </div>
 
       {/* Token Summary */}
       {formData.totalSupply && formData.pricePerTokenLocal && (
-        <div className="bg-gray-700/30 rounded-lg p-4">
-          <h4 className="text-white font-medium mb-3">Token Summary</h4>
+        <div className="bg-surface-overlay/30 rounded-lg p-4">
+          <h4 className="text-ink font-medium mb-3">Token Summary</h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-400">Total Supply</p>
-              <p className="text-white font-medium">{parseInt(formData.totalSupply).toLocaleString()} {formData.tokenSymbol || 'tokens'}</p>
+              <p className="text-ink-muted">Total Supply</p>
+              <p className="text-ink font-medium">{parseInt(formData.totalSupply).toLocaleString()} {formData.tokenSymbol || 'tokens'}</p>
             </div>
             <div>
-              <p className="text-gray-400">Market Cap</p>
-              <p className="text-white font-medium">
+              <p className="text-ink-muted">Market Cap</p>
+              <p className="text-ink font-medium">
                 {formatCurrency(
                   parseFloat(formData.totalSupply) * parseFloat(formData.pricePerTokenLocal),
                   formData.localCurrency
@@ -1092,17 +1092,17 @@ export default function CreateProjectPage() {
               </p>
             </div>
             <div>
-              <p className="text-gray-400">Price per Token</p>
-              <p className="text-white font-medium">
+              <p className="text-ink-muted">Price per Token</p>
+              <p className="text-ink font-medium">
                 {formatCurrency(parseFloat(formData.pricePerTokenLocal), formData.localCurrency)}
                 {formData.localCurrency !== 'USD' && (
-                  <span className="text-gray-400 ml-2">({getUSDEquivalent(formData.pricePerTokenLocal)})</span>
+                  <span className="text-ink-muted ml-2">({getUSDEquivalent(formData.pricePerTokenLocal)})</span>
                 )}
               </p>
             </div>
             <div>
-              <p className="text-gray-400">Funding Goal Coverage</p>
-              <p className="text-white font-medium">
+              <p className="text-ink-muted">Funding Goal Coverage</p>
+              <p className="text-ink font-medium">
                 {formData.fundingGoalLocal ? (
                   ((parseFloat(formData.totalSupply) * parseFloat(formData.pricePerTokenLocal)) / parseFloat(formData.fundingGoalLocal) * 100).toFixed(1)
                 ) : '0'}%
@@ -1119,120 +1119,120 @@ export default function CreateProjectPage() {
     
     return (
       <div className="space-y-6">
-        <div className="bg-gray-700/50 rounded-lg p-4">
-          <h3 className="text-white font-medium mb-2">Review Your Project</h3>
-          <p className="text-gray-400 text-sm">Please review all details before submitting</p>
+        <div className="bg-surface-overlay/50 rounded-lg p-4">
+          <h3 className="text-ink font-medium mb-2">Review Your Project</h3>
+          <p className="text-ink-muted text-sm">Please review all details before submitting</p>
         </div>
 
         {/* Basic Info */}
-        <div className="bg-gray-800 rounded-lg p-4">
-          <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+        <div className="bg-surface rounded-lg p-4">
+          <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">1</span>
             Basic Information
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-400">Name</p>
-              <p className="text-white">{formData.name}</p>
+              <p className="text-ink-muted">Name</p>
+              <p className="text-ink">{formData.name}</p>
             </div>
             <div>
-              <p className="text-gray-400">Category</p>
-              <p className="text-white">{formData.category}</p>
+              <p className="text-ink-muted">Category</p>
+              <p className="text-ink">{formData.category}</p>
             </div>
             <div className="col-span-2">
-              <p className="text-gray-400">Description</p>
-              <p className="text-white text-sm">{formData.description.slice(0, 200)}...</p>
+              <p className="text-ink-muted">Description</p>
+              <p className="text-ink text-sm">{formData.description.slice(0, 200)}...</p>
             </div>
           </div>
         </div>
 
         {/* Funding */}
-        <div className="bg-gray-800 rounded-lg p-4">
-          <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+        <div className="bg-surface rounded-lg p-4">
+          <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">2</span>
             Funding Details
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-400">Local Currency</p>
-              <p className="text-white">{formData.localCurrency}</p>
+              <p className="text-ink-muted">Local Currency</p>
+              <p className="text-ink">{formData.localCurrency}</p>
             </div>
             <div>
-              <p className="text-gray-400">Funding Goal</p>
-              <p className="text-white">
+              <p className="text-ink-muted">Funding Goal</p>
+              <p className="text-ink">
                 {formatCurrency(parseFloat(formData.fundingGoalLocal), formData.localCurrency)}
                 {formData.localCurrency !== 'USD' && (
-                  <span className="text-gray-400 ml-2">({getUSDEquivalent(formData.fundingGoalLocal)})</span>
+                  <span className="text-ink-muted ml-2">({getUSDEquivalent(formData.fundingGoalLocal)})</span>
                 )}
               </p>
             </div>
             <div>
-              <p className="text-gray-400">Min Investment</p>
-              <p className="text-white">
+              <p className="text-ink-muted">Min Investment</p>
+              <p className="text-ink">
                 {formatCurrency(parseFloat(formData.minInvestmentLocal), formData.localCurrency)}
               </p>
             </div>
             <div>
-              <p className="text-gray-400">Accepted Tokens</p>
-              <p className="text-white">{formData.acceptedTokens.join(', ')}</p>
+              <p className="text-ink-muted">Accepted Tokens</p>
+              <p className="text-ink">{formData.acceptedTokens.join(', ')}</p>
             </div>
           </div>
         </div>
 
         {/* Milestones */}
-        <div className="bg-gray-800 rounded-lg p-4">
-          <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+        <div className="bg-surface rounded-lg p-4">
+          <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">3</span>
             Milestones ({formData.milestones.length})
           </h4>
           <div className="space-y-2">
             {formData.milestones.map((m, i) => (
-              <div key={m.id} className="flex items-center justify-between text-sm py-2 border-b border-gray-700 last:border-0">
+              <div key={m.id} className="flex items-center justify-between text-sm py-2 border-b border-border last:border-0">
                 <div>
-                  <span className="text-white">{i + 1}. {m.title}</span>
+                  <span className="text-ink">{i + 1}. {m.title}</span>
                   {m.targetDate && (
-                    <span className="text-gray-400 ml-2">({new Date(m.targetDate).toLocaleDateString()})</span>
+                    <span className="text-ink-muted ml-2">({new Date(m.targetDate).toLocaleDateString()})</span>
                   )}
                 </div>
                 <span className="text-gold-400 font-medium">{m.percentage}%</span>
               </div>
             ))}
             <div className="flex items-center justify-between pt-2 text-sm font-medium">
-              <span className="text-gray-300">Total</span>
-              <span className={totalPercentage === 100 ? 'text-green-400' : 'text-red-400'}>{totalPercentage}%</span>
+              <span className="text-ink-muted">Total</span>
+              <span className={totalPercentage === 100 ? 'text-success' : 'text-danger'}>{totalPercentage}%</span>
             </div>
           </div>
         </div>
 
         {/* Timeline & Documents */}
-        <div className="bg-gray-800 rounded-lg p-4">
-          <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+        <div className="bg-surface rounded-lg p-4">
+          <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">4</span>
             Timeline & Documents
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-400">Start Date</p>
-              <p className="text-white">{formData.startDate ? new Date(formData.startDate).toLocaleDateString() : '-'}</p>
+              <p className="text-ink-muted">Start Date</p>
+              <p className="text-ink">{formData.startDate ? new Date(formData.startDate).toLocaleDateString() : '-'}</p>
             </div>
             <div>
-              <p className="text-gray-400">End Date</p>
-              <p className="text-white">{formData.endDate ? new Date(formData.endDate).toLocaleDateString() : '-'}</p>
+              <p className="text-ink-muted">End Date</p>
+              <p className="text-ink">{formData.endDate ? new Date(formData.endDate).toLocaleDateString() : '-'}</p>
             </div>
             <div className="col-span-2">
-              <p className="text-gray-400 mb-2">Documents</p>
+              <p className="text-ink-muted mb-2">Documents</p>
               <div className="flex gap-2 flex-wrap">
                 {formData.businessPlan && (
-                  <span className="px-2 py-1 bg-green-600/20 text-green-400 rounded text-xs">Business Plan</span>
+                  <span className="px-2 py-1 bg-success/20 text-success rounded text-xs">Business Plan</span>
                 )}
                 {formData.financialProjections && (
-                  <span className="px-2 py-1 bg-green-600/20 text-green-400 rounded text-xs">Financial Projections</span>
+                  <span className="px-2 py-1 bg-success/20 text-success rounded text-xs">Financial Projections</span>
                 )}
                 {formData.legalDocuments && (
-                  <span className="px-2 py-1 bg-green-600/20 text-green-400 rounded text-xs">Legal Documents</span>
+                  <span className="px-2 py-1 bg-success/20 text-success rounded text-xs">Legal Documents</span>
                 )}
                 {!formData.businessPlan && !formData.financialProjections && !formData.legalDocuments && (
-                  <span className="text-gray-500">No documents uploaded</span>
+                  <span className="text-ink-faint">No documents uploaded</span>
                 )}
               </div>
             </div>
@@ -1240,27 +1240,27 @@ export default function CreateProjectPage() {
         </div>
 
         {/* Token */}
-        <div className="bg-gray-800 rounded-lg p-4">
-          <h4 className="text-white font-medium mb-3 flex items-center gap-2">
+        <div className="bg-surface rounded-lg p-4">
+          <h4 className="text-ink font-medium mb-3 flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-gold-600 flex items-center justify-center text-sm">5</span>
             Token Details
           </h4>
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p className="text-gray-400">Token Name</p>
-              <p className="text-white">{formData.tokenName}</p>
+              <p className="text-ink-muted">Token Name</p>
+              <p className="text-ink">{formData.tokenName}</p>
             </div>
             <div>
-              <p className="text-gray-400">Symbol</p>
-              <p className="text-white">{formData.tokenSymbol}</p>
+              <p className="text-ink-muted">Symbol</p>
+              <p className="text-ink">{formData.tokenSymbol}</p>
             </div>
             <div>
-              <p className="text-gray-400">Total Supply</p>
-              <p className="text-white">{parseInt(formData.totalSupply || '0').toLocaleString()}</p>
+              <p className="text-ink-muted">Total Supply</p>
+              <p className="text-ink">{parseInt(formData.totalSupply || '0').toLocaleString()}</p>
             </div>
             <div>
-              <p className="text-gray-400">Price per Token</p>
-              <p className="text-white">
+              <p className="text-ink-muted">Price per Token</p>
+              <p className="text-ink">
                 {formatCurrency(parseFloat(formData.pricePerTokenLocal || '0'), formData.localCurrency)}
               </p>
             </div>
@@ -1269,7 +1269,7 @@ export default function CreateProjectPage() {
 
         {submitResult && (
           <div className={`p-4 rounded-lg ${
-            submitResult.type === 'success' ? 'bg-green-900/50 text-green-200' : 'bg-red-900/50 text-red-200'
+            submitResult.type === 'success' ? 'bg-success/50 text-success' : 'bg-danger/50 text-danger'
           }`}>
             {submitResult.message}
           </div>
@@ -1284,24 +1284,24 @@ export default function CreateProjectPage() {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">Connect Your Wallet</h1>
-          <p className="text-gray-400 mb-6">Please connect your wallet to create a project</p>
+          <h1 className="text-2xl font-bold text-ink mb-4">Connect Your Wallet</h1>
+          <p className="text-ink-muted mb-6">Please connect your wallet to create a project</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900 py-8">
+    <div className="min-h-screen bg-surface-sunken py-8">
       <div className="max-w-4xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-white mb-2">Create New Project</h1>
-        <p className="text-gray-400 mb-8">Launch your tokenized real-world asset project</p>
+        <h1 className="text-3xl font-bold text-ink mb-2">Create New Project</h1>
+        <p className="text-ink-muted mb-8">Launch your tokenized real-world asset project</p>
 
         {renderStepIndicator()}
 
-        <div className="bg-gray-800 rounded-xl p-6 mb-6">
+        <div className="bg-surface rounded-xl p-6 mb-6">
           {currentStep === 1 && renderStep1()}
           {currentStep === 2 && renderStep2()}
           {currentStep === 3 && renderStep3()}
@@ -1315,7 +1315,7 @@ export default function CreateProjectPage() {
           <button
             onClick={handlePrev}
             disabled={currentStep === 1}
-            className="px-6 py-3 bg-gray-700 hover:bg-gray-600 disabled:bg-gray-800 disabled:text-gray-500 text-white rounded-lg transition-colors"
+            className="px-6 py-3 bg-surface-overlay hover:bg-border-strong disabled:bg-surface disabled:text-ink-faint text-ink rounded-lg transition-colors"
           >
             Previous
           </button>
@@ -1323,7 +1323,7 @@ export default function CreateProjectPage() {
           {currentStep < STEPS.length ? (
             <button
               onClick={handleNext}
-              className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-white rounded-lg transition-colors"
+              className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg transition-colors"
             >
               Next
             </button>
@@ -1331,7 +1331,7 @@ export default function CreateProjectPage() {
             <button
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="px-8 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white rounded-lg transition-colors"
+              className="px-8 py-3 bg-success hover:bg-success disabled:bg-border-strong text-ink rounded-lg transition-colors"
             >
               {isSubmitting ? 'Creating Project...' : 'Create Project'}
             </button>

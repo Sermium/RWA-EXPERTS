@@ -64,7 +64,7 @@ function NetworkBadge({
 }) {
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-raised/50 rounded-lg">
-      <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-yellow-400' : 'bg-green-400'}`} />
+      <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-warning' : 'bg-success'}`} />
       <span className="text-sm text-ink-muted">{chainName}</span>
       {isTestnet && (
         <span className="text-xs px-1.5 py-0.5 bg-warning/20 text-warning rounded">
@@ -534,7 +534,7 @@ export default function FactorySettings() {
                     <button
                       onClick={handleUnpause}
                       disabled={processing}
-                      className="px-6 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center gap-2"
+                      className="px-6 py-2 bg-success hover:bg-success disabled:opacity-50 rounded-lg text-ink font-medium flex items-center gap-2"
                     >
                       {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
                       UNPAUSE
@@ -543,7 +543,7 @@ export default function FactorySettings() {
                     <button
                       onClick={handlePause}
                       disabled={processing}
-                      className="px-6 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center gap-2"
+                      className="px-6 py-2 bg-danger hover:bg-danger disabled:opacity-50 rounded-lg text-ink font-medium flex items-center gap-2"
                     >
                       {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Pause className="w-4 h-4" />}
                       PAUSE
@@ -773,7 +773,7 @@ export default function FactorySettings() {
                 <button
                   onClick={() => handleSetRequireApproval(false)}
                   disabled={processing || !factoryData?.requireApproval}
-                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-success hover:bg-success disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
                 >
                   {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Unlock className="w-4 h-4" />}
                   Disable (Open)
@@ -798,7 +798,7 @@ export default function FactorySettings() {
                 <button
                   onClick={() => { setNewDeployerApproval(true); handleSetDeployerApproval(); }}
                   disabled={processing || !isAddress(newDeployerAddress)}
-                  className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-success hover:bg-success disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
                 >
                   {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
                   Approve
@@ -806,7 +806,7 @@ export default function FactorySettings() {
                 <button
                   onClick={() => { setNewDeployerApproval(false); handleSetDeployerApproval(); }}
                   disabled={processing || !isAddress(newDeployerAddress)}
-                  className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
+                  className="flex-1 px-4 py-2 bg-danger hover:bg-danger disabled:opacity-50 rounded-lg text-ink font-medium flex items-center justify-center gap-2"
                 >
                   {processing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <AlertCircle className="w-4 h-4" />}
                   Revoke

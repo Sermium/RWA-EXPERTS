@@ -119,7 +119,7 @@ export default function FAQPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-20">
+    <div className="min-h-screen bg-gradient-to-b from-surface-sunken via-surface to-surface-sunken py-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
@@ -139,7 +139,7 @@ export default function FAQPage() {
               placeholder="Search questions..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-6 py-4 bg-surface border border-border rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-purple-500 transition-colors pl-12"
+              className="w-full px-6 py-4 bg-surface border border-border rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-gold transition-colors pl-12"
             />
             <svg 
               className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-faint"

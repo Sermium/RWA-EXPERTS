@@ -40,7 +40,7 @@ export function NetworkSwitcher({
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
               chain.id === currentChainId
                 ? 'bg-gold-600 text-ink cursor-default'
-                : 'bg-surface-overlay/50 text-ink-muted hover:bg-gray-600/50 hover:text-ink'
+                : 'bg-surface-overlay/50 text-ink-muted hover:bg-border-strong/50 hover:text-ink'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {isSwitching && chain.id !== currentChainId && (

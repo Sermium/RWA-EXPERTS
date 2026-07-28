@@ -25,7 +25,7 @@ export function SuccessModal({ onClose }: SuccessModalProps) {
         <div className="space-y-3">
           <Link
             href="/dashboard"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-gold-500 hover:bg-gold-600 text-white font-medium rounded-xl transition-colors"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-gold-500 hover:bg-gold-600 text-ink font-medium rounded-xl transition-colors"
           >
             Go to Dashboard
             <ArrowRight className="w-4 h-4" />

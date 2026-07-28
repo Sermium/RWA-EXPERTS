@@ -18,7 +18,7 @@ export default function WhitePaperPage() {
         <p className="text-sm text-ink-faint mt-2">Version 1.0 | March 2026</p>
         <a
           href="/assets/whitepaper.pdf"
-          className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-cyan-500 text-ink rounded-lg hover:bg-cyan-600 transition-colors"
+          className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-gold text-ink rounded-lg hover:bg-gold transition-colors"
         >
           <FileDown className="w-5 h-5" />
           Download PDF
@@ -27,7 +27,7 @@ export default function WhitePaperPage() {
 
       {/* Abstract */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">Abstract</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">Abstract</h2>
         <p>
           {COMPANY.name} is a decentralized platform enabling compliant tokenization of real-world assets, 
           targeting Africa's $6.6 trillion under-utilized asset base and its global diaspora. By reducing 
@@ -38,7 +38,7 @@ export default function WhitePaperPage() {
 
       {/* Problem Statement */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">1. Problem Statement</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">1. Problem Statement</h2>
         
         <h3 className="text-xl text-ink mt-6 mb-3">1.1 The Illiquidity Crisis</h3>
         <p>
@@ -68,7 +68,7 @@ export default function WhitePaperPage() {
 
       {/* Market Opportunity */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">2. Market Opportunity</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">2. Market Opportunity</h2>
         
         <h3 className="text-xl text-ink mt-6 mb-3">2.1 Global Tokenization Market</h3>
         <p>
@@ -126,7 +126,7 @@ export default function WhitePaperPage() {
 
       {/* Solution */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">3. Solution</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">3. Solution</h2>
         
         <p>
           {COMPANY.name} provides enterprise-grade compliance with startup-friendly pricing, reducing 
@@ -153,7 +153,7 @@ export default function WhitePaperPage() {
 
       {/* Technical Architecture */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">4. Technical Architecture</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">4. Technical Architecture</h2>
         
         <h3 className="text-xl text-ink mt-6 mb-3">4.1 System Components</h3>
         <ul>
@@ -198,7 +198,7 @@ export default function WhitePaperPage() {
 
       {/* Compliance Framework */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">5. Compliance Framework</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">5. Compliance Framework</h2>
         
         <h3 className="text-xl text-ink mt-6 mb-3">5.1 KYC Tiers</h3>
         <div className="not-prose my-6 overflow-x-auto">
@@ -259,7 +259,7 @@ export default function WhitePaperPage() {
 
       {/* Economics */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">6. Token Economics</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">6. Token Economics</h2>
         
         <h3 className="text-xl text-ink mt-6 mb-3">6.1 Fee Structure</h3>
         <div className="not-prose my-6 overflow-x-auto">
@@ -308,7 +308,7 @@ export default function WhitePaperPage() {
 
       {/* Roadmap */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">7. Roadmap</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">7. Roadmap</h2>
         
         <h3 className="text-xl text-ink mt-6 mb-3">Q3 2026 - Launch</h3>
         <ul>
@@ -346,7 +346,7 @@ export default function WhitePaperPage() {
 
       {/* Conclusion */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold text-cyan-400 border-b border-border pb-2">8. Conclusion</h2>
+        <h2 className="text-2xl font-semibold text-gold border-b border-border pb-2">8. Conclusion</h2>
         <p>
           {COMPANY.name} addresses the fundamental problem of asset illiquidity by providing compliant, 
           affordable, and accessible tokenization infrastructure. By focusing on underserved markets—

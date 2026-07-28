@@ -26,8 +26,8 @@ interface OCRProgressBarProps {
 export function OCRProgressBar({ progress }: OCRProgressBarProps) {
   const getStatusColor = () => {
     switch (progress.status) {
-      case 'error': return 'bg-red-500';
-      case 'complete': return 'bg-green-500';
+      case 'error': return 'bg-danger';
+      case 'complete': return 'bg-success';
       default: return 'bg-gold-500';
     }
   };
@@ -247,7 +247,7 @@ export function DragDropZone({ onFileDrop, accept = 'image/*', maxSize = 10 * 10
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className={`relative ${className} ${isDragging ? 'ring-2 ring-purple-500 ring-offset-2 ring-offset-gray-900' : ''}`}
+      className={`relative ${className} ${isDragging ? 'ring-2 ring-gold ring-offset-2 ring-offset-surface-sunken' : ''}`}
     >
       {children}
       
@@ -263,7 +263,7 @@ export function DragDropZone({ onFileDrop, accept = 'image/*', maxSize = 10 * 10
       )}
 
       {dragError && (
-        <div className="absolute top-2 left-2 right-2 bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium z-20 animate-pulse">
+        <div className="absolute top-2 left-2 right-2 bg-danger text-ink px-4 py-2 rounded-lg text-sm font-medium z-20 animate-pulse">
           {dragError}
         </div>
       )}
@@ -283,7 +283,7 @@ interface DocumentTypeSelectorProps {
 export function DocumentTypeSelector({ selectedType, onSelect }: DocumentTypeSelectorProps) {
   return (
     <div className="mb-6">
-      <label className="block text-gray-400 text-sm mb-3">Document Type</label>
+      <label className="block text-ink-muted text-sm mb-3">Document Type</label>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         {(Object.entries(DOCUMENT_TYPES) as [DocumentType, typeof DOCUMENT_TYPES[DocumentType]][]).map(([type, config]) => (
           <button
@@ -293,35 +293,35 @@ export function DocumentTypeSelector({ selectedType, onSelect }: DocumentTypeSel
             className={`p-4 rounded-xl border-2 text-left transition-all ${
               selectedType === type
                 ? 'border-gold-500 bg-gold-900/20'
-                : 'border-gray-700 bg-gray-800/50 hover:border-gray-600'
+                : 'border-border bg-surface/50 hover:border-border-strong'
             }`}
           >
             <div className="flex items-start gap-3">
               <div className={`w-10 h-7 rounded flex items-center justify-center ${
-                selectedType === type ? 'bg-gold-500' : 'bg-gray-700'
+                selectedType === type ? 'bg-gold-500' : 'bg-surface-overlay'
               }`}>
                 {type === 'passport' ? (
-                  <svg className={`w-5 h-5 ${selectedType === type ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-5 h-5 ${selectedType === type ? 'text-ink' : 'text-ink-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                   </svg>
                 ) : (
-                  <svg className={`w-5 h-5 ${selectedType === type ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className={`w-5 h-5 ${selectedType === type ? 'text-ink' : 'text-ink-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2" />
                   </svg>
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className={`font-medium text-sm ${selectedType === type ? 'text-gold-400' : 'text-white'}`}>
+                <h4 className={`font-medium text-sm ${selectedType === type ? 'text-gold-400' : 'text-ink'}`}>
                   {config.label}
                 </h4>
-                <p className="text-xs text-gray-500 mt-0.5 truncate">
+                <p className="text-xs text-ink-faint mt-0.5 truncate">
                   {config.description}
                 </p>
                 <div className="mt-2 flex flex-wrap gap-1">
                   <span className={`px-2 py-0.5 text-xs rounded ${
                     selectedType === type 
                       ? 'bg-gold-500/20 text-gold-300' 
-                      : 'bg-gray-700 text-gray-400'
+                      : 'bg-surface-overlay text-ink-muted'
                   }`}>
                     {config.requiresBack ? 'Front + Back' : 'Front only'}
                   </span>
@@ -385,13 +385,13 @@ export function DocumentCaptureCard({
   };
 
   const getBorderColor = () => {
-    if (!preview) return 'border-gray-600';
-    if (isValidating) return 'border-yellow-500';
-    if (validationError) return 'border-red-500';
-    if (validationResult?.isValid && validationResult.confidence >= 70) return 'border-green-500';
-    if (validationResult?.isValid && validationResult.confidence >= 50) return 'border-yellow-500';
-    if (validationResult && !validationResult.isValid) return 'border-red-500';
-    return 'border-gray-600';
+    if (!preview) return 'border-border-strong';
+    if (isValidating) return 'border-warning';
+    if (validationError) return 'border-danger';
+    if (validationResult?.isValid && validationResult.confidence >= 70) return 'border-success';
+    if (validationResult?.isValid && validationResult.confidence >= 50) return 'border-warning';
+    if (validationResult && !validationResult.isValid) return 'border-danger';
+    return 'border-border-strong';
   };
 
   return (
@@ -399,22 +399,22 @@ export function DocumentCaptureCard({
       onFileDrop={onFileSelect}
       accept="image/*,.pdf"
       disabled={!!preview}
-      className={`rounded-xl p-4 border-2 ${preview ? getBorderColor() : 'border-gray-700 border-dashed'} ${
+      className={`rounded-xl p-4 border-2 ${preview ? getBorderColor() : 'border-border border-dashed'} ${
         !isRequired && !preview ? 'opacity-60' : ''
       }`}
     >
       <div className="flex items-center justify-between mb-3">
-        <h4 className="font-medium text-white text-sm">
+        <h4 className="font-medium text-ink text-sm">
           {side === 'front' ? 'Front Side' : 'Back Side'}
-          {isRequired && <span className="text-red-400 ml-1">*</span>}
-          {!isRequired && <span className="text-gray-500 text-xs ml-2">(Optional)</span>}
+          {isRequired && <span className="text-danger ml-1">*</span>}
+          {!isRequired && <span className="text-ink-faint text-xs ml-2">(Optional)</span>}
         </h4>
         {preview && (
           <div className="flex items-center gap-1">
             <button
               type="button"
               onClick={onRotate}
-              className="p-1.5 text-gray-400 hover:text-white rounded transition-colors"
+              className="p-1.5 text-ink-muted hover:text-ink rounded transition-colors"
               title="Rotate image"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -424,7 +424,7 @@ export function DocumentCaptureCard({
             <button
               type="button"
               onClick={onRemove}
-              className="p-1.5 text-red-400 hover:text-red-300 rounded transition-colors"
+              className="p-1.5 text-danger hover:text-danger rounded transition-colors"
               title="Remove image"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -437,7 +437,7 @@ export function DocumentCaptureCard({
 
       {preview ? (
         <div className="relative">
-          <div className={`aspect-[3/2] rounded-lg overflow-hidden bg-gray-900 border ${getBorderColor()}`}>
+          <div className={`aspect-[3/2] rounded-lg overflow-hidden bg-surface-sunken border ${getBorderColor()}`}>
             <img
               src={preview}
               alt={`${side} of document`}
@@ -451,30 +451,30 @@ export function DocumentCaptureCard({
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <p className="text-white text-sm mb-2">{ocrProgress.message}</p>
-                  <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+                  <p className="text-ink text-sm mb-2">{ocrProgress.message}</p>
+                  <div className="h-2 bg-surface-overlay rounded-full overflow-hidden">
                     <div 
                       className="h-full bg-gold-500 rounded-full transition-all duration-300"
                       style={{ width: `${ocrProgress.progress}%` }}
                     />
                   </div>
-                  <p className="text-gray-400 text-xs mt-1">{ocrProgress.progress}%</p>
+                  <p className="text-ink-muted text-xs mt-1">{ocrProgress.progress}%</p>
                 </div>
               </div>
             )}
             
             {!isValidating && validationResult && (
               <div className={`absolute top-2 right-2 p-1.5 rounded-full ${
-                validationResult.isValid && validationResult.confidence >= 70 ? 'bg-green-500' :
-                validationResult.isValid && validationResult.confidence >= 50 ? 'bg-yellow-500' :
-                'bg-red-500'
+                validationResult.isValid && validationResult.confidence >= 70 ? 'bg-success' :
+                validationResult.isValid && validationResult.confidence >= 50 ? 'bg-warning' :
+                'bg-danger'
               }`}>
                 {validationResult.isValid && validationResult.confidence >= 50 ? (
-                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3 h-3 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                   </svg>
                 ) : (
-                  <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-3 h-3 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 )}
@@ -482,8 +482,8 @@ export function DocumentCaptureCard({
             )}
 
             {!isValidating && validationError && (
-              <div className="absolute top-2 right-2 p-1.5 rounded-full bg-red-500">
-                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="absolute top-2 right-2 p-1.5 rounded-full bg-danger">
+                <svg className="w-3 h-3 text-ink" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
               </div>
@@ -504,16 +504,16 @@ export function DocumentCaptureCard({
         </div>
       ) : (
         <div 
-          className="aspect-[3/2] bg-gray-800 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-700/50 transition-colors"
+          className="aspect-[3/2] bg-surface rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-surface-overlay/50 transition-colors"
           onClick={() => fileInputRef.current?.click()}
         >
-          <svg className="w-10 h-10 text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-10 h-10 text-ink-faint mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <p className="text-gray-400 text-sm">
+          <p className="text-ink-muted text-sm">
             {isMobile ? 'Tap to upload' : 'Click or drag to upload'}
           </p>
-          <p className="text-gray-500 text-xs mt-1">
+          <p className="text-ink-faint text-xs mt-1">
             {isMobile ? 'or use camera' : 'PNG, JPG, PDF (max 10MB)'}
           </p>
         </div>
@@ -533,7 +533,7 @@ export function DocumentCaptureCard({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="px-3 py-2.5 text-xs font-medium border border-gray-600 rounded-lg hover:bg-gray-800 transition-colors text-gray-300 flex items-center justify-center gap-1.5"
+            className="px-3 py-2.5 text-xs font-medium border border-border-strong rounded-lg hover:bg-surface transition-colors text-ink-muted flex items-center justify-center gap-1.5"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
@@ -543,7 +543,7 @@ export function DocumentCaptureCard({
           <button
             type="button"
             onClick={onWebcamCapture}
-            className="px-3 py-2.5 text-xs font-medium bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition-colors flex items-center justify-center gap-1.5"
+            className="px-3 py-2.5 text-xs font-medium bg-gold-600 hover:bg-gold-500 text-ink rounded-lg transition-colors flex items-center justify-center gap-1.5"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -571,45 +571,45 @@ export function ValidationResultDisplay({ result, documentNumber, onReset }: Val
   return (
     <div className={`mt-4 p-4 rounded-lg border ${
       result.isValid 
-        ? 'bg-green-500/10 border-green-500/30' 
-        : 'bg-yellow-500/10 border-yellow-500/30'
+        ? 'bg-success/10 border-success/30' 
+        : 'bg-warning/10 border-warning/30'
     }`}>
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           {result.isValid ? (
-            <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           ) : (
-            <svg className="w-5 h-5 text-yellow-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           )}
-          <h4 className="font-medium text-white">
+          <h4 className="font-medium text-ink">
             {result.isValid ? 'Document Verified' : 'Manual Review Required'}
           </h4>
         </div>
         <span className={`text-lg font-bold ${
-          result.confidence >= 70 ? 'text-green-400' :
-          result.confidence >= 50 ? 'text-yellow-400' : 'text-red-400'
+          result.confidence >= 70 ? 'text-success' :
+          result.confidence >= 50 ? 'text-warning' : 'text-danger'
         }`}>
           {result.confidence}%
         </span>
       </div>
 
       {/* Confidence Bar */}
-      <div className="w-full bg-gray-700 rounded-full h-2 mb-4">
+      <div className="w-full bg-surface-overlay rounded-full h-2 mb-4">
         <div 
           className={`h-2 rounded-full transition-all duration-500 ${
-            result.confidence >= 70 ? 'bg-green-500' :
-            result.confidence >= 50 ? 'bg-yellow-500' : 'bg-red-500'
+            result.confidence >= 70 ? 'bg-success' :
+            result.confidence >= 50 ? 'bg-warning' : 'bg-danger'
           }`}
           style={{ width: `${result.confidence}%` }}
         />
       </div>
 
       {/* Simple status message */}
-      <p className="text-sm text-gray-400">
+      <p className="text-sm text-ink-muted">
         {result.isValid 
           ? 'Your document has been successfully verified and matches the information provided.'
           : 'We could not fully verify your document. Please ensure the image is clear and the information matches your document exactly.'
@@ -619,7 +619,7 @@ export function ValidationResultDisplay({ result, documentNumber, onReset }: Val
       {/* Re-validate Button */}
       <button
         onClick={onReset}
-        className="mt-4 w-full py-2 px-4 bg-gray-700 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors"
+        className="mt-4 w-full py-2 px-4 bg-surface-overlay hover:bg-border-strong text-ink text-sm rounded-lg transition-colors"
       >
         Re-validate Document
       </button>
@@ -813,16 +813,16 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
   return (
     <div className="fixed inset-0 z-50 bg-black flex flex-col">
       {/* Header */}
-      <div className="bg-gray-900 px-4 py-3 flex items-center justify-between safe-area-top">
+      <div className="bg-surface-sunken px-4 py-3 flex items-center justify-between safe-area-top">
         <button
           onClick={handleClose}
-          className="p-2 text-white hover:text-gray-300 rounded-full"
+          className="p-2 text-ink hover:text-ink-muted rounded-full"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <h3 className="text-white font-medium text-center flex-1">
+        <h3 className="text-ink font-medium text-center flex-1">
           {forSelfie ? 'Take Selfie' : `${config.label} - ${side === 'front' ? 'Front' : 'Back'}`}
         </h3>
         <div className="w-10" />
@@ -833,14 +833,14 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
         {error ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center p-6 max-w-sm">
-              <svg className="w-16 h-16 mx-auto text-red-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-16 h-16 mx-auto text-danger mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
-              <p className="text-white text-lg mb-2">Camera Error</p>
-              <p className="text-gray-400 mb-6">{error}</p>
+              <p className="text-ink text-lg mb-2">Camera Error</p>
+              <p className="text-ink-muted mb-6">{error}</p>
               <button
                 onClick={handleClose}
-                className="px-6 py-3 bg-gold-600 text-white rounded-xl font-medium hover:bg-gold-500 transition-colors"
+                className="px-6 py-3 bg-gold-600 text-ink rounded-xl font-medium hover:bg-gold-500 transition-colors"
               >
                 Use File Upload Instead
               </button>
@@ -892,8 +892,8 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
             {countdown !== null && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                 <div className="text-center">
-                  <span className="text-white text-8xl font-bold">{countdown}</span>
-                  <p className="text-white text-lg mt-4">Hold still...</p>
+                  <span className="text-ink text-8xl font-bold">{countdown}</span>
+                  <p className="text-ink text-lg mt-4">Hold still...</p>
                 </div>
               </div>
             )}
@@ -906,7 +906,7 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
-                  <p className="text-white">Starting camera...</p>
+                  <p className="text-ink">Starting camera...</p>
                 </div>
               </div>
             )}
@@ -915,12 +915,12 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
       </div>
 
       {/* Controls */}
-      <div className="bg-gray-900 safe-area-bottom">
+      <div className="bg-surface-sunken safe-area-bottom">
         {capturedImage ? (
           <div className="p-4 flex items-center justify-center gap-4">
             <button
               onClick={handleRetake}
-              className="flex-1 py-3 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-surface-overlay hover:bg-border-strong text-ink font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -929,7 +929,7 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
             </button>
             <button
               onClick={handleConfirm}
-              className="flex-1 py-3 bg-green-600 hover:bg-green-500 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="flex-1 py-3 bg-success hover:bg-success text-ink font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -944,7 +944,7 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
                 {torchSupported && (
                   <button
                     onClick={toggleTorch}
-                    className={`p-3 rounded-full transition-colors ${torchEnabled ? 'bg-yellow-500 text-black' : 'bg-gray-700 text-white hover:bg-gray-600'}`}
+                    className={`p-3 rounded-full transition-colors ${torchEnabled ? 'bg-warning text-black' : 'bg-surface-overlay text-ink hover:bg-border-strong'}`}
                   >
                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -956,16 +956,16 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
               <button
                 onClick={handleCapture}
                 disabled={!isReady || countdown !== null}
-                className="w-20 h-20 rounded-full bg-white disabled:bg-gray-500 flex items-center justify-center hover:bg-gray-200 transition-colors shadow-lg"
+                className="w-20 h-20 rounded-full bg-white disabled:bg-ink-faint flex items-center justify-center hover:bg-border-strong transition-colors shadow-lg"
               >
-                <div className="w-16 h-16 rounded-full border-4 border-gray-900" />
+                <div className="w-16 h-16 rounded-full border-4 border-surface-sunken" />
               </button>
 
               <div className="w-12">
                 {hasMultipleCameras && (
                   <button
                     onClick={switchCamera}
-                    className="p-3 rounded-full bg-gray-700 text-white hover:bg-gray-600 transition-colors"
+                    className="p-3 rounded-full bg-surface-overlay text-ink hover:bg-border-strong transition-colors"
                   >
                     <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -979,8 +979,8 @@ export function MobileCamera({ documentType, side, forSelfie = false, onCapture,
 
         {!capturedImage && (
           <div className="px-4 pb-4">
-            <div className="bg-gray-800 rounded-lg p-3 max-w-md mx-auto">
-              <p className="text-gray-400 text-xs text-center">
+            <div className="bg-surface rounded-lg p-3 max-w-md mx-auto">
+              <p className="text-ink-muted text-xs text-center">
                 {forSelfie 
                   ? 'Look directly at the camera • Good lighting • No glasses'
                   : 'Good lighting • Hold steady • Avoid glare • Keep flat'

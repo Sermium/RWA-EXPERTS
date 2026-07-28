@@ -14,34 +14,34 @@ export const STATUS_NAMES: Record<number, string> = {
 };
 
 export const STATUS_COLORS: Record<number, string> = {
-  0: 'bg-gray-500',
-  1: 'bg-yellow-500',
-  2: 'bg-green-500',
-  3: 'bg-blue-500',
-  4: 'bg-purple-500',
-  5: 'bg-emerald-500',
-  6: 'bg-red-500',
-  7: 'bg-red-700',
+  0: 'bg-ink-faint',
+  1: 'bg-warning',
+  2: 'bg-success',
+  3: 'bg-gold',
+  4: 'bg-gold',
+  5: 'bg-success',
+  6: 'bg-danger',
+  7: 'bg-danger',
 };
 
 export const PROJECT_STATUS: Record<number, { label: string; color: string }> = {
-  0: { label: 'Draft', color: 'bg-gray-500/20 text-ink-muted' },
-  1: { label: 'Pending', color: 'bg-yellow-500/20 text-yellow-400' },
-  2: { label: 'Active', color: 'bg-green-500/20 text-green-400' },
-  3: { label: 'Funded', color: 'bg-blue-500/20 text-blue-400' },
-  4: { label: 'In Progress', color: 'bg-purple-500/20 text-purple-400' },
-  5: { label: 'Completed', color: 'bg-emerald-500/20 text-emerald-400' },
-  6: { label: 'Cancelled', color: 'bg-red-500/20 text-red-400' },
-  7: { label: 'Failed', color: 'bg-red-700/20 text-red-400' },
+  0: { label: 'Draft', color: 'bg-ink-faint/20 text-ink-muted' },
+  1: { label: 'Pending', color: 'bg-warning/20 text-warning' },
+  2: { label: 'Active', color: 'bg-success/20 text-success' },
+  3: { label: 'Funded', color: 'bg-gold/20 text-gold' },
+  4: { label: 'In Progress', color: 'bg-gold/20 text-gold' },
+  5: { label: 'Completed', color: 'bg-success/20 text-success' },
+  6: { label: 'Cancelled', color: 'bg-danger/20 text-danger' },
+  7: { label: 'Failed', color: 'bg-danger/20 text-danger' },
 };
 
 export const MILESTONE_STATUS: Record<number, { label: string; color: string }> = {
-  0: { label: 'Pending', color: 'bg-gray-500' },
-  1: { label: 'Submitted', color: 'bg-yellow-500' },
-  2: { label: 'Approved', color: 'bg-green-500' },
-  3: { label: 'Rejected', color: 'bg-red-500' },
+  0: { label: 'Pending', color: 'bg-ink-faint' },
+  1: { label: 'Submitted', color: 'bg-warning' },
+  2: { label: 'Approved', color: 'bg-success' },
+  3: { label: 'Rejected', color: 'bg-danger' },
   4: { label: 'Disputed', color: 'bg-orange-500' },
-  5: { label: 'Released', color: 'bg-blue-500' },
+  5: { label: 'Released', color: 'bg-gold' },
 };
 
 export const KYC_LEVELS: Record<number, string> = {
@@ -53,10 +53,10 @@ export const KYC_LEVELS: Record<number, string> = {
 };
 
 export const KYC_STATUS: Record<number, { label: string; color: string }> = {
-  0: { label: 'Pending', color: 'bg-yellow-500' },
-  1: { label: 'Approved', color: 'bg-green-500' },
-  2: { label: 'Rejected', color: 'bg-red-500' },
-  3: { label: 'Expired', color: 'bg-gray-500' },
+  0: { label: 'Pending', color: 'bg-warning' },
+  1: { label: 'Approved', color: 'bg-success' },
+  2: { label: 'Rejected', color: 'bg-danger' },
+  3: { label: 'Expired', color: 'bg-ink-faint' },
 };
 
 export const COUNTRY_CODES: Record<number, string> = {
@@ -76,23 +76,23 @@ export const COUNTRY_CODES: Record<number, string> = {
 export const TOKENIZATION_STATUS: Record<string, { label: string; color: string }> = {
   pending: { 
     label: 'Pending Review', 
-    color: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30' 
+    color: 'bg-warning/10 text-warning border-warning/30' 
   },
   approved: { 
     label: 'Approved', 
-    color: 'bg-green-500/10 text-green-400 border-green-500/30' 
+    color: 'bg-success/10 text-success border-success/30' 
   },
   completed: { 
     label: 'Completed', 
-    color: 'bg-blue-500/10 text-blue-400 border-blue-500/30' 
+    color: 'bg-gold/10 text-gold border-gold/30' 
   },
   rejected: { 
     label: 'Rejected', 
-    color: 'bg-red-500/10 text-red-400 border-red-500/30' 
+    color: 'bg-danger/10 text-danger border-danger/30' 
   },
   cancelled: { 
     label: 'Cancelled', 
-    color: 'bg-gray-500/10 text-ink-muted border-gray-500/30' 
+    color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/30' 
   },
 };
 

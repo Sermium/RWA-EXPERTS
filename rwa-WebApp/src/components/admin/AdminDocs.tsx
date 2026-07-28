@@ -104,12 +104,12 @@ export default function AdminDocs() {
 
   const colorClasses: Record<string, string> = {
     blue: 'bg-gold-500/20 text-gold-400',
-    green: 'bg-green-500/20 text-success',
+    green: 'bg-success/20 text-success',
     purple: 'bg-gold-500/20 text-gold-400',
     orange: 'bg-orange-500/20 text-warning',
-    red: 'bg-red-500/20 text-danger',
-    gray: 'bg-gray-500/20 text-ink-muted',
-    cyan: 'bg-cyan-500/20 text-cyan-400',
+    red: 'bg-danger/20 text-danger',
+    gray: 'bg-ink-faint/20 text-ink-muted',
+    cyan: 'bg-gold/20 text-gold',
   };
 
   return (

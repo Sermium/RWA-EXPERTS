@@ -74,14 +74,14 @@ export default function DocsPage() {
             <Link
               key={section.title}
               href={section.href}
-              className="group bg-surface border border-border rounded-xl p-6 hover:border-cyan-500/50 transition-colors"
+              className="group bg-surface border border-border rounded-xl p-6 hover:border-gold/50 transition-colors"
             >
               <div className="flex items-start gap-4">
-                <div className="p-3 bg-cyan-500/10 rounded-lg">
-                  <Icon className="w-6 h-6 text-cyan-400" />
+                <div className="p-3 bg-gold/10 rounded-lg">
+                  <Icon className="w-6 h-6 text-gold" />
                 </div>
                 <div className="flex-1">
-                  <h2 className="text-xl font-semibold text-ink group-hover:text-cyan-400 transition-colors flex items-center gap-2">
+                  <h2 className="text-xl font-semibold text-ink group-hover:text-gold transition-colors flex items-center gap-2">
                     {section.title}
                     <ArrowRight className="w-5 h-5 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                   </h2>
@@ -96,7 +96,7 @@ export default function DocsPage() {
       {/* Legal documents */}
       <div className="bg-surface/50 border border-border rounded-xl p-6">
         <div className="flex items-center gap-3 mb-4">
-          <Shield className="w-6 h-6 text-cyan-400" />
+          <Shield className="w-6 h-6 text-gold" />
           <h2 className="text-xl font-semibold text-ink">Legal Documents</h2>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -104,7 +104,7 @@ export default function DocsPage() {
             <Link
               key={doc.title}
               href={doc.href}
-              className="text-ink-muted hover:text-cyan-400 transition-colors"
+              className="text-ink-muted hover:text-gold transition-colors"
             >
               {doc.title} →
             </Link>

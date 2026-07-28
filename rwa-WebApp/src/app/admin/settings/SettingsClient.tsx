@@ -57,7 +57,7 @@ function NetworkBadge({
 }) {
   return (
     <div className="flex items-center gap-2 px-3 py-1.5 bg-surface-raised/50 rounded-lg">
-      <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-yellow-400' : 'bg-green-400'}`} />
+      <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-warning' : 'bg-success'}`} />
       <span className="text-sm text-ink-muted">{chainName}</span>
       {isTestnet && (
         <span className="text-xs px-1.5 py-0.5 bg-warning/20 text-warning rounded">
@@ -416,7 +416,7 @@ export default function SettingsClient() {
                       setShowWithdrawModal(true);
                       setResult(null);
                     }}
-                    className="px-4 py-2 bg-green-600 hover:bg-success text-ink rounded-lg transition flex items-center gap-2"
+                    className="px-4 py-2 bg-success hover:bg-success text-ink rounded-lg transition flex items-center gap-2"
                   >
                     <ArrowDownToLine className="w-4 h-4" />
                     Withdraw Fees
@@ -519,7 +519,7 @@ export default function SettingsClient() {
                           <div key={chain.chainId} className="p-4">
                             <div className="flex items-center justify-between mb-2">
                               <div className="flex items-center gap-2">
-                                <div className={`w-2 h-2 rounded-full ${chain.isTestnet ? 'bg-yellow-400' : 'bg-green-400'}`} />
+                                <div className={`w-2 h-2 rounded-full ${chain.isTestnet ? 'bg-warning' : 'bg-success'}`} />
                                 <span className="text-ink font-medium">{chain.chainName}</span>
                                 {chain.isTestnet && (
                                   <span className="text-xs px-1.5 py-0.5 bg-warning/20 text-warning rounded">
@@ -843,7 +843,7 @@ export default function SettingsClient() {
                   <button
                     onClick={handleWithdrawFees}
                     disabled={processing}
-                    className="flex-1 px-4 py-2 bg-green-600 hover:bg-success disabled:bg-surface-overlay text-ink rounded-lg transition flex items-center justify-center gap-2"
+                    className="flex-1 px-4 py-2 bg-success hover:bg-success disabled:bg-surface-overlay text-ink rounded-lg transition flex items-center justify-center gap-2"
                   >
                     {processing ? (
                       <>

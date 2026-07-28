@@ -22,41 +22,41 @@ export default function ComplianceFrameworkPage() {
             <Scale className="w-6 h-6 text-gold-400" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-white">Compliance Framework</h1>
-            <p className="text-gray-400">Regulatory requirements and compliance procedures</p>
+            <h1 className="text-3xl font-bold text-ink">Compliance Framework</h1>
+            <p className="text-ink-muted">Regulatory requirements and compliance procedures</p>
           </div>
         </div>
       </div>
 
       {/* Regulatory Overview */}
       <section className="mb-10">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-4">1. Regulatory Framework</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-4">1. Regulatory Framework</h2>
         
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 mb-4">
-          <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-            <Globe className="w-5 h-5 text-cyan-400" />
+        <div className="bg-surface border border-border rounded-lg p-6 mb-4">
+          <h3 className="font-semibold text-ink mb-4 flex items-center gap-2">
+            <Globe className="w-5 h-5 text-gold" />
             Global Standards
           </h3>
-          <ul className="space-y-3 text-sm text-gray-300">
+          <ul className="space-y-3 text-sm text-ink-muted">
             <li className="flex items-start gap-3">
               <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-white">FATF Recommendations</strong>
-                <p className="text-gray-400">Anti-money laundering and counter-terrorist financing standards</p>
+                <strong className="text-ink">FATF Recommendations</strong>
+                <p className="text-ink-muted">Anti-money laundering and counter-terrorist financing standards</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-white">GDPR (EU)</strong>
-                <p className="text-gray-400">Data protection and privacy for EU residents</p>
+                <strong className="text-ink">GDPR (EU)</strong>
+                <p className="text-ink-muted">Data protection and privacy for EU residents</p>
               </div>
             </li>
             <li className="flex items-start gap-3">
               <CheckCircle className="w-4 h-4 text-success flex-shrink-0 mt-0.5" />
               <div>
-                <strong className="text-white">Securities Regulations</strong>
-                <p className="text-gray-400">Compliance with applicable securities laws per jurisdiction</p>
+                <strong className="text-ink">Securities Regulations</strong>
+                <p className="text-ink-muted">Compliance with applicable securities laws per jurisdiction</p>
               </div>
             </li>
           </ul>
@@ -65,7 +65,7 @@ export default function ComplianceFrameworkPage() {
 
       {/* Regional Requirements */}
       <section className="mb-10">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-4">2. Regional Requirements</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-4">2. Regional Requirements</h2>
         
         <div className="space-y-4">
           {[
@@ -112,9 +112,9 @@ export default function ComplianceFrameworkPage() {
               status: 'In Progress'
             },
           ].map((item, i) => (
-            <div key={i} className="bg-gray-800 border border-gray-700 rounded-lg p-5">
+            <div key={i} className="bg-surface border border-border rounded-lg p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-white flex items-center gap-2">
+                <h3 className="font-semibold text-ink flex items-center gap-2">
                   <span className="text-2xl">{item.flag}</span>
                   {item.region}
                 </h3>
@@ -130,16 +130,16 @@ export default function ComplianceFrameworkPage() {
               </div>
               <div className="grid md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <h4 className="text-gray-500 mb-1">Regulations</h4>
-                  <ul className="text-gray-300 space-y-1">
+                  <h4 className="text-ink-faint mb-1">Regulations</h4>
+                  <ul className="text-ink-muted space-y-1">
                     {item.regulations.map((r, j) => (
                       <li key={j}>• {r}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h4 className="text-gray-500 mb-1">Requirements</h4>
-                  <ul className="text-gray-300 space-y-1">
+                  <h4 className="text-ink-faint mb-1">Requirements</h4>
+                  <ul className="text-ink-muted space-y-1">
                     {item.requirements.map((r, j) => (
                       <li key={j}>• {r}</li>
                     ))}
@@ -153,14 +153,14 @@ export default function ComplianceFrameworkPage() {
 
       {/* Restricted Jurisdictions */}
       <section className="mb-10">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-4">3. Restricted Jurisdictions</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-4">3. Restricted Jurisdictions</h2>
         
         <div className="bg-danger/10 border border-danger/30 rounded-lg p-6">
           <h3 className="font-semibold text-danger mb-4 flex items-center gap-2">
             <XCircle className="w-5 h-5" />
             Prohibited Jurisdictions
           </h3>
-          <p className="text-sm text-gray-300 mb-4">
+          <p className="text-sm text-ink-muted mb-4">
             Users from these jurisdictions are <strong>completely blocked</strong> from using the platform:
           </p>
           <div className="flex flex-wrap gap-2">
@@ -171,9 +171,9 @@ export default function ComplianceFrameworkPage() {
             ))}
           </div>
           
-          <div className="mt-6 pt-4 border-t border-red-500/30">
+          <div className="mt-6 pt-4 border-t border-danger/30">
             <h4 className="font-medium text-warning mb-2">Enhanced Due Diligence Required</h4>
-            <p className="text-sm text-gray-400 mb-2">
+            <p className="text-sm text-ink-muted mb-2">
               Users from these jurisdictions require additional verification:
             </p>
             <div className="flex flex-wrap gap-2">
@@ -189,45 +189,45 @@ export default function ComplianceFrameworkPage() {
 
       {/* KYC Requirements */}
       <section className="mb-10">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-4">4. KYC/AML Requirements</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-4">4. KYC/AML Requirements</h2>
         
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-          <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-            <Users className="w-5 h-5 text-cyan-400" />
+        <div className="bg-surface border border-border rounded-lg p-6">
+          <h3 className="font-semibold text-ink mb-4 flex items-center gap-2">
+            <Users className="w-5 h-5 text-gold" />
             Verification Tiers
           </h3>
           
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-700">
-                  <th className="text-left py-2 px-3 text-gray-400">Tier</th>
-                  <th className="text-left py-2 px-3 text-gray-400">Documents Required</th>
-                  <th className="text-left py-2 px-3 text-gray-400">Checks Performed</th>
-                  <th className="text-right py-2 px-3 text-gray-400">Limit</th>
+                <tr className="border-b border-border">
+                  <th className="text-left py-2 px-3 text-ink-muted">Tier</th>
+                  <th className="text-left py-2 px-3 text-ink-muted">Documents Required</th>
+                  <th className="text-left py-2 px-3 text-ink-muted">Checks Performed</th>
+                  <th className="text-right py-2 px-3 text-ink-muted">Limit</th>
                 </tr>
               </thead>
-              <tbody className="text-gray-300">
-                <tr className="border-b border-gray-700/50">
+              <tbody className="text-ink-muted">
+                <tr className="border-b border-border/50">
                   <td className="py-3 px-3 text-orange-400">Bronze</td>
                   <td className="py-3 px-3">Email only</td>
                   <td className="py-3 px-3">Email verification, IP check</td>
                   <td className="text-right py-3 px-3">$1,000</td>
                 </tr>
-                <tr className="border-b border-gray-700/50">
-                  <td className="py-3 px-3 text-gray-300">Silver</td>
+                <tr className="border-b border-border/50">
+                  <td className="py-3 px-3 text-ink-muted">Silver</td>
                   <td className="py-3 px-3">ID, Proof of Address</td>
                   <td className="py-3 px-3">Document verification, Sanctions, PEP</td>
                   <td className="text-right py-3 px-3">$10,000</td>
                 </tr>
-                <tr className="border-b border-gray-700/50">
-                  <td className="py-3 px-3 text-yellow-400">Gold</td>
+                <tr className="border-b border-border/50">
+                  <td className="py-3 px-3 text-warning">Gold</td>
                   <td className="py-3 px-3">ID, Address, Source of Funds</td>
                   <td className="py-3 px-3">All Silver + Enhanced due diligence</td>
                   <td className="text-right py-3 px-3">$100,000</td>
                 </tr>
                 <tr>
-                  <td className="py-3 px-3 text-cyan-400">Diamond</td>
+                  <td className="py-3 px-3 text-gold">Diamond</td>
                   <td className="py-3 px-3">All Gold + Business docs</td>
                   <td className="py-3 px-3">Manual review, Institutional verification</td>
                   <td className="text-right py-3 px-3">Unlimited</td>
@@ -240,15 +240,15 @@ export default function ComplianceFrameworkPage() {
 
       {/* Transaction Monitoring */}
       <section className="mb-10">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-4">5. Transaction Monitoring</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-4">5. Transaction Monitoring</h2>
         
-        <div className="bg-gray-800 border border-gray-700 rounded-lg p-6">
-          <h3 className="font-semibold text-white mb-4">Red Flags - Automatic Alerts</h3>
+        <div className="bg-surface border border-border rounded-lg p-6">
+          <h3 className="font-semibold text-ink mb-4">Red Flags - Automatic Alerts</h3>
           
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <h4 className="text-sm font-medium text-danger mb-2">Transaction Patterns</h4>
-              <ul className="text-sm text-gray-300 space-y-1">
+              <ul className="text-sm text-ink-muted space-y-1">
                 <li>• Multiple transactions just below thresholds</li>
                 <li>• Rapid succession of transactions</li>
                 <li>• Unusual transaction volumes</li>
@@ -257,7 +257,7 @@ export default function ComplianceFrameworkPage() {
             </div>
             <div>
               <h4 className="text-sm font-medium text-danger mb-2">User Behavior</h4>
-              <ul className="text-sm text-gray-300 space-y-1">
+              <ul className="text-sm text-ink-muted space-y-1">
                 <li>• Multiple accounts from same IP</li>
                 <li>• VPN/Proxy usage patterns</li>
                 <li>• Inconsistent geographic activity</li>
@@ -277,34 +277,34 @@ export default function ComplianceFrameworkPage() {
 
       {/* Record Keeping */}
       <section className="mb-10">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-4">6. Record Keeping Requirements</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-4">6. Record Keeping Requirements</h2>
         
-        <div className="bg-gray-800 border border-gray-700 rounded-lg overflow-hidden">
+        <div className="bg-surface border border-border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-700 bg-gray-900">
-                <th className="text-left py-3 px-4 text-gray-400">Record Type</th>
-                <th className="text-left py-3 px-4 text-gray-400">Retention Period</th>
-                <th className="text-left py-3 px-4 text-gray-400">Storage</th>
+              <tr className="border-b border-border bg-surface-sunken">
+                <th className="text-left py-3 px-4 text-ink-muted">Record Type</th>
+                <th className="text-left py-3 px-4 text-ink-muted">Retention Period</th>
+                <th className="text-left py-3 px-4 text-ink-muted">Storage</th>
               </tr>
             </thead>
-            <tbody className="text-gray-300">
-              <tr className="border-b border-gray-700/50">
+            <tbody className="text-ink-muted">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4">KYC Documents</td>
                 <td className="py-3 px-4">7 years after relationship ends</td>
                 <td className="py-3 px-4">Encrypted, access-controlled</td>
               </tr>
-              <tr className="border-b border-gray-700/50">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4">Transaction Records</td>
                 <td className="py-3 px-4">7 years</td>
                 <td className="py-3 px-4">Database + blockchain</td>
               </tr>
-              <tr className="border-b border-gray-700/50">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4">SAR/STR Filings</td>
                 <td className="py-3 px-4">7 years</td>
                 <td className="py-3 px-4">Secure, restricted access</td>
               </tr>
-              <tr className="border-b border-gray-700/50">
+              <tr className="border-b border-border/50">
                 <td className="py-3 px-4">Communication Logs</td>
                 <td className="py-3 px-4">5 years</td>
                 <td className="py-3 px-4">Archived, searchable</td>
@@ -321,12 +321,12 @@ export default function ComplianceFrameworkPage() {
 
       {/* Audit Requirements */}
       <section className="mb-10">
-        <h2 className="text-2xl font-semibold text-cyan-400 mb-4">7. Audit & Reporting</h2>
+        <h2 className="text-2xl font-semibold text-gold mb-4">7. Audit & Reporting</h2>
         
         <div className="grid md:grid-cols-2 gap-4">
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-5">
-            <h3 className="font-semibold text-white mb-3">Internal Audits</h3>
-            <ul className="text-sm text-gray-300 space-y-2">
+          <div className="bg-surface border border-border rounded-lg p-5">
+            <h3 className="font-semibold text-ink mb-3">Internal Audits</h3>
+            <ul className="text-sm text-ink-muted space-y-2">
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-success" />
                 Quarterly compliance review
@@ -342,9 +342,9 @@ export default function ComplianceFrameworkPage() {
             </ul>
           </div>
           
-          <div className="bg-gray-800 border border-gray-700 rounded-lg p-5">
-            <h3 className="font-semibold text-white mb-3">External Audits</h3>
-            <ul className="text-sm text-gray-300 space-y-2">
+          <div className="bg-surface border border-border rounded-lg p-5">
+            <h3 className="font-semibold text-ink mb-3">External Audits</h3>
+            <ul className="text-sm text-ink-muted space-y-2">
               <li className="flex items-center gap-2">
                 <CheckCircle className="w-4 h-4 text-success" />
                 Annual financial audit
@@ -370,12 +370,12 @@ export default function ComplianceFrameworkPage() {
         </h2>
         <div className="grid md:grid-cols-2 gap-4 text-sm">
           <div>
-            <h3 className="font-medium text-white">Compliance Officer</h3>
-            <p className="text-gray-400">{CONTACT.compliance}</p>
+            <h3 className="font-medium text-ink">Compliance Officer</h3>
+            <p className="text-ink-muted">{CONTACT.compliance}</p>
           </div>
           <div>
-            <h3 className="font-medium text-white">Data Protection Officer</h3>
-            <p className="text-gray-400">{CONTACT.privacy}</p>
+            <h3 className="font-medium text-ink">Data Protection Officer</h3>
+            <p className="text-ink-muted">{CONTACT.privacy}</p>
           </div>
         </div>
       </section>

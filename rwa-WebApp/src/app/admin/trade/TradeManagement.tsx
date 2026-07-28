@@ -77,23 +77,23 @@ interface TradeDeal {
 // =============================================================================
 
 const STAGE_CONFIG: Record<string, { label: string; color: string }> = {
-  draft: { label: 'Draft', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
+  draft: { label: 'Draft', color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/20' },
   loi_pending: { label: 'LOI Pending', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
   loi_signed: { label: 'LOI Signed', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
   kyc_verification: { label: 'KYC Verification', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
   contract_negotiation: { label: 'Contract Negotiation', color: 'bg-warning/10 text-warning border-warning/20' },
   contract_signed: { label: 'Contract Signed', color: 'bg-warning/10 text-warning border-warning/20' },
   payment_deposited: { label: 'Payment Deposited', color: 'bg-success/10 text-success border-success/20' },
-  production: { label: 'In Production', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
-  quality_inspection: { label: 'Quality Inspection', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
-  shipping: { label: 'Shipping', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
-  customs_clearance: { label: 'Customs Clearance', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
-  delivery: { label: 'Delivery', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
-  inspection_final: { label: 'Final Inspection', color: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' },
+  production: { label: 'In Production', color: 'bg-gold/10 text-gold border-gold/20' },
+  quality_inspection: { label: 'Quality Inspection', color: 'bg-gold/10 text-gold border-gold/20' },
+  shipping: { label: 'Shipping', color: 'bg-gold/10 text-gold border-gold/20' },
+  customs_clearance: { label: 'Customs Clearance', color: 'bg-gold/10 text-gold border-gold/20' },
+  delivery: { label: 'Delivery', color: 'bg-gold/10 text-gold border-gold/20' },
+  inspection_final: { label: 'Final Inspection', color: 'bg-gold/10 text-gold border-gold/20' },
   payment_released: { label: 'Payment Released', color: 'bg-success/10 text-success border-success/20' },
   completed: { label: 'Completed', color: 'bg-success/10 text-success border-success/20' },
   disputed: { label: 'Disputed', color: 'bg-danger/10 text-danger border-danger/20' },
-  cancelled: { label: 'Cancelled', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
+  cancelled: { label: 'Cancelled', color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/20' },
 };
 
 const COUNTRY_NAMES: Record<string, string> = {

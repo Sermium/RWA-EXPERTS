@@ -159,7 +159,7 @@ export default function AdminOverview({
       </div>
 
       {/* Fee Revenue Section */}
-      <div className="bg-gradient-to-r from-success/10 via-emerald-500/10 to-teal-500/10 border border-success/30 rounded-xl p-6">
+      <div className="bg-gradient-to-r from-success/10 via-gold-light/10 to-gold-light/10 border border-success/30 rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-success/20 rounded-lg">
@@ -247,7 +247,7 @@ export default function AdminOverview({
                 <p className="text-ink-faint text-xs">Tokenization</p>
               </div>
               <div className="bg-surface/30 rounded-lg p-3 text-center">
-                <Handshake className="w-5 h-5 text-cyan-400 mx-auto mb-1" />
+                <Handshake className="w-5 h-5 text-gold mx-auto mb-1" />
                 <p className="text-ink font-semibold">
                   {formatCurrency(feeStats?.trading_fees || 0)}
                 </p>
@@ -355,15 +355,15 @@ export default function AdminOverview({
       {(tradeStats || disputeStats) && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div
-            className="bg-surface border border-border rounded-xl p-6 cursor-pointer hover:border-cyan-500/50 transition-colors"
+            className="bg-surface border border-border rounded-xl p-6 cursor-pointer hover:border-gold/50 transition-colors"
             onClick={() => setActiveTab('trade')}
           >
             <div className="flex items-center justify-between mb-2">
-              <div className="p-2 bg-cyan-500/20 rounded-lg">
-                <Handshake className="w-5 h-5 text-cyan-400" />
+              <div className="p-2 bg-gold/20 rounded-lg">
+                <Handshake className="w-5 h-5 text-gold" />
               </div>
               {tradeStats && tradeStats.activeDeals > 0 && (
-                <span className="px-2 py-0.5 bg-cyan-500/20 text-cyan-400 text-xs rounded-full">
+                <span className="px-2 py-0.5 bg-gold/20 text-gold text-xs rounded-full">
                   {tradeStats.activeDeals} active
                 </span>
               )}
@@ -524,13 +524,13 @@ export default function AdminOverview({
           onClick={() => setActiveTab('trade')}
         >
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-cyan-500/20 rounded-lg">
-              <Handshake className="w-5 h-5 text-cyan-400" />
+            <div className="p-2 bg-gold/20 rounded-lg">
+              <Handshake className="w-5 h-5 text-gold" />
             </div>
             <h3 className="text-lg font-semibold text-ink">Trade Platform</h3>
           </div>
           <p className="text-ink-muted text-sm">Manage international trade deals, escrow, and payments.</p>
-          <p className="text-cyan-400 text-sm mt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
+          <p className="text-gold text-sm mt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
             Manage <ArrowRight className="w-4 h-4" />
           </p>
         </div>
@@ -620,13 +620,13 @@ export default function AdminOverview({
           onClick={() => setActiveTab('users')}
         >
           <div className="flex items-center gap-3 mb-3">
-            <div className="p-2 bg-indigo-500/20 rounded-lg">
-              <Users className="w-5 h-5 text-indigo-400" />
+            <div className="p-2 bg-gold/20 rounded-lg">
+              <Users className="w-5 h-5 text-gold" />
             </div>
             <h3 className="text-lg font-semibold text-ink">Users</h3>
           </div>
           <p className="text-ink-muted text-sm">Manage user accounts and admin permissions.</p>
-          <p className="text-indigo-400 text-sm mt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
+          <p className="text-gold text-sm mt-3 flex items-center gap-1 group-hover:gap-2 transition-all">
             Manage <ArrowRight className="w-4 h-4" />
           </p>
         </div>
@@ -699,7 +699,7 @@ export default function AdminOverview({
             <h3 className="text-lg font-semibold text-ink">Trade Summary</h3>
             <button
               onClick={() => setActiveTab('trade')}
-              className="text-cyan-400 hover:text-cyan-300 text-sm flex items-center gap-1"
+              className="text-gold hover:text-gold text-sm flex items-center gap-1"
             >
               View All <ArrowRight className="w-4 h-4" />
             </button>
@@ -714,7 +714,7 @@ export default function AdminOverview({
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-surface-overlay/50 rounded-lg p-4 text-center">
-                  <p className="text-2xl font-bold text-cyan-400">{tradeStats.activeDeals}</p>
+                  <p className="text-2xl font-bold text-gold">{tradeStats.activeDeals}</p>
                   <p className="text-ink-muted text-sm">Active</p>
                 </div>
                 <div className="bg-surface-overlay/50 rounded-lg p-4 text-center">
@@ -731,10 +731,10 @@ export default function AdminOverview({
                 </div>
               </div>
 
-              <div className="p-3 bg-cyan-500/10 border border-cyan-500/30 rounded-lg">
+              <div className="p-3 bg-gold/10 border border-gold/30 rounded-lg">
                 <div className="flex items-center justify-between">
                   <span className="text-ink-muted text-sm">In Escrow</span>
-                  <span className="text-cyan-400 font-semibold">
+                  <span className="text-gold font-semibold">
                     ${(tradeStats.inEscrow / 1000).toFixed(0)}K
                   </span>
                 </div>

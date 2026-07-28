@@ -395,7 +395,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                     <button
                       onClick={handleRefreshMilestones}
                       disabled={milestonesLoading}
-                      className="px-3 py-1 bg-surface-overlay hover:bg-gray-500 disabled:opacity-50 rounded text-xs text-ink"
+                      className="px-3 py-1 bg-surface-overlay hover:bg-ink-faint disabled:opacity-50 rounded text-xs text-ink"
                     >
                       {milestonesLoading ? 'Loading...' : 'Refresh'}
                     </button>
@@ -412,7 +412,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                   ) : (
                     <div className="space-y-3">
                       {milestones.map((milestone, index) => {
-                        const statusInfo = MILESTONE_STATUS[milestone.status] || { label: 'Unknown', color: 'bg-gray-500' };
+                        const statusInfo = MILESTONE_STATUS[milestone.status] || { label: 'Unknown', color: 'bg-ink-faint' };
                         return (
                           <div key={index} className="bg-surface-raised rounded-lg p-4">
                             <div className="flex justify-between items-start mb-2">
@@ -433,7 +433,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                                   setShowStatusModal(true);
                                 }}
                                 disabled={processing || txLoading}
-                                className="px-3 py-1 bg-surface-overlay hover:bg-gray-500 disabled:opacity-50 rounded text-xs text-ink"
+                                className="px-3 py-1 bg-surface-overlay hover:bg-ink-faint disabled:opacity-50 rounded text-xs text-ink"
                               >
                                 Change Status
                               </button>
@@ -443,7 +443,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                                   <button
                                     onClick={() => handleApproveMilestone(index)}
                                     disabled={processing || txLoading}
-                                    className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:opacity-50 rounded text-xs text-ink"
+                                    className="px-3 py-1 bg-success hover:bg-success disabled:opacity-50 rounded text-xs text-ink"
                                   >
                                     Approve
                                   </button>
@@ -453,7 +453,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
                                       setShowRejectModal(true);
                                     }}
                                     disabled={processing || txLoading}
-                                    className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded text-xs text-ink"
+                                    className="px-3 py-1 bg-danger hover:bg-danger disabled:opacity-50 rounded text-xs text-ink"
                                   >
                                     Reject
                                   </button>
@@ -530,7 +530,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
               <button
                 onClick={handleRejectMilestone}
                 disabled={processing || !rejectReason.trim()}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-50 rounded-lg text-ink"
+                className="flex-1 px-4 py-2 bg-danger hover:bg-danger disabled:opacity-50 rounded-lg text-ink"
               >
                 {processing ? 'Processing...' : 'Reject'}
               </button>

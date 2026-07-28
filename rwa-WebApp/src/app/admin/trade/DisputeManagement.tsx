@@ -121,13 +121,13 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   resolved_seller: { label: 'Resolved - Seller', color: 'bg-success/10 text-success border-success/20' },
   resolved_split: { label: 'Resolved - Split', color: 'bg-success/10 text-success border-success/20' },
   resolved_refund: { label: 'Resolved - Refund', color: 'bg-success/10 text-success border-success/20' },
-  resolved_dismissed: { label: 'Dismissed', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
-  withdrawn: { label: 'Withdrawn', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
+  resolved_dismissed: { label: 'Dismissed', color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/20' },
+  withdrawn: { label: 'Withdrawn', color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/20' },
   // On-chain statuses (from DisputeManager contract)
-  '0': { label: 'None', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
+  '0': { label: 'None', color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/20' },
   '1': { label: 'Open', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
   '2': { label: 'Under Review', color: 'bg-gold-500/10 text-gold-400 border-gold-500/20' },
-  '3': { label: 'Resolved - Dismissed', color: 'bg-gray-500/10 text-ink-muted border-gray-500/20' },
+  '3': { label: 'Resolved - Dismissed', color: 'bg-ink-faint/10 text-ink-muted border-ink-faint/20' },
   '4': { label: 'Resolved - Refund', color: 'bg-success/10 text-success border-success/20' },
   '5': { label: 'Resolved - Partial', color: 'bg-success/10 text-success border-success/20' },
 };
@@ -152,12 +152,12 @@ function StatsGrid({ stats }: { stats: DisputeStats }) {
         <p className="text-2xl font-bold text-ink">{stats.total}</p>
       </div>
 
-      <div className="bg-surface border border-cyan-500/30 rounded-xl p-4">
+      <div className="bg-surface border border-gold/30 rounded-xl p-4">
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm text-ink-muted">Trade</span>
-          <Ship className="h-5 w-5 text-cyan-400" />
+          <Ship className="h-5 w-5 text-gold" />
         </div>
-        <p className="text-2xl font-bold text-cyan-400">{stats.tradeDisputes}</p>
+        <p className="text-2xl font-bold text-gold">{stats.tradeDisputes}</p>
       </div>
 
       <div className="bg-surface border border-gold-500/30 rounded-xl p-4">
@@ -627,7 +627,7 @@ function DisputeDetailModal({
                 <button
                   onClick={() => onResolve(refundInvestors, reasoning)}
                   disabled={isProcessing || !reasoning.trim()}
-                  className="flex-1 py-3 bg-green-600 text-ink font-medium rounded-xl hover:bg-success transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-success text-ink font-medium rounded-xl hover:bg-success transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isProcessing ? (
                     <Loader2 className="h-5 w-5 animate-spin" />

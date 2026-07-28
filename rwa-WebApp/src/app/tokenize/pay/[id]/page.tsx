@@ -448,7 +448,7 @@ export default function PaymentPage() {
         <div className="py-12 px-4 pt-24">
           <div className="max-w-lg mx-auto">
             <div className="bg-surface-raised rounded-xl p-8 text-center">
-              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="w-10 h-10 text-success" />
               </div>
               <h1 className="text-2xl font-bold text-ink mb-2">Payment Successful!</h1>
@@ -682,7 +682,7 @@ export default function PaymentPage() {
 
               {/* Error Message */}
               {error && (
-                <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-4 flex items-start gap-3">
+                <div className="bg-danger/10 border border-danger/30 rounded-xl p-4 flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-danger flex-shrink-0 mt-0.5" />
                   <p className="text-danger text-sm">{error}</p>
                 </div>
@@ -690,7 +690,7 @@ export default function PaymentPage() {
 
               {/* Insufficient Balance Warning */}
               {hasInsufficientBalance() && currentToken && (
-                <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 flex items-start gap-3">
+                <div className="bg-warning/10 border border-warning/30 rounded-xl p-4 flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="text-warning text-sm">

@@ -103,17 +103,17 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-xl border border-gray-700 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="p-6 border-b border-gray-700 flex items-center justify-between">
+      <div className="bg-surface-sunken rounded-xl border border-border w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="p-6 border-b border-border flex items-center justify-between">
           <h2 className="text-xl font-bold">Edit Round: {round.display_name}</h2>
-          <button onClick={onClose} className="p-2 hover:bg-gray-800 rounded-lg">
+          <button onClick={onClose} className="p-2 hover:bg-surface rounded-lg">
             <X className="w-5 h-5" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {error && (
-            <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm">
+            <div className="p-3 bg-danger/20 border border-danger/30 rounded-lg text-danger text-sm">
               {error}
             </div>
           )}
@@ -121,56 +121,56 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
           {/* Basic Info */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Display Name</label>
+              <label className="block text-sm text-ink-muted mb-1">Display Name</label>
               <input
                 type="text"
                 value={form.display_name}
                 onChange={(e) => setForm(f => ({ ...f, display_name: e.target.value }))}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Timeline</label>
+              <label className="block text-sm text-ink-muted mb-1">Timeline</label>
               <input
                 type="text"
                 value={form.timeline}
                 onChange={(e) => setForm(f => ({ ...f, timeline: e.target.value }))}
                 placeholder="e.g., Q1-Q2 2026"
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
           </div>
 
           {/* Pricing */}
           <div>
-            <h3 className="text-sm font-medium text-gray-300 mb-3">Pricing & Limits</h3>
+            <h3 className="text-sm font-medium text-ink-muted mb-3">Pricing & Limits</h3>
             <div className="grid md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Token Price (USD)</label>
+                <label className="block text-sm text-ink-muted mb-1">Token Price (USD)</label>
                 <input
                   type="number"
                   step="0.000001"
                   value={form.token_price_usd}
                   onChange={(e) => setForm(f => ({ ...f, token_price_usd: parseFloat(e.target.value) }))}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none font-mono"
+                  className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none font-mono"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Min Investment (USD)</label>
+                <label className="block text-sm text-ink-muted mb-1">Min Investment (USD)</label>
                 <input
                   type="number"
                   value={form.min_investment_usd}
                   onChange={(e) => setForm(f => ({ ...f, min_investment_usd: parseFloat(e.target.value) }))}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none"
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1">Max Investment (USD)</label>
+                <label className="block text-sm text-ink-muted mb-1">Max Investment (USD)</label>
                 <input
                   type="number"
                   value={form.max_investment_usd}
                   onChange={(e) => setForm(f => ({ ...f, max_investment_usd: parseFloat(e.target.value) }))}
-                  className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
+                  className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none"
                 />
               </div>
             </div>
@@ -179,47 +179,47 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
           {/* Allocation */}
           <div className="grid md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Target Raise (USD)</label>
+              <label className="block text-sm text-ink-muted mb-1">Target Raise (USD)</label>
               <input
                 type="number"
                 value={form.target_amount_usd}
                 onChange={(e) => setForm(f => ({ ...f, target_amount_usd: parseFloat(e.target.value) }))}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Token Allocation (%)</label>
+              <label className="block text-sm text-ink-muted mb-1">Token Allocation (%)</label>
               <input
                 type="number"
                 step="0.1"
                 value={form.token_allocation_percent}
                 onChange={(e) => setForm(f => ({ ...f, token_allocation_percent: parseFloat(e.target.value) }))}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
             <div>
-              <label className="block text-sm text-gray-400 mb-1">Vesting (months)</label>
+              <label className="block text-sm text-ink-muted mb-1">Vesting (months)</label>
               <input
                 type="number"
                 value={form.vesting_months}
                 onChange={(e) => setForm(f => ({ ...f, vesting_months: parseInt(e.target.value) }))}
-                className="w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none"
               />
             </div>
           </div>
 
           {/* Deliverables */}
           <div>
-            <h3 className="text-sm font-medium text-gray-300 mb-3">Deliverables & Milestones</h3>
+            <h3 className="text-sm font-medium text-ink-muted mb-3">Deliverables & Milestones</h3>
             <div className="space-y-2 mb-3">
               {form.deliverables.map((d, i) => (
-                <div key={i} className="flex items-center gap-2 bg-gray-800 rounded-lg p-2">
-                  <GripVertical className="w-4 h-4 text-gray-600" />
+                <div key={i} className="flex items-center gap-2 bg-surface rounded-lg p-2">
+                  <GripVertical className="w-4 h-4 text-ink-faint" />
                   <span className="flex-1 text-sm">{d}</span>
                   <button
                     type="button"
                     onClick={() => removeDeliverable(i)}
-                    className="p-1 hover:bg-red-500/20 rounded text-red-400"
+                    className="p-1 hover:bg-danger/20 rounded text-danger"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -232,7 +232,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
                 value={newDeliverable}
                 onChange={(e) => setNewDeliverable(e.target.value)}
                 placeholder="Add new deliverable..."
-                className="flex-1 px-3 py-2 bg-gray-800 border border-gray-700 rounded-lg focus:border-gold-500 focus:outline-none text-sm"
+                className="flex-1 px-3 py-2 bg-surface border border-border rounded-lg focus:border-gold-500 focus:outline-none text-sm"
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addDeliverable())}
               />
               <button
@@ -246,18 +246,18 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end gap-3 pt-4 border-t border-gray-700">
+          <div className="flex justify-end gap-3 pt-4 border-t border-border">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg"
+              className="px-4 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="px-4 py-2 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg flex items-center gap-2"
+              className="px-4 py-2 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong rounded-lg flex items-center gap-2"
             >
               {saving ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
               Save Changes
@@ -373,13 +373,13 @@ export default function FundraisingManagement() {
 
   const getStatusBadge = (status: string) => {
     const configs: Record<string, { bg: string; text: string; icon: any }> = {
-      active: { bg: 'bg-green-500/20', text: 'text-green-400', icon: Rocket },
-      upcoming: { bg: 'bg-gray-500/20', text: 'text-gray-400', icon: Lock },
+      active: { bg: 'bg-success/20', text: 'text-success', icon: Rocket },
+      upcoming: { bg: 'bg-ink-faint/20', text: 'text-ink-muted', icon: Lock },
       completed: { bg: 'bg-gold-500/20', text: 'text-gold-400', icon: CheckCircle },
-      cancelled: { bg: 'bg-red-500/20', text: 'text-red-400', icon: X },
-      pending: { bg: 'bg-yellow-500/20', text: 'text-yellow-400', icon: Clock },
-      confirmed: { bg: 'bg-green-500/20', text: 'text-green-400', icon: Check },
-      failed: { bg: 'bg-red-500/20', text: 'text-red-400', icon: X },
+      cancelled: { bg: 'bg-danger/20', text: 'text-danger', icon: X },
+      pending: { bg: 'bg-warning/20', text: 'text-warning', icon: Clock },
+      confirmed: { bg: 'bg-success/20', text: 'text-success', icon: Check },
+      failed: { bg: 'bg-danger/20', text: 'text-danger', icon: X },
       refunded: { bg: 'bg-orange-500/20', text: 'text-orange-400', icon: RefreshCw }
     };
     const config = configs[status] || configs.pending;
@@ -419,7 +419,7 @@ export default function FundraisingManagement() {
     <div className="space-y-6">
       {/* Success Message */}
       {successMessage && (
-        <div className="p-4 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400 flex items-center gap-2">
+        <div className="p-4 bg-success/20 border border-success/30 rounded-lg text-success flex items-center gap-2">
           <CheckCircle className="w-5 h-5" />
           {successMessage}
         </div>
@@ -427,46 +427,46 @@ export default function FundraisingManagement() {
 
       {/* Header Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="bg-surface rounded-xl p-4 border border-border">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-500/20 rounded-lg">
-              <DollarSign className="w-5 h-5 text-green-400" />
+            <div className="p-2 bg-success/20 rounded-lg">
+              <DollarSign className="w-5 h-5 text-success" />
             </div>
             <div>
-              <p className="text-gray-400 text-sm">Total Raised</p>
+              <p className="text-ink-muted text-sm">Total Raised</p>
               <p className="text-xl font-bold">{formatCurrency(totalRaised)}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="bg-surface rounded-xl p-4 border border-border">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gold-500/20 rounded-lg">
               <TrendingUp className="w-5 h-5 text-gold-400" />
             </div>
             <div>
-              <p className="text-gray-400 text-sm">Target</p>
+              <p className="text-ink-muted text-sm">Target</p>
               <p className="text-xl font-bold">{formatCurrency(totalTarget)}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="bg-surface rounded-xl p-4 border border-border">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-gold-500/20 rounded-lg">
               <Users className="w-5 h-5 text-gold-400" />
             </div>
             <div>
-              <p className="text-gray-400 text-sm">Investors</p>
+              <p className="text-ink-muted text-sm">Investors</p>
               <p className="text-xl font-bold">{totalInvestors}</p>
             </div>
           </div>
         </div>
-        <div className="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div className="bg-surface rounded-xl p-4 border border-border">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-yellow-500/20 rounded-lg">
-              <AlertCircle className="w-5 h-5 text-yellow-400" />
+            <div className="p-2 bg-warning/20 rounded-lg">
+              <AlertCircle className="w-5 h-5 text-warning" />
             </div>
             <div>
-              <p className="text-gray-400 text-sm">Pending</p>
+              <p className="text-ink-muted text-sm">Pending</p>
               <p className="text-xl font-bold">{pendingInvestments}</p>
             </div>
           </div>
@@ -474,11 +474,11 @@ export default function FundraisingManagement() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 border-b border-gray-700 pb-2">
+      <div className="flex gap-2 border-b border-border pb-2">
         <button
           onClick={() => setActiveTab('rounds')}
           className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
-            activeTab === 'rounds' ? 'bg-gold-600 text-white' : 'text-gray-400 hover:text-white'
+            activeTab === 'rounds' ? 'bg-gold-600 text-ink' : 'text-ink-muted hover:text-ink'
           }`}
         >
           Rounds ({rounds.length})
@@ -486,12 +486,12 @@ export default function FundraisingManagement() {
         <button
           onClick={() => setActiveTab('investments')}
           className={`px-4 py-2 rounded-t-lg font-medium transition-colors flex items-center gap-2 ${
-            activeTab === 'investments' ? 'bg-gold-600 text-white' : 'text-gray-400 hover:text-white'
+            activeTab === 'investments' ? 'bg-gold-600 text-ink' : 'text-ink-muted hover:text-ink'
           }`}
         >
           Investments ({investments.length})
           {pendingInvestments > 0 && (
-            <span className="bg-yellow-500 text-black text-xs px-2 py-0.5 rounded-full">{pendingInvestments}</span>
+            <span className="bg-warning text-black text-xs px-2 py-0.5 rounded-full">{pendingInvestments}</span>
           )}
         </button>
       </div>
@@ -500,7 +500,7 @@ export default function FundraisingManagement() {
       {activeTab === 'rounds' && (
         <div className="space-y-4">
           {rounds.map((round) => (
-            <div key={round.id} className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+            <div key={round.id} className="bg-surface rounded-xl border border-border overflow-hidden">
               <div 
                 className="p-4 flex items-center justify-between cursor-pointer hover:bg-gray-750"
                 onClick={() => setExpandedRound(expandedRound === round.id ? null : round.id)}
@@ -509,7 +509,7 @@ export default function FundraisingManagement() {
                   {getStatusBadge(round.status)}
                   <div>
                     <h3 className="font-bold text-lg">{round.display_name}</h3>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-ink-muted text-sm">
                       {formatCurrency(parseFloat(String(round.raised_amount_usd || 0)))} / {formatCurrency(parseFloat(String(round.target_amount_usd)))}
                       {' • '}{round.investor_count || 0} investors
                     </p>
@@ -525,40 +525,40 @@ export default function FundraisingManagement() {
                   </button>
                   <div className="text-right mr-4">
                     <p className="font-mono text-sm">${parseFloat(String(round.token_price_usd)).toFixed(6)}</p>
-                    <p className="text-gray-500 text-xs">{round.token_allocation_percent}% allocation</p>
+                    <p className="text-ink-faint text-xs">{round.token_allocation_percent}% allocation</p>
                   </div>
                   {expandedRound === round.id ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
                 </div>
               </div>
 
               {expandedRound === round.id && (
-                <div className="border-t border-gray-700 p-4 bg-gray-850">
+                <div className="border-t border-border p-4 bg-gray-850">
                   <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-3">
-                      <h4 className="font-medium text-gray-300">Round Details</h4>
+                      <h4 className="font-medium text-ink-muted">Round Details</h4>
                       <div className="grid grid-cols-2 gap-2 text-sm">
-                        <span className="text-gray-500">Token Price:</span>
+                        <span className="text-ink-faint">Token Price:</span>
                         <span className="font-mono">${parseFloat(String(round.token_price_usd)).toFixed(6)}</span>
-                        <span className="text-gray-500">Allocation:</span>
+                        <span className="text-ink-faint">Allocation:</span>
                         <span>{(round.token_allocation_amount / 1e6).toFixed(0)}M RWA ({round.token_allocation_percent}%)</span>
-                        <span className="text-gray-500">Min Investment:</span>
+                        <span className="text-ink-faint">Min Investment:</span>
                         <span>{formatCurrency(round.min_investment_usd)}</span>
-                        <span className="text-gray-500">Max Investment:</span>
+                        <span className="text-ink-faint">Max Investment:</span>
                         <span>{formatCurrency(round.max_investment_usd)}</span>
-                        <span className="text-gray-500">Vesting:</span>
+                        <span className="text-ink-faint">Vesting:</span>
                         <span>{round.vesting_months} months</span>
-                        <span className="text-gray-500">Timeline:</span>
+                        <span className="text-ink-faint">Timeline:</span>
                         <span>{round.timeline || 'Not set'}</span>
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <h4 className="font-medium text-gray-300">Status Actions</h4>
+                      <h4 className="font-medium text-ink-muted">Status Actions</h4>
                       <div className="flex flex-wrap gap-2">
                         {round.status === 'upcoming' && (
                           <button
                             onClick={() => updateRoundStatus(round.id, 'active')}
                             disabled={updating === round.id}
-                            className="px-3 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 rounded-lg text-sm font-medium flex items-center gap-2"
+                            className="px-3 py-2 bg-success hover:bg-success disabled:bg-border-strong rounded-lg text-sm font-medium flex items-center gap-2"
                           >
                             {updating === round.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Rocket className="w-4 h-4" />}
                             Activate Round
@@ -569,14 +569,14 @@ export default function FundraisingManagement() {
                             <button
                               onClick={() => updateRoundStatus(round.id, 'completed')}
                               disabled={updating === round.id}
-                              className="px-3 py-2 bg-gold-600 hover:bg-gold-700 disabled:bg-gray-600 rounded-lg text-sm font-medium flex items-center gap-2"
+                              className="px-3 py-2 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong rounded-lg text-sm font-medium flex items-center gap-2"
                             >
                               <CheckCircle className="w-4 h-4" /> Complete Round
                             </button>
                             <button
                               onClick={() => updateRoundStatus(round.id, 'cancelled')}
                               disabled={updating === round.id}
-                              className="px-3 py-2 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 rounded-lg text-sm font-medium flex items-center gap-2"
+                              className="px-3 py-2 bg-danger hover:bg-danger disabled:bg-border-strong rounded-lg text-sm font-medium flex items-center gap-2"
                             >
                               <X className="w-4 h-4" /> Cancel
                             </button>
@@ -586,14 +586,14 @@ export default function FundraisingManagement() {
                           <button
                             onClick={() => updateRoundStatus(round.id, 'upcoming')}
                             disabled={updating === round.id}
-                            className="px-3 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-600 rounded-lg text-sm font-medium flex items-center gap-2"
+                            className="px-3 py-2 bg-border-strong hover:bg-surface-overlay disabled:bg-border-strong rounded-lg text-sm font-medium flex items-center gap-2"
                           >
                             <RefreshCw className="w-4 h-4" /> Reset to Upcoming
                           </button>
                         )}
                       </div>
                       <div className="mt-4">
-                        <h5 className="text-sm text-gray-400 mb-2">Deliverables</h5>
+                        <h5 className="text-sm text-ink-muted mb-2">Deliverables</h5>
                         {(() => {
                           // Parse deliverables from JSONB
                           let deliverables: string[] = [];
@@ -610,14 +610,14 @@ export default function FundraisingManagement() {
                           return deliverables.length > 0 ? (
                             <ul className="text-sm space-y-1">
                               {deliverables.map((d, i) => (
-                                <li key={i} className="text-gray-300 flex items-start gap-2">
-                                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                                <li key={i} className="text-ink-muted flex items-start gap-2">
+                                  <CheckCircle className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
                                   {d}
                                 </li>
                               ))}
                             </ul>
                           ) : (
-                            <p className="text-gray-500 text-sm italic">No deliverables set. Click Edit to add.</p>
+                            <p className="text-ink-faint text-sm italic">No deliverables set. Click Edit to add.</p>
                           );
                         })()}
                       </div>
@@ -640,7 +640,7 @@ export default function FundraisingManagement() {
                 key={status}
                 onClick={() => setStatusFilter(status)}
                 className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  statusFilter === status ? 'bg-gold-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                  statusFilter === status ? 'bg-gold-600 text-ink' : 'bg-surface-overlay text-ink-muted hover:bg-border-strong'
                 }`}
               >
                 {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -649,11 +649,11 @@ export default function FundraisingManagement() {
           </div>
 
           {/* Investments List */}
-          <div className="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden">
+          <div className="bg-surface rounded-xl border border-border overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-750">
-                  <tr className="text-left text-gray-400 text-sm">
+                  <tr className="text-left text-ink-muted text-sm">
                     <th className="p-4">Investor</th>
                     <th className="p-4">Round</th>
                     <th className="p-4">Amount</th>
@@ -663,18 +663,18 @@ export default function FundraisingManagement() {
                     <th className="p-4">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-700">
+                <tbody className="divide-y divide-border">
                   {investments
                     .filter(i => statusFilter === 'all' || i.payment_status === statusFilter)
                     .map((inv) => (
                       <tr key={inv.id} className="hover:bg-gray-750">
                         <td className="p-4">
                           <div className="flex items-center gap-2">
-                            <Wallet className="w-4 h-4 text-gray-500" />
+                            <Wallet className="w-4 h-4 text-ink-faint" />
                             <div>
                               <p className="font-mono text-sm">{inv.wallet_address.slice(0, 6)}...{inv.wallet_address.slice(-4)}</p>
                               {inv.investor_email && (
-                                <p className="text-gray-500 text-xs flex items-center gap-1">
+                                <p className="text-ink-faint text-xs flex items-center gap-1">
                                   <Mail className="w-3 h-3" /> {inv.investor_email}
                                 </p>
                               )}
@@ -685,14 +685,14 @@ export default function FundraisingManagement() {
                         <td className="p-4 font-medium">{formatCurrency(inv.investment_amount_usd)}</td>
                         <td className="p-4 text-sm font-mono">{inv.token_amount?.toLocaleString() || 0} RWA</td>
                         <td className="p-4">{getStatusBadge(inv.payment_status)}</td>
-                        <td className="p-4 text-sm text-gray-400">{formatDate(inv.invested_at)}</td>
+                        <td className="p-4 text-sm text-ink-muted">{formatDate(inv.invested_at)}</td>
                         <td className="p-4">
                           {inv.payment_status === 'pending' && (
                             <div className="flex gap-2">
                               <button
                                 onClick={() => confirmInvestment(inv.id, true)}
                                 disabled={updating === inv.id}
-                                className="p-2 bg-green-600 hover:bg-green-700 rounded-lg disabled:opacity-50"
+                                className="p-2 bg-success hover:bg-success rounded-lg disabled:opacity-50"
                                 title="Confirm"
                               >
                                 {updating === inv.id ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
@@ -700,7 +700,7 @@ export default function FundraisingManagement() {
                               <button
                                 onClick={() => confirmInvestment(inv.id, false)}
                                 disabled={updating === inv.id}
-                                className="p-2 bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-50"
+                                className="p-2 bg-danger hover:bg-danger rounded-lg disabled:opacity-50"
                                 title="Reject"
                               >
                                 <X className="w-4 h-4" />
@@ -722,7 +722,7 @@ export default function FundraisingManagement() {
                     ))}
                   {investments.filter(i => statusFilter === 'all' || i.payment_status === statusFilter).length === 0 && (
                     <tr>
-                      <td colSpan={7} className="p-8 text-center text-gray-500">
+                      <td colSpan={7} className="p-8 text-center text-ink-faint">
                         No investments found
                       </td>
                     </tr>
