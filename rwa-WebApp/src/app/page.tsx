@@ -50,12 +50,12 @@ function WalletModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-surface border border-border rounded-2xl p-6 w-full max-w-md mx-4 shadow-panel animate-fade-up">
+      <div className="relative bg-surface border border-border rounded-xl p-6 w-full max-w-md mx-4 shadow-panel animate-fade-up">
         <h3 className="text-xl font-display font-medium text-ink mb-4">Connect Wallet</h3>
         <div className="space-y-3">
           <button
             onClick={() => handleConnect(injected())}
-            className="w-full flex items-center gap-3 p-4 bg-surface-raised hover:bg-surface-overlay rounded-xl transition-colors duration-200"
+            className="w-full flex items-center gap-3 p-4 bg-surface-raised hover:bg-surface-overlay rounded-lg transition-colors duration-200"
           >
             <div className="w-10 h-10 bg-gold/15 rounded-lg flex items-center justify-center">
               <Wallet className="w-5 h-5 text-gold" />
@@ -67,7 +67,7 @@ function WalletModal({
           </button>
           <button
             onClick={() => handleConnect(coinbaseWallet({ appName: 'Investa' }))}
-            className="w-full flex items-center gap-3 p-4 bg-surface-raised hover:bg-surface-overlay rounded-xl transition-colors duration-200"
+            className="w-full flex items-center gap-3 p-4 bg-surface-raised hover:bg-surface-overlay rounded-lg transition-colors duration-200"
           >
             <div className="w-10 h-10 bg-gold/15 rounded-lg flex items-center justify-center">
               <Wallet className="w-5 h-5 text-gold" />
@@ -81,7 +81,7 @@ function WalletModal({
             onClick={() => handleConnect(walletConnect({
               projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || ''
             }))}
-            className="w-full flex items-center gap-3 p-4 bg-surface-raised hover:bg-surface-overlay rounded-xl transition-colors duration-200"
+            className="w-full flex items-center gap-3 p-4 bg-surface-raised hover:bg-surface-overlay rounded-lg transition-colors duration-200"
           >
             <div className="w-10 h-10 bg-gold/15 rounded-lg flex items-center justify-center">
               <Wallet className="w-5 h-5 text-gold" />
@@ -294,7 +294,7 @@ function TestnetFaucet() {
   // Don't show if no stablecoins deployed
   if (!usdcAddress && !usdtAddress) {
     return (
-      <div className="bg-warning-muted border border-warning/30 rounded-2xl p-6 mb-8">
+      <div className="bg-warning-muted border border-warning/30 rounded-xl p-6 mb-8">
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-6 h-6 text-warning flex-shrink-0 mt-0.5" />
           <div>
@@ -311,7 +311,7 @@ function TestnetFaucet() {
 
   return (
     <>
-      <div className="bg-surface border border-border rounded-2xl p-6 mb-8">
+      <div className="bg-surface border border-border rounded-xl p-6 mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-gold/10 rounded-lg">
             <Droplets className="w-6 h-6 text-gold" />
@@ -653,21 +653,21 @@ export default function LandingPage() {
             {!isConnected ? (
               <button
                 onClick={() => setShowWalletModal(true)}
-                className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200 flex items-center cursor-pointer"
+                className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-colors duration-200 flex items-center cursor-pointer"
               >
                 <Wallet className="mr-2 w-5 h-5" /> Connect Wallet
               </button>
             ) : (
               <Link
                 href="/crowdfunding"
-                className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200 flex items-center"
+                className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-colors duration-200 flex items-center"
               >
                 Browse Projects <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             )}
             <Link
               href="/about/rwa-tokenization"
-              className="px-8 py-4 bg-transparent text-ink font-semibold rounded-xl transition-colors duration-200 border border-border hover:border-border-strong flex items-center"
+              className="px-8 py-4 bg-transparent text-ink font-semibold rounded-lg transition-colors duration-200 border border-border hover:border-border-strong flex items-center"
             >
               Learn How It Works
             </Link>
@@ -688,9 +688,6 @@ export default function LandingPage() {
 
         {/* Background decoration */}
         <div className="absolute inset-0 bg-grain opacity-40 pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-6xl opacity-[0.15] pointer-events-none">
-          <div className="absolute top-10 left-1/4 w-96 h-96 bg-gold rounded-full filter blur-[160px]" />
-        </div>
       </section>
 
       {/* What is RWA Tokenization - Simplified */}
@@ -706,7 +703,7 @@ export default function LandingPage() {
           </p>
           <Link
             href="/about/rwa-tokenization"
-            className="inline-flex items-center px-6 py-3 bg-transparent border border-border text-ink font-semibold rounded-xl hover:border-gold/50 hover:text-gold transition-colors duration-200"
+            className="inline-flex items-center px-6 py-3 bg-transparent border border-border text-ink font-semibold rounded-lg hover:border-gold/50 hover:text-gold transition-colors duration-200"
           >
             Learn More <ArrowRight className="ml-2 w-5 h-5" />
           </Link>
@@ -765,7 +762,7 @@ export default function LandingPage() {
           </p>
           <Link
             href="/tokenize"
-            className="inline-flex items-center px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200"
+            className="inline-flex items-center px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-colors duration-200"
           >
             Start Tokenizing <ArrowRight className="ml-2 w-5 h-5" />
           </Link>
@@ -789,9 +786,9 @@ export default function LandingPage() {
             {serviceOfferings.map((offering) => (
               <div
                 key={offering.title}
-                className="bg-surface border border-border rounded-2xl p-6 hover:border-gold/40 transition-colors duration-300 group"
+                className="bg-surface border border-border rounded-xl p-6 hover:border-gold/40 transition-colors duration-300 group"
               >
-                <div className="p-3 bg-gold/10 rounded-xl text-gold inline-block mb-4">
+                <div className="p-3 bg-gold/10 rounded-lg text-gold inline-block mb-4">
                   <offering.icon className="w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-semibold text-ink mb-3">{offering.title}</h3>
@@ -815,7 +812,7 @@ export default function LandingPage() {
             </p>
             <Link
               href="/about/contact"
-              className="inline-flex items-center px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200"
+              className="inline-flex items-center px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-colors duration-200"
             >
               Let's Talk <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
@@ -827,7 +824,7 @@ export default function LandingPage() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface/50 border-y border-border">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-display font-medium text-ink mb-4">
+            <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink mb-4">
               Our Services
             </h2>
             <p className="text-ink-muted max-w-2xl mx-auto">
@@ -868,7 +865,7 @@ export default function LandingPage() {
       {/* CTA Section */}
       <section className="py-16 px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto text-center">
-          <h2 className="text-3xl font-display font-medium text-ink mb-6">
+          <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink mb-6">
             Ready to get started?
           </h2>
           <p className="text-lg text-ink-muted mb-8">
@@ -879,21 +876,21 @@ export default function LandingPage() {
             {!isConnected ? (
               <button
                 onClick={() => setShowWalletModal(true)}
-                className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200 flex items-center cursor-pointer"
+                className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-colors duration-200 flex items-center cursor-pointer"
               >
                 <Wallet className="mr-2 w-5 h-5" /> Connect Wallet
               </button>
             ) : (
               <Link
                 href="/crowdfunding"
-                className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-xl transition-colors duration-200 flex items-center"
+                className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-colors duration-200 flex items-center"
               >
                 Browse Projects <ArrowRight className="ml-2 w-5 h-5" />
               </Link>
             )}
             <Link
               href="/about/company"
-              className="px-8 py-4 bg-transparent text-ink font-semibold rounded-xl transition-colors duration-200 border border-border hover:border-border-strong"
+              className="px-8 py-4 bg-transparent text-ink font-semibold rounded-lg transition-colors duration-200 border border-border hover:border-border-strong"
             >
               Learn More
             </Link>

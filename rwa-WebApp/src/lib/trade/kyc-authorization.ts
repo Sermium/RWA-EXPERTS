@@ -1,4 +1,5 @@
 // src/lib/trade/kyc-authorization.ts
+import { Circle, Medal, Award, Trophy, Gem, type LucideIcon } from 'lucide-react';
 
 // =============================================================================
 // KYC LEVEL DEFINITIONS FOR TRADE
@@ -156,7 +157,7 @@ export const KYC_LEVEL_INFO: Record<KYCLevel, {
   color: string;
   bgColor: string;
   borderColor: string;
-  icon: string;
+  icon: LucideIcon;
   description: string;
   requirements: string[];
 }> = {
@@ -165,16 +166,16 @@ export const KYC_LEVEL_INFO: Record<KYCLevel, {
     color: 'text-ink-muted',
     bgColor: 'bg-surface-raised',
     borderColor: 'border-border',
-    icon: '🔒',
+    icon: Circle,
     description: 'Complete KYC verification to start trading',
     requirements: [],
   },
   bronze: {
     label: 'Bronze',
-    color: 'text-amber-600',
-    bgColor: 'bg-amber-500/10',
-    borderColor: 'border-amber-500/20',
-    icon: '🥉',
+    color: 'text-gold-dark',
+    bgColor: 'bg-gold-dark/10',
+    borderColor: 'border-gold-dark/50',
+    icon: Medal,
     description: 'Basic verification for small trades',
     requirements: [
       'Government ID verification',
@@ -184,10 +185,10 @@ export const KYC_LEVEL_INFO: Record<KYCLevel, {
   },
   silver: {
     label: 'Silver',
-    color: 'text-slate-300',
-    bgColor: 'bg-slate-400/10',
-    borderColor: 'border-slate-400/20',
-    icon: '🥈',
+    color: 'text-ink-muted',
+    bgColor: 'bg-ink-muted/10',
+    borderColor: 'border-ink-muted/50',
+    icon: Award,
     description: 'Standard verification for medium trades',
     requirements: [
       'All Bronze requirements',
@@ -198,10 +199,10 @@ export const KYC_LEVEL_INFO: Record<KYCLevel, {
   },
   gold: {
     label: 'Gold',
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-500/10',
-    borderColor: 'border-yellow-500/20',
-    icon: '🥇',
+    color: 'text-gold',
+    bgColor: 'bg-gold/10',
+    borderColor: 'border-gold/50',
+    icon: Trophy,
     description: 'Enhanced verification for large trades',
     requirements: [
       'All Silver requirements',
@@ -213,10 +214,10 @@ export const KYC_LEVEL_INFO: Record<KYCLevel, {
   },
   diamond: {
     label: 'Diamond',
-    color: 'text-cyan-300',
-    bgColor: 'bg-cyan-500/10',
-    borderColor: 'border-cyan-500/20',
-    icon: '💎',
+    color: 'text-gold-light',
+    bgColor: 'bg-gold-light/10',
+    borderColor: 'border-gold-light/50',
+    icon: Gem,
     description: 'Premium verification for enterprise trades',
     requirements: [
       'All Gold requirements',

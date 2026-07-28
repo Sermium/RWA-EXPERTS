@@ -110,7 +110,7 @@ export default function BlogArticlePage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gold"></div>
       </div>
     );
   }
@@ -121,7 +121,7 @@ export default function BlogArticlePage() {
         <h1 className="text-2xl font-bold mb-4">{error || 'Article not found'}</h1>
         <Link 
           href="/about/blog"
-          className="text-emerald-400 hover:text-emerald-300 flex items-center gap-2"
+          className="text-gold hover:text-gold-light flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Blog
@@ -141,7 +141,7 @@ export default function BlogArticlePage() {
             <ChevronRight className="w-4 h-4" />
             <Link href="/about/blog" className="hover:text-ink">Blog</Link>
             <ChevronRight className="w-4 h-4" />
-            <span className="text-emerald-400">{post.category}</span>
+            <span className="text-gold">{post.category}</span>
           </nav>
 
           {/* Back button */}
@@ -155,7 +155,7 @@ export default function BlogArticlePage() {
 
           {/* Category */}
           <div className="mb-4">
-            <span className="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-sm rounded-full">
+            <span className="px-3 py-1 bg-gold/10 text-gold text-sm rounded-full">
               {post.category}
             </span>
           </div>
@@ -177,8 +177,8 @@ export default function BlogArticlePage() {
                   className="rounded-full"
                 />
               ) : (
-                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                  <User className="w-5 h-5 text-emerald-400" />
+                <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center">
+                  <User className="w-5 h-5 text-gold" />
                 </div>
               )}
               <span className="text-ink">{post.author_name}</span>
@@ -236,11 +236,11 @@ export default function BlogArticlePage() {
           className="prose prose-invert prose-lg max-w-none
             prose-headings:text-ink prose-headings:font-bold
             prose-p:text-ink-muted prose-p:leading-relaxed
-            prose-a:text-emerald-400 prose-a:no-underline hover:prose-a:underline
+            prose-a:text-gold prose-a:no-underline hover:prose-a:underline
             prose-strong:text-ink
-            prose-code:text-emerald-400 prose-code:bg-surface prose-code:px-2 prose-code:py-1 prose-code:rounded
+            prose-code:text-gold prose-code:bg-surface prose-code:px-2 prose-code:py-1 prose-code:rounded
             prose-pre:bg-surface-sunken prose-pre:border prose-pre:border-border
-            prose-blockquote:border-l-emerald-500 prose-blockquote:text-ink-muted
+            prose-blockquote:border-l-gold prose-blockquote:text-ink-muted
             prose-li:text-ink-muted"
           dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br />') }}
         />
@@ -294,10 +294,10 @@ export default function BlogArticlePage() {
                     </div>
                   )}
                   <div className="p-4">
-                    <span className="text-xs text-emerald-400 mb-2 block">
+                    <span className="text-xs text-gold mb-2 block">
                       {relatedPost.category}
                     </span>
-                    <h3 className="font-semibold text-ink group-hover:text-emerald-400 transition-colors line-clamp-2">
+                    <h3 className="font-semibold text-ink group-hover:text-gold transition-colors line-clamp-2">
                       {relatedPost.title}
                     </h3>
                     <p className="text-sm text-ink-muted mt-2 line-clamp-2">
@@ -326,9 +326,9 @@ export default function BlogArticlePage() {
             <input
               type="email"
               placeholder="Enter your email"
-              className="flex-1 px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-emerald-500 text-ink"
+              className="flex-1 px-4 py-3 bg-surface border border-border rounded-lg focus:outline-none focus:border-gold text-ink"
             />
-            <button className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-lg font-medium transition-colors">
+            <button className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken rounded-lg font-medium transition-colors">
               Subscribe
             </button>
           </div>

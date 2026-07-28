@@ -1,5 +1,6 @@
 // src/types/kyc.ts
 import { DocumentType } from '@/lib/documentValidation';
+import { Circle, Medal, Award, Trophy, Gem, type LucideIcon } from 'lucide-react';
 
 // ======================================
 // TYPES & INTERFACES
@@ -134,7 +135,7 @@ export const TIER_STYLES: Record<number, {
   color: string;
   bgColor: string;
   borderColor: string;
-  icon: string;
+  icon: LucideIcon;
   description: string;
   requirements: string[];
 }> = {
@@ -143,43 +144,43 @@ export const TIER_STYLES: Record<number, {
     color: 'text-ink-muted',
     bgColor: 'bg-surface-raised',
     borderColor: 'border-border-strong',
-    icon: '⚪',
+    icon: Circle,
     description: 'No verification',
     requirements: []
   },
   1: {
     name: 'Bronze',
-    color: 'text-orange-400',
-    bgColor: 'bg-gradient-to-br from-orange-900/30 to-orange-800/20',
-    borderColor: 'border-orange-500/50',
-    icon: '🥉',
+    color: 'text-gold-dark',
+    bgColor: 'bg-gold-dark/10',
+    borderColor: 'border-gold-dark/50',
+    icon: Medal,
     description: 'Basic verification',
     requirements: ['Personal Information', 'Government-issued ID']
   },
   2: {
     name: 'Silver',
-    color: 'text-gray-300',
-    bgColor: 'bg-gradient-to-br from-gray-700/30 to-gray-600/20',
-    borderColor: 'border-gray-400/50',
-    icon: '🥈',
+    color: 'text-ink-muted',
+    bgColor: 'bg-ink-muted/10',
+    borderColor: 'border-ink-muted/50',
+    icon: Award,
     description: 'Enhanced verification',
     requirements: ['Selfie Photo']
   },
   3: {
     name: 'Gold',
-    color: 'text-yellow-400',
-    bgColor: 'bg-gradient-to-br from-yellow-900/30 to-yellow-800/20',
-    borderColor: 'border-yellow-500/50',
-    icon: '🥇',
+    color: 'text-gold',
+    bgColor: 'bg-gold/10',
+    borderColor: 'border-gold/50',
+    icon: Trophy,
     description: 'Advanced verification',
     requirements: ['Liveness Check', 'Proof of Address']
   },
   4: {
     name: 'Diamond',
-    color: 'text-cyan-400',
-    bgColor: 'bg-gradient-to-br from-cyan-900/30 to-cyan-800/20',
-    borderColor: 'border-cyan-500/50',
-    icon: '💎',
+    color: 'text-gold-light',
+    bgColor: 'bg-gold-light/10',
+    borderColor: 'border-gold-light/50',
+    icon: Gem,
     description: 'Maximum verification',
     requirements: ['Accredited Investor Documentation']
   }

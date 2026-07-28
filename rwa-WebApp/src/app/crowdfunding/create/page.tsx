@@ -15,7 +15,7 @@ import StepMediaLegal from '@/components/crowdfunding/create/StepMediaLegal'
 import StepReview from '@/components/crowdfunding/create/StepReview'
 import StepPayment from '@/components/crowdfunding/create/StepPayment'
 import StepSubmitted from '@/components/crowdfunding/create/StepSubmitted';
-import { Loader2, Clock, XCircle, Lock, ArrowRight } from 'lucide-react'
+import { Loader2, Clock, XCircle, Lock, ArrowRight, Link2, Check, ClipboardList, Target, FolderOpen, CheckCircle2, CreditCard, PartyPopper, type LucideIcon } from 'lucide-react'
 
 // ============================================================================
 // TYPES
@@ -233,13 +233,13 @@ const INITIAL_DATA: ProjectData = {
 // STEPS CONFIG
 // ============================================================================
 
-const STEPS = [
-  { id: 'details', title: 'Project & Financials', icon: '📋' },
-  { id: 'milestones', title: 'Milestones', icon: '🎯' },
-  { id: 'media', title: 'Media & Legal', icon: '📁' },
-  { id: 'review', title: 'Review', icon: '✅' },
-  { id: 'payment', title: 'Payment', icon: '💳' },
-  { id: 'submitted', title: 'Submitted', icon: '🎉' },
+const STEPS: { id: string; title: string; icon: LucideIcon }[] = [
+  { id: 'details', title: 'Project & Financials', icon: ClipboardList },
+  { id: 'milestones', title: 'Milestones', icon: Target },
+  { id: 'media', title: 'Media & Legal', icon: FolderOpen },
+  { id: 'review', title: 'Review', icon: CheckCircle2 },
+  { id: 'payment', title: 'Payment', icon: CreditCard },
+  { id: 'submitted', title: 'Submitted', icon: PartyPopper },
 ]
 
 // ============================================================================
@@ -277,8 +277,8 @@ function KYCRequirementGate({ children }: { children: React.ReactNode }) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] p-8">
         <div className="max-w-md text-center">
-          <div className="text-6xl mb-6">🔗</div>
-          <h2 className="text-2xl font-bold text-ink mb-3">Connect Your Wallet</h2>
+          <Link2 className="w-14 h-14 text-ink-faint mb-6 mx-auto" />
+          <h2 className="text-2xl font-display font-medium text-ink mb-3">Connect Your Wallet</h2>
           <p className="text-ink-muted mb-6">
             Please connect your wallet to create a new project on the {COMPANY.name}.
           </p>
@@ -290,7 +290,7 @@ function KYCRequirementGate({ children }: { children: React.ReactNode }) {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] p-8">
-        <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mb-4" />
+        <div className="w-12 h-12 border-4 border-gold border-t-transparent rounded-full animate-spin mb-4" />
         <p className="text-ink-muted">Verifying KYC status...</p>
       </div>
     )
@@ -666,7 +666,7 @@ function CreateProjectContent () {
     return (
       <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-gold-500 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-gold animate-spin mx-auto mb-4" />
           <p className="text-ink-muted">Loading application...</p>
         </div>
       </div>
@@ -678,12 +678,12 @@ function CreateProjectContent () {
     return (
       <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center max-w-md">
-          <div className="text-6xl mb-4">❌</div>
-          <h2 className="text-xl font-bold text-ink mb-2">Failed to Load Application</h2>
+          <XCircle className="w-14 h-14 text-danger mb-4 mx-auto" />
+          <h2 className="text-xl font-display font-medium text-ink mb-2">Failed to Load Application</h2>
           <p className="text-ink-muted mb-6">{loadError}</p>
           <Link
             href="/dashboard"
-            className="px-6 py-3 bg-gold-600 hover:bg-gold-700 text-ink rounded-lg transition-colors"
+            className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken rounded-lg transition-colors"
           >
             Back to Dashboard
           </Link>
@@ -698,7 +698,7 @@ function CreateProjectContent () {
         <KYCRequirementGate>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-ink mb-2">
+              <h1 className="text-3xl font-display font-medium text-ink mb-2">
                 {isEditMode ? 'Edit Application' : 'Create New Project'}
               </h1>
               <p className="text-ink-muted">
@@ -750,23 +750,23 @@ function CreateProjectContent () {
                           : 'cursor-not-allowed'
                       }`}
                     >
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg transition-colors
-                        ${index === currentStep 
-                          ? 'bg-gold-600 text-ink ring-4 ring-blue-600/30' 
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors
+                        ${index === currentStep
+                          ? 'bg-gold text-surface-sunken ring-4 ring-gold/30'
                           : index < currentStep || (isEditMode && data.paymentCompleted && index < 4)
-                            ? 'bg-success text-ink' 
+                            ? 'bg-success text-ink'
                             : data.paymentCompleted && index === 5
                               ? 'bg-success text-ink'
                               : skipPayment
                                 ? 'bg-success text-ink'
                                 : 'bg-surface-overlay text-ink-muted'}`}
                       >
-                        {index < currentStep || (isEditMode && data.paymentCompleted && index <= 4) 
-                          ? '✓' 
-                          : step.icon}
+                        {index < currentStep || (isEditMode && data.paymentCompleted && index <= 4)
+                          ? <Check className="w-5 h-5" />
+                          : <step.icon className="w-5 h-5" />}
                       </div>
                       <span className={`mt-2 text-xs sm:text-sm font-medium hidden sm:block text-center
-                        ${index === currentStep ? 'text-gold-400' : 'text-ink-faint'}`}>
+                        ${index === currentStep ? 'text-gold' : 'text-ink-faint'}`}>
                         {step.title}
                       </span>
                     </button>
@@ -875,7 +875,7 @@ export default function CreateProjectPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <Loader2 className="w-12 h-12 text-gold-500 animate-spin mx-auto mb-4" />
+          <Loader2 className="w-12 h-12 text-gold animate-spin mx-auto mb-4" />
           <p className="text-ink-muted">Loading...</p>
         </div>
       </div>

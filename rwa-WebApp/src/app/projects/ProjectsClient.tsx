@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { useChainId, useAccount } from 'wagmi';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { isValidChainId } from '@/config/chains';
-import { TrendingUp, Timer, Clock, Percent } from 'lucide-react';
+import { TrendingUp, TrendingDown, Timer, Clock, Percent, BarChart3, Coins, Calendar, Flame, Globe2, Search, AlertTriangle, CheckCircle2, type LucideIcon } from 'lucide-react';
 
 // ============================================================================
 // TYPES
@@ -87,44 +87,44 @@ const INVESTOR_VISIBLE_STATUSES = ['active', 'funded', 'in_progress', 'completed
 
 // Database status labels and colors
 const DB_STATUS_CONFIG: Record<string, { label: string; color: string; priority: number; investorLabel?: string }> = {
-  'active': { 
-    label: 'Active', 
-    color: 'bg-green-500/20 text-green-400 border-green-500/30', 
+  'active': {
+    label: 'Active',
+    color: 'bg-success/10 text-success border-success/30',
     priority: 0,
     investorLabel: 'Open for Investment'
   },
-  'funded': { 
-    label: 'Funded', 
-    color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', 
+  'funded': {
+    label: 'Funded',
+    color: 'bg-success/10 text-success border-success/30',
     priority: 1,
     investorLabel: 'Fully Funded'
   },
-  'in_progress': { 
-    label: 'In Progress', 
-    color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', 
+  'in_progress': {
+    label: 'In Progress',
+    color: 'bg-gold/10 text-gold border-gold/30',
     priority: 2,
     investorLabel: 'Project Running'
   },
-  'completed': { 
-    label: 'Completed', 
-    color: 'bg-gold-500/20 text-gold-400 border-gold-500/30', 
+  'completed': {
+    label: 'Completed',
+    color: 'bg-gold/10 text-gold border-gold/30',
     priority: 3,
     investorLabel: 'Milestones in Review'
   },
-  'archived': { 
-    label: 'Archived', 
-    color: 'bg-ink-muted/10 text-ink-muted border-ink-muted/20', 
+  'archived': {
+    label: 'Archived',
+    color: 'bg-ink-muted/10 text-ink-muted border-ink-muted/20',
     priority: 10,
     investorLabel: 'Archived'
   },
   // These should NOT appear on the projects page but keeping for reference
   'draft': { label: 'Draft', color: 'bg-ink-muted/10 text-ink-muted border-ink-muted/20', priority: 99 },
-  'pending_review': { label: 'Pending Review', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', priority: 99 },
-  'pending_payment': { label: 'Pending Payment', color: 'bg-orange-500/20 text-orange-400 border-orange-500/30', priority: 99 },
-  'approved': { label: 'Approved', color: 'bg-green-500/20 text-green-400 border-green-500/30', priority: 99 },
-  'rejected': { label: 'Rejected', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 99 },
-  'cancelled': { label: 'Cancelled', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 99 },
-  'failed': { label: 'Failed', color: 'bg-red-500/20 text-red-400 border-red-500/30', priority: 99 },
+  'pending_review': { label: 'Pending Review', color: 'bg-warning/10 text-warning border-warning/30', priority: 99 },
+  'pending_payment': { label: 'Pending Payment', color: 'bg-warning/10 text-warning border-warning/30', priority: 99 },
+  'approved': { label: 'Approved', color: 'bg-success/10 text-success border-success/30', priority: 99 },
+  'rejected': { label: 'Rejected', color: 'bg-danger/10 text-danger border-danger/30', priority: 99 },
+  'cancelled': { label: 'Cancelled', color: 'bg-danger/10 text-danger border-danger/30', priority: 99 },
+  'failed': { label: 'Failed', color: 'bg-danger/10 text-danger border-danger/30', priority: 99 },
 };
 
 const getStatusConfig = (status: string) => {
@@ -202,17 +202,17 @@ type SortOption = 'newest' | 'oldest' | 'most_raised' | 'least_raised' | 'most_f
 interface SortConfig {
   value: SortOption;
   label: string;
-  icon: string;
+  icon: LucideIcon;
 }
 
 const SORT_OPTIONS: SortConfig[] = [
-  { value: 'newest', label: 'Newest First', icon: '🕐' },
-  { value: 'ending_soon', label: 'Ending Soon', icon: '⏰' },
-  { value: 'highest_roi', label: 'Highest ROI', icon: '📈' },
-  { value: 'most_funded', label: 'Most % Funded', icon: '📊' },
-  { value: 'least_funded', label: 'Least % Funded', icon: '📉' },
-  { value: 'most_raised', label: 'Most Raised', icon: '💰' },
-  { value: 'oldest', label: 'Oldest First', icon: '📅' },
+  { value: 'newest', label: 'Newest First', icon: Clock },
+  { value: 'ending_soon', label: 'Ending Soon', icon: Timer },
+  { value: 'highest_roi', label: 'Highest ROI', icon: TrendingUp },
+  { value: 'most_funded', label: 'Most % Funded', icon: BarChart3 },
+  { value: 'least_funded', label: 'Least % Funded', icon: TrendingDown },
+  { value: 'most_raised', label: 'Most Raised', icon: Coins },
+  { value: 'oldest', label: 'Oldest First', icon: Calendar },
 ];
 
 // ============================================================================
@@ -354,8 +354,8 @@ function SortDropdown({ value, onChange }: SortDropdownProps) {
         <svg className="w-4 h-4 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
         </svg>
-        <span className="flex-1 text-left text-sm">
-          {currentOption.icon} {currentOption.label}
+        <span className="flex-1 flex items-center gap-2 text-left text-sm">
+          <currentOption.icon className="w-4 h-4 text-ink-faint" /> {currentOption.label}
         </span>
         <svg 
           className={`w-4 h-4 text-ink-faint transition-transform ${isOpen ? 'rotate-180' : ''}`} 
@@ -368,7 +368,7 @@ function SortDropdown({ value, onChange }: SortDropdownProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full bg-surface border border-border rounded-lg shadow-xl z-50 overflow-hidden">
+        <div className="absolute top-full left-0 mt-2 w-full bg-surface border border-border rounded-lg shadow-panel z-50 overflow-hidden">
           {SORT_OPTIONS.map((option) => (
             <button
               key={option.value}
@@ -382,7 +382,7 @@ function SortDropdown({ value, onChange }: SortDropdownProps) {
                   : 'text-ink-muted hover:bg-surface-overlay'
               }`}
             >
-              <span>{option.icon}</span>
+              <option.icon className="w-4 h-4" />
               <span>{option.label}</span>
               {value === option.value && (
                 <svg className="w-4 h-4 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -566,10 +566,10 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
 
           {/* Chain Badge */}
           <div className="absolute top-3 left-3">
-            <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-              isTestnet 
-                ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' 
-                : 'bg-green-500/20 text-green-400 border border-green-500/30'
+            <span className={`px-2 py-1 text-xs font-medium rounded-full border ${
+              isTestnet
+                ? 'bg-warning-muted text-warning border-warning/30'
+                : 'bg-success/10 text-success border-success/30'
             }`}>
               {chainName}
             </span>
@@ -578,8 +578,8 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
           {/* Urgent badge for ending soon */}
           {project.status === 'active' && daysLeft !== null && daysLeft <= 3 && daysLeft > 0 && (
             <div className="absolute bottom-3 right-3">
-              <span className="px-2 py-1 text-xs font-bold rounded bg-danger text-ink animate-pulse">
-                🔥 Ending Soon!
+              <span className="inline-flex items-center gap-1 px-2 py-1 text-xs font-semibold rounded-full bg-danger text-ink">
+                <Flame className="w-3.5 h-3.5" /> Ending Soon
               </span>
             </div>
           )}
@@ -612,25 +612,25 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
           {(displayROI || project.cliffPeriod) && (
             <div className="flex flex-wrap gap-2 mb-4">
               {displayROI && displayROI > 0 && (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-lg">
-                  <TrendingUp className="w-3.5 h-3.5 text-green-400" />
-                  <span className="text-sm text-green-400 font-medium">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-success/10 border border-success/20 rounded-lg">
+                  <TrendingUp className="w-3.5 h-3.5 text-success" />
+                  <span className="text-sm text-success font-medium">
                     {displayROI}% ROI
                   </span>
                 </div>
               )}
               {project.cliffPeriod && project.cliffPeriod > 0 && (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-lg">
-                  <Timer className="w-3.5 h-3.5 text-orange-400" />
-                  <span className="text-sm text-orange-400 font-medium">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-ink-muted/10 border border-ink-muted/20 rounded-lg">
+                  <Timer className="w-3.5 h-3.5 text-ink-muted" />
+                  <span className="text-sm text-ink-muted font-medium">
                     {project.cliffPeriod}d cliff
                   </span>
                 </div>
               )}
               {project.dividendYield && project.dividendYield > 0 && (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gold-500/10 border border-gold-500/20 rounded-lg">
-                  <Percent className="w-3.5 h-3.5 text-gold-400" />
-                  <span className="text-sm text-gold-400 font-medium">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-gold/10 border border-gold/20 rounded-lg">
+                  <Percent className="w-3.5 h-3.5 text-gold" />
+                  <span className="text-sm text-gold font-medium">
                     {project.dividendYield}% yield
                   </span>
                 </div>
@@ -652,15 +652,17 @@ function ProjectCard({ project, chainName, isTestnet }: ProjectCardProps) {
             <div className="w-full bg-surface-overlay rounded-full h-2">
               <div
                 className={`h-2 rounded-full transition-all ${
-                  progress >= 100 
-                    ? 'bg-gradient-to-r from-green-500 to-emerald-400' 
+                  progress >= 100
+                    ? 'bg-success'
                     : 'bg-gradient-to-r from-gold-dark to-gold'
                 }`}
                 style={{ width: `${Math.min(progress, 100)}%` }}
               />
             </div>
             <div className="text-right text-xs text-ink-faint mt-1">
-              {progress >= 100 ? '✓ Goal Reached' : `${progress.toFixed(1)}% funded`}
+              {progress >= 100 ? (
+                <span className="inline-flex items-center gap-1 text-success"><CheckCircle2 className="w-3 h-3" /> Goal Reached</span>
+              ) : `${progress.toFixed(1)}% funded`}
             </div>
           </div>
 
@@ -893,7 +895,7 @@ export default function ProjectsClient() {
         <main className="max-w-6xl mx-auto px-4 py-8">
           <div className="bg-surface rounded-xl border border-border p-12 text-center">
             <div className="w-20 h-20 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="text-4xl">🌐</span>
+              <Globe2 className="w-9 h-9 text-warning" />
             </div>
             <h2 className="text-2xl font-display font-medium text-ink mb-2">Network Not Supported</h2>
             <p className="text-ink-muted mb-6">
@@ -920,11 +922,11 @@ export default function ProjectsClient() {
   return (
     <div className="min-h-screen bg-surface-sunken">
       {/* Network Banner */}
-      <div className={`border-b ${isTestnet ? 'bg-yellow-500/10 border-yellow-500/30' : 'bg-green-500/10 border-green-500/30'}`}>
+      <div className={`border-b ${isTestnet ? 'bg-warning-muted border-warning/30' : 'bg-success/10 border-success/30'}`}>
         <div className="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-yellow-400' : 'bg-green-400'}`} />
-            <span className={`text-sm font-medium ${isTestnet ? 'text-yellow-400' : 'text-green-400'}`}>
+            <span className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-warning' : 'bg-success'}`} />
+            <span className={`text-sm font-medium ${isTestnet ? 'text-warning' : 'text-success'}`}>
               {chainName} {isTestnet && '(Testnet)'}
             </span>
           </div>
@@ -946,9 +948,9 @@ export default function ProjectsClient() {
 
       {/* Wrong Chain Warning */}
       {isWrongChain && (
-        <div className="bg-orange-500/10 border-b border-orange-500/30">
+        <div className="bg-warning-muted border-b border-warning/30">
           <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <span className="text-orange-400 text-sm">⚠️ Your wallet is on a different network</span>
+            <span className="text-warning text-sm flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> Your wallet is on a different network</span>
             <button
               onClick={() => handleSwitchNetwork(chainId)}
               disabled={isSwitching}
@@ -1073,7 +1075,7 @@ export default function ProjectsClient() {
         {/* Error */}
         {error && (
           <div className="bg-danger-muted border border-danger/30 rounded-xl p-8 text-center">
-            <div className="text-danger text-5xl mb-4">⚠️</div>
+            <AlertTriangle className="w-12 h-12 text-danger mb-4 mx-auto" />
             <h2 className="text-xl font-semibold text-ink mb-2">Error Loading Projects</h2>
             <p className="text-ink-muted mb-4">{error}</p>
             <button onClick={handleRefresh} className="px-4 py-2 bg-danger hover:bg-danger/80 text-ink rounded-lg">
@@ -1085,7 +1087,7 @@ export default function ProjectsClient() {
         {/* Empty */}
         {!loading && !error && filteredProjects.length === 0 && (
           <div className="bg-surface border border-border rounded-xl p-12 text-center">
-            <div className="text-5xl mb-4">🔍</div>
+            <Search className="w-12 h-12 text-ink-faint mb-4 mx-auto" />
             <h2 className="text-xl font-semibold text-ink mb-2">No Projects Found</h2>
             <p className="text-ink-muted mb-6">
               {projects.length === 0 

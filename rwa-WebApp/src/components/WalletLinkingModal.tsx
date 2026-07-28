@@ -4,6 +4,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { useKYC } from "@/contexts/KYCContext";
+import { X, PartyPopper, Check, Clipboard, Loader2, ArrowRight, ArrowLeft } from "lucide-react";
 
 interface WalletLinkingModalProps {
   isOpen: boolean;
@@ -125,20 +126,20 @@ export function WalletLinkingModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface-raised rounded-2xl max-w-md w-full p-6 relative">
+      <div className="bg-surface-raised rounded-xl max-w-md w-full p-6 relative">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-ink-muted hover:text-ink text-xl"
+          className="absolute top-4 right-4 text-ink-muted hover:text-ink"
         >
-          ×
+          <X className="w-5 h-5" />
         </button>
 
         {/* Success State */}
         {success ? (
           <div className="text-center py-6">
-            <div className="text-5xl mb-4">🎉</div>
-            <h2 className="text-xl font-display font-bold text-ink mb-2">
+            <PartyPopper className="w-12 h-12 text-gold mb-4 mx-auto" />
+            <h2 className="text-xl font-display font-medium text-ink mb-2">
               Wallet Linked!
             </h2>
             <p className="text-ink-muted mb-6">
@@ -154,7 +155,7 @@ export function WalletLinkingModal({
         ) : mode === "generate" ? (
           /* Generate Code Mode */
           <div>
-            <h2 className="text-xl font-display font-bold text-ink mb-2">
+            <h2 className="text-xl font-display font-medium text-ink mb-2">
               Generate Link Code
             </h2>
             <p className="text-ink-muted text-sm mb-6">
@@ -179,7 +180,7 @@ export function WalletLinkingModal({
                       onClick={handleCopy}
                       className="p-2 hover:bg-surface-overlay rounded-lg transition-colors"
                     >
-                      {copied ? "✓" : "📋"}
+                      {copied ? <Check className="w-4 h-4 text-success" /> : <Clipboard className="w-4 h-4 text-ink-muted" />}
                     </button>
                   </div>
                   <p className={`text-sm mt-3 ${timeLeft < 60 ? "text-danger" : "text-ink-faint"}`}>
@@ -199,11 +200,11 @@ export function WalletLinkingModal({
               <button
                 onClick={handleGenerate}
                 disabled={isLoading}
-                className="w-full py-3 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+                className="w-full py-3 bg-gold hover:bg-gold-light disabled:bg-border-strong rounded-lg text-surface-sunken font-medium transition-colors flex items-center justify-center gap-2"
               >
                 {isLoading ? (
                   <>
-                    <span className="animate-spin">⟳</span>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Generating...
                   </>
                 ) : (
@@ -215,7 +216,7 @@ export function WalletLinkingModal({
         ) : (
           /* Use Code Mode */
           <div>
-            <h2 className="text-xl font-display font-bold text-ink mb-2">
+            <h2 className="text-xl font-display font-medium text-ink mb-2">
               Link Wallet
             </h2>
             <p className="text-ink-muted text-sm mb-6">
@@ -234,7 +235,7 @@ export function WalletLinkingModal({
                 value={inputCode}
                 onChange={(e) => setInputCode(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 8))}
                 placeholder="XXXXXXXX"
-                className="w-full px-4 py-4 bg-surface border border-border rounded-xl text-ink text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-gold-500 uppercase"
+                className="w-full px-4 py-4 bg-surface border border-border rounded-xl text-ink text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-gold uppercase"
                 maxLength={8}
               />
 
@@ -245,7 +246,7 @@ export function WalletLinkingModal({
               >
                 {isLoading ? (
                   <>
-                    <span className="animate-spin">⟳</span>
+                    <Loader2 className="w-4 h-4 animate-spin" />
                     Linking...
                   </>
                 ) : (
@@ -265,12 +266,13 @@ export function WalletLinkingModal({
               setLinkCode(null);
               setInputCode("");
             }}
-            className="w-full mt-4 py-2 text-ink-faint hover:text-ink-muted text-sm transition-colors"
+            className="w-full mt-4 py-2 flex items-center justify-center gap-1.5 text-ink-faint hover:text-ink-muted text-sm transition-colors"
           >
-            {mode === "generate" 
-              ? "I have a code to enter →" 
-              : "← I need to generate a code"
-            }
+            {mode === "generate" ? (
+              <>I have a code to enter <ArrowRight className="w-3.5 h-3.5" /></>
+            ) : (
+              <><ArrowLeft className="w-3.5 h-3.5" /> I need to generate a code</>
+            )}
           </button>
         )}
       </div>

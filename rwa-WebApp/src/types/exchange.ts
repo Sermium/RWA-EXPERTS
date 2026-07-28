@@ -88,14 +88,13 @@ export interface CreateOrderParams {
   quantity: number;
 }
 
-// Token configurations with icons
+// Token configurations
 export const EXCHANGE_TOKENS = {
   USDC: {
     symbol: 'USDC',
     name: 'USD Coin',
     address: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582',
     decimals: 6,
-    icon: '💵',
     color: '#2775CA',
   },
   USDT: {
@@ -103,7 +102,6 @@ export const EXCHANGE_TOKENS = {
     name: 'Tether USD',
     address: '0x1dBe87Efd97c84d3a73807399EBbfcfF13Ff578e',
     decimals: 6,
-    icon: '💲',
     color: '#26A17B',
   },
   POL: {
@@ -111,7 +109,6 @@ export const EXCHANGE_TOKENS = {
     name: 'Polygon',
     address: '0x0000000000000000000000000000000000001010',
     decimals: 18,
-    icon: '🟣',
     color: '#8247E5',
   },
   ETH: {
@@ -119,7 +116,6 @@ export const EXCHANGE_TOKENS = {
     name: 'Ethereum',
     address: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0',
     decimals: 18,
-    icon: '💎',
     color: '#627EEA',
   },
   WBTC: {
@@ -127,7 +123,6 @@ export const EXCHANGE_TOKENS = {
     name: 'Wrapped Bitcoin',
     address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
     decimals: 8,
-    icon: '🟠',
     color: '#F7931A',
   },
 } as const;

@@ -110,9 +110,9 @@ export function getTierInfo(tier: KYCTier, limit?: number): TierInfo {
       description: 'Complete KYC to invest'
     },
     Bronze: {
-      color: 'text-amber-600',
-      bgColor: 'bg-amber-500/10',
-      borderColor: 'border-amber-500',
+      color: 'text-gold-dark',
+      bgColor: 'bg-gold-dark/10',
+      borderColor: 'border-gold-dark/50',
       icon: Medal,
       label: 'Bronze',
       description: 'Basic verification'
@@ -134,9 +134,9 @@ export function getTierInfo(tier: KYCTier, limit?: number): TierInfo {
       description: 'Accredited investor'
     },
     Diamond: {
-      color: 'text-cyan-400',
-      bgColor: 'bg-cyan-500/10',
-      borderColor: 'border-cyan-500',
+      color: 'text-gold-light',
+      bgColor: 'bg-gold-light/10',
+      borderColor: 'border-gold-light',
       icon: Gem,
       label: 'Diamond',
       description: 'Institutional investor'

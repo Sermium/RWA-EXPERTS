@@ -214,7 +214,7 @@ function DealRow({
         <div>
           <p className="text-ink text-sm">{deal.buyerCompany}</p>
           <div className="flex items-center mt-1 gap-2">
-            <span className="text-lg">{buyerKycInfo.icon}</span>
+            <buyerKycInfo.icon className={`w-4 h-4 ${buyerKycInfo.color}`} />
             <span className={`text-xs ${buyerKycInfo.color}`}>{buyerKycInfo.label}</span>
             <span className="text-xs text-ink-faint">• {deal.buyerCountry}</span>
           </div>
@@ -225,7 +225,7 @@ function DealRow({
         <div>
           <p className="text-ink text-sm">{deal.sellerCompany}</p>
           <div className="flex items-center mt-1 gap-2">
-            <span className="text-lg">{sellerKycInfo.icon}</span>
+            <sellerKycInfo.icon className={`w-4 h-4 ${sellerKycInfo.color}`} />
             <span className={`text-xs ${sellerKycInfo.color}`}>{sellerKycInfo.label}</span>
             <span className="text-xs text-ink-faint">• {deal.sellerCountry}</span>
           </div>
@@ -409,10 +409,10 @@ function DealDetailModal({
                   className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-ink"
                 >
                   <option value="none">Not Verified</option>
-                  <option value="bronze">🥉 Bronze</option>
-                  <option value="silver">🥈 Silver</option>
-                  <option value="gold">🥇 Gold</option>
-                  <option value="diamond">💎 Diamond</option>
+                  <option value="bronze">Bronze</option>
+                  <option value="silver">Silver</option>
+                  <option value="gold">Gold</option>
+                  <option value="diamond">Diamond</option>
                 </select>
               </div>
             </div>
@@ -435,10 +435,10 @@ function DealDetailModal({
                   className="w-full px-3 py-2 bg-surface border border-border rounded-lg text-ink"
                 >
                   <option value="none">Not Verified</option>
-                  <option value="bronze">🥉 Bronze</option>
-                  <option value="silver">🥈 Silver</option>
-                  <option value="gold">🥇 Gold</option>
-                  <option value="diamond">💎 Diamond</option>
+                  <option value="bronze">Bronze</option>
+                  <option value="silver">Silver</option>
+                  <option value="gold">Gold</option>
+                  <option value="diamond">Diamond</option>
                 </select>
               </div>
             </div>
@@ -486,7 +486,7 @@ function DealDetailModal({
 
               {deal.flagged && (
                 <div className="bg-danger/10 border border-danger/20 rounded-lg p-3 mb-4">
-                  <p className="text-danger text-sm font-medium">⚠️ Flagged</p>
+                  <p className="text-danger text-sm font-medium flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> Flagged</p>
                   <p className="text-xs text-ink-muted mt-1">{deal.flagReason || 'No reason provided'}</p>
                 </div>
               )}

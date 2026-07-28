@@ -21,6 +21,7 @@ import {
   Globe,
   AlertTriangle,
 } from 'lucide-react';
+import { TIER_ICON, TIER_ICON_CLASS } from '@/lib/kycTierIcons';
 
 export default function CrowdfundingClient() {
   const { isConnected } = useAccount();
@@ -96,7 +97,7 @@ export default function CrowdfundingClient() {
 
   const features = [
     {
-      icon: <Shield className="w-8 h-8 text-gold-500" />,
+      icon: <Shield className="w-8 h-8 text-gold" />,
       title: "ERC-3643 Compliant",
       description: "Built on the institutional security token standard with identity verification and transfer restrictions for regulatory compliance."
     },
@@ -106,12 +107,12 @@ export default function CrowdfundingClient() {
       description: "Tokenize commercial and residential properties with fractional ownership, enabling investment from as little as $100."
     },
     {
-      icon: <Users className="w-8 h-8 text-gold-500" />,
+      icon: <Users className="w-8 h-8 text-gold" />,
       title: "Investor Management",
       description: "KYC/AML compliance with on-chain identity registry. Claim verification ensures only eligible investors participate."
     },
     {
-      icon: <TrendingUp className="w-8 h-8 text-yellow-500" />,
+      icon: <TrendingUp className="w-8 h-8 text-gold" />,
       title: "Dividend Distribution",
       description: "Automated dividend payments based on token holdings. Smart contracts ensure transparent, instant payouts to all holders."
     },
@@ -121,7 +122,7 @@ export default function CrowdfundingClient() {
       description: "Country restrictions, max balance limits, lockup periods, and accreditation checks built into every token."
     },
     {
-      icon: <Wallet className="w-8 h-8 text-indigo-500" />,
+      icon: <Wallet className="w-8 h-8 text-gold" />,
       title: "Escrow & Milestones",
       description: "Secure fund management with milestone-based releases. Investor funds are protected until project milestones are met."
     }
@@ -148,10 +149,10 @@ export default function CrowdfundingClient() {
   // Network badge component
   const NetworkBadge = () => (
     <div className="inline-flex items-center gap-2 px-3 py-1 bg-surface rounded-full border border-border">
-      <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-yellow-500' : 'bg-success'}`} />
+      <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-warning' : 'bg-success'}`} />
       <span className="text-sm text-ink-muted">{chainName}</span>
       {isTestnet && (
-        <span className="text-xs bg-yellow-500/20 text-yellow-400 px-1.5 py-0.5 rounded">
+        <span className="text-xs bg-warning-muted text-warning px-1.5 py-0.5 rounded">
           Testnet
         </span>
       )}
@@ -169,11 +170,11 @@ export default function CrowdfundingClient() {
           disabled={isSwitching || chain.id === chainId}
           className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm transition-colors ${
             chain.id === chainId
-              ? 'bg-gold-500/20 text-gold-400 border border-gold-500/30'
+              ? 'bg-gold/20 text-gold border border-gold/30'
               : 'bg-surface text-ink-muted border border-border hover:border-border-strong hover:text-ink-muted'
           }`}
         >
-          <div className={`w-1.5 h-1.5 rounded-full ${chain.testnet ? 'bg-yellow-500' : 'bg-success'}`} />
+          <div className={`w-1.5 h-1.5 rounded-full ${chain.testnet ? 'bg-warning' : 'bg-success'}`} />
           {chain.name}
         </button>
       ))}
@@ -186,19 +187,19 @@ export default function CrowdfundingClient() {
       <main>
         {/* Wrong Chain Banner */}
         {isConnected && isWrongChain && (
-          <div className="bg-yellow-500/10 border-b border-yellow-500/30">
+          <div className="bg-warning-muted border-b border-warning/30">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
               <div className="flex items-center justify-between flex-wrap gap-3">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                  <span className="text-yellow-200">
+                  <AlertTriangle className="w-5 h-5 text-warning" />
+                  <span className="text-warning">
                     Please switch to {chainName} to access all features
                   </span>
                 </div>
                 <button
                   onClick={() => handleSwitchNetwork()}
                   disabled={isSwitching}
-                  className="px-4 py-1.5 bg-yellow-500 hover:bg-yellow-600 disabled:opacity-50 text-black font-medium rounded-lg text-sm transition-colors"
+                  className="px-4 py-1.5 bg-gold hover:bg-gold-light disabled:opacity-50 text-surface-sunken font-medium rounded-lg text-sm transition-colors"
                 >
                   {isSwitching ? 'Switching...' : `Switch to ${chainName}`}
                 </button>
@@ -213,9 +214,9 @@ export default function CrowdfundingClient() {
             <div className="text-center">
               {/* Breadcrumb */}
               <div className="flex items-center justify-center text-sm text-ink-faint mb-6">
-                <Link href="/" className="hover:text-gold-400">Home</Link>
+                <Link href="/" className="hover:text-gold">Home</Link>
                 <span className="mx-2">/</span>
-                <span className="text-gold-400">Crowdfunding</span>
+                <span className="text-gold">Crowdfunding</span>
               </div>
 
               {/* Network Badge */}
@@ -223,7 +224,7 @@ export default function CrowdfundingClient() {
                 <NetworkBadge />
               </div>
 
-              <h1 className="text-4xl md:text-5xl font-bold text-ink mb-6">
+              <h1 className="text-4xl md:text-5xl font-display font-medium text-ink mb-6">
                 Tokenized Asset Crowdfunding
               </h1>
               <p className="text-xl text-ink-muted mb-8 max-w-3xl mx-auto">
@@ -236,7 +237,7 @@ export default function CrowdfundingClient() {
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <button
                     onClick={openConnectModal}
-                    className="bg-gold-600 hover:bg-gold-700 text-ink font-semibold py-3 px-8 rounded-lg text-lg cursor-pointer transition-colors flex items-center justify-center"
+                    className="bg-gold hover:bg-gold-light text-surface-sunken font-semibold py-3 px-8 rounded-lg text-lg cursor-pointer transition-colors flex items-center justify-center"
                   >
                     <Wallet className="mr-2 w-5 h-5" /> Connect Wallet to Invest
                   </button>
@@ -251,7 +252,7 @@ export default function CrowdfundingClient() {
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <Link
                     href="/projects"
-                    className="bg-gold-600 hover:bg-gold-700 text-ink font-semibold py-3 px-8 rounded-lg text-lg flex items-center justify-center"
+                    className="bg-gold hover:bg-gold-light text-surface-sunken font-semibold py-3 px-8 rounded-lg text-lg flex items-center justify-center"
                   >
                     View Projects <ArrowRight className="ml-2 w-5 h-5" />
                   </Link>
@@ -273,7 +274,7 @@ export default function CrowdfundingClient() {
         {/* How It Works Section */}
         <div className="bg-surface/50 py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-ink text-center mb-4">
+            <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink text-center mb-4">
               How It Works
             </h2>
             <p className="text-ink-muted text-center mb-12 max-w-2xl mx-auto">
@@ -282,16 +283,16 @@ export default function CrowdfundingClient() {
 
             <div className="relative">
               {/* Connection line */}
-              <div className="hidden lg:block absolute top-16 left-0 right-0 h-0.5 bg-gradient-to-r from-gold-500 via-purple-500 to-green-500"></div>
-              
+              <div className="hidden lg:block absolute top-16 left-0 right-0 h-0.5 bg-gold/30"></div>
+
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8">
                 {howItWorks.map((item, index) => (
                   <div key={index} className="relative text-center">
-                    <div className="bg-surface rounded-xl p-6 border border-border hover:border-gold-500 transition-colors">
-                      <div className="w-12 h-12 bg-gradient-to-r from-gold-500 to-gold-light-500 rounded-full flex items-center justify-center text-ink font-bold text-xl mx-auto mb-4">
+                    <div className="bg-surface rounded-xl p-6 border border-border hover:border-gold transition-colors">
+                      <div className="w-12 h-12 bg-gold rounded-full flex items-center justify-center text-surface-sunken font-semibold text-xl mx-auto mb-4">
                         {item.step}
                       </div>
-                      <div className="p-2 bg-gold-500/10 rounded-lg text-gold-400 inline-block mb-3">
+                      <div className="p-2 bg-gold/10 rounded-lg text-gold inline-block mb-3">
                         {item.icon}
                       </div>
                       <h3 className="text-ink font-semibold mb-2">{item.title}</h3>
@@ -309,12 +310,12 @@ export default function CrowdfundingClient() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12">
               {/* Investor Benefits */}
-              <div className="bg-surface rounded-2xl p-8 border border-border">
+              <div className="bg-surface rounded-xl p-8 border border-border">
                 <div className="flex items-center mb-6">
                   <div className="p-3 bg-success/10 rounded-lg text-success mr-4">
                     <TrendingUp className="w-8 h-8" />
                   </div>
-                  <h3 className="text-2xl font-bold text-ink">For Investors</h3>
+                  <h3 className="text-2xl font-semibold text-ink">For Investors</h3>
                 </div>
                 <ul className="space-y-4">
                   {investorBenefits.map((benefit, index) => (
@@ -333,24 +334,24 @@ export default function CrowdfundingClient() {
               </div>
 
               {/* Issuer Benefits */}
-              <div className="bg-surface rounded-2xl p-8 border border-border">
+              <div className="bg-surface rounded-xl p-8 border border-border">
                 <div className="flex items-center mb-6">
-                  <div className="p-3 bg-gold-500/10 rounded-lg text-gold-400 mr-4">
+                  <div className="p-3 bg-gold/10 rounded-lg text-gold mr-4">
                     <Building2 className="w-8 h-8" />
                   </div>
-                  <h3 className="text-2xl font-bold text-ink">For Issuers</h3>
+                  <h3 className="text-2xl font-semibold text-ink">For Issuers</h3>
                 </div>
                 <ul className="space-y-4">
                   {issuerBenefits.map((benefit, index) => (
                     <li key={index} className="flex items-start">
-                      <CheckCircle2 className="w-5 h-5 text-gold-400 mr-3 flex-shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-5 h-5 text-gold mr-3 flex-shrink-0 mt-0.5" />
                       <span className="text-ink-muted">{benefit}</span>
                     </li>
                   ))}
                 </ul>
                 <Link
                   href="/crowdfunding/create"
-                  className="mt-6 inline-flex items-center text-gold-400 hover:text-gold-300"
+                  className="mt-6 inline-flex items-center text-gold hover:text-gold-light"
                 >
                   Launch Your Project <ArrowRight className="ml-2 w-4 h-4" />
                 </Link>
@@ -361,7 +362,7 @@ export default function CrowdfundingClient() {
 
         {/* Features Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <h2 className="text-3xl font-bold text-ink text-center mb-4">
+          <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink text-center mb-4">
             Platform Features
           </h2>
           <p className="text-ink-muted text-center mb-12 max-w-2xl mx-auto">
@@ -390,7 +391,7 @@ export default function CrowdfundingClient() {
                 value={chainName} 
                 label="Current Network" 
                 badge={isTestnet ? 'Testnet' : 'Mainnet'}
-                badgeColor={isTestnet ? 'yellow' : 'green'}
+                badgeColor={isTestnet ? 'warning' : 'success'}
               />
             </div>
           </div>
@@ -399,7 +400,7 @@ export default function CrowdfundingClient() {
         {/* Supported Networks Section */}
         <div className="py-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-ink text-center mb-4">
+            <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink text-center mb-4">
               Supported Networks
             </h2>
             <p className="text-ink-muted text-center mb-12 max-w-2xl mx-auto">
@@ -414,7 +415,7 @@ export default function CrowdfundingClient() {
                   disabled={isSwitching}
                   className={`p-4 rounded-xl border transition-all ${
                     chain.id === chainId
-                      ? 'bg-gold-500/20 border-gold-500 text-ink'
+                      ? 'bg-gold/20 border-gold text-ink'
                       : 'bg-surface border-border text-ink-muted hover:border-border-strong hover:bg-surface-raised'
                   }`}
                 >
@@ -423,13 +424,13 @@ export default function CrowdfundingClient() {
                     <span className="font-semibold">{chain.name}</span>
                   </div>
                   <div className="flex items-center justify-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${chain.testnet ? 'bg-yellow-500' : 'bg-success'}`} />
+                    <div className={`w-2 h-2 rounded-full ${chain.testnet ? 'bg-warning' : 'bg-success'}`} />
                     <span className="text-sm text-ink-muted">
                       {chain.testnet ? 'Testnet' : 'Mainnet'}
                     </span>
                   </div>
                   {chain.id === chainId && (
-                    <div className="mt-2 text-xs text-gold-400">Currently Connected</div>
+                    <div className="mt-2 text-xs text-gold">Currently Connected</div>
                   )}
                 </button>
               ))}
@@ -440,7 +441,7 @@ export default function CrowdfundingClient() {
         {/* KYC Tiers */}
         <div className="py-16 bg-surface/50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl font-bold text-ink text-center mb-4">
+            <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink text-center mb-4">
               KYC Verification Tiers
             </h2>
             <p className="text-ink-muted text-center mb-12 max-w-2xl mx-auto">
@@ -449,7 +450,7 @@ export default function CrowdfundingClient() {
 
             <div className="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
               <div className="bg-surface rounded-xl p-6 border border-border">
-                <div className="text-2xl mb-2">🥉</div>
+                <TIER_ICON.Bronze className={`w-7 h-7 mb-2 ${TIER_ICON_CLASS.Bronze}`} />
                 <h3 className="text-lg font-semibold text-ink mb-2">Bronze</h3>
                 <p className="text-ink-muted text-sm mb-4">Basic verification</p>
                 <ul className="text-sm text-ink-faint space-y-2">
@@ -457,8 +458,8 @@ export default function CrowdfundingClient() {
                   <li>• Limited investment amounts</li>
                 </ul>
               </div>
-              <div className="bg-surface rounded-xl p-6 border border-yellow-500/50">
-                <div className="text-2xl mb-2">🥈</div>
+              <div className="bg-surface rounded-xl p-6 border border-ink-muted/30">
+                <TIER_ICON.Silver className={`w-7 h-7 mb-2 ${TIER_ICON_CLASS.Silver}`} />
                 <h3 className="text-lg font-semibold text-ink mb-2">Silver</h3>
                 <p className="text-ink-muted text-sm mb-4">Enhanced verification</p>
                 <ul className="text-sm text-ink-faint space-y-2">
@@ -466,9 +467,9 @@ export default function CrowdfundingClient() {
                   <li>• Access to more projects</li>
                 </ul>
               </div>
-              <div className="bg-gradient-to-br from-yellow-900/30 to-yellow-800/30 rounded-xl p-6 border border-yellow-500">
-                <div className="text-2xl mb-2">🥇</div>
-                <h3 className="text-lg font-semibold text-yellow-400 mb-2">Gold</h3>
+              <div className="bg-gold/10 rounded-xl p-6 border border-gold">
+                <TIER_ICON.Gold className={`w-7 h-7 mb-2 ${TIER_ICON_CLASS.Gold}`} />
+                <h3 className="text-lg font-semibold text-gold mb-2">Gold</h3>
                 <p className="text-ink-muted text-sm mb-4">Full verification</p>
                 <ul className="text-sm text-ink-muted space-y-2">
                   <li>• Unlimited investments</li>
@@ -481,7 +482,7 @@ export default function CrowdfundingClient() {
             <div className="text-center mt-8">
               <Link
                 href="/kyc"
-                className="inline-flex items-center px-6 py-3 bg-yellow-600 hover:bg-yellow-500 text-ink font-semibold rounded-lg transition"
+                className="inline-flex items-center px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition"
               >
                 Complete KYC Verification <ArrowRight className="ml-2 w-4 h-4" />
               </Link>
@@ -492,17 +493,17 @@ export default function CrowdfundingClient() {
         {/* Testnet Notice - Only show if on testnet */}
         {isTestnet && faucetUrl && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div className="bg-yellow-900/50 border border-yellow-600 rounded-lg p-4">
+            <div className="bg-warning-muted border border-warning/40 rounded-lg p-4">
               <div className="flex items-center flex-wrap gap-2">
-                <AlertTriangle className="w-5 h-5 text-yellow-500" />
-                <span className="text-yellow-500 font-semibold">Testnet Mode:</span>
-                <span className="text-yellow-200">
+                <AlertTriangle className="w-5 h-5 text-warning" />
+                <span className="text-warning font-semibold">Testnet Mode:</span>
+                <span className="text-ink-muted">
                   You're currently on {chainName}. Get test {nativeCurrency || 'tokens'} from the{' '}
                   <a
                     href={faucetUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="underline hover:text-yellow-100"
+                    className="underline text-warning hover:text-gold"
                   >
                     {chainName} Faucet
                   </a>
@@ -518,7 +519,7 @@ export default function CrowdfundingClient() {
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
-                  <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-yellow-500' : 'bg-success'}`} />
+                  <div className={`w-2 h-2 rounded-full ${isTestnet ? 'bg-warning' : 'bg-success'}`} />
                   <span className="text-ink-muted">Connected to {chainName}</span>
                 </div>
                 {nativeCurrency && (
@@ -557,26 +558,26 @@ export default function CrowdfundingClient() {
   );
 }
 
-function StatCard({ 
-  value, 
-  label, 
-  badge, 
-  badgeColor = 'gray' 
-}: { 
-  value: string; 
+function StatCard({
+  value,
+  label,
+  badge,
+  badgeColor = 'neutral'
+}: {
+  value: string;
   label: string;
   badge?: string;
-  badgeColor?: 'yellow' | 'green' | 'gray';
+  badgeColor?: 'warning' | 'success' | 'neutral';
 }) {
   const badgeColors = {
-    yellow: 'bg-yellow-500/20 text-yellow-400',
-    green: 'bg-success/15 text-success',
-    gray: 'bg-surface-overlay text-ink-muted',
+    warning: 'bg-warning-muted text-warning',
+    success: 'bg-success/15 text-success',
+    neutral: 'bg-surface-overlay text-ink-muted',
   };
 
   return (
     <div>
-      <div className="text-3xl font-bold text-ink">{value}</div>
+      <div className="text-3xl font-display font-medium text-ink">{value}</div>
       <div className="text-ink-muted">{label}</div>
       {badge && (
         <span className={`inline-block mt-2 text-xs px-2 py-0.5 rounded ${badgeColors[badgeColor]}`}>

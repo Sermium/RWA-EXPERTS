@@ -2,20 +2,21 @@
 
 import { useState, useRef, useEffect, useCallback, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { Eye, EyeOff, ArrowLeft, ArrowRight, Smile, AlertTriangle, CheckCircle2, XCircle, type LucideIcon } from 'lucide-react';
 
 type Challenge = {
   id: string;
   instruction: string;
-  icon: string;
+  icon: LucideIcon;
   duration: number;
 };
 
 const CHALLENGES: Challenge[] = [
-  { id: 'center', instruction: 'Look straight at the camera', icon: '👁️', duration: 3000 },
-  { id: 'left', instruction: 'Turn your head left', icon: '👈', duration: 3000 },
-  { id: 'right', instruction: 'Turn your head right', icon: '👉', duration: 3000 },
-  { id: 'blink', instruction: 'Blink your eyes twice', icon: '😑', duration: 3000 },
-  { id: 'smile', instruction: 'Smile naturally', icon: '😊', duration: 3000 },
+  { id: 'center', instruction: 'Look straight at the camera', icon: Eye, duration: 3000 },
+  { id: 'left', instruction: 'Turn your head left', icon: ArrowLeft, duration: 3000 },
+  { id: 'right', instruction: 'Turn your head right', icon: ArrowRight, duration: 3000 },
+  { id: 'blink', instruction: 'Blink your eyes twice', icon: EyeOff, duration: 3000 },
+  { id: 'smile', instruction: 'Smile naturally', icon: Smile, duration: 3000 },
 ];
 
 function LivenessMobileContent() {
@@ -178,13 +179,13 @@ function LivenessMobileContent() {
       <div className="min-h-screen bg-surface-sunken flex items-center justify-center p-6">
         <div className="text-center max-w-sm">
           <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-danger/20 flex items-center justify-center">
-            <span className="text-4xl">⚠️</span>
+            <AlertTriangle className="w-9 h-9 text-danger" />
           </div>
-          <h1 className="text-xl font-bold text-ink mb-3">Camera Error</h1>
+          <h1 className="text-xl font-display font-medium text-ink mb-3">Camera Error</h1>
           <p className="text-ink-muted mb-6">{cameraError}</p>
           <button
             onClick={initCamera}
-            className="w-full py-3 bg-gold-600 hover:bg-gold-500 text-ink font-medium rounded-xl transition-colors"
+            className="w-full py-3 bg-gold hover:bg-gold-light text-surface-sunken font-medium rounded-lg transition-colors"
           >
             Try Again
           </button>
@@ -203,9 +204,9 @@ function LivenessMobileContent() {
           <div className={`w-24 h-24 mx-auto mb-6 rounded-full flex items-center justify-center ${
             passed ? 'bg-success/20' : 'bg-danger/20'
           }`}>
-            <span className="text-5xl">{passed ? '✅' : '❌'}</span>
+            {passed ? <CheckCircle2 className="w-11 h-11 text-success" /> : <XCircle className="w-11 h-11 text-danger" />}
           </div>
-          <h1 className="text-2xl font-bold text-ink mb-2">
+          <h1 className="text-2xl font-display font-medium text-ink mb-2">
             {passed ? 'Verification Complete!' : 'Verification Failed'}
           </h1>
           <p className="text-ink-muted mb-6">
@@ -232,11 +233,13 @@ function LivenessMobileContent() {
     );
   }
 
+  const ChallengeIcon = CHALLENGES[currentChallengeIndex].icon;
+
   return (
     <div className="min-h-screen bg-surface-sunken flex flex-col">
       {/* Header */}
       <div className="p-4 text-center border-b border-border bg-surface-sunken sticky top-0 z-10">
-        <h1 className="text-lg font-bold text-ink">Liveness Check</h1>
+        <h1 className="text-lg font-display font-medium text-ink">Liveness Check</h1>
         <p className="text-ink-muted text-sm">Follow the instructions</p>
       </div>
 
@@ -260,7 +263,7 @@ function LivenessMobileContent() {
         {status === 'loading' && (
           <div className="absolute inset-0 bg-black/80 flex items-center justify-center">
             <div className="text-center">
-              <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+              <div className="w-12 h-12 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-4" />
               <p className="text-ink">Starting camera...</p>
             </div>
           </div>
@@ -280,14 +283,14 @@ function LivenessMobileContent() {
         {status === 'active' && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-6 pt-16">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <span className="text-4xl">{CHALLENGES[currentChallengeIndex].icon}</span>
+              <ChallengeIcon className="w-9 h-9 text-ink" />
               <span className="text-ink font-semibold text-xl">
                 {CHALLENGES[currentChallengeIndex].instruction}
               </span>
             </div>
             <div className="w-full h-2 bg-surface-overlay rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-gold-500 to-gold-light-500 transition-all duration-100"
+                className="h-full bg-gradient-to-r from-gold to-gold-light transition-all duration-100"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -306,7 +309,7 @@ function LivenessMobileContent() {
                 completedChallenges.includes(challenge.id)
                   ? 'bg-success'
                   : index === currentChallengeIndex && status === 'active'
-                  ? 'bg-gold-500 animate-pulse'
+                  ? 'bg-gold animate-pulse'
                   : 'bg-border-strong'
               }`}
             />
@@ -317,7 +320,7 @@ function LivenessMobileContent() {
         {status === 'ready' && !showCountdown && (
           <button
             onClick={startCheck}
-            className="w-full py-4 bg-gradient-to-r from-gold-600 to-gold-light-600 text-ink font-bold text-lg rounded-xl"
+            className="w-full py-4 bg-gradient-to-r bg-gold text-surface-sunken font-bold text-lg rounded-lg"
           >
             Start Verification
           </button>
@@ -339,7 +342,7 @@ export default function LivenessMobilePage() {
     <Suspense fallback={
       <div className="min-h-screen bg-surface-sunken flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-4" />
           <p className="text-ink">Loading...</p>
         </div>
       </div>

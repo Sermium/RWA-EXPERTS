@@ -590,7 +590,7 @@ export default function EditApplicationPage() {
     return (
       <div className="min-h-screen bg-surface-sunken">
         <main className="max-w-3xl mx-auto px-4 py-12">
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-8 text-center">
+          <div className="bg-danger-muted border border-danger/30 rounded-xl p-8 text-center">
             <AlertCircle className="w-16 h-16 text-danger mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-ink mb-2">Error</h2>
             <p className="text-danger mb-6">{error}</p>
@@ -612,7 +612,7 @@ export default function EditApplicationPage() {
       <div className="min-h-screen bg-surface-sunken">
         <main className="max-w-3xl mx-auto px-4 py-12">
           <div className="bg-surface-raised border border-border rounded-xl p-8 text-center">
-            <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+            <CheckCircle2 className="w-16 h-16 text-success mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-ink mb-2">Application Resubmitted!</h2>
             <p className="text-ink-muted mb-6">
               Your updated application has been submitted for review. Our team will review it and notify you of the decision.
@@ -652,7 +652,7 @@ export default function EditApplicationPage() {
 
         {/* Rejection Reason */}
         {(application?.admin_notes || application?.rejection_reason) && (
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 mb-8">
+          <div className="bg-danger-muted border border-danger/30 rounded-xl p-6 mb-8">
             <h3 className="text-danger font-semibold mb-2 flex items-center">
               <MessageSquare className="w-5 h-5 mr-2" />
               Rejection Feedback
@@ -668,7 +668,7 @@ export default function EditApplicationPage() {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-3">
+          <div className="mb-6 p-4 bg-danger-muted border border-danger/30 rounded-lg flex items-center gap-3">
             <AlertCircle className="w-5 h-5 text-danger" />
             <p className="text-danger">{error}</p>
             <button onClick={() => setError('')} className="ml-auto text-danger hover:text-red-300">
@@ -832,7 +832,7 @@ export default function EditApplicationPage() {
           <div className="bg-surface-raised border border-border rounded-xl p-6 mb-6">
             <div className="flex items-center justify-between mb-2">
               <h3 className="text-lg font-semibold text-ink flex items-center">
-                <Upload className="w-5 h-5 mr-2 text-cyan-400" />
+                <Upload className="w-5 h-5 mr-2 text-gold" />
                 Required Documents
               </h3>
               {formData.assetType && (
@@ -841,7 +841,7 @@ export default function EditApplicationPage() {
                     ? <span className="text-success flex items-center gap-1">
                         <CheckCircle2 className="w-4 h-4" /> All required documents uploaded
                       </span>
-                    : <span className="text-amber-400">
+                    : <span className="text-warning">
                         {getMissingDocuments(formData.assetType, documents).length} required documents missing
                       </span>
                   }
@@ -854,7 +854,7 @@ export default function EditApplicationPage() {
                 {/* Required Documents Checklist */}
                 <div className="bg-surface-overlay/50 rounded-lg p-4 mb-4">
                   <h4 className="text-sm font-medium text-ink-muted mb-3 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-gold-400" />
+                    <Shield className="w-4 h-4 text-gold" />
                     Required for {getAssetTypeLabel(formData.assetType)}:
                   </h4>
                   <div className="grid gap-2">
@@ -864,8 +864,8 @@ export default function EditApplicationPage() {
                         <div 
                           key={doc.value}
                           className={`flex items-center gap-2 text-sm p-2 rounded transition-colors ${
-                            isUploaded 
-                              ? 'bg-green-500/10 text-success' 
+                            isUploaded
+                              ? 'bg-success/10 text-success'
                               : 'bg-surface-overlay/50 text-ink-muted'
                           }`}
                         >
@@ -921,8 +921,8 @@ export default function EditApplicationPage() {
                     htmlFor="document-upload"
                     className={`px-4 py-2 rounded-lg font-medium transition inline-flex items-center justify-center cursor-pointer ${
                       !selectedDocType || uploadingDocument
-                        ? 'bg-gray-600 text-ink-muted cursor-not-allowed'
-                        : 'bg-cyan-600 hover:bg-cyan-700 text-ink'
+                        ? 'bg-border-strong text-ink-muted cursor-not-allowed'
+                        : 'bg-gold hover:bg-gold-light text-surface-sunken'
                     }`}
                   >
                     {uploadingDocument ? (
@@ -940,7 +940,7 @@ export default function EditApplicationPage() {
                 </div>
 
                 {uploadError && (
-                  <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2">
+                  <div className="mb-4 p-3 bg-danger-muted border border-danger/30 rounded-lg flex items-center gap-2">
                     <AlertCircle className="w-4 h-4 text-danger" />
                     <p className="text-danger text-sm">{uploadError}</p>
                   </div>
@@ -1009,9 +1009,9 @@ export default function EditApplicationPage() {
             <div className="space-y-4">
               {/* Escrow Option */}
               <label className={`flex items-start gap-4 p-4 bg-surface-overlay/50 border rounded-xl transition ${
-                originalOptions.needsEscrow 
-                  ? 'border-green-500/50 cursor-not-allowed' 
-                  : 'border-border-strong cursor-pointer hover:border-gray-500'
+                originalOptions.needsEscrow
+                  ? 'border-success/50 cursor-not-allowed'
+                  : 'border-border-strong cursor-pointer hover:border-border-strong'
               }`}>
                 <input
                   type="checkbox"
@@ -1019,21 +1019,21 @@ export default function EditApplicationPage() {
                   checked={formData.needsEscrow}
                   onChange={handleChange}
                   disabled={originalOptions.needsEscrow}
-                  className="mt-1 w-5 h-5 rounded border-gray-500 text-green-600 focus:ring-green-500 disabled:opacity-50"
+                  className="mt-1 w-5 h-5 rounded border-border-strong text-gold focus:ring-gold disabled:opacity-50"
                 />
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Lock className="w-5 h-5 text-green-400" />
+                      <Lock className="w-5 h-5 text-gold" />
                       <span className="text-ink font-medium">Trade Escrow</span>
                       {originalOptions.needsEscrow && (
-                        <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
+                        <span className="text-xs bg-success/15 text-success px-2 py-0.5 rounded-full">
                           Already Included
                         </span>
                       )}
                     </div>
                     {!originalOptions.needsEscrow && (
-                      <span className="text-green-400 font-semibold">+${FEES.escrow}</span>
+                      <span className="text-gold font-semibold">+${FEES.escrow}</span>
                     )}
                   </div>
                   <p className="text-ink-muted text-sm mt-1">
@@ -1049,9 +1049,9 @@ export default function EditApplicationPage() {
 
               {/* Dividends Option */}
               <label className={`flex items-start gap-4 p-4 bg-surface-overlay/50 border rounded-xl transition ${
-                originalOptions.needsDividends 
-                  ? 'border-yellow-500/50 cursor-not-allowed' 
-                  : 'border-border-strong cursor-pointer hover:border-gray-500'
+                originalOptions.needsDividends
+                  ? 'border-success/50 cursor-not-allowed'
+                  : 'border-border-strong cursor-pointer hover:border-border-strong'
               }`}>
                 <input
                   type="checkbox"
@@ -1059,21 +1059,21 @@ export default function EditApplicationPage() {
                   checked={formData.needsDividends}
                   onChange={handleChange}
                   disabled={originalOptions.needsDividends}
-                  className="mt-1 w-5 h-5 rounded border-gray-500 text-yellow-600 focus:ring-yellow-500 disabled:opacity-50"
+                  className="mt-1 w-5 h-5 rounded border-border-strong text-gold focus:ring-gold disabled:opacity-50"
                 />
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-yellow-400" />
+                      <TrendingUp className="w-5 h-5 text-gold" />
                       <span className="text-ink font-medium">Dividend Distributor</span>
                       {originalOptions.needsDividends && (
-                        <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">
+                        <span className="text-xs bg-success/15 text-success px-2 py-0.5 rounded-full">
                           Already Included
                         </span>
                       )}
                     </div>
                     {!originalOptions.needsDividends && (
-                      <span className="text-yellow-400 font-semibold">+${FEES.dividend}</span>
+                      <span className="text-gold font-semibold">+${FEES.dividend}</span>
                     )}
                   </div>
                   <p className="text-ink-muted text-sm mt-1">
@@ -1104,9 +1104,9 @@ export default function EditApplicationPage() {
 
           {/* Fee Summary */}
           <div className={`border rounded-xl p-6 mb-6 ${
-            calculateFeeDifference() > 0 
-              ? 'bg-gradient-to-r from-amber-900/30 to-orange-900/30 border-amber-500/30'
-              : 'bg-gradient-to-r from-green-900/30 to-emerald-900/30 border-green-500/30'
+            calculateFeeDifference() > 0
+              ? 'bg-warning-muted border-warning/30'
+              : 'bg-success/10 border-success/30'
           }`}>
             <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
               <Coins className="w-5 h-5 mr-2 text-success" />
@@ -1116,29 +1116,29 @@ export default function EditApplicationPage() {
               {/* Base fee - always paid */}
               <div className="flex justify-between text-sm">
                 <span className="text-ink-muted">Base Fee (Project NFT + ERC-3643 Token)</span>
-                <span className="text-success">${FEES.base} ✓</span>
+                <span className="inline-flex items-center gap-1 text-success">${FEES.base} <CheckCircle2 className="w-3.5 h-3.5" /></span>
               </div>
-              
+
               {/* Escrow */}
               {(formData.needsEscrow || originalOptions.needsEscrow) && (
                 <div className="flex justify-between text-sm">
                   <span className="text-ink-muted">Trade Escrow</span>
                   {originalOptions.needsEscrow ? (
-                    <span className="text-green-400">${FEES.escrow} ✓</span>
+                    <span className="inline-flex items-center gap-1 text-success">${FEES.escrow} <CheckCircle2 className="w-3.5 h-3.5" /></span>
                   ) : (
-                    <span className="text-amber-400">+${FEES.escrow} (NEW)</span>
+                    <span className="text-warning">+${FEES.escrow} (NEW)</span>
                   )}
                 </div>
               )}
-              
+
               {/* Dividends */}
               {(formData.needsDividends || originalOptions.needsDividends) && (
                 <div className="flex justify-between text-sm">
                   <span className="text-ink-muted">Dividend Distributor</span>
                   {originalOptions.needsDividends ? (
-                    <span className="text-yellow-400">${FEES.dividend} ✓</span>
+                    <span className="inline-flex items-center gap-1 text-success">${FEES.dividend} <CheckCircle2 className="w-3.5 h-3.5" /></span>
                   ) : (
-                    <span className="text-amber-400">+${FEES.dividend} (NEW)</span>
+                    <span className="text-warning">+${FEES.dividend} (NEW)</span>
                   )}
                 </div>
               )}
@@ -1151,7 +1151,7 @@ export default function EditApplicationPage() {
                 {calculateFeeDifference() > 0 && (
                   <div className="flex justify-between text-sm">
                     <span className="text-ink-muted">Additional Payment</span>
-                    <span className="text-amber-400">+${calculateFeeDifference()}</span>
+                    <span className="text-warning">+${calculateFeeDifference()}</span>
                   </div>
                 )}
                 <div className="flex justify-between mt-2 pt-2 border-t border-border-strong">
@@ -1159,7 +1159,7 @@ export default function EditApplicationPage() {
                     {calculateFeeDifference() > 0 ? 'Amount Due' : 'Total Paid'}
                   </span>
                   <span className={`font-bold text-lg ${
-                    calculateFeeDifference() > 0 ? 'text-amber-400' : 'text-success'
+                    calculateFeeDifference() > 0 ? 'text-warning' : 'text-success'
                   }`}>
                     {calculateFeeDifference() > 0 
                       ? `$${calculateFeeDifference()} USDC`
@@ -1171,7 +1171,7 @@ export default function EditApplicationPage() {
             </div>
             
             {calculateFeeDifference() > 0 ? (
-              <p className="text-amber-400 text-sm mt-3 flex items-center gap-2">
+              <p className="text-warning text-sm mt-3 flex items-center gap-2">
                 <AlertCircle className="w-4 h-4" />
                 You've added new options. Additional payment of ${calculateFeeDifference()} USDC is required.
               </p>
@@ -1187,7 +1187,7 @@ export default function EditApplicationPage() {
           <div className="flex gap-4">
             <Link
               href="/tokenize"
-              className="px-6 py-4 bg-surface-overlay hover:bg-gray-600 text-ink font-semibold rounded-xl transition inline-flex items-center"
+              className="px-6 py-4 bg-surface-overlay hover:bg-border-strong text-ink font-semibold rounded-lg transition inline-flex items-center"
             >
               <ArrowLeft className="mr-2 w-5 h-5" />
               Cancel
@@ -1195,11 +1195,7 @@ export default function EditApplicationPage() {
             <button
               type="submit"
               disabled={submitting || (!!formData.assetType && !hasAllRequiredDocuments(formData.assetType, documents))}
-              className={`flex-1 py-4 text-ink font-semibold rounded-xl hover:opacity-90 transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed ${
-                calculateFeeDifference() > 0 
-                  ? 'bg-gradient-to-r from-amber-500 to-orange-600'
-                  : 'bg-gradient-to-r from-orange-500 to-red-600'
-              }`}
+              className="flex-1 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? (
                 <>
@@ -1225,7 +1221,7 @@ export default function EditApplicationPage() {
           </div>
 
           {formData.assetType && !hasAllRequiredDocuments(formData.assetType, documents) && (
-            <p className="text-center text-amber-400 text-sm mt-3">
+            <p className="text-center text-warning text-sm mt-3">
               Please upload all required documents before resubmitting
             </p>
           )}

@@ -94,8 +94,8 @@ export default function SubmitArticlePage() {
     return (
       <div className="min-h-screen bg-surface-sunken flex items-center justify-center px-4">
         <div className="max-w-md w-full text-center">
-          <div className="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-emerald-400" />
+          <div className="w-20 h-20 bg-success/15 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10 text-success" />
           </div>
           <h1 className="text-2xl font-bold text-ink mb-4">Article Submitted!</h1>
           <p className="text-ink-muted mb-8">
@@ -121,7 +121,7 @@ export default function SubmitArticlePage() {
                   author_email: ''
                 });
               }}
-              className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-ink rounded-lg transition-colors"
+              className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken rounded-lg transition-colors"
             >
               Submit Another
             </button>
@@ -149,11 +149,11 @@ export default function SubmitArticlePage() {
         </div>
 
         {!isConnected && (
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-8 flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
+          <div className="bg-warning-muted border border-warning/30 rounded-lg p-4 mb-8 flex items-start gap-3">
+            <AlertCircle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
             <div>
-              <p className="text-yellow-400 font-medium">Wallet not connected</p>
-              <p className="text-yellow-400/70 text-sm">Please connect your wallet to submit an article.</p>
+              <p className="text-warning font-medium">Wallet not connected</p>
+              <p className="text-warning/70 text-sm">Please connect your wallet to submit an article.</p>
             </div>
           </div>
         )}
@@ -176,7 +176,7 @@ export default function SubmitArticlePage() {
               value={formData.title}
               onChange={handleChange}
               placeholder="Enter your article title"
-              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
               required
             />
           </div>
@@ -189,7 +189,7 @@ export default function SubmitArticlePage() {
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
               required
             >
               <option value="">Select a category</option>
@@ -209,7 +209,7 @@ export default function SubmitArticlePage() {
               onChange={handleChange}
               placeholder="A brief summary of your article (1-2 sentences)"
               rows={2}
-              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors resize-none"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold transition-colors resize-none"
             />
           </div>
 
@@ -226,7 +226,7 @@ export default function SubmitArticlePage() {
               onChange={handleChange}
               placeholder="Write your article content here..."
               rows={15}
-              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors font-mono text-sm"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold transition-colors font-mono text-sm"
               required
             />
           </div>
@@ -242,7 +242,7 @@ export default function SubmitArticlePage() {
               value={formData.cover_image_url}
               onChange={handleChange}
               placeholder="https://example.com/image.jpg"
-              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
             />
             <p className="text-ink-faint text-sm mt-1">Optional. Use a direct image URL.</p>
           </div>
@@ -258,7 +258,7 @@ export default function SubmitArticlePage() {
               value={formData.tags}
               onChange={handleChange}
               placeholder="blockchain, tokenization, real-estate"
-              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
             />
             <p className="text-ink-faint text-sm mt-1">Separate tags with commas</p>
           </div>
@@ -273,7 +273,7 @@ export default function SubmitArticlePage() {
               value={formData.author_email}
               onChange={handleChange}
               placeholder="your@email.com"
-              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border rounded-lg text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold transition-colors"
             />
             <p className="text-ink-faint text-sm mt-1">We will notify you when your article is reviewed</p>
           </div>
@@ -282,7 +282,7 @@ export default function SubmitArticlePage() {
             <button
               type="submit"
               disabled={isSubmitting || !isConnected}
-              className="w-full py-4 bg-emerald-600 hover:bg-emerald-500 disabled:bg-surface-overlay disabled:cursor-not-allowed text-ink font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+              className="w-full py-4 bg-gold hover:bg-gold-light disabled:bg-surface-overlay disabled:cursor-not-allowed text-surface-sunken font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -300,7 +300,7 @@ export default function SubmitArticlePage() {
 
           <div className="bg-surface-sunken/50 border border-border rounded-lg p-6 mt-8">
             <h3 className="font-semibold text-ink mb-3 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-emerald-400" />
+              <FileText className="w-5 h-5 text-success" />
               Submission Guidelines
             </h3>
             <ul className="text-ink-muted text-sm space-y-2">

@@ -5,20 +5,8 @@ import { useAccount, useConnect, useDisconnect, useChainId, useReconnect } from 
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { SupportedChainId } from '@/config/contracts';
+import { Wallet, AlertTriangle, ExternalLink, Link2 } from 'lucide-react';
 import Image from 'next/image';
-
-// Wallet icons
-const walletIcons: Record<string, string> = {
-  metaMask: '🦊',
-  'io.metamask': '🦊',
-  phantom: '👻',
-  'app.phantom': '👻',
-  coinbaseWallet: '🔵',
-  coinbaseWalletSDK: '🔵',
-  walletConnect: '🔗',
-  injected: '💼',
-  'app.subwallet': '📱',
-};
 
 const walletNames: Record<string, string> = {
   metaMask: 'MetaMask',
@@ -60,10 +48,10 @@ function ChainLogo({ chainId, size = 24, className = "" }: { chainId: number; si
   if (!logo || hasError) {
     return (
       <div 
-        className={`rounded-full bg-gradient-to-br from-gray-600 to-gray-700 flex items-center justify-center ${className}`}
+        className={`rounded-full bg-surface-overlay border border-border-strong flex items-center justify-center ${className}`}
         style={{ width: size, height: size }}
       >
-        <span className="text-ink" style={{ fontSize: size * 0.5 }}>⛓</span>
+        <Link2 className="text-ink-muted" style={{ width: size * 0.55, height: size * 0.55 }} />
       </div>
     );
   }
@@ -321,7 +309,7 @@ function WalletModal({ onClose }: { onClose: () => void }) {
         onClick={onClose}
       />
       
-      <div className="relative bg-surface rounded-2xl border border-border shadow-panel w-full max-w-md mx-4 overflow-hidden">
+      <div className="relative bg-surface rounded-xl border border-border shadow-panel w-full max-w-md mx-4 overflow-hidden">
         <div className="flex items-center justify-between p-5 border-b border-border">
           <h2 className="text-xl font-bold text-ink">Connect Wallet</h2>
           <button
@@ -342,11 +330,11 @@ function WalletModal({ onClose }: { onClose: () => void }) {
 
         {/* No wallet detected message */}
         {!hasAnyWallet && (
-          <div className="mx-4 mt-4 p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg">
+          <div className="mx-4 mt-4 p-4 bg-warning-muted border border-warning/30 rounded-lg">
             <div className="flex items-start gap-3">
-              <span className="text-2xl">🦊</span>
+              <AlertTriangle className="w-5 h-5 text-warning flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-amber-400 font-medium">No wallet detected</p>
+                <p className="text-warning font-medium">No wallet detected</p>
                 <p className="text-sm text-ink-muted mt-1">
                   Install a Web3 wallet to connect to the platform.
                 </p>
@@ -354,12 +342,10 @@ function WalletModal({ onClose }: { onClose: () => void }) {
                   href="https://metamask.io/download/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-black font-medium rounded-lg transition-colors text-sm"
+                  className="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-gold hover:bg-gold-light text-surface-sunken font-medium rounded-lg transition-colors text-sm"
                 >
                   Install MetaMask
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
+                  <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
             </div>
@@ -377,29 +363,30 @@ function WalletModal({ onClose }: { onClose: () => void }) {
           ) : (
             availableConnectors.map((connector) => {
               const isConnecting = connectingId === connector.id;
-              const icon = walletIcons[connector.id] || '💼';
               const name = walletNames[connector.id] || connector.name;
-              
+
               // Check if this specific connector is available
               const isInjected = connector.type === 'injected' || connector.id === 'injected';
               const isWalletConnect = connector.id === 'walletConnect';
               const providerAvailable = isWalletConnect || (hasAnyWallet && isInjected) || isProviderAvailable(connector.id);
-              
+
               return (
                 <button
                   key={connector.id}
                   onClick={() => handleConnect(connector)}
                   disabled={isPending || isConnecting}
                   className={`
-                    w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-200 group
-                    ${providerAvailable 
-                      ? 'bg-surface-raised hover:bg-surface-overlay' 
+                    w-full flex items-center gap-4 p-4 rounded-lg transition-all duration-200 group
+                    ${providerAvailable
+                      ? 'bg-surface-raised hover:bg-surface-overlay'
                       : 'bg-surface-raised/50 opacity-60'
                     }
                     disabled:opacity-50 disabled:cursor-not-allowed
                   `}
                 >
-                  <span className="text-3xl">{icon}</span>
+                  <span className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center flex-shrink-0">
+                    <Wallet className="w-5 h-5 text-gold" />
+                  </span>
                   <div className="flex-1 text-left">
                     <div className="text-ink font-semibold group-hover:text-gold transition-colors">
                       {name}
@@ -525,7 +512,7 @@ export function ConnectButton() {
         </div>
 
         {/* Status dot */}
-        <div className={`w-2 h-2 rounded-full ${isDeployed ? 'bg-green-500' : 'bg-yellow-500'}`} />
+        <div className={`w-2 h-2 rounded-full ${isDeployed ? 'bg-success' : 'bg-warning'}`} />
 
         {/* Address */}
         <span className="text-ink font-mono text-sm">
@@ -552,8 +539,8 @@ export function ConnectButton() {
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-ink-faint uppercase tracking-wider font-medium">Network</span>
               {!isDeployed && (
-                <span className="text-xs text-yellow-500 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-yellow-500 rounded-full animate-pulse" />
+                <span className="text-xs text-warning flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-warning rounded-full animate-pulse" />
                   Not Deployed
                 </span>
               )}
@@ -561,7 +548,7 @@ export function ConnectButton() {
             
             <button
               onClick={() => setShowNetworks(!showNetworks)}
-              className="w-full flex items-center justify-between p-2.5 bg-surface-raised hover:bg-gray-750 rounded-lg transition-colors"
+              className="w-full flex items-center justify-between p-2.5 bg-surface-raised hover:bg-surface-overlay rounded-lg transition-colors"
             >
               <div className="flex items-center gap-3">
                 <ChainLogo chainId={chainId} size={32} />

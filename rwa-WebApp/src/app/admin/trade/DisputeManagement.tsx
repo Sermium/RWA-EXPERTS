@@ -133,8 +133,8 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
 };
 
 const SOURCE_CONFIG: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
-  trade: { label: 'Trade', icon: <Ship className="h-4 w-4" />, color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
-  crowdfunding: { label: 'Crowdfunding', icon: <Coins className="h-4 w-4" />, color: 'bg-gold-500/20 text-gold-400 border-gold-500/30' },
+  trade: { label: 'Trade', icon: <Ship className="h-4 w-4" />, color: 'bg-ink-muted/10 text-ink-muted border-ink-muted/30' },
+  crowdfunding: { label: 'Crowdfunding', icon: <Coins className="h-4 w-4" />, color: 'bg-gold/10 text-gold border-gold/30' },
 };
 
 // =============================================================================
@@ -542,7 +542,7 @@ function DisputeDetailModal({
           {activeSection === 'resolve' && (
             <div className="space-y-6">
               <div className="bg-warning/10 border border-warning/20 rounded-xl p-4">
-                <p className="text-warning text-sm font-medium">⚠️ Final Resolution</p>
+                <p className="text-warning text-sm font-medium flex items-center gap-1.5"><AlertTriangle className="w-4 h-4" /> Final Resolution</p>
                 <p className="text-ink-muted text-sm mt-1">
                   This action is irreversible. Choose the resolution carefully.
                 </p>

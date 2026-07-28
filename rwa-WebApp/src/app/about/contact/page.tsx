@@ -458,7 +458,7 @@ export default function ContactPage() {
             {/* Response Time */}
             <div className="bg-surface border border-border rounded-xl p-6">
               <h3 className="text-lg font-semibold text-ink mb-4 flex items-center">
-                <Clock className="w-5 h-5 mr-2 text-yellow-400" />
+                <Clock className="w-5 h-5 mr-2 text-gold" />
                 Response Time
               </h3>
               <p className="text-ink-muted text-sm mb-4">

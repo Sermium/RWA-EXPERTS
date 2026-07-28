@@ -131,7 +131,7 @@ function KYCBadge() {
       </button>
 
       {showDropdown && (
-        <div className="absolute right-0 mt-2 w-72 bg-surface border border-border rounded-xl shadow-panel z-50 overflow-hidden">
+        <div className="absolute right-0 mt-2 w-72 bg-surface border border-border rounded-lg shadow-panel z-50 overflow-hidden">
           <div className={`px-4 py-3 ${tierInfo.bgColor} border-b border-border`}>
             <div className="flex items-center gap-3">
               <StatusIcon className={`w-6 h-6 ${tierInfo.color}`} />
@@ -177,7 +177,7 @@ function KYCBadge() {
                   <span className="text-ink-muted">Tier Limit</span>
                   <span className="text-ink">
                     {isDiamond ? (
-                      <span className="text-cyan-400">∞ Unlimited</span>
+                      <span className="text-gold-light">∞ Unlimited</span>
                     ) : (
                       formatLimit(investmentLimit)
                     )}
@@ -191,7 +191,7 @@ function KYCBadge() {
                   <span className="text-ink-muted">Remaining</span>
                   <span className="text-success font-medium">
                     {isDiamond ? (
-                      <span className="text-cyan-400">∞ Unlimited</span>
+                      <span className="text-gold-light">∞ Unlimited</span>
                     ) : (
                       formatLimit(remainingLimit)
                     )}
@@ -340,7 +340,7 @@ function MobileDropdown({
             <Link
               key={item.href}
               href={item.href}
-              className="block py-2 text-ink-muted hover:text-ink transition-colors duration-150"
+              className="block px-2 py-2 rounded-lg text-ink-muted hover:text-ink hover:bg-surface-overlay transition-colors duration-150"
               onClick={onItemClick}
             >
               {item.label}
@@ -490,7 +490,7 @@ export default function Header() {
                   <LayoutDashboard className="w-4 h-4" />
                   <span>Dashboard</span>
                   {isOwner && (
-                    <span className="text-xs px-1.5 py-0.5 bg-gold/15 text-gold rounded">Pro</span>
+                    <span className="text-xs px-1.5 py-0.5 bg-gold/15 text-gold rounded-full">Pro</span>
                   )}
                 </Link>
               )}
@@ -539,7 +539,7 @@ export default function Header() {
                     <LayoutDashboard className="w-4 h-4" />
                     Dashboard
                     {isOwner && (
-                      <span className="text-xs px-1.5 py-0.5 bg-gold/15 text-gold rounded">Pro</span>
+                      <span className="text-xs px-1.5 py-0.5 bg-gold/15 text-gold rounded-full">Pro</span>
                     )}
                   </Link>
                 )}

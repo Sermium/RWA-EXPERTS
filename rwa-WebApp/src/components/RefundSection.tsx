@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseAbi } from 'viem';
 import { EXPLORER_URL } from '@/config/contracts';
+import { AlertTriangle, Check } from 'lucide-react';
 
 const escrowAbi = parseAbi([
   'function claimRefund(uint256)',
@@ -77,9 +78,9 @@ export default function RefundSection({
   return (
     <div className="bg-danger/10 border border-danger/30 rounded-xl p-6 mt-6">
       <div className="flex items-start gap-3 mb-4">
-        <span className="text-2xl">⚠️</span>
+        <AlertTriangle className="w-6 h-6 text-danger flex-shrink-0" />
         <div>
-          <h3 className="text-lg font-bold text-danger">Project Cancelled</h3>
+          <h3 className="text-lg font-semibold text-danger">Project Cancelled</h3>
           <p className="text-danger/80 text-sm">
             This project has been cancelled. You can claim a refund for your investment.
           </p>
@@ -104,7 +105,7 @@ export default function RefundSection({
       {investorDetails.refunded ? (
         <div className="bg-success/10 border border-success/30 rounded-lg p-4">
           <p className="text-success flex items-center gap-2">
-            <span>✓</span>
+            <Check className="w-4 h-4" />
             Your refund has been processed successfully.
           </p>
         </div>

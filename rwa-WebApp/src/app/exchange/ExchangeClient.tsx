@@ -730,8 +730,6 @@ export default function ExchangeClient() {
     const quoteBalance = isCrypto ? cryptoQuoteBalance : securityQuoteBalance;
     const baseBalance = isCrypto ? cryptoBaseBalance : securityTokenBalance;
     
-    const accentColor = isCrypto ? 'blue' : 'purple';
-    
     return (
       <div className="p-3 space-y-3">
         {/* Available Balance Section */}
@@ -767,7 +765,7 @@ export default function ExchangeClient() {
             onClick={() => setOrderType('limit')}
             className={`text-xs font-medium pb-1 border-b-2 transition-colors ${
               orderType === 'limit'
-                ? `text-ink border-${accentColor}-500`
+                ? 'text-ink border-gold'
                 : 'text-ink-faint border-transparent hover:text-ink-muted'
             }`}
           >
@@ -777,7 +775,7 @@ export default function ExchangeClient() {
             onClick={() => setOrderType('market')}
             className={`text-xs font-medium pb-1 border-b-2 transition-colors ${
               orderType === 'market'
-                ? `text-ink border-${accentColor}-500`
+                ? 'text-ink border-gold'
                 : 'text-ink-faint border-transparent hover:text-ink-muted'
             }`}
           >
@@ -894,20 +892,20 @@ export default function ExchangeClient() {
                   key={pct}
                   className={`w-2.5 h-2.5 rounded-full border-2 transition-colors ${
                     sliderValue >= pct
-                      ? orderSide === 'buy' 
-                        ? 'bg-success border-green-400' 
-                        : 'bg-danger border-red-400'
+                      ? orderSide === 'buy'
+                        ? 'bg-success border-success/60'
+                        : 'bg-danger border-danger/60'
                       : 'bg-surface-overlay border-border-strong'
                   }`}
                 />
               ))}
             </div>
             {/* Draggable Thumb */}
-            <div 
-              className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 shadow-lg pointer-events-none ${
-                orderSide === 'buy' 
-                  ? 'bg-success border-green-300' 
-                  : 'bg-danger border-red-300'
+            <div
+              className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border-2 shadow-panel pointer-events-none ${
+                orderSide === 'buy'
+                  ? 'bg-success border-success/40'
+                  : 'bg-danger border-danger/40'
               } ${isDragging ? 'scale-110' : ''}`}
               style={{ 
                 left: `calc(${sliderValue}% - 8px)`,
@@ -926,7 +924,7 @@ export default function ExchangeClient() {
                 }}
                 className={`hover:text-ink-muted transition-colors w-6 text-center ${
                   sliderValue >= pct 
-                    ? orderSide === 'buy' ? 'text-green-500' : 'text-red-500' 
+                    ? orderSide === 'buy' ? 'text-success' : 'text-danger' 
                     : ''
                 }`}
               >
@@ -957,7 +955,7 @@ export default function ExchangeClient() {
             disabled={!isConnected || submitting}
             className={`py-2 rounded text-xs font-medium transition-all ${
               orderSide === 'buy'
-                ? 'bg-success hover:bg-green-700 text-ink'
+                ? 'bg-success hover:bg-success/80 text-ink'
                 : 'bg-surface border border-border text-ink-muted hover:text-ink hover:border-success'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
@@ -973,7 +971,7 @@ export default function ExchangeClient() {
             disabled={!isConnected || submitting}
             className={`py-2 rounded text-xs font-medium transition-all ${
               orderSide === 'sell'
-                ? 'bg-danger hover:bg-red-700 text-ink'
+                ? 'bg-danger hover:bg-danger/80 text-ink'
                 : 'bg-surface border border-border text-ink-muted hover:text-ink hover:border-danger'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
@@ -988,8 +986,8 @@ export default function ExchangeClient() {
             disabled={!isConnected || submitting || (orderType === 'limit' && !orderPrice)}
             className={`w-full py-2.5 rounded text-xs font-bold transition-all flex items-center justify-center gap-2 ${
               orderSide === 'buy'
-                ? 'bg-success hover:bg-green-700'
-                : 'bg-danger hover:bg-red-700'
+                ? 'bg-success hover:bg-success/80'
+                : 'bg-danger hover:bg-danger/80'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
             {submitting ? (
@@ -1018,8 +1016,8 @@ export default function ExchangeClient() {
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Store className="w-5 h-5 text-gold-400" />
-              <h1 className="text-lg font-bold">RWA Exchange</h1>
+              <Store className="w-5 h-5 text-gold" />
+              <h1 className="text-lg font-semibold text-ink">RWA Exchange</h1>
               <span className="px-1.5 py-0.5 bg-success/20 text-success text-[10px] rounded">Live</span>
             </div>
 
@@ -1029,7 +1027,7 @@ export default function ExchangeClient() {
                 onClick={() => setMarketType('crypto')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
                   marketType === 'crypto'
-                    ? 'bg-gold-600 text-ink'
+                    ? 'bg-gold text-ink'
                     : 'text-ink-muted hover:text-ink'
                 }`}
               >
@@ -1052,7 +1050,7 @@ export default function ExchangeClient() {
             <div className="flex items-center gap-3">
               {/* Chain indicator for security tokens */}
               {marketType === 'security' && (
-                <div className="flex items-center gap-1.5 px-2 py-1 bg-gold-500/10 text-gold-400 rounded text-xs">
+                <div className="flex items-center gap-1.5 px-2 py-1 bg-gold/10 text-gold rounded text-xs">
                   <Activity className="w-3 h-3" />
                   {getChainName(chainId)}
                 </div>
@@ -1151,7 +1149,7 @@ export default function ExchangeClient() {
                         value={cryptoSearchQuery}
                         onChange={(e) => setCryptoSearchQuery(e.target.value)}
                         placeholder="Search..."
-                        className="w-full pl-7 pr-3 py-1.5 bg-surface rounded border border-border-strong focus:border-gold-500 outline-none text-xs"
+                        className="w-full pl-7 pr-3 py-1.5 bg-surface rounded border border-border-strong focus:border-gold outline-none text-xs"
                       />
                     </div>
                   </div>
@@ -1168,7 +1166,7 @@ export default function ExchangeClient() {
                         key={pair.symbol}
                         onClick={() => setSelectedCryptoPair(pair)}
                         className={`w-full px-2 py-2 flex items-center hover:bg-ink/5 transition-colors ${
-                          selectedCryptoPair?.symbol === pair.symbol ? 'bg-gold-500/10 border-l-2 border-gold-500' : ''
+                          selectedCryptoPair?.symbol === pair.symbol ? 'bg-gold/10 border-l-2 border-gold' : ''
                         }`}
                       >
                         <div className="flex items-center gap-1.5 flex-1">
@@ -1277,7 +1275,7 @@ export default function ExchangeClient() {
                 <Shield className="w-16 h-16 text-ink-faint mx-auto mb-4" />
                 <h2 className="text-2xl font-bold mb-2">No Security Tokens on {getChainName(chainId)}</h2>
                 <p className="text-ink-muted mb-6">No tokenized assets are currently listed on this network.</p>
-                <a href="/dashboard" className="inline-flex items-center gap-2 px-4 py-2 bg-gold-600 hover:bg-gold-700 rounded text-sm">
+                <a href="/dashboard" className="inline-flex items-center gap-2 px-4 py-2 bg-gold hover:bg-gold-light rounded text-sm">
                   List Your Asset <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
@@ -1286,12 +1284,12 @@ export default function ExchangeClient() {
             <div className="max-w-7xl mx-auto px-4 py-4">
               {/* Compact Market Info Bar */}
               {selectedSecurityToken && (
-                <div className="flex items-center gap-4 mb-4 p-3 bg-surface-overlay rounded-lg border border-gold-800/30">
+                <div className="flex items-center gap-4 mb-4 p-3 bg-surface-overlay rounded-lg border border-gold-dark/30">
                   <div className="flex items-center gap-2">
                     {selectedSecurityToken.logoUrl ? (
                       <img src={selectedSecurityToken.logoUrl} alt="" className="w-8 h-8 rounded" />
                     ) : (
-                      <div className="w-8 h-8 bg-gold-700 rounded flex items-center justify-center text-xs font-bold">
+                      <div className="w-8 h-8 bg-gold-dark rounded flex items-center justify-center text-xs font-bold">
                         {selectedSecurityToken.symbol?.slice(0, 2)}
                       </div>
                     )}
@@ -1345,7 +1343,7 @@ export default function ExchangeClient() {
                           value={securitySearchQuery}
                           onChange={(e) => setSecuritySearchQuery(e.target.value)}
                           placeholder="Search..."
-                          className="w-full pl-7 pr-3 py-1.5 bg-surface rounded border border-border-strong focus:border-gold-500 outline-none text-xs"
+                          className="w-full pl-7 pr-3 py-1.5 bg-surface rounded border border-border-strong focus:border-gold outline-none text-xs"
                         />
                       </div>
                     </div>
@@ -1362,14 +1360,14 @@ export default function ExchangeClient() {
                           key={token.id}
                           onClick={() => setSelectedSecurityToken(token)}
                           className={`w-full px-2 py-1.5 flex items-center hover:bg-ink/5 transition-colors ${
-                            selectedSecurityToken?.id === token.id ? 'bg-gold-500/10 border-l-2 border-gold-500' : ''
+                            selectedSecurityToken?.id === token.id ? 'bg-gold/10 border-l-2 border-gold' : ''
                           }`}
                         >
                           <div className="flex items-center gap-1.5 flex-1">
                             {token.logoUrl ? (
                               <img src={token.logoUrl} alt="" className="w-4 h-4 rounded" />
                             ) : (
-                              <div className="w-4 h-4 bg-gold-700 rounded flex items-center justify-center text-[8px]">
+                              <div className="w-4 h-4 bg-gold-dark rounded flex items-center justify-center text-[8px]">
                                 {token.symbol?.slice(0, 2)}
                               </div>
                             )}
@@ -1504,7 +1502,7 @@ export default function ExchangeClient() {
                         onClick={() => setActiveTab(tab)}
                         className={`flex-1 py-2 text-xs font-medium transition-colors ${
                           activeTab === tab
-                            ? 'text-gold-400 border-b-2 border-gold-400'
+                            ? 'text-gold border-b-2 border-gold'
                             : 'text-ink-faint hover:text-ink'
                         }`}
                       >
@@ -1572,7 +1570,7 @@ export default function ExchangeClient() {
                                     </span>
                                     <span className="text-[10px] font-medium">{selectedSecurityToken?.symbol}</span>
                                     <span className={`px-1 py-0.5 rounded text-[8px] ${
-                                      order.status === 'filled' ? 'bg-gold-500/20 text-gold-400' : 'bg-surface-overlay/20 text-ink-muted'
+                                      order.status === 'filled' ? 'bg-gold/20 text-gold' : 'bg-surface-overlay/20 text-ink-muted'
                                     }`}>
                                       {order.status}
                                     </span>

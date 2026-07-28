@@ -211,8 +211,8 @@ export default function CompanyPage() {
                   key={chain.id}
                   className={`px-4 py-2 rounded-lg text-sm font-medium ${
                     chain.testnet
-                      ? 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/30'
-                      : 'bg-green-500/10 text-green-400 border border-green-500/30'
+                      ? 'bg-warning-muted text-warning border border-warning/30'
+                      : 'bg-success/10 text-success border border-success/30'
                   }`}
                 >
                   {chain.name}
@@ -227,7 +227,7 @@ export default function CompanyPage() {
             <div>
               <h3 className="text-lg font-semibold text-ink mb-4">
                 Contracts on {chainName}
-                {isTestnet && <span className="ml-2 text-yellow-400 text-sm">(Testnet)</span>}
+                {isTestnet && <span className="ml-2 text-warning text-sm">(Testnet)</span>}
               </h3>
               <div className="flex flex-wrap justify-center gap-3">
                 {contractLinks.map((contract, index) => (
@@ -253,8 +253,8 @@ export default function CompanyPage() {
 
           {/* Not deployed message */}
           {!isDeployed && chainName && (
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mt-4">
-              <p className="text-yellow-400 text-sm">
+            <div className="bg-warning-muted border border-warning/30 rounded-lg p-4 mt-4">
+              <p className="text-warning text-sm">
                 Contracts are not yet deployed on {chainName}. 
                 Switch to a supported network to view contract addresses.
               </p>

@@ -26,7 +26,6 @@ export interface TokenConfig {
   name: string;
   address: `0x${string}`;
   decimals: number;
-  icon: string;
   isNative?: boolean;
 }
 
@@ -104,21 +103,18 @@ export const DEFAULT_TOKENS: Record<TokenSymbol, TokenConfig> = {
     name: 'Tether USD',
     address: '0x1dBe87Efd97c84d3a73807399EBbfcfF13Ff578e',
     decimals: 6,
-    icon: '💲',
   },
   USDC: {
     symbol: 'USDC',
     name: 'USD Coin',
     address: '0x41E94Eb019C0762f9Bfcf9Fb1E58725BfB0e7582',
     decimals: 6,
-    icon: '💵',
   },
   POL: {
     symbol: 'POL',
     name: 'Polygon',
     address: '0x0000000000000000000000000000000000001010',
     decimals: 18,
-    icon: '🟣',
     isNative: true,
   },
   ETH: {
@@ -126,21 +122,18 @@ export const DEFAULT_TOKENS: Record<TokenSymbol, TokenConfig> = {
     name: 'Ethereum',
     address: '0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0',
     decimals: 18,
-    icon: '⟠',
   },
   BTC: {
     symbol: 'BTC',
     name: 'Bitcoin',
     address: '0x0000000000000000000000000000000000000000',
     decimals: 8,
-    icon: '₿',
   },
   MATIC: {
     symbol: 'MATIC',
     name: 'Polygon (Legacy)',
     address: '0x0000000000000000000000000000000000001010',
     decimals: 18,
-    icon: '🟣',
     isNative: true,
   },
 };

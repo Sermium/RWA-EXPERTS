@@ -5,6 +5,11 @@ import React, { useState, useCallback, useEffect } from "react";
 import { useAccount } from "wagmi";
 import { useKYC } from "@/contexts/KYCContext";
 import { CONTACT } from '@/config/contacts';
+import {
+  Download, Check, FileText, Trash2, AlertTriangle, Loader2, Lock, Inbox,
+  Scale, User, CheckCircle2, Wallet, Shield, Globe2, Database, Mail,
+  type LucideIcon,
+} from "lucide-react";
 
 // ============================================================================
 // TYPES
@@ -17,12 +22,12 @@ type ActionState = "idle" | "confirming" | "processing" | "success" | "error";
 // ============================================================================
 
 function DataCategoryCard({
-  icon,
+  icon: Icon,
   title,
   description,
   items,
 }: {
-  icon: string;
+  icon: LucideIcon;
   title: string;
   description: string;
   items: string[];
@@ -30,7 +35,7 @@ function DataCategoryCard({
   return (
     <div className="bg-surface rounded-xl p-4 border border-border">
       <div className="flex items-start gap-3">
-        <span className="text-2xl">{icon}</span>
+        <Icon className="w-6 h-6 text-gold flex-shrink-0" />
         <div className="flex-1">
           <h3 className="font-medium text-ink">{title}</h3>
           <p className="text-sm text-ink-muted mb-2">{description}</p>
@@ -59,8 +64,8 @@ function ExportSection({
   return (
     <div className="bg-surface rounded-xl p-6 border border-border">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-full bg-gold-500/20 flex items-center justify-center text-2xl">
-          📥
+        <div className="w-12 h-12 rounded-full bg-gold/15 flex items-center justify-center">
+          <Download className="w-6 h-6 text-gold" />
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-ink mb-1">
@@ -80,23 +85,23 @@ function ExportSection({
 
           {success ? (
             <div className="p-3 bg-success/30 border border-success/30 rounded-lg text-success text-sm flex items-center gap-2">
-              <span>✓</span>
+              <Check className="w-4 h-4" />
               <span>Download started! Check your downloads folder.</span>
             </div>
           ) : (
             <button
               onClick={onExport}
               disabled={isProcessing}
-              className="px-6 py-2 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center gap-2"
+              className="px-6 py-2 bg-gold hover:bg-gold-light disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-surface-sunken font-medium transition-colors flex items-center gap-2"
             >
               {isProcessing ? (
                 <>
-                  <span className="animate-spin">⟳</span>
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   Preparing Export...
                 </>
               ) : (
                 <>
-                  <span>📄</span>
+                  <FileText className="w-4 h-4" />
                   Download My Data
                 </>
               )}
@@ -138,7 +143,7 @@ function DeleteSection({
   if (state === "success") {
     return (
       <div className="bg-surface rounded-xl p-6 border border-border text-center">
-        <div className="text-5xl mb-4">🗑️</div>
+        <Trash2 className="w-12 h-12 text-ink-faint mb-4 mx-auto" />
         <h3 className="text-xl font-semibold text-ink mb-2">
           Data Deleted Successfully
         </h3>
@@ -153,8 +158,8 @@ function DeleteSection({
   return (
     <div className="bg-surface rounded-xl p-6 border border-danger/30">
       <div className="flex items-start gap-4">
-        <div className="w-12 h-12 rounded-full bg-danger/20 flex items-center justify-center text-2xl">
-          🗑️
+        <div className="w-12 h-12 rounded-full bg-danger/20 flex items-center justify-center">
+          <Trash2 className="w-6 h-6 text-danger" />
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-ink mb-1">
@@ -176,7 +181,7 @@ function DeleteSection({
               {/* Warning Banner */}
               <div className="p-4 bg-danger/30 border border-danger/30 rounded-lg">
                 <h4 className="text-danger font-semibold mb-2 flex items-center gap-2">
-                  <span>⚠️</span>
+                  <AlertTriangle className="w-4 h-4" />
                   Warning: This action is irreversible
                 </h4>
                 <p className="text-ink-muted text-sm">
@@ -260,7 +265,7 @@ function DeleteSection({
             </div>
           ) : state === "processing" ? (
             <div className="flex items-center gap-3 text-ink-muted">
-              <span className="animate-spin text-xl">⟳</span>
+              <Loader2 className="w-5 h-5 animate-spin" />
               <span>Deleting your data...</span>
             </div>
           ) : (
@@ -268,7 +273,7 @@ function DeleteSection({
               onClick={onDelete}
               className="px-6 py-2 bg-danger/20 hover:bg-danger/30 border border-danger/30 rounded-lg text-danger font-medium transition-colors flex items-center gap-2"
             >
-              <span>🗑️</span>
+              <Trash2 className="w-4 h-4" />
               Request Data Deletion
             </button>
           )}
@@ -373,8 +378,8 @@ export function GDPRDataManagement() {
   if (!isConnected) {
     return (
       <div className="max-w-2xl mx-auto p-8 text-center">
-        <div className="text-6xl mb-4">🔐</div>
-        <h2 className="text-2xl font-bold text-ink mb-2">Connect Your Wallet</h2>
+        <Lock className="w-14 h-14 text-ink-faint mb-4 mx-auto" />
+        <h2 className="text-2xl font-display font-medium text-ink mb-2">Connect Your Wallet</h2>
         <p className="text-ink-muted">
           Please connect your wallet to manage your data.
         </p>
@@ -387,8 +392,8 @@ export function GDPRDataManagement() {
   if (!hasKYCData) {
     return (
       <div className="max-w-2xl mx-auto p-8 text-center">
-        <div className="text-6xl mb-4">📭</div>
-        <h2 className="text-2xl font-bold text-ink mb-2">No Data Found</h2>
+        <Inbox className="w-14 h-14 text-ink-faint mb-4 mx-auto" />
+        <h2 className="text-2xl font-display font-medium text-ink mb-2">No Data Found</h2>
         <p className="text-ink-muted">
           You haven't submitted any KYC data yet. There's nothing to export or delete.
         </p>
@@ -400,42 +405,42 @@ export function GDPRDataManagement() {
     <div className="max-w-3xl mx-auto p-6 space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-ink mb-2">Data Privacy</h1>
+        <h1 className="text-2xl font-display font-medium text-ink mb-2">Data Privacy</h1>
         <p className="text-ink-muted">
           Manage your personal data in compliance with GDPR
         </p>
       </div>
 
       {/* Your Rights Section */}
-      <div className="bg-gradient-to-br from-gold-500/10 to-gold-light-500/10 rounded-xl p-6 border border-gold-500/20">
+      <div className="bg-gold/5 rounded-xl p-6 border border-gold/20">
         <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
-          <span>⚖️</span>
+          <Scale className="w-5 h-5 text-gold" />
           Your Data Rights
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div className="flex gap-3">
-            <span className="text-gold-400">✓</span>
+            <Check className="w-4 h-4 text-gold flex-shrink-0 mt-1" />
             <div>
               <p className="text-ink font-medium">Right to Access</p>
               <p className="text-ink-muted">View and download all your data</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <span className="text-gold-400">✓</span>
+            <Check className="w-4 h-4 text-gold flex-shrink-0 mt-1" />
             <div>
               <p className="text-ink font-medium">Right to Portability</p>
               <p className="text-ink-muted">Export data in machine-readable format</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <span className="text-gold-400">✓</span>
+            <Check className="w-4 h-4 text-gold flex-shrink-0 mt-1" />
             <div>
               <p className="text-ink font-medium">Right to Erasure</p>
               <p className="text-ink-muted">Request deletion of all your data</p>
             </div>
           </div>
           <div className="flex gap-3">
-            <span className="text-gold-400">✓</span>
+            <Check className="w-4 h-4 text-gold flex-shrink-0 mt-1" />
             <div>
               <p className="text-ink font-medium">Right to Rectification</p>
               <p className="text-ink-muted">Update incorrect information</p>
@@ -451,7 +456,7 @@ export function GDPRDataManagement() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <DataCategoryCard
-            icon="👤"
+            icon={User}
             title="Personal Information"
             description="Basic identity details"
             items={[
@@ -462,7 +467,7 @@ export function GDPRDataManagement() {
             ]}
           />
           <DataCategoryCard
-            icon="📄"
+            icon={FileText}
             title="Identity Documents"
             description="Verification documents"
             items={[
@@ -473,7 +478,7 @@ export function GDPRDataManagement() {
             ]}
           />
           <DataCategoryCard
-            icon="✅"
+            icon={CheckCircle2}
             title="Verification Data"
             description="KYC process information"
             items={[
@@ -484,7 +489,7 @@ export function GDPRDataManagement() {
             ]}
           />
           <DataCategoryCard
-            icon="👛"
+            icon={Wallet}
             title="Wallet Information"
             description="Blockchain identifiers"
             items={[
@@ -500,26 +505,26 @@ export function GDPRDataManagement() {
       {/* Data Security Notice */}
       <div className="bg-surface rounded-xl p-6 border border-border">
         <h2 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
-          <span>🔒</span>
+          <Shield className="w-5 h-5 text-gold" />
           How We Protect Your Data
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div className="text-center p-4">
-            <div className="text-3xl mb-2">🔐</div>
+            <Lock className="w-8 h-8 text-gold mb-2 mx-auto" />
             <p className="text-ink font-medium">AES-256 Encryption</p>
             <p className="text-ink-muted text-xs mt-1">
               All PII is encrypted at rest
             </p>
           </div>
           <div className="text-center p-4">
-            <div className="text-3xl mb-2">🌐</div>
+            <Globe2 className="w-8 h-8 text-gold mb-2 mx-auto" />
             <p className="text-ink font-medium">TLS 1.3 in Transit</p>
             <p className="text-ink-muted text-xs mt-1">
               Secure data transmission
             </p>
           </div>
           <div className="text-center p-4">
-            <div className="text-3xl mb-2">🗄️</div>
+            <Database className="w-8 h-8 text-gold mb-2 mx-auto" />
             <p className="text-ink font-medium">Isolated Storage</p>
             <p className="text-ink-muted text-xs mt-1">
               Documents stored separately
@@ -558,7 +563,7 @@ export function GDPRDataManagement() {
           href={`mailto:${CONTACT.privacy}`}
           className="inline-flex items-center gap-2 px-4 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg text-ink transition-colors"
         >
-          <span>✉️</span>
+          <Mail className="w-4 h-4" />
           {CONTACT.privacy}
         </a>
       </div>

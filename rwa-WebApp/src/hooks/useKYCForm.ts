@@ -4,6 +4,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useAccount, useWriteContract, useWaitForTransactionReceipt, useChainId, useSwitchChain, useReadContract } from 'wagmi';
 import { keccak256, toBytes } from 'viem';
+import type { LucideIcon } from 'lucide-react';
 import { useKYC, KYCTier } from '@/contexts/KYCContext';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { ZERO_ADDRESS } from '@/config/contracts';
@@ -203,7 +204,7 @@ export function useKYCForm() {
       color: string;
       bgColor: string;
       borderColor: string;
-      icon: string;
+      icon: LucideIcon;
       description: string;
       requirements: string[];
     }> = {};

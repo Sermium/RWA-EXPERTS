@@ -482,11 +482,11 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
 
     return (
       <div className="mb-4">
-        <label className="block text-sm text-gray-400 mb-2">Select Camera</label>
+        <label className="block text-sm text-ink-muted mb-2">Select Camera</label>
         <select
           value={selectedCameraId}
           onChange={(e) => handleCameraChange(e.target.value)}
-          className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-gold-500 transition-colors"
+          className="w-full bg-surface-overlay border border-border-strong rounded-lg px-4 py-2.5 text-ink focus:outline-none focus:border-gold transition-colors"
         >
           {availableCameras.map((device, index) => (
             <option key={device.deviceId} value={device.deviceId}>
@@ -502,11 +502,11 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
   const renderModeSelection = () => (
     <div className="p-6">
       <div className="text-center mb-6">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-yellow-500/20 flex items-center justify-center">
-          <ScanFace className="w-8 h-8 text-yellow-400" />
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-warning-muted flex items-center justify-center">
+          <ScanFace className="w-8 h-8 text-warning" />
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">Liveness Verification</h2>
-        <p className="text-gray-400 text-sm">
+        <h2 className="text-xl font-display font-medium text-ink mb-2">Liveness Verification</h2>
+        <p className="text-ink-muted text-sm">
           Choose how you'd like to verify you're a real person
         </p>
       </div>
@@ -515,16 +515,16 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
         {/* Advanced Camera Option */}
         <button
           onClick={handleCameraMode}
-          className="w-full flex items-center gap-4 p-4 bg-gray-700/50 hover:bg-gray-700 border border-gray-600 hover:border-gold-500/50 rounded-xl transition-all text-left"
+          className="w-full flex items-center gap-4 p-4 bg-surface-overlay/50 hover:bg-surface-overlay border border-border-strong hover:border-gold/50 rounded-xl transition-all text-left"
         >
-          <div className="w-12 h-12 rounded-xl bg-gold-500/20 flex items-center justify-center">
-            <Camera className="w-6 h-6 text-gold-400" />
+          <div className="w-12 h-12 rounded-xl bg-gold/15 flex items-center justify-center">
+            <Camera className="w-6 h-6 text-gold" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-white">Smart Camera Check</h3>
-            <p className="text-gray-400 text-sm">AI-powered face detection (recommended)</p>
+            <h3 className="font-semibold text-ink">Smart Camera Check</h3>
+            <p className="text-ink-muted text-sm">AI-powered face detection (recommended)</p>
           </div>
-          <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -532,16 +532,16 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
         {/* Simple Camera Option */}
         <button
           onClick={handleSimpleCameraMode}
-          className="w-full flex items-center gap-4 p-4 bg-gray-700/50 hover:bg-gray-700 border border-gray-600 hover:border-green-500/50 rounded-xl transition-all text-left"
+          className="w-full flex items-center gap-4 p-4 bg-surface-overlay/50 hover:bg-surface-overlay border border-border-strong hover:border-success/50 rounded-xl transition-all text-left"
         >
-          <div className="w-12 h-12 rounded-xl bg-green-500/20 flex items-center justify-center">
-            <Video className="w-6 h-6 text-green-400" />
+          <div className="w-12 h-12 rounded-xl bg-success/15 flex items-center justify-center">
+            <Video className="w-6 h-6 text-success" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-white">Simple Camera Check</h3>
-            <p className="text-gray-400 text-sm">Basic verification (if smart check fails)</p>
+            <h3 className="font-semibold text-ink">Simple Camera Check</h3>
+            <p className="text-ink-muted text-sm">Basic verification (if smart check fails)</p>
           </div>
-          <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -549,16 +549,16 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
         {/* Mobile Option */}
         <button
           onClick={handleMobileMode}
-          className="w-full flex items-center gap-4 p-4 bg-gray-700/50 hover:bg-gray-700 border border-gray-600 hover:border-gold-500/50 rounded-xl transition-all text-left"
+          className="w-full flex items-center gap-4 p-4 bg-surface-overlay/50 hover:bg-surface-overlay border border-border-strong hover:border-gold/50 rounded-xl transition-all text-left"
         >
-          <div className="w-12 h-12 rounded-xl bg-gold-500/20 flex items-center justify-center">
-            <Smartphone className="w-6 h-6 text-gold-400" />
+          <div className="w-12 h-12 rounded-xl bg-gold/15 flex items-center justify-center">
+            <Smartphone className="w-6 h-6 text-gold" />
           </div>
           <div className="flex-1">
-            <h3 className="font-semibold text-white">Use Your Phone</h3>
-            <p className="text-gray-400 text-sm">Scan QR code to verify on mobile</p>
+            <h3 className="font-semibold text-ink">Use Your Phone</h3>
+            <p className="text-ink-muted text-sm">Scan QR code to verify on mobile</p>
           </div>
-          <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg className="w-5 h-5 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
           </svg>
         </button>
@@ -566,7 +566,7 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
 
       <button
         onClick={handleCancel}
-        className="w-full mt-4 text-gray-400 hover:text-white py-2 transition-colors text-sm"
+        className="w-full mt-4 text-ink-muted hover:text-ink py-2 transition-colors text-sm"
       >
         Cancel
       </button>
@@ -577,11 +577,11 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
   const renderMobileMode = () => (
     <div className="p-6">
       <div className="text-center mb-6">
-        <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gold-500/20 flex items-center justify-center">
-          <Smartphone className="w-6 h-6 text-gold-400" />
+        <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-gold/15 flex items-center justify-center">
+          <Smartphone className="w-6 h-6 text-gold" />
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">Scan with Your Phone</h2>
-        <p className="text-gray-400 text-sm">
+        <h2 className="text-xl font-bold text-ink mb-2">Scan with Your Phone</h2>
+        <p className="text-ink-muted text-sm">
           Open your phone's camera and scan this QR code
         </p>
       </div>
@@ -592,18 +592,18 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
         </div>
       </div>
 
-      <div className="bg-gray-700/50 rounded-xl p-3 mb-6">
-        <p className="text-gray-400 text-xs mb-2 text-center">Or copy this link:</p>
+      <div className="bg-surface-overlay/50 rounded-xl p-3 mb-6">
+        <p className="text-ink-muted text-xs mb-2 text-center">Or copy this link:</p>
         <div className="flex items-center gap-2">
           <input
             type="text"
             value={getMobileUrl()}
             readOnly
-            className="flex-1 px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white text-xs font-mono truncate"
+            className="flex-1 px-3 py-2 bg-surface border border-border-strong rounded-lg text-ink text-xs font-mono truncate"
           />
           <button
             onClick={() => navigator.clipboard.writeText(getMobileUrl())}
-            className="px-3 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg text-white transition-colors"
+            className="px-3 py-2 bg-surface-overlay hover:bg-border-strong rounded-lg text-ink transition-colors"
             title="Copy link"
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -616,13 +616,13 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
       <div className="flex gap-3">
         <button
           onClick={() => setMode('select')}
-          className="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors"
+          className="flex-1 py-2.5 bg-surface-overlay hover:bg-border-strong text-ink rounded-xl transition-colors"
         >
           Back
         </button>
         <button
           onClick={startMobileWaiting}
-          className="flex-1 py-2.5 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition-colors"
+          className="flex-1 py-2.5 bg-gold hover:bg-gold-light text-ink font-medium rounded-xl transition-colors"
         >
           I've Scanned It
         </button>
@@ -634,47 +634,47 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
   const renderMobileWaiting = () => (
     <div className="p-6">
       <div className="text-center mb-6">
-        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gold-500/20 flex items-center justify-center">
-          <svg className="w-8 h-8 text-gold-400 animate-spin" fill="none" viewBox="0 0 24 24">
+        <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gold/15 flex items-center justify-center">
+          <svg className="w-8 h-8 text-gold animate-spin" fill="none" viewBox="0 0 24 24">
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-white mb-2">Waiting for Phone</h2>
-        <p className="text-gray-400 text-sm">
+        <h2 className="text-xl font-bold text-ink mb-2">Waiting for Phone</h2>
+        <p className="text-ink-muted text-sm">
           Complete the liveness check on your phone. This will update automatically.
         </p>
       </div>
 
       <div className="flex justify-center mb-6">
-        <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+        <div className="bg-surface-overlay/50 rounded-xl p-4 text-center">
           <div className="bg-white p-2 rounded-lg inline-block mb-2">
             <QRCodeSVG value={getMobileUrl()} size={80} level="H" includeMargin={false} />
           </div>
-          <p className="text-gray-500 text-xs">Haven't scanned yet?</p>
+          <p className="text-ink-faint text-xs">Haven't scanned yet?</p>
         </div>
       </div>
 
       <div className="flex gap-3 mb-6">
         <button
           onClick={() => setMode('mobile')}
-          className="flex-1 py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors"
+          className="flex-1 py-2.5 bg-surface-overlay hover:bg-border-strong text-ink rounded-xl transition-colors"
         >
           Show QR Again
         </button>
         <button
           onClick={handleCancel}
-          className="flex-1 py-2.5 text-gray-400 hover:text-white rounded-xl transition-colors"
+          className="flex-1 py-2.5 text-ink-muted hover:text-ink rounded-xl transition-colors"
         >
           Cancel
         </button>
       </div>
 
-      <div className="pt-4 border-t border-gray-700 text-center">
-        <p className="text-gray-500 text-xs mb-2">Having trouble?</p>
+      <div className="pt-4 border-t border-border text-center">
+        <p className="text-ink-faint text-xs mb-2">Having trouble?</p>
         <button
           onClick={handleManualFallback}
-          className="text-gold-400 hover:text-gold-300 text-sm underline"
+          className="text-gold hover:text-gold-light text-sm underline"
         >
           Request manual review instead
         </button>
@@ -687,12 +687,12 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
     <div className="p-4">
       {status === 'error' ? (
         <div className="text-center py-6">
-          <div className="text-5xl mb-4">⚠️</div>
-          <h3 className="text-lg font-bold text-white mb-2">Detection Error</h3>
-          <p className="text-red-400 text-sm mb-4 max-w-sm mx-auto">{errorMessage}</p>
+          <AlertTriangle className="w-12 h-12 text-danger mb-4 mx-auto" />
+          <h3 className="text-lg font-semibold text-ink mb-2">Detection Error</h3>
+          <p className="text-danger text-sm mb-4 max-w-sm mx-auto">{errorMessage}</p>
           
           {useSimpleMode && (
-            <p className="text-gray-400 text-sm mb-6">
+            <p className="text-ink-muted text-sm mb-6">
               Try the simple camera check or use your phone instead.
             </p>
           )}
@@ -701,28 +701,28 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
             {useSimpleMode && (
               <button
                 onClick={handleSimpleCameraMode}
-                className="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-success hover:bg-success/80 text-ink font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <span>🎥</span>
+                <Camera className="w-4 h-4" />
                 Try Simple Camera Check
               </button>
             )}
             <button
               onClick={handleRetryCamera}
-              className="w-full py-2.5 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition-colors"
+              className="w-full py-2.5 bg-gold hover:bg-gold-light text-ink font-medium rounded-xl transition-colors"
             >
               Retry Smart Check
             </button>
             <button
               onClick={handleMobileMode}
-              className="w-full py-2.5 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-gold hover:bg-gold-light text-ink font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
-              <span>📱</span>
+              <Smartphone className="w-4 h-4" />
               Use Phone Instead
             </button>
             <button
               onClick={() => setMode('select')}
-              className="w-full py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors"
+              className="w-full py-2.5 bg-surface-overlay hover:bg-border-strong text-ink rounded-xl transition-colors"
             >
               Back to Options
             </button>
@@ -730,15 +730,15 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
         </div>
       ) : status === 'complete' && result ? (
         <div className="text-center py-6">
-          <div className="text-6xl mb-4">{result.passed ? '✅' : '❌'}</div>
-          <h3 className="text-2xl font-bold text-white mb-2">
+          {result.passed ? <CheckCircle2 className="w-14 h-14 text-success mb-4 mx-auto" /> : <XCircle className="w-14 h-14 text-danger mb-4 mx-auto" />}
+          <h3 className="text-2xl font-bold text-ink mb-2">
             {result.passed ? 'Liveness Verified!' : 'Verification Failed'}
           </h3>
-          <p className="text-gray-400 mb-4">
+          <p className="text-ink-muted mb-4">
             Score: {result.score}% ({result.completedChallenges}/{result.totalChallenges} challenges)
           </p>
-          <div className="flex items-center justify-center gap-2 text-gold-400">
-            <div className="w-4 h-4 border-2 border-gold-500 border-t-transparent rounded-full animate-spin" />
+          <div className="flex items-center justify-center gap-2 text-gold">
+            <div className="w-4 h-4 border-2 border-gold border-t-transparent rounded-full animate-spin" />
             <span className="text-sm">Continuing...</span>
           </div>
         </div>
@@ -747,7 +747,7 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
           {/* Camera selector */}
           {renderCameraSelector()}
 
-          <div className="relative aspect-[4/3] bg-gray-900 rounded-xl overflow-hidden mb-4">
+          <div className="relative aspect-[4/3] bg-surface-sunken rounded-xl overflow-hidden mb-4">
             <video
               ref={videoRef}
               autoPlay
@@ -760,22 +760,22 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
 
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className={`w-40 h-52 border-4 border-dashed rounded-full transition-colors ${
-                faceDetected ? 'border-green-500' : 'border-gray-500'
+                faceDetected ? 'border-success' : 'border-ink-faint'
               }`} />
             </div>
 
             <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-sm flex items-center gap-2 ${
-              faceDetected ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+              faceDetected ? 'bg-success/20 text-success' : 'bg-danger/20 text-danger'
             }`}>
-              <div className={`w-2 h-2 rounded-full ${faceDetected ? 'bg-green-500' : 'bg-red-500'}`} />
+              <div className={`w-2 h-2 rounded-full ${faceDetected ? 'bg-success' : 'bg-danger'}`} />
               {faceDetected ? 'Face detected' : 'No face detected'}
             </div>
 
             {status === 'loading' && (
-              <div className="absolute inset-0 bg-gray-900/80 flex items-center justify-center">
+              <div className="absolute inset-0 bg-surface-sunken/80 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-10 h-10 border-4 border-gold-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                  <p className="text-gray-400">Loading face detection...</p>
+                  <div className="w-10 h-10 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-3" />
+                  <p className="text-ink-muted">Loading face detection...</p>
                 </div>
               </div>
             )}
@@ -784,27 +784,27 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
           {status === 'running' && currentChallenge && (
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-gray-400 text-sm">Challenge {challengeIndex + 1}/{totalChallenges}</span>
-                <div className="flex-1 bg-gray-700 rounded-full h-2">
+                <span className="text-ink-muted text-sm">Challenge {challengeIndex + 1}/{totalChallenges}</span>
+                <div className="flex-1 bg-surface-overlay rounded-full h-2">
                   <div
-                    className="bg-gold-500 h-2 rounded-full transition-all duration-300"
+                    className="bg-gold h-2 rounded-full transition-all duration-300"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
               </div>
 
-              <div className="bg-gold-500/10 border border-gold-500/30 rounded-xl p-4 text-center">
-                <div className="text-4xl mb-2">{currentChallenge.icon}</div>
-                <p className="text-gold-300 text-lg font-medium">{currentChallenge.instruction}</p>
+              <div className="bg-gold/10 border border-gold/30 rounded-xl p-4 text-center">
+                <currentChallenge.icon className="w-9 h-9 text-gold mb-2 mx-auto" />
+                <p className="text-gold-light text-lg font-medium">{currentChallenge.instruction}</p>
               </div>
             </div>
           )}
 
           {status === 'ready' && (
             <>
-              <div className="bg-gray-700/50 rounded-xl p-4 mb-4">
-                <h4 className="text-white font-medium mb-2">Instructions:</h4>
-                <ul className="text-gray-400 text-sm space-y-1">
+              <div className="bg-surface-overlay/50 rounded-xl p-4 mb-4">
+                <h4 className="text-ink font-medium mb-2">Instructions:</h4>
+                <ul className="text-ink-muted text-sm space-y-1">
                   <li>• Position your face in the oval guide</li>
                   <li>• Ensure good lighting on your face</li>
                   <li>• Follow the on-screen prompts</li>
@@ -815,23 +815,23 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
                 <button
                   onClick={startAdvancedCheck}
                   disabled={!faceDetected}
-                  className="w-full bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-600 disabled:cursor-not-allowed text-black font-semibold py-3 rounded-xl transition-colors"
+                  className="w-full bg-gold hover:bg-gold-light disabled:bg-border-strong disabled:cursor-not-allowed text-surface-sunken font-semibold py-3 rounded-lg transition-colors"
                 >
                   {faceDetected ? 'Start Liveness Check' : 'Waiting for face detection...'}
                 </button>
 
-                <p className="text-center text-gray-500 text-xs">
+                <p className="text-center text-ink-faint text-xs">
                   Face detection not working?{' '}
                   <button
                     onClick={handleSimpleCameraMode}
-                    className="text-green-400 hover:text-green-300 underline"
+                    className="text-success hover:text-success/80 underline"
                   >
                     Try simple mode
                   </button>
                   {' or '}
                   <button
                     onClick={handleMobileMode}
-                    className="text-gold-400 hover:text-gold-300 underline"
+                    className="text-gold hover:text-gold-light underline"
                   >
                     use your phone
                   </button>
@@ -843,7 +843,7 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
           {status === 'running' && (
             <button
               onClick={handleCancel}
-              className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl"
+              className="w-full bg-surface-overlay hover:bg-border-strong text-ink py-3 rounded-xl"
             >
               Cancel
             </button>
@@ -858,27 +858,27 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
     <div className="p-4">
       {status === 'error' ? (
         <div className="text-center py-6">
-          <div className="text-5xl mb-4">⚠️</div>
-          <h3 className="text-lg font-bold text-white mb-2">Camera Error</h3>
-          <p className="text-red-400 text-sm mb-6 max-w-sm mx-auto">{errorMessage}</p>
+          <AlertTriangle className="w-12 h-12 text-danger mb-4 mx-auto" />
+          <h3 className="text-lg font-semibold text-ink mb-2">Camera Error</h3>
+          <p className="text-danger text-sm mb-6 max-w-sm mx-auto">{errorMessage}</p>
 
           <div className="space-y-3 max-w-xs mx-auto">
             <button
               onClick={handleRetryCamera}
-              className="w-full py-2.5 bg-green-600 hover:bg-green-500 text-white font-medium rounded-xl transition-colors"
+              className="w-full py-2.5 bg-success hover:bg-success/80 text-ink font-medium rounded-xl transition-colors"
             >
               Try Again
             </button>
             <button
               onClick={handleMobileMode}
-              className="w-full py-2.5 bg-gold-600 hover:bg-gold-500 text-white font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+              className="w-full py-2.5 bg-gold hover:bg-gold-light text-ink font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
             >
-              <span>📱</span>
+              <Smartphone className="w-4 h-4" />
               Use Phone Instead
             </button>
             <button
               onClick={() => setMode('select')}
-              className="w-full py-2.5 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors"
+              className="w-full py-2.5 bg-surface-overlay hover:bg-border-strong text-ink rounded-xl transition-colors"
             >
               Back to Options
             </button>
@@ -886,15 +886,15 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
         </div>
       ) : status === 'complete' && result ? (
         <div className="text-center py-6">
-          <div className="text-6xl mb-4">{result.passed ? '✅' : '❌'}</div>
-          <h3 className="text-2xl font-bold text-white mb-2">
+          {result.passed ? <CheckCircle2 className="w-14 h-14 text-success mb-4 mx-auto" /> : <XCircle className="w-14 h-14 text-danger mb-4 mx-auto" />}
+          <h3 className="text-2xl font-bold text-ink mb-2">
             {result.passed ? 'Verification Complete!' : 'Verification Failed'}
           </h3>
-          <p className="text-gray-400 mb-4">
+          <p className="text-ink-muted mb-4">
             Score: {result.score}% ({result.completedChallenges}/{result.totalChallenges} challenges)
           </p>
-          <div className="flex items-center justify-center gap-2 text-green-400">
-            <div className="w-4 h-4 border-2 border-green-500 border-t-transparent rounded-full animate-spin" />
+          <div className="flex items-center justify-center gap-2 text-success">
+            <div className="w-4 h-4 border-2 border-success border-t-transparent rounded-full animate-spin" />
             <span className="text-sm">Continuing...</span>
           </div>
         </div>
@@ -903,7 +903,7 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
           {/* Camera selector */}
           {renderCameraSelector()}
 
-          <div className="relative aspect-[4/3] bg-gray-900 rounded-xl overflow-hidden mb-4">
+          <div className="relative aspect-[4/3] bg-surface-sunken rounded-xl overflow-hidden mb-4">
             <video
               ref={videoRef}
               autoPlay
@@ -914,19 +914,19 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
             />
 
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-40 h-52 border-4 border-dashed border-green-500/50 rounded-full" />
+              <div className="w-40 h-52 border-4 border-dashed border-success/50 rounded-full" />
             </div>
 
-            <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-sm bg-green-500/20 text-green-400 flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-green-500" />
+            <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-sm bg-success/15 text-success flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-success" />
               Simple Mode
             </div>
 
             {status === 'loading' && (
-              <div className="absolute inset-0 bg-gray-900/80 flex items-center justify-center">
+              <div className="absolute inset-0 bg-surface-sunken/80 flex items-center justify-center">
                 <div className="text-center">
-                  <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
-                  <p className="text-gray-400">Starting camera...</p>
+                  <div className="w-10 h-10 border-4 border-success border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                  <p className="text-ink-muted">Starting camera...</p>
                 </div>
               </div>
             )}
@@ -935,20 +935,23 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
           {status === 'running' && (
             <div className="mb-4">
               <div className="flex items-center gap-2 mb-3">
-                <span className="text-gray-400 text-sm">
+                <span className="text-ink-muted text-sm">
                   Challenge {simpleChallengeIndex + 1}/{SIMPLE_CHALLENGES.length}
                 </span>
-                <div className="flex-1 bg-gray-700 rounded-full h-2">
+                <div className="flex-1 bg-surface-overlay rounded-full h-2">
                   <div
-                    className="bg-green-500 h-2 rounded-full transition-all duration-100"
+                    className="bg-success h-2 rounded-full transition-all duration-100"
                     style={{ width: `${simpleProgress}%` }}
                   />
                 </div>
               </div>
 
-              <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4 text-center">
-                <div className="text-4xl mb-2">{SIMPLE_CHALLENGES[simpleChallengeIndex]?.icon}</div>
-                <p className="text-green-300 text-lg font-medium">
+              <div className="bg-success/10 border border-success/30 rounded-xl p-4 text-center">
+                {(() => {
+                  const SimpleChallengeIcon = SIMPLE_CHALLENGES[simpleChallengeIndex]?.icon;
+                  return SimpleChallengeIcon ? <SimpleChallengeIcon className="w-9 h-9 text-success mb-2 mx-auto" /> : null;
+                })()}
+                <p className="text-success text-lg font-medium">
                   {SIMPLE_CHALLENGES[simpleChallengeIndex]?.instruction}
                 </p>
               </div>
@@ -960,10 +963,10 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
                     key={index}
                     className={`w-3 h-3 rounded-full transition-colors ${
                       simpleCompleted.includes(index)
-                        ? 'bg-green-500'
+                        ? 'bg-success'
                         : index === simpleChallengeIndex
-                        ? 'bg-green-500 animate-pulse'
-                        : 'bg-gray-600'
+                        ? 'bg-success animate-pulse'
+                        : 'bg-border-strong'
                     }`}
                   />
                 ))}
@@ -973,9 +976,9 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
 
           {status === 'ready' && (
             <>
-              <div className="bg-gray-700/50 rounded-xl p-4 mb-4">
-                <h4 className="text-white font-medium mb-2">Simple Verification</h4>
-                <p className="text-gray-400 text-sm">
+              <div className="bg-surface-overlay/50 rounded-xl p-4 mb-4">
+                <h4 className="text-ink font-medium mb-2">Simple Verification</h4>
+                <p className="text-ink-muted text-sm">
                   Position your face in the oval and follow the prompts. Each challenge takes about 3 seconds.
                 </p>
               </div>
@@ -983,16 +986,16 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
               <div className="space-y-3">
                 <button
                   onClick={startSimpleCheck}
-                  className="w-full bg-green-500 hover:bg-green-600 text-black font-semibold py-3 rounded-xl transition-colors"
+                  className="w-full bg-success hover:bg-success/80 text-surface-sunken font-semibold py-3 rounded-xl transition-colors"
                 >
                   Start Simple Check
                 </button>
 
-                <p className="text-center text-gray-500 text-xs">
+                <p className="text-center text-ink-faint text-xs">
                   Want AI detection?{' '}
                   <button
                     onClick={handleCameraMode}
-                    className="text-gold-400 hover:text-gold-300 underline"
+                    className="text-gold hover:text-gold-light underline"
                   >
                     Try smart mode
                   </button>
@@ -1004,7 +1007,7 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
           {status === 'running' && (
             <button
               onClick={handleCancel}
-              className="w-full bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl mt-4"
+              className="w-full bg-surface-overlay hover:bg-border-strong text-ink py-3 rounded-xl mt-4"
             >
               Cancel
             </button>
@@ -1016,17 +1019,17 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
 
   return (
     <div className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-2xl max-w-xl w-full border border-gray-700 overflow-hidden max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center p-4 border-b border-gray-700 sticky top-0 bg-gray-800 z-10">
+      <div className="bg-surface rounded-xl max-w-xl w-full border border-border overflow-hidden max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center p-4 border-b border-border sticky top-0 bg-surface z-10">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-              mode === 'simple-camera' ? 'bg-green-500/20' : 'bg-yellow-500/20'
+              mode === 'simple-camera' ? 'bg-success/20' : 'bg-gold/20'
             }`}>
-              <span className="text-xl">🎭</span>
+              <ScanFace className={`w-5 h-5 ${mode === 'simple-camera' ? 'text-success' : 'text-gold'}`} />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-white">Liveness Check</h2>
-              <p className="text-gray-400 text-sm">
+              <h2 className="text-lg font-display font-medium text-ink">Liveness Check</h2>
+              <p className="text-ink-muted text-sm">
                 {mode === 'select' && 'Choose verification method'}
                 {mode === 'camera' && 'Smart camera verification'}
                 {mode === 'simple-camera' && 'Simple camera verification'}
@@ -1037,7 +1040,7 @@ export function LivenessCheck({ onComplete, onCancel }: LivenessCheckProps) {
           </div>
           <button
             onClick={handleCancel}
-            className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-700"
+            className="text-ink-muted hover:text-ink p-2 rounded-lg hover:bg-surface-overlay"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

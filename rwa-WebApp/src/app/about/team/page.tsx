@@ -52,15 +52,15 @@ function ArrowButton({
       onClick={onClick}
       className={`
         w-10 h-10 md:w-12 md:h-12
-        bg-surface/80 hover:bg-gold-600 
+        bg-surface/80 hover:bg-gold
         backdrop-blur-sm
         text-ink rounded-full
         flex items-center justify-center
         transition-all duration-300
-        border border-border-strong/50 hover:border-gold-500
+        border border-border-strong/50 hover:border-gold
         hover:scale-110
-        focus:outline-none focus:ring-2 focus:ring-purple-500
-        shadow-lg
+        focus:outline-none focus:ring-2 focus:ring-gold
+        shadow-panel
         ${className}
       `}
       aria-label={`Scroll ${direction}`}

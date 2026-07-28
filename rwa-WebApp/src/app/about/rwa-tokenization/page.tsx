@@ -97,14 +97,14 @@ export default function RWATokenizationPage() {
       {/* Hero Section */}
       <section className="relative pt-16 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center px-4 py-2 bg-gold-500/10 border border-gold-500/30 rounded-full text-gold text-sm mb-8">
+          <div className="inline-flex items-center px-4 py-2 bg-gold/10 border border-gold/30 rounded-full text-gold text-sm mb-8">
             <Coins className="w-4 h-4 mr-2" />
             Understanding RWA Tokenization
           </div>
 
-          <h1 className="text-4xl sm:text-5xl font-bold text-ink mb-6">
+          <h1 className="text-4xl sm:text-5xl font-display font-medium text-ink mb-6">
             What is Real-World Asset
-            <span className="block bg-gradient-to-r from-gold-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            <span className="block italic text-gradient-gold">
               Tokenization?
             </span>
           </h1>
@@ -116,9 +116,8 @@ export default function RWATokenizationPage() {
         </div>
 
         {/* Background decoration */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-6xl opacity-20 pointer-events-none">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-gold-500 rounded-full filter blur-[128px]"></div>
-          <div className="absolute top-40 right-10 w-72 h-72 bg-gold-500 rounded-full filter blur-[128px]"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full max-w-6xl opacity-10 pointer-events-none">
+          <div className="absolute top-20 left-1/4 w-72 h-72 bg-gold rounded-full filter blur-[128px]"></div>
         </div>
       </section>
 
@@ -127,7 +126,7 @@ export default function RWATokenizationPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-ink mb-6">
+              <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink mb-6">
                 The Bridge Between Traditional and Digital Finance
               </h2>
               <p className="text-ink-muted mb-6 text-lg">
@@ -149,7 +148,7 @@ export default function RWATokenizationPage() {
                   "Immutable records eliminate fraud and disputes"
                 ].map((item, index) => (
                   <div key={index} className="flex items-start">
-                    <CheckCircle2 className="w-6 h-6 text-green-400 mr-3 flex-shrink-0 mt-0.5" />
+                    <CheckCircle2 className="w-6 h-6 text-success mr-3 flex-shrink-0 mt-0.5" />
                     <span className="text-ink-muted">{item}</span>
                   </div>
                 ))}
@@ -157,29 +156,29 @@ export default function RWATokenizationPage() {
             </div>
 
             <div className="relative">
-              <div className="bg-gradient-to-br from-gray-700 to-gray-800 rounded-2xl p-8 border border-border-strong">
+              <div className="bg-surface-raised rounded-xl p-8 border border-border-strong">
                 <h3 className="text-xl font-semibold text-ink mb-6">Traditional vs Tokenized</h3>
                 <div className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                      <div className="text-red-400 font-semibold mb-2">Traditional</div>
+                    <div className="text-center p-4 bg-danger/10 border border-danger/30 rounded-lg">
+                      <div className="text-danger font-semibold mb-2">Traditional</div>
                       <div className="text-3xl font-bold text-ink">T+2</div>
                       <div className="text-sm text-ink-muted">Settlement</div>
                     </div>
-                    <div className="text-center p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-                      <div className="text-green-400 font-semibold mb-2">Tokenized</div>
+                    <div className="text-center p-4 bg-success/10 border border-success/30 rounded-lg">
+                      <div className="text-success font-semibold mb-2">Tokenized</div>
                       <div className="text-3xl font-bold text-ink">Instant</div>
                       <div className="text-sm text-ink-muted">Settlement</div>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="text-center p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-                      <div className="text-red-400 font-semibold mb-2">Traditional</div>
+                    <div className="text-center p-4 bg-danger/10 border border-danger/30 rounded-lg">
+                      <div className="text-danger font-semibold mb-2">Traditional</div>
                       <div className="text-3xl font-bold text-ink">$100K+</div>
                       <div className="text-sm text-ink-muted">Min Investment</div>
                     </div>
-                    <div className="text-center p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-                      <div className="text-green-400 font-semibold mb-2">Tokenized</div>
+                    <div className="text-center p-4 bg-success/10 border border-success/30 rounded-lg">
+                      <div className="text-success font-semibold mb-2">Tokenized</div>
                       <div className="text-3xl font-bold text-ink">$100</div>
                       <div className="text-sm text-ink-muted">Min Investment</div>
                     </div>
@@ -195,11 +194,11 @@ export default function RWATokenizationPage() {
       <section className="py-16 md:py-24 bg-gradient-to-b from-surface-sunken to-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-gold-500/10 text-gold border border-gold-500/20 mb-4">
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-gold/10 text-gold border border-gold/20 mb-4">
               <Play className="h-4 w-4 mr-2" />
               Video Explainer
             </span>
-            <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">
+            <h2 className="text-3xl md:text-4xl font-display font-medium text-ink mb-4">
               Watch & Learn
             </h2>
             <p className="text-ink-muted text-lg max-w-2xl mx-auto">
@@ -208,7 +207,7 @@ export default function RWATokenizationPage() {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-surface shadow-2xl shadow-blue-500/10 border border-border/50">
+            <div className="relative aspect-video rounded-xl overflow-hidden bg-surface shadow-panel border border-border/50">
               <video
                 ref={videoRef}
                 className="absolute inset-0 w-full h-full object-cover"
@@ -226,7 +225,7 @@ export default function RWATokenizationPage() {
                   className="absolute inset-0 flex items-center justify-center bg-surface-sunken/40 cursor-pointer transition-opacity hover:bg-surface-sunken/30"
                   onClick={toggleVideoPlay}
                 >
-                  <div className="w-20 h-20 rounded-full bg-gold-500 flex items-center justify-center shadow-lg shadow-blue-500/50 transition-transform hover:scale-110">
+                  <div className="w-20 h-20 rounded-full bg-gold flex items-center justify-center shadow-gold transition-transform hover:scale-110">
                     <Play className="h-8 w-8 text-ink ml-1" fill="white" />
                   </div>
                 </div>
@@ -265,11 +264,11 @@ export default function RWATokenizationPage() {
               <div className="text-sm text-ink-muted">Quick Overview</div>
             </div>
             <div className="bg-surface/50 rounded-xl p-4 border border-border/50 text-center">
-              <div className="text-2xl font-bold text-green-400 mb-1">Simple</div>
+              <div className="text-2xl font-bold text-gold mb-1">Simple</div>
               <div className="text-sm text-ink-muted">Easy to Understand</div>
             </div>
             <div className="bg-surface/50 rounded-xl p-4 border border-border/50 text-center">
-              <div className="text-2xl font-bold text-gold-400 mb-1">Complete</div>
+              <div className="text-2xl font-bold text-gold mb-1">Complete</div>
               <div className="text-sm text-ink-muted">Full Process Explained</div>
             </div>
           </div>
@@ -280,7 +279,7 @@ export default function RWATokenizationPage() {
       <section className="py-16 px-4 sm:px-6 lg:px-8 bg-surface/30">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-ink mb-4">
+            <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink mb-4">
               Why Tokenize?
             </h2>
             <p className="text-ink-muted max-w-2xl mx-auto text-lg">
@@ -293,10 +292,10 @@ export default function RWATokenizationPage() {
             {advantages.map((advantage, index) => (
               <div 
                 key={index}
-                className="bg-surface/50 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-gold-500/50 transition-all duration-300"
+                className="bg-surface/50 backdrop-blur-sm border border-border rounded-xl p-6 hover:border-gold/50 transition-all duration-300"
               >
                 <div className="flex items-start justify-between mb-4">
-                  <div className="p-2 bg-gold-500/10 rounded-lg text-gold">
+                  <div className="p-2 bg-gold/10 rounded-lg text-gold">
                     {advantage.icon}
                   </div>
                   <div className="text-right">
@@ -313,18 +312,18 @@ export default function RWATokenizationPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-r from-gold-900/30 to-gold-light-900/30">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gold/5">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold text-ink mb-6">
+          <h2 className="text-3xl sm:text-4xl font-display font-medium text-ink mb-6">
             Ready to Tokenize Your Assets?
           </h2>
           <p className="text-lg text-ink-muted mb-8">
             Start your tokenization journey today. Our platform supports a wide range of asset types.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Link 
+            <Link
               href="/tokenize"
-              className="px-8 py-4 bg-gradient-to-r from-gold-500 to-gold-light-600 text-ink font-semibold rounded-xl hover:opacity-90 transition flex items-center"
+              className="px-8 py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition flex items-center"
             >
               Start Tokenizing <ArrowRight className="ml-2 w-5 h-5" />
             </Link>

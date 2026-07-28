@@ -3,6 +3,7 @@
 
 import { useAccount } from 'wagmi';
 import { useChainConfig } from '@/hooks/useChainConfig';
+import { AlertTriangle } from 'lucide-react';
 
 export function NetworkGuard() {
   const { isConnected } = useAccount();
@@ -21,19 +22,19 @@ export function NetworkGuard() {
   if (!suggestedChain) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-yellow-500 text-black p-3 z-[9999] shadow-lg">
+    <div className="fixed top-0 left-0 right-0 bg-warning text-surface-sunken p-3 z-[9999] shadow-panel">
       <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-lg">⚠️</span>
+          <AlertTriangle className="w-5 h-5" />
           <span className="text-sm sm:text-base">
-            <strong>{chainName}</strong> is not supported yet. 
+            <strong>{chainName}</strong> is not supported yet.
             Switch to <strong>{suggestedChain.name}</strong> to use the platform.
           </span>
         </div>
         <button
           onClick={() => switchToChain(suggestedChain.id)}
           disabled={isSwitching}
-          className="px-4 py-1.5 bg-black text-yellow-500 rounded-lg font-semibold text-sm hover:bg-gray-900 disabled:opacity-50 transition-colors"
+          className="px-4 py-1.5 bg-surface-sunken text-warning rounded-lg font-semibold text-sm hover:bg-surface disabled:opacity-50 transition-colors"
         >
           {isSwitching ? 'Switching...' : `Switch Network`}
         </button>

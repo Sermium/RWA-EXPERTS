@@ -52,15 +52,15 @@ export interface FormErrors {
 
 // Asset types - MUST match database constraint
 export const ASSET_TYPES = [
-  { value: 'real_estate', label: 'Real Estate', icon: '🏠', description: 'Properties, land, buildings' },
-  { value: 'infrastructure', label: 'Infrastructure', icon: '🏗️', description: 'Roads, bridges, utilities' },
-  { value: 'art_collectibles', label: 'Art & Collectibles', icon: '🎨', description: 'Artwork, rare items, memorabilia' },
-  { value: 'business_equity', label: 'Business Equity', icon: '🏢', description: 'Company shares, ownership stakes' },
-  { value: 'revenue_based', label: 'Revenue Based', icon: '💰', description: 'Royalties, recurring income streams' },
-  { value: 'commodities', label: 'Commodities', icon: '📦', description: 'Raw materials, precious metals' },
-  { value: 'vehicles', label: 'Vehicles & Equipment', icon: '🚗', description: 'Cars, machinery, equipment' },
-  { value: 'intellectual_property', label: 'Intellectual Property', icon: '💡', description: 'Patents, trademarks, copyrights' },
-  { value: 'other', label: 'Other', icon: '🔷', description: 'Other asset types' },
+  { value: 'real_estate', label: 'Real Estate', description: 'Properties, land, buildings' },
+  { value: 'infrastructure', label: 'Infrastructure', description: 'Roads, bridges, utilities' },
+  { value: 'art_collectibles', label: 'Art & Collectibles', description: 'Artwork, rare items, memorabilia' },
+  { value: 'business_equity', label: 'Business Equity', description: 'Company shares, ownership stakes' },
+  { value: 'revenue_based', label: 'Revenue Based', description: 'Royalties, recurring income streams' },
+  { value: 'commodities', label: 'Commodities', description: 'Raw materials, precious metals' },
+  { value: 'vehicles', label: 'Vehicles & Equipment', description: 'Cars, machinery, equipment' },
+  { value: 'intellectual_property', label: 'Intellectual Property', description: 'Patents, trademarks, copyrights' },
+  { value: 'other', label: 'Other', description: 'Other asset types' },
 ];
 
 export const USE_CASES = [

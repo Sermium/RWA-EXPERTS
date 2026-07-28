@@ -11,7 +11,8 @@ import { CONTRACTS, getNativeCurrency } from "@/config/contracts";
 import { getChainFees } from "@/lib/feesService";
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import { getLivenessChecker, LivenessChallenge, LivenessResult } from "@/lib/livenessCheck";
-import { Upload, Check, AlertCircle, X, Camera, Clock } from 'lucide-react';
+import { Upload, Check, AlertCircle, AlertTriangle, X, Camera, Clock, type LucideIcon } from 'lucide-react';
+import { TIER_ICON, TIER_ICON_CLASS } from '@/lib/kycTierIcons';
 import { useRouter } from "next/navigation";
 import { DocumentTypeSelector, MobileCamera } from '@/components/kyc/KYCComponents';
 import { validateIdDocument, DocumentValidationResult, DocumentType } from "@/lib/documentValidation";
@@ -55,7 +56,7 @@ const TIER_NAME_TO_NUMBER: Record<KYCTier, number> = {
 
 interface TierConfigItem {
   name: KYCTier;
-  icon: string;
+  icon: LucideIcon;
   limit: string;
   color: string;
   bgColor: string;
@@ -71,9 +72,9 @@ type TierConfigType = Record<number, TierConfigItem>;
 const getTierConfig = (limits: Record<KYCTier, number>): TierConfigType => ({
   0: {
     name: "None",
-    icon: "⚪",
+    icon: TIER_ICON.None,
     limit: "$0",
-    color: "text-ink-muted",
+    color: TIER_ICON_CLASS.None,
     bgColor: "bg-surface/50",
     borderColor: "border-border",
     buttonColor: "bg-border-strong",
@@ -82,20 +83,20 @@ const getTierConfig = (limits: Record<KYCTier, number>): TierConfigType => ({
   },
   1: {
     name: "Bronze",
-    icon: "🥉",
+    icon: TIER_ICON.Bronze,
     limit: formatLimitDisplay(limits.Bronze),
-    color: "text-amber-400",
-    bgColor: "bg-amber-900/20",
-    borderColor: "border-amber-500/30",
-    buttonColor: "bg-amber-600 hover:bg-amber-500",
+    color: TIER_ICON_CLASS.Bronze,
+    bgColor: "bg-gold-dark/10",
+    borderColor: "border-gold-dark/30",
+    buttonColor: "bg-gold-dark hover:bg-gold",
     requirements: ["Email verification", "Basic information", "Government ID"],
     processingTime: "Instant - 24 hours",
   },
   2: {
     name: "Silver",
-    icon: "🥈",
+    icon: TIER_ICON.Silver,
     limit: formatLimitDisplay(limits.Silver),
-    color: "text-ink-muted",
+    color: TIER_ICON_CLASS.Silver,
     bgColor: "bg-surface-overlay/30",
     borderColor: "border-border-strong/30",
     buttonColor: "bg-border-strong hover:bg-surface-overlay",
@@ -104,23 +105,23 @@ const getTierConfig = (limits: Record<KYCTier, number>): TierConfigType => ({
   },
   3: {
     name: "Gold",
-    icon: "🥇",
+    icon: TIER_ICON.Gold,
     limit: formatLimitDisplay(limits.Gold),
-    color: "text-warning",
-    bgColor: "bg-warning/20",
-    borderColor: "border-warning/30",
-    buttonColor: "bg-warning hover:bg-warning",
+    color: TIER_ICON_CLASS.Gold,
+    bgColor: "bg-gold/10",
+    borderColor: "border-gold/30",
+    buttonColor: "bg-gold hover:bg-gold-light",
     requirements: ["Silver requirements", "Liveness verification", "Proof of address"],
     processingTime: "3-5 business days",
   },
   4: {
     name: "Diamond",
-    icon: "💎",
+    icon: TIER_ICON.Diamond,
     limit: "Unlimited",
-    color: "text-cyan-400",
-    bgColor: "bg-cyan-900/20",
-    borderColor: "border-cyan-500/30",
-    buttonColor: "bg-cyan-600 hover:bg-cyan-500",
+    color: TIER_ICON_CLASS.Diamond,
+    bgColor: "bg-gold-light/10",
+    borderColor: "border-gold-light/30",
+    buttonColor: "bg-gold-light hover:bg-gold",
     requirements: ["Gold requirements", "Accredited investor documentation"],
     processingTime: "5-10 business days",
   },
@@ -193,16 +194,16 @@ function ProgressSteps({ currentStep }: { currentStep: FormStep }) {
                   index < currentIndex
                     ? "bg-success text-ink"
                     : index === currentIndex
-                    ? "bg-gold-600 text-ink ring-4 ring-purple-500/30"
+                    ? "bg-gold text-surface-sunken ring-4 ring-gold/30"
                     : "bg-surface-overlay text-ink-muted"
                 }
               `}
             >
-              {index < currentIndex ? "✓" : index + 1}
+              {index < currentIndex ? <Check className="w-4 h-4" /> : index + 1}
             </div>
             <span
               className={`text-xs mt-2 ${
-                index === currentIndex ? "text-gold-400" : "text-ink-faint"
+                index === currentIndex ? "text-gold" : "text-ink-faint"
               }`}
             >
               {step.label}
@@ -242,27 +243,27 @@ function TierCard({
     <div
       onClick={() => canSelect && onSelect()}
       className={`
-        relative rounded-2xl p-6 border-2 transition-all flex flex-col
+        relative rounded-xl p-6 border-2 transition-all flex flex-col
         ${
           isCurrent
             ? `${config.bgColor} ${config.borderColor} ring-2 ring-success/50`
             : isCompleted
             ? "bg-surface/50 border-border-strong"
             : canSelect
-            ? `${config.bgColor} ${config.borderColor} hover:ring-2 hover:ring-purple-500/50 cursor-pointer`
+            ? `${config.bgColor} ${config.borderColor} hover:ring-2 hover:ring-gold/50 cursor-pointer`
             : "bg-surface/30 border-border opacity-50"
         }
       `}
     >
       {isCurrent && (
-        <span className="absolute -top-3 -right-3 px-3 py-1 bg-success text-ink text-xs font-bold rounded-full">
-          ✓ CURRENT
+        <span className="absolute -top-3 -right-3 inline-flex items-center gap-1 px-3 py-1 bg-success text-ink text-xs font-bold rounded-full">
+          <Check className="w-3 h-3" /> CURRENT
         </span>
       )}
 
       <div className="text-center mb-4">
-        <div className="text-4xl mb-2">{config.icon}</div>
-        <h3 className={`text-xl font-bold ${config.color}`}>{config.name}</h3>
+        <config.icon className={`w-9 h-9 mb-2 mx-auto ${config.color}`} />
+        <h3 className={`text-xl font-semibold ${config.color}`}>{config.name}</h3>
         <p className="text-2xl font-bold text-ink mt-2">{config.limit}</p>
         <p className="text-ink-muted text-sm">investment limit</p>
       </div>
@@ -272,7 +273,7 @@ function TierCard({
           {config.requirements.map((req: string, idx: number) => (
             <li key={idx} className="flex items-center gap-2 text-sm text-ink-muted">
               <span className={isCompleted || isCurrent ? "text-success" : config.color}>
-                {isCompleted || isCurrent ? "✓" : "•"}
+                {isCompleted || isCurrent ? <Check className="w-3.5 h-3.5" /> : "•"}
               </span>
               {req}
             </li>
@@ -282,10 +283,10 @@ function TierCard({
 
       <div className="mt-6 pt-4 border-t border-border">
         {isCurrent && (
-          <div className="text-center text-success font-medium py-2">✓ Your Current Tier</div>
+          <div className="flex items-center justify-center gap-1.5 text-success font-medium py-2"><Check className="w-4 h-4" /> Your Current Tier</div>
         )}
         {isCompleted && (
-          <div className="text-center text-ink-faint font-medium py-2">✓ Completed</div>
+          <div className="flex items-center justify-center gap-1.5 text-ink-faint font-medium py-2"><Check className="w-4 h-4" /> Completed</div>
         )}
         {canSelect && (
           <div
@@ -313,12 +314,12 @@ function OcrProgressBar({ stage, percent }: { stage: string; percent: number }) 
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2">
-        <div className="animate-spin h-4 w-4 border-2 border-gold-500 border-t-transparent rounded-full" />
+        <div className="animate-spin h-4 w-4 border-2 border-gold border-t-transparent rounded-full" />
         <span className="text-sm text-ink-muted">{stage || 'Processing...'}</span>
       </div>
       <div className="w-full bg-surface-overlay rounded-full h-2">
         <div 
-          className="bg-gold-500 h-2 rounded-full transition-all duration-300"
+          className="bg-gold h-2 rounded-full transition-all duration-300"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -495,7 +496,7 @@ function LivenessCapture({
         {isRunning && currentChallenge && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6 pt-12">
             <div className="text-center">
-              <div className="text-5xl mb-3 animate-bounce">{currentChallenge.icon}</div>
+              <currentChallenge.icon className="w-14 h-14 text-ink mb-3 mx-auto" />
               <p className="text-ink text-xl font-semibold mb-1">{currentChallenge.instruction}</p>
               <p className="text-ink-muted text-sm">Step {challengeIndex + 1} of {totalChallenges}</p>
             </div>
@@ -506,7 +507,7 @@ function LivenessCapture({
           <div className="absolute top-4 left-4 right-20">
             <div className="h-2 bg-surface-overlay/80 rounded-full overflow-hidden backdrop-blur-sm">
               <div 
-                className="h-full bg-gradient-to-r from-green-500 to-emerald-400 transition-all duration-300 ease-out"
+                className="h-full bg-success transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -517,8 +518,8 @@ function LivenessCapture({
         {!isReady && !isRunning && !isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-surface-sunken/80">
             <div className="text-center p-6">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gold-600/20 flex items-center justify-center">
-                <svg className="w-10 h-10 text-gold-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gold/15 flex items-center justify-center">
+                <svg className="w-10 h-10 text-gold" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                 </svg>
               </div>
@@ -532,7 +533,7 @@ function LivenessCapture({
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-surface-sunken/80">
             <div className="text-center">
-              <div className="w-12 h-12 border-4 border-gold-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-4" />
+              <div className="w-12 h-12 border-4 border-gold/30 border-t-gold rounded-full animate-spin mx-auto mb-4" />
               <p className="text-ink">Initializing camera...</p>
               <p className="text-ink-muted text-sm mt-1">Loading face detection models</p>
             </div>
@@ -543,7 +544,7 @@ function LivenessCapture({
       {error && (
         <div className="p-4 bg-danger/30 border border-danger/50 rounded-xl">
           <div className="flex items-start gap-3">
-            <span className="text-danger text-xl">⚠️</span>
+            <AlertTriangle className="w-5 h-5 text-danger flex-shrink-0" />
             <div>
               <p className="text-danger font-medium">Camera Error</p>
               <p className="text-danger/80 text-sm mt-1">{error}</p>
@@ -558,7 +559,7 @@ function LivenessCapture({
             type="button"
             onClick={handleStart}
             disabled={isLoading}
-            className="flex-1 py-3.5 bg-gold-600 hover:bg-gold-500 disabled:bg-gold-600/50 text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="flex-1 py-3.5 bg-gold hover:bg-gold-light disabled:bg-gold/50 text-surface-sunken font-semibold rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <>
@@ -621,8 +622,8 @@ function LivenessCapture({
       </div>
       
       {isReady && !isRunning && (
-        <div className="p-4 bg-gold-900/20 border border-gold-500/30 rounded-xl">
-          <h4 className="text-gold-400 font-medium mb-2 flex items-center gap-2">
+        <div className="p-4 bg-gold/10 border border-gold/30 rounded-xl">
+          <h4 className="text-gold font-medium mb-2 flex items-center gap-2">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -1173,7 +1174,7 @@ export function KYCSubmissionForm() {
   if (kycLoading) {
     return (
       <div className="max-w-md mx-auto text-center py-16">
-        <svg className="w-12 h-12 mx-auto text-gold-400 animate-spin mb-6" fill="none" viewBox="0 0 24 24">
+        <svg className="w-12 h-12 mx-auto text-gold animate-spin mb-6" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
         </svg>
@@ -1193,7 +1194,7 @@ export function KYCSubmissionForm() {
 
     if (isApplicationPending) {
       return (
-        <div className="bg-warning/30 border border-warning/50 rounded-2xl p-6 mb-8">
+        <div className="bg-warning/30 border border-warning/50 rounded-xl p-6 mb-8">
           <div className="flex items-center gap-4">
             <svg className="w-8 h-8 text-warning animate-spin" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -1210,15 +1211,15 @@ export function KYCSubmissionForm() {
 
     if (isApproved) {
       return (
-        <div className={`rounded-2xl p-6 mb-8 ${config.bgColor} border ${config.borderColor}`}>
+        <div className={`rounded-xl p-6 mb-8 ${config.bgColor} border ${config.borderColor}`}>
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
-              <div className="text-4xl">{config.icon}</div>
+              <config.icon className={`w-9 h-9 ${config.color}`} />
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className={`text-2xl font-bold ${config.color}`}>{config.name} Tier</h2>
-                  <span className="px-2 py-1 bg-success/20 text-success text-xs font-medium rounded-full">
-                    ✓ Verified
+                  <h2 className={`text-2xl font-semibold ${config.color}`}>{config.name} Tier</h2>
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-success/20 text-success text-xs font-medium rounded-full">
+                    <Check className="w-3 h-3" /> Verified
                   </span>
                 </div>
                 <p className="text-ink-muted mt-1">Investment limit: {config.limit}</p>
@@ -1228,7 +1229,7 @@ export function KYCSubmissionForm() {
             {effectiveTier < 4 && (
               <button
                 onClick={() => handleTierSelect(effectiveTier + 1)}
-                className="px-6 py-3 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 text-ink font-semibold rounded-xl transition-all"
+                className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-all"
               >
                 Upgrade Tier
               </button>
@@ -1295,11 +1296,11 @@ export function KYCSubmissionForm() {
 
     return (
       <div className="max-w-xl mx-auto">
-        <div className={`rounded-2xl p-6 mb-6 ${tierConfig.bgColor} border ${tierConfig.borderColor}`}>
+        <div className={`rounded-xl p-6 mb-6 ${tierConfig.bgColor} border ${tierConfig.borderColor}`}>
           <div className="flex items-center gap-4">
-            <div className="text-4xl">{tierConfig.icon}</div>
+            <tierConfig.icon className={`w-9 h-9 ${tierConfig.color}`} />
             <div>
-              <h2 className={`text-2xl font-bold ${tierConfig.color}`}>{tierConfig.name} Tier</h2>
+              <h2 className={`text-2xl font-semibold ${tierConfig.color}`}>{tierConfig.name} Tier</h2>
               <p className="text-ink-muted">Investment limit: {tierConfig.limit}</p>
             </div>
           </div>
@@ -1319,8 +1320,8 @@ export function KYCSubmissionForm() {
         )}
 
         {currentLevel > 0 && (
-          <div className="bg-gold-900/20 border border-gold-500/30 rounded-xl p-4 mb-6">
-            <p className="text-gold-400 text-sm">
+          <div className="bg-gold/10 border border-gold/30 rounded-xl p-4 mb-6">
+            <p className="text-gold text-sm">
               <span className="font-medium">Upgrading from {TIER_CONFIG[currentLevel as keyof typeof TIER_CONFIG].name}:</span> Only new requirements are shown below.
             </p>
           </div>
@@ -1338,7 +1339,7 @@ export function KYCSubmissionForm() {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     placeholder="Enter your full legal name"
-                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold"
                   />
                 </div>
 
@@ -1349,7 +1350,7 @@ export function KYCSubmissionForm() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="your@email.com"
-                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold"
                   />
                 </div>
 
@@ -1359,7 +1360,7 @@ export function KYCSubmissionForm() {
                     type="date"
                     value={dateOfBirth}
                     onChange={(e) => setDateOfBirth(e.target.value)}
-                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold focus:ring-1 focus:ring-gold"
                   />
                 </div>
 
@@ -1368,7 +1369,7 @@ export function KYCSubmissionForm() {
                   <select
                     value={countryCode}
                     onChange={(e) => setCountryCode(Number(e.target.value))}
-                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold focus:ring-1 focus:ring-gold"
                   >
                     <option value={0}>Select your country</option>
                     {countries
@@ -1408,7 +1409,7 @@ export function KYCSubmissionForm() {
                     value={documentNumber}
                     onChange={(e) => setDocumentNumber(e.target.value)}
                     placeholder="e.g. AB1234567"
-                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:border-gold focus:ring-1 focus:ring-gold"
                   />
                 </div>
                 <div>
@@ -1418,7 +1419,7 @@ export function KYCSubmissionForm() {
                     value={documentExpiry}
                     onChange={(e) => setDocumentExpiry(e.target.value)}
                     min={new Date().toISOString().split('T')[0]}
-                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold-500 focus:ring-1 focus:ring-purple-500"
+                    className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-xl text-ink focus:border-gold focus:ring-1 focus:ring-gold"
                   />
                 </div>
               </div>
@@ -1470,8 +1471,9 @@ export function KYCSubmissionForm() {
                   ) : idValidation ? (
                     <div className={`p-3 rounded-lg ${idValidation.isValid ? 'bg-success/30 border border-success/50' : 'bg-warning/30 border border-warning/50'}`}>
                       <div className="flex items-center justify-between mb-2">
-                        <span className={idValidation.isValid ? 'text-success font-medium' : 'text-warning font-medium'}>
-                          {idValidation.isValid ? '✓ Document verified' : '⚠ Review needed'}
+                        <span className={`inline-flex items-center gap-1.5 ${idValidation.isValid ? 'text-success font-medium' : 'text-warning font-medium'}`}>
+                          {idValidation.isValid ? <Check className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
+                          {idValidation.isValid ? 'Document verified' : 'Review needed'}
                         </span>
                         <span className="text-sm text-ink-muted">
                           Confidence: {idValidation.confidence}%
@@ -1498,18 +1500,18 @@ export function KYCSubmissionForm() {
                       )}
 
                       {idValidation.mrzDetected && (
-                        <p className="text-xs text-gold-400 mb-2">✓ MRZ code detected</p>
+                        <p className="text-xs text-gold mb-2 flex items-center gap-1"><Check className="w-3.5 h-3.5" /> MRZ code detected</p>
                       )}
 
                       {idValidation.warnings && idValidation.warnings.length > 0 && (
-                        <div className="mt-2 text-sm text-warning">
-                          {idValidation.warnings.map((w, i) => <p key={i}>⚠ {w}</p>)}
+                        <div className="mt-2 text-sm text-warning space-y-1">
+                          {idValidation.warnings.map((w, i) => <p key={i} className="flex items-start gap-1.5"><AlertTriangle className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" /> {w}</p>)}
                         </div>
                       )}
 
                       {idValidation.errors && idValidation.errors.length > 0 && (
-                        <div className="mt-2 text-sm text-danger">
-                          {idValidation.errors.map((e, i) => <p key={i}>✗ {e}</p>)}
+                        <div className="mt-2 text-sm text-danger space-y-1">
+                          {idValidation.errors.map((e, i) => <p key={i} className="flex items-start gap-1.5"><X className="w-3.5 h-3.5 flex-shrink-0 mt-0.5" /> {e}</p>)}
                         </div>
                       )}
 
@@ -1526,7 +1528,7 @@ export function KYCSubmissionForm() {
                       type="button"
                       onClick={handleValidateDocument}
                       disabled={!fullName || !dateOfBirth || !documentNumber}
-                      className="w-full py-3 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-medium rounded-lg transition-colors"
+                      className="w-full py-3 bg-gold hover:bg-gold-light disabled:bg-border-strong disabled:cursor-not-allowed text-surface-sunken font-medium rounded-lg transition-colors"
                     >
                       Verify Document
                     </button>
@@ -1584,9 +1586,9 @@ export function KYCSubmissionForm() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       {livenessResult.passed ? (
-                        <span className="text-success font-medium">✓ Liveness verified</span>
+                        <span className="inline-flex items-center gap-1.5 text-success font-medium"><Check className="w-4 h-4" /> Liveness verified</span>
                       ) : (
-                        <span className="text-danger font-medium">✗ Verification failed</span>
+                        <span className="inline-flex items-center gap-1.5 text-danger font-medium"><X className="w-4 h-4" /> Verification failed</span>
                       )}
                       <span className="text-sm text-ink-muted">
                         ({livenessResult.completedChallenges}/{livenessResult.totalChallenges} challenges)
@@ -1646,13 +1648,13 @@ export function KYCSubmissionForm() {
                 type="checkbox"
                 checked={termsAgreed}
                 onChange={(e) => setTermsAgreed(e.target.checked)}
-                className="mt-1 w-5 h-5 rounded border-border-strong bg-surface-sunken text-gold-500 focus:ring-purple-500"
+                className="mt-1 w-5 h-5 rounded border-border-strong bg-surface-sunken text-gold focus:ring-gold"
               />
               <span className="text-ink-muted text-sm">
                 I agree to the{" "}
-                <Link href="/legal/terms" className="text-gold-400 hover:text-gold-300 underline">Terms of Service</Link>{" "}
+                <Link href="/legal/terms" className="text-gold hover:text-gold-light underline">Terms of Service</Link>{" "}
                 and{" "}
-                <Link href="/legal/privacy" className="text-gold-400 hover:text-gold-300 underline">Privacy Policy</Link>.
+                <Link href="/legal/privacy" className="text-gold hover:text-gold-light underline">Privacy Policy</Link>.
                 I confirm the information provided is accurate.
               </span>
             </label>
@@ -1660,7 +1662,7 @@ export function KYCSubmissionForm() {
             <button
               onClick={handleSubmitForm}
               disabled={!canSubmitForm || isSubmitting || isValidatingId}
-              className="w-full mt-6 py-4 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-ink font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2"
+              className="w-full mt-6 py-4 bg-gold hover:bg-gold-light disabled:bg-border-strong disabled:cursor-not-allowed text-surface-sunken font-bold text-lg rounded-lg transition-all flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -1694,7 +1696,7 @@ export function KYCSubmissionForm() {
       </p>
       <button
         onClick={() => router.push('/dashboard')}
-        className="mt-6 px-6 py-2 bg-gold-600 hover:bg-gold-500 text-ink font-medium rounded-lg transition-colors"
+        className="mt-6 px-6 py-2 bg-gold hover:bg-gold-light text-surface-sunken font-medium rounded-lg transition-colors"
       >
         Return to Dashboard
       </button>
@@ -1734,7 +1736,7 @@ export function KYCSubmissionForm() {
         <button
           onClick={handlePayAndVerify}
           disabled={!hasEnoughBalance || isPaying}
-          className="w-full py-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:from-gray-600 disabled:to-gray-600 disabled:cursor-not-allowed text-ink font-bold text-lg rounded-xl transition-all flex items-center justify-center gap-2"
+          className="w-full py-4 bg-success hover:bg-success/80 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-bold text-lg rounded-lg transition-all flex items-center justify-center gap-2"
         >
           {isPaying ? (
             <>
@@ -1763,7 +1765,7 @@ export function KYCSubmissionForm() {
 
   const renderProcessing = () => (
     <div className="max-w-md mx-auto text-center py-12">
-      <svg className="w-20 h-20 mx-auto text-gold-400 animate-spin mb-8" fill="none" viewBox="0 0 24 24">
+      <svg className="w-20 h-20 mx-auto text-gold animate-spin mb-8" fill="none" viewBox="0 0 24 24">
         <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
       </svg>
@@ -1774,7 +1776,7 @@ export function KYCSubmissionForm() {
           href={`https://polygonscan.com/tx/${txHash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-gold-400 hover:text-gold-300 text-sm"
+          className="text-gold hover:text-gold-light text-sm"
         >
           View on Explorer →
         </a>
@@ -1793,9 +1795,11 @@ export function KYCSubmissionForm() {
       <div
         className={`inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 ${tierConfig.bgColor} ${tierConfig.borderColor} border`}
       >
-        <span className="text-2xl">{tierConfig.icon}</span>
-        <span className={`font-bold ${tierConfig.color}`}>{tierConfig.name} Tier</span>
-        <span className="px-2 py-0.5 bg-success/20 text-success text-xs rounded-full">✓ Active</span>
+        <tierConfig.icon className={`w-5 h-5 ${tierConfig.color}`} />
+        <span className={`font-semibold ${tierConfig.color}`}>{tierConfig.name} Tier</span>
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-success/20 text-success text-xs rounded-full">
+          <Check className="w-3 h-3" /> Active
+        </span>
       </div>
 
       <p className="text-ink-muted mb-8">Your KYC verification is now active. You can invest up to {tierConfig.limit}.</p>
@@ -1805,7 +1809,7 @@ export function KYCSubmissionForm() {
           href={`https://polygonscan.com/tx/${txHash}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-gold-400 hover:text-gold-300 mb-6"
+          className="inline-flex items-center gap-2 text-gold hover:text-gold-light mb-6"
         >
           View Transaction
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -1822,7 +1826,7 @@ export function KYCSubmissionForm() {
       <div className="flex gap-4 justify-center">
         <Link
           href="/invest"
-          className="px-6 py-3 bg-gradient-to-r from-gold-600 to-gold-light-600 hover:from-gold-500 hover:to-gold-light-500 text-ink font-semibold rounded-xl transition-all"
+          className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-all"
         >
           Start Investing
         </Link>

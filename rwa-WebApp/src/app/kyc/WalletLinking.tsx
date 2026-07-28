@@ -4,6 +4,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useAccount } from "wagmi";
 import { useKYC } from "@/contexts/KYCContext";
+import {
+  Crown, Wallet, Check, Clipboard, Loader2, Link2, PartyPopper, Lock,
+  CheckCircle2, AlertTriangle, Download, ArrowLeft, Zap, Gift, Hash,
+} from "lucide-react";
 
 // ============================================================================
 // TYPES
@@ -36,7 +40,7 @@ function LinkedWalletCard({
       className={`
         flex items-center justify-between p-4 rounded-xl border transition-colors
         ${isCurrentWallet
-          ? "bg-gold-500/10 border-gold-500/30"
+          ? "bg-gold/10 border-gold/30"
           : "bg-surface border-border"
         }
       `}
@@ -46,7 +50,7 @@ function LinkedWalletCard({
           w-10 h-10 rounded-full flex items-center justify-center
           ${wallet.isPrimary ? "bg-gold/20" : "bg-surface-overlay"}
         `}>
-          {wallet.isPrimary ? "👑" : "👛"}
+          {wallet.isPrimary ? <Crown className="w-5 h-5 text-gold" /> : <Wallet className="w-5 h-5 text-ink-muted" />}
         </div>
         <div>
           <div className="flex items-center gap-2">
@@ -54,7 +58,7 @@ function LinkedWalletCard({
               {wallet.address.slice(0, 6)}...{wallet.address.slice(-4)}
             </p>
             {isCurrentWallet && (
-              <span className="px-2 py-0.5 bg-gold-500/20 text-gold-400 text-xs rounded-full">
+              <span className="px-2 py-0.5 bg-gold/20 text-gold text-xs rounded-full">
                 Current
               </span>
             )}
@@ -156,9 +160,9 @@ function GenerateCodeSection({
                   title="Copy code"
                 >
                   {copied ? (
-                    <span className="text-success">✓</span>
+                    <Check className="w-4 h-4 text-success" />
                   ) : (
-                    <span className="text-ink-muted">📋</span>
+                    <Clipboard className="w-4 h-4 text-ink-muted" />
                   )}
                 </button>
               </div>
@@ -170,8 +174,8 @@ function GenerateCodeSection({
               </p>
             </div>
 
-            <div className="bg-gold-500/10 border border-gold-500/30 rounded-lg p-4">
-              <h4 className="text-gold-400 font-medium mb-2">Instructions:</h4>
+            <div className="bg-gold/10 border border-gold/30 rounded-lg p-4">
+              <h4 className="text-gold font-medium mb-2">Instructions:</h4>
               <ol className="text-sm text-ink-muted space-y-1 list-decimal list-inside">
                 <li>Open this page on your other wallet</li>
                 <li>Click "Link Existing Wallet"</li>
@@ -192,16 +196,16 @@ function GenerateCodeSection({
           <button
             onClick={onGenerate}
             disabled={isGenerating}
-            className="w-full py-3 bg-gold-600 hover:bg-gold-500 disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-gold hover:bg-gold-light disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-surface-sunken font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isGenerating ? (
               <>
-                <span className="animate-spin">⟳</span>
+                <Loader2 className="w-4 h-4 animate-spin" />
                 Generating...
               </>
             ) : (
               <>
-                <span>🔗</span>
+                <Link2 className="w-4 h-4" />
                 Generate Link Code
               </>
             )}
@@ -240,12 +244,12 @@ function UseCodeSection({
 
   if (success) {
     return (
-      <div className="bg-gray-800 rounded-xl p-6 text-center">
-        <div className="text-5xl mb-4">🎉</div>
-        <h3 className="text-xl font-semibold text-white mb-2">
+      <div className="bg-surface rounded-xl p-6 text-center">
+        <PartyPopper className="w-12 h-12 text-gold mb-4 mx-auto" />
+        <h3 className="text-xl font-semibold text-ink mb-2">
           Wallet Linked Successfully!
         </h3>
-        <p className="text-gray-400">
+        <p className="text-ink-muted">
           This wallet now shares KYC verification with the primary wallet.
           You can use all investment features immediately.
         </p>
@@ -255,24 +259,24 @@ function UseCodeSection({
 
   return (
     <div className="space-y-4">
-      <div className="bg-gray-800 rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-2">
+      <div className="bg-surface rounded-xl p-6">
+        <h3 className="text-lg font-semibold text-ink mb-2">
           Link to Existing KYC
         </h3>
-        <p className="text-gray-400 text-sm mb-4">
+        <p className="text-ink-muted text-sm mb-4">
           Enter a link code from your verified wallet to share KYC verification
           with this wallet.
         </p>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-900/30 border border-red-500/30 rounded-lg text-red-400 text-sm">
+          <div className="mb-4 p-3 bg-danger-muted border border-danger/30 rounded-lg text-danger text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-2">
+            <label className="block text-sm text-ink-muted mb-2">
               Link Code
             </label>
             <input
@@ -280,10 +284,10 @@ function UseCodeSection({
               value={code}
               onChange={(e) => handleCodeChange(e.target.value)}
               placeholder="Enter 8-character code"
-              className="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg text-white text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-gold-500 uppercase"
+              className="w-full px-4 py-3 bg-surface-sunken border border-border-strong rounded-lg text-ink text-center text-2xl font-mono tracking-widest focus:outline-none focus:border-gold uppercase"
               maxLength={8}
             />
-            <p className="text-xs text-gray-500 mt-2 text-center">
+            <p className="text-xs text-ink-faint mt-2 text-center">
               {code.length}/8 characters
             </p>
           </div>
@@ -291,27 +295,27 @@ function UseCodeSection({
           <button
             type="submit"
             disabled={code.length !== 8 || isLinking}
-            className="w-full py-3 bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed rounded-lg text-white font-medium transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-success hover:bg-success/80 disabled:bg-border-strong disabled:cursor-not-allowed rounded-lg text-ink font-medium transition-colors flex items-center justify-center gap-2"
           >
             {isLinking ? (
               <>
-                <span className="animate-spin">⟳</span>
+                <Loader2 className="w-4 h-4 animate-spin" />
                 Linking Wallet...
               </>
             ) : (
               <>
-                <span>✓</span>
+                <Check className="w-4 h-4" />
                 Link This Wallet
               </>
             )}
           </button>
         </form>
 
-        <div className="mt-4 p-4 bg-gray-900 rounded-lg">
-          <h4 className="text-gray-400 text-sm font-medium mb-2">
+        <div className="mt-4 p-4 bg-surface-sunken rounded-lg">
+          <h4 className="text-ink-muted text-sm font-medium mb-2">
             How to get a link code:
           </h4>
-          <ol className="text-xs text-gray-500 space-y-1 list-decimal list-inside">
+          <ol className="text-xs text-ink-faint space-y-1 list-decimal list-inside">
             <li>Connect your verified wallet</li>
             <li>Go to KYC → Wallet Linking</li>
             <li>Click "Generate Link Code"</li>
@@ -427,9 +431,9 @@ export function WalletLinking() {
   if (!isConnected) {
     return (
       <div className="max-w-2xl mx-auto p-8 text-center">
-        <div className="text-6xl mb-4">🔐</div>
-        <h2 className="text-2xl font-bold text-white mb-2">Connect Your Wallet</h2>
-        <p className="text-gray-400">
+        <Lock className="w-14 h-14 text-ink-faint mb-4 mx-auto" />
+        <h2 className="text-2xl font-display font-medium text-ink mb-2">Connect Your Wallet</h2>
+        <p className="text-ink-muted">
           Please connect your wallet to manage linked wallets.
         </p>
       </div>
@@ -449,8 +453,8 @@ export function WalletLinking() {
     <div className="max-w-2xl mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-white mb-2">Wallet Linking</h1>
-        <p className="text-gray-400">
+        <h1 className="text-2xl font-bold text-ink mb-2">Wallet Linking</h1>
+        <p className="text-ink-muted">
           Link multiple wallets to share your KYC verification
         </p>
       </div>
@@ -459,20 +463,20 @@ export function WalletLinking() {
       <div className={`
         rounded-xl p-4 border
         ${hasKYC 
-          ? "bg-green-500/10 border-green-500/30" 
-          : "bg-yellow-500/10 border-yellow-500/30"
+          ? "bg-success/10 border-success/30" 
+          : "bg-warning-muted border-warning/30"
         }
       `}>
         <div className="flex items-center gap-3">
-          <span className="text-2xl">{hasKYC ? "✅" : "⚠️"}</span>
+          {hasKYC ? <CheckCircle2 className="w-6 h-6 text-success" /> : <AlertTriangle className="w-6 h-6 text-warning" />}
           <div>
-            <p className={`font-medium ${hasKYC ? "text-green-400" : "text-yellow-400"}`}>
+            <p className={`font-medium ${hasKYC ? "text-success" : "text-warning"}`}>
               {hasKYC 
                 ? `KYC Verified - ${tier} (${tierInfo.formattedLimit})` 
                 : "KYC Not Verified"
               }
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-ink-muted">
               {hasKYC
                 ? isPrimaryWallet
                   ? "This is your primary verified wallet"
@@ -489,7 +493,7 @@ export function WalletLinking() {
       {/* Linked Wallets List */}
       {linkedWallets.length > 0 && (
         <div className="space-y-3">
-          <h2 className="text-lg font-semibold text-white">
+          <h2 className="text-lg font-semibold text-ink">
             Linked Wallets ({linkedWallets.length})
           </h2>
           {linkedWallets.map((wallet) => (
@@ -516,20 +520,20 @@ export function WalletLinking() {
             className={`
               p-6 rounded-xl border-2 text-left transition-all
               ${hasKYC 
-                ? "border-gold-500/30 hover:border-gold-500 hover:bg-gold-500/10 cursor-pointer" 
-                : "border-gray-700 opacity-50 cursor-not-allowed"
+                ? "border-gold/30 hover:border-gold hover:bg-gold/10 cursor-pointer" 
+                : "border-border-strong opacity-50 cursor-not-allowed"
               }
             `}
           >
-            <div className="text-3xl mb-3">🔗</div>
-            <h3 className="text-lg font-semibold text-white mb-1">
+            <Link2 className="w-8 h-8 text-gold mb-3" />
+            <h3 className="text-lg font-semibold text-ink mb-1">
               Link Another Wallet
             </h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-ink-muted">
               Generate a code to share your KYC with another wallet you own
             </p>
             {!hasKYC && (
-              <p className="text-xs text-yellow-400 mt-2">
+              <p className="text-xs text-warning mt-2">
                 Requires verified KYC
               </p>
             )}
@@ -546,20 +550,20 @@ export function WalletLinking() {
             className={`
               p-6 rounded-xl border-2 text-left transition-all
               ${!hasKYC 
-                ? "border-green-500/30 hover:border-green-500 hover:bg-green-500/10 cursor-pointer" 
-                : "border-gray-700 opacity-50 cursor-not-allowed"
+                ? "border-success/30 hover:border-success hover:bg-success/10 cursor-pointer" 
+                : "border-border-strong opacity-50 cursor-not-allowed"
               }
             `}
           >
-            <div className="text-3xl mb-3">📥</div>
-            <h3 className="text-lg font-semibold text-white mb-1">
+            <Download className="w-8 h-8 text-success mb-3" />
+            <h3 className="text-lg font-semibold text-ink mb-1">
               Link to Existing KYC
             </h3>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-ink-muted">
               Enter a link code from your verified wallet
             </p>
             {hasKYC && (
-              <p className="text-xs text-gold-400 mt-2">
+              <p className="text-xs text-gold mt-2">
                 This wallet already has KYC
               </p>
             )}
@@ -582,9 +586,9 @@ export function WalletLinking() {
               setLinkCode(null);
               setLocalError(null);
             }}
-            className="w-full py-2 text-gray-400 hover:text-white transition-colors"
+            className="w-full py-2 flex items-center justify-center gap-1.5 text-ink-muted hover:text-ink transition-colors"
           >
-            ← Back
+            <ArrowLeft className="w-4 h-4" /> Back
           </button>
         </>
       )}
@@ -604,56 +608,56 @@ export function WalletLinking() {
                 setMode("none");
                 setLocalError(null);
               }}
-              className="w-full py-2 text-gray-400 hover:text-white transition-colors"
+              className="w-full py-2 flex items-center justify-center gap-1.5 text-ink-muted hover:text-ink transition-colors"
             >
-              ← Back
+              <ArrowLeft className="w-4 h-4" /> Back
             </button>
           )}
         </>
       )}
 
       {/* Info Section */}
-      <div className="bg-gray-800 rounded-xl p-6 space-y-4">
-        <h3 className="text-lg font-semibold text-white">
+      <div className="bg-surface rounded-xl p-6 space-y-4">
+        <h3 className="text-lg font-semibold text-ink">
           About Wallet Linking
         </h3>
         
         <div className="space-y-3 text-sm">
           <div className="flex gap-3">
-            <span className="text-xl">🔒</span>
+            <Lock className="w-5 h-5 text-gold flex-shrink-0" />
             <div>
-              <p className="text-white font-medium">Privacy Preserved</p>
-              <p className="text-gray-400">
+              <p className="text-ink font-medium">Privacy Preserved</p>
+              <p className="text-ink-muted">
                 Your KYC data stays encrypted. Only the verification status is shared.
               </p>
             </div>
           </div>
 
           <div className="flex gap-3">
-            <span className="text-xl">⚡</span>
+            <Zap className="w-5 h-5 text-gold flex-shrink-0" />
             <div>
-              <p className="text-white font-medium">Instant Linking</p>
-              <p className="text-gray-400">
+              <p className="text-ink font-medium">Instant Linking</p>
+              <p className="text-ink-muted">
                 Linked wallets can immediately use investment features.
               </p>
             </div>
           </div>
 
           <div className="flex gap-3">
-            <span className="text-xl">🆓</span>
+            <Gift className="w-5 h-5 text-gold flex-shrink-0" />
             <div>
-              <p className="text-white font-medium">Free to Link</p>
-              <p className="text-gray-400">
+              <p className="text-ink font-medium">Free to Link</p>
+              <p className="text-ink-muted">
                 No additional fees for linking wallets after initial KYC.
               </p>
             </div>
           </div>
 
           <div className="flex gap-3">
-            <span className="text-xl">🔢</span>
+            <Hash className="w-5 h-5 text-gold flex-shrink-0" />
             <div>
-              <p className="text-white font-medium">Up to 10 Wallets</p>
-              <p className="text-gray-400">
+              <p className="text-ink font-medium">Up to 10 Wallets</p>
+              <p className="text-ink-muted">
                 Link up to 10 wallets per verified identity.
               </p>
             </div>
@@ -663,15 +667,15 @@ export function WalletLinking() {
 
       {/* FAQ */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-white">
+        <h3 className="text-lg font-semibold text-ink">
           Frequently Asked Questions
         </h3>
 
-        <details className="bg-gray-800 rounded-lg">
-          <summary className="p-4 cursor-pointer text-white hover:text-gray-300">
+        <details className="bg-surface rounded-lg">
+          <summary className="p-4 cursor-pointer text-ink hover:text-ink-muted">
             Why would I link multiple wallets?
           </summary>
-          <div className="px-4 pb-4 text-sm text-gray-400">
+          <div className="px-4 pb-4 text-sm text-ink-muted">
             You might use different wallets for different purposes (e.g., a hardware 
             wallet for long-term holdings and a hot wallet for active trading). 
             Linking allows you to use any of these wallets for KYC-gated features 
@@ -679,33 +683,33 @@ export function WalletLinking() {
           </div>
         </details>
 
-        <details className="bg-gray-800 rounded-lg">
-          <summary className="p-4 cursor-pointer text-white hover:text-gray-300">
+        <details className="bg-surface rounded-lg">
+          <summary className="p-4 cursor-pointer text-ink hover:text-ink-muted">
             Can I unlink a wallet?
           </summary>
-          <div className="px-4 pb-4 text-sm text-gray-400">
+          <div className="px-4 pb-4 text-sm text-ink-muted">
             You can unlink secondary wallets at any time. However, the primary wallet 
             (the one where you originally completed KYC) cannot be unlinked. If you 
             need to change your primary wallet, please contact support.
           </div>
         </details>
 
-        <details className="bg-gray-800 rounded-lg">
-          <summary className="p-4 cursor-pointer text-white hover:text-gray-300">
+        <details className="bg-surface rounded-lg">
+          <summary className="p-4 cursor-pointer text-ink hover:text-ink-muted">
             What happens if I delete my KYC data?
           </summary>
-          <div className="px-4 pb-4 text-sm text-gray-400">
+          <div className="px-4 pb-4 text-sm text-ink-muted">
             If you request deletion of your KYC data (GDPR right to be forgotten), 
             all linked wallets will lose their verified status. You would need to 
             complete KYC again to regain access to investment features.
           </div>
         </details>
 
-        <details className="bg-gray-800 rounded-lg">
-          <summary className="p-4 cursor-pointer text-white hover:text-gray-300">
+        <details className="bg-surface rounded-lg">
+          <summary className="p-4 cursor-pointer text-ink hover:text-ink-muted">
             Is linking secure?
           </summary>
-          <div className="px-4 pb-4 text-sm text-gray-400">
+          <div className="px-4 pb-4 text-sm text-ink-muted">
             Yes. Link codes expire after 15 minutes and can only be used once. 
             Both wallets must sign messages to prove ownership. No private keys 
             are ever shared or exposed during the process.

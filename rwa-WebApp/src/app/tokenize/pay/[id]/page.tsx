@@ -6,17 +6,19 @@ import { useParams, useRouter } from 'next/navigation';
 import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { parseUnits, formatUnits } from 'viem';
 import Link from 'next/link';
-import { 
-  ArrowLeft, 
-  CreditCard, 
-  CheckCircle2, 
-  AlertCircle, 
+import {
+  ArrowLeft,
+  CreditCard,
+  CheckCircle2,
+  AlertCircle,
   Loader2,
   ExternalLink,
   Coins,
+  Banknote,
   Building2,
   ChevronDown,
-  AlertTriangle
+  AlertTriangle,
+  type LucideIcon
 } from 'lucide-react';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { useTokenConfig } from '@/hooks/useTokenConfig';
@@ -74,7 +76,7 @@ interface PaymentToken {
   address: `0x${string}`;
   symbol: string;
   decimals: number;
-  icon: string;
+  icon: LucideIcon;
   color: string;
 }
 
@@ -105,18 +107,18 @@ export default function PaymentPage() {
         address: tokens.USDC as `0x${string}`,
         symbol: 'USDC',
         decimals: 6,
-        icon: '💵',
-        color: 'from-gold-500 to-gold-light-600'
+        icon: Coins,
+        color: 'from-gold to-gold-light'
       };
     }
-    
+
     if (tokens.USDT) {
       paymentTokens.USDT = {
         address: tokens.USDT as `0x${string}`,
         symbol: 'USDT',
         decimals: 6,
-        icon: '💲',
-        color: 'from-green-500 to-green-600'
+        icon: Banknote,
+        color: 'from-gold to-gold-light'
       };
     }
     return paymentTokens;
@@ -366,7 +368,7 @@ export default function PaymentPage() {
               Payment is not available on {chainName || 'this network'}. 
               Please switch to a supported network.
             </p>
-            <Link href="/tokenize" className="text-cyan-400 hover:text-cyan-300">
+            <Link href="/tokenize" className="text-gold hover:text-gold-light">
               ← Back to Applications
             </Link>
           </div>
@@ -386,7 +388,7 @@ export default function PaymentPage() {
             <p className="text-ink-muted mb-4">
               No stablecoin payment tokens are configured on {chainName || 'this network'}.
             </p>
-            <Link href="/tokenize" className="text-cyan-400 hover:text-cyan-300">
+            <Link href="/tokenize" className="text-gold hover:text-gold-light">
               ← Back to Applications
             </Link>
           </div>
@@ -415,7 +417,7 @@ export default function PaymentPage() {
     return (
       <div className="min-h-screen bg-surface-sunken">
         <div className="flex items-center justify-center pt-32">
-          <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+          <Loader2 className="w-8 h-8 text-gold animate-spin" />
         </div>
       </div>
     );
@@ -430,7 +432,7 @@ export default function PaymentPage() {
             <AlertCircle className="w-16 h-16 text-danger mx-auto mb-4" />
             <h2 className="text-xl text-ink mb-2">Error</h2>
             <p className="text-ink-muted mb-4">{error}</p>
-            <Link href="/tokenize" className="text-cyan-400 hover:text-cyan-300">
+            <Link href="/tokenize" className="text-gold hover:text-gold-light">
               ← Back to Applications
             </Link>
           </div>
@@ -445,7 +447,7 @@ export default function PaymentPage() {
       <div className="min-h-screen bg-surface-sunken">
         <div className="py-12 px-4 pt-24">
           <div className="max-w-lg mx-auto">
-            <div className="bg-surface-raised rounded-2xl p-8 text-center">
+            <div className="bg-surface-raised rounded-xl p-8 text-center">
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <CheckCircle2 className="w-10 h-10 text-success" />
               </div>
@@ -459,7 +461,7 @@ export default function PaymentPage() {
                   href={getTxUrl(txHash)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 mb-6"
+                  className="inline-flex items-center gap-2 text-gold hover:text-gold-light mb-6"
                 >
                   View Transaction <ExternalLink className="w-4 h-4" />
                 </a>
@@ -482,7 +484,7 @@ export default function PaymentPage() {
               <div className="flex flex-col gap-3">
                 <Link
                   href="/dashboard"
-                  className="w-full py-3 bg-gradient-to-r from-cyan-500 to-gold-light-600 text-ink font-semibold rounded-xl hover:opacity-90 transition"
+                  className="w-full py-3 bg-gradient-to-r from-gold to-gold-light text-ink font-semibold rounded-xl hover:opacity-90 transition"
                 >
                   Back to Dashboard
                 </Link>
@@ -506,12 +508,12 @@ export default function PaymentPage() {
             <ArrowLeft className="w-4 h-4" /> Back to Application
           </Link>
 
-          <div className="bg-surface-raised rounded-2xl overflow-hidden">
+          <div className="bg-surface-raised rounded-xl overflow-hidden">
             {/* Payment Header */}
-            <div className="bg-gradient-to-r from-cyan-500/20 to-gold-light-600/20 p-6 border-b border-border">
+            <div className="bg-gold/10 p-6 border-b border-border">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-cyan-500/20 rounded-xl flex items-center justify-center">
-                  <CreditCard className="w-7 h-7 text-cyan-400" />
+                <div className="w-14 h-14 bg-gold/15 rounded-xl flex items-center justify-center">
+                  <CreditCard className="w-7 h-7 text-gold" />
                 </div>
                 <div>
                   <h1 className="text-xl font-bold text-ink">
@@ -560,10 +562,10 @@ export default function PaymentPage() {
                 <label className="block text-sm text-ink-muted mb-2">Pay with</label>
                 <button
                   onClick={() => setShowTokenSelector(!showTokenSelector)}
-                  className="w-full flex items-center justify-between p-4 bg-surface-overlay/50 rounded-xl border border-border-strong hover:border-gray-500 transition"
+                  className="w-full flex items-center justify-between p-4 bg-surface-overlay/50 rounded-xl border border-border-strong hover:border-border-strong transition"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-2xl">{currentToken?.icon || '💰'}</span>
+                    {currentToken ? <currentToken.icon className="w-6 h-6 text-gold" /> : <Coins className="w-6 h-6 text-ink-faint" />}
                     <div className="text-left">
                       <p className="text-ink font-medium">{currentToken?.symbol || 'Select Token'}</p>
                       <p className="text-sm text-ink-muted">
@@ -594,12 +596,12 @@ export default function PaymentPage() {
                             setSelectedToken(tokenKey);
                             setShowTokenSelector(false);
                           }}
-                          className={`w-full flex items-center justify-between p-4 hover:bg-gray-600/50 transition ${
-                            isSelected ? 'bg-gray-600/30' : ''
+                          className={`w-full flex items-center justify-between p-4 hover:bg-surface-overlay transition ${
+                            isSelected ? 'bg-surface-overlay/60' : ''
                           }`}
                         >
                           <div className="flex items-center gap-3">
-                            <span className="text-2xl">{token.icon}</span>
+                            <token.icon className="w-6 h-6 text-gold" />
                             <div className="text-left">
                               <p className="text-ink font-medium">{token.symbol}</p>
                               <p className={`text-sm ${hasSufficientBalance ? 'text-ink-muted' : 'text-danger'}`}>
@@ -609,12 +611,12 @@ export default function PaymentPage() {
                           </div>
                           <div className="flex items-center gap-2">
                             {hasSufficientBalance && (
-                              <span className="text-xs bg-green-500/20 text-success px-2 py-1 rounded-full">
+                              <span className="text-xs bg-success/15 text-success px-2 py-1 rounded-full">
                                 Sufficient
                               </span>
                             )}
                             {isSelected && (
-                              <CheckCircle2 className="w-5 h-5 text-cyan-400" />
+                              <CheckCircle2 className="w-5 h-5 text-gold" />
                             )}
                           </div>
                         </button>
@@ -655,14 +657,14 @@ export default function PaymentPage() {
                       <div 
                         key={tokenKey}
                         className={`flex justify-between items-center p-2 rounded-lg ${
-                          isSelected ? 'bg-gray-600/50' : ''
+                          isSelected ? 'bg-surface-overlay/60' : ''
                         }`}
                       >
                         <div className="flex items-center gap-2">
-                          <span>{token.icon}</span>
+                          <token.icon className="w-4 h-4 text-gold" />
                           <span className="text-ink">{token.symbol}</span>
                           {isSelected && (
-                            <span className="text-xs bg-cyan-500/20 text-cyan-400 px-2 py-0.5 rounded">
+                            <span className="text-xs bg-gold/15 text-gold px-2 py-0.5 rounded">
                               Selected
                             </span>
                           )}
@@ -725,7 +727,7 @@ export default function PaymentPage() {
               <button
                 onClick={handlePay}
                 disabled={isPaying || !application || hasInsufficientBalance() || !currentToken}
-                className={`w-full py-4 bg-gradient-to-r ${currentToken?.color || 'from-cyan-500 to-gold-light-600'} text-ink font-semibold rounded-xl hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
+                className="w-full py-4 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {isPaying ? (
                   <>

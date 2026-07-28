@@ -28,7 +28,7 @@ export default function AboutLayout({
         
         <div className="relative container mx-auto px-4 py-16">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-white via-purple-200 to-gold-light-200 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-display font-medium mb-4 text-ink">
               About Us
             </h1>
             <p className="text-xl text-ink-muted">
@@ -49,7 +49,7 @@ export default function AboutLayout({
                 href={tab.href}
                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl font-medium transition-all text-sm md:text-base ${
                   isActive
-                    ? 'bg-gold text-ink shadow-lg shadow-purple-500/25'
+                    ? 'bg-gold text-surface-sunken shadow-gold'
                     : 'bg-surface/50 text-ink-muted hover:bg-surface-overlay/50 hover:text-ink'
                 }`}
               >

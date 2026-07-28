@@ -10,6 +10,8 @@ import {
 import { formatEther, parseEther, isAddress, getAddress } from "viem";
 import { useChainConfig } from "@/hooks/useChainConfig";
 import { getNativeCurrency } from "@/config/contracts";
+import { Lock, Ban, ClipboardList, Clock, CheckCircle2, XCircle, DollarSign, Search, AlertTriangle, IdCard, Camera, FileText, Loader2, Inbox, type LucideIcon } from "lucide-react";
+import { TIER_ICON } from "@/lib/kycTierIcons";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -130,26 +132,26 @@ const TIER_NAMES: Record<number, TierName> = {
 };
 
 const TIER_COLORS: Record<number, string> = {
-  0: "bg-gray-500",
-  1: "bg-amber-600",
-  2: "bg-gray-400",
-  3: "bg-yellow-500",
-  4: "bg-cyan-500",
+  0: "bg-ink-faint",
+  1: "bg-gold-dark",
+  2: "bg-ink-muted",
+  3: "bg-gold",
+  4: "bg-gold-light",
 };
 
-const TIER_ICONS: Record<number, string> = {
-  0: "⚪",
-  1: "🥉",
-  2: "🥈",
-  3: "🥇",
-  4: "💎",
+const TIER_ICONS: Record<number, typeof TIER_ICON.None> = {
+  0: TIER_ICON.None,
+  1: TIER_ICON.Bronze,
+  2: TIER_ICON.Silver,
+  3: TIER_ICON.Gold,
+  4: TIER_ICON.Diamond,
 };
 
 const STATUS_COLORS: Record<string, string> = {
-  pending: "bg-yellow-500",
-  approved: "bg-green-500",
-  rejected: "bg-red-500",
-  expired: "bg-gray-500",
+  pending: "bg-warning",
+  approved: "bg-success",
+  rejected: "bg-danger",
+  expired: "bg-ink-faint",
 };
 
 const REJECTION_REASONS = [
@@ -461,7 +463,7 @@ function StatCard({
   value,
   subtitle,
   icon,
-  color = "blue",
+  color = "gold",
 }: {
   title: string;
   value: string | number;
@@ -470,35 +472,33 @@ function StatCard({
   color?: string;
 }) {
   const colorClasses: Record<string, string> = {
-    blue: "bg-gold-500/10 text-gold-500 border-gold-500/20",
-    green: "bg-green-500/10 text-green-500 border-green-500/20",
-    yellow: "bg-yellow-500/10 text-yellow-500 border-yellow-500/20",
-    red: "bg-red-500/10 text-red-500 border-red-500/20",
-    purple: "bg-gold-500/10 text-gold-500 border-gold-500/20",
-    amber: "bg-amber-500/10 text-amber-500 border-amber-500/20",
-    cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-500/20",
+    gold: "bg-gold/10 text-gold border-gold/20",
+    success: "bg-success/10 text-success border-success/20",
+    warning: "bg-warning-muted text-warning border-warning/20",
+    danger: "bg-danger/10 text-danger border-danger/20",
   };
 
   return (
-    <div className={`rounded-xl border p-4 ${colorClasses[color]}`}>
+    <div className={`rounded-xl border p-4 ${colorClasses[color] || colorClasses.gold}`}>
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm opacity-70">{title}</p>
           <p className="text-2xl font-bold">{value}</p>
           {subtitle && <p className="text-xs opacity-50">{subtitle}</p>}
         </div>
-        <div className="text-3xl opacity-50">{icon}</div>
+        <div className="opacity-50">{icon}</div>
       </div>
     </div>
   );
 }
 
 function TierBadge({ level }: { level: number }) {
+  const Icon = TIER_ICONS[level];
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-white ${TIER_COLORS[level]}`}
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium text-ink ${TIER_COLORS[level]}`}
     >
-      <span>{TIER_ICONS[level]}</span>
+      <Icon className="w-3.5 h-3.5" />
       {TIER_NAMES[level]}
     </span>
   );
@@ -521,20 +521,20 @@ function ApplicationCard({
   const limit = tierLimits[requestedTierName];
 
   return (
-    <div className="bg-gray-800 rounded-xl p-4 border border-gray-700 hover:border-gray-600 transition-colors">
+    <div className="bg-surface rounded-xl p-4 border border-border hover:border-border-strong transition-colors">
       <div className="flex items-start justify-between mb-3">
         <div>
-          <h3 className="font-semibold text-white">
+          <h3 className="font-semibold text-ink">
             {application.firstName} {application.lastName}
           </h3>
-          <p className="text-sm text-gray-400">{application.email}</p>
-          <p className="text-xs text-gray-500 font-mono mt-1">
+          <p className="text-sm text-ink-muted">{application.email}</p>
+          <p className="text-xs text-ink-faint font-mono mt-1">
             {application.walletPreview}
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
           <span
-            className={`px-2 py-1 rounded-full text-xs font-medium text-white ${STATUS_COLORS[application.status]}`}
+            className={`px-2 py-1 rounded-full text-xs font-medium text-ink ${STATUS_COLORS[application.status]}`}
           >
             {application.status.toUpperCase()}
           </span>
@@ -544,12 +544,12 @@ function ApplicationCard({
 
       <div className="grid grid-cols-2 gap-2 text-sm mb-3">
         <div>
-          <span className="text-gray-500">Country:</span>
-          <span className="text-white ml-2">{application.countryName}</span>
+          <span className="text-ink-faint">Country:</span>
+          <span className="text-ink ml-2">{application.countryName}</span>
         </div>
         <div>
-          <span className="text-gray-500">Submitted:</span>
-          <span className="text-white ml-2">
+          <span className="text-ink-faint">Submitted:</span>
+          <span className="text-ink ml-2">
             {new Date(application.submittedAt).toLocaleDateString()}
           </span>
         </div>
@@ -558,17 +558,17 @@ function ApplicationCard({
       {application.verificationScore !== undefined && (
         <div className="mb-3">
           <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-gray-500">Document Score</span>
-            <span className="text-white">{application.verificationScore}%</span>
+            <span className="text-ink-faint">Document Score</span>
+            <span className="text-ink">{application.verificationScore}%</span>
           </div>
-          <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
+          <div className="h-2 bg-surface-overlay rounded-full overflow-hidden">
             <div
               className={`h-full transition-all ${
                 application.verificationScore >= 80
-                  ? "bg-green-500"
+                  ? "bg-success"
                   : application.verificationScore >= 50
-                  ? "bg-yellow-500"
-                  : "bg-red-500"
+                  ? "bg-warning"
+                  : "bg-danger"
               }`}
               style={{ width: `${application.verificationScore}%` }}
             />
@@ -578,22 +578,22 @@ function ApplicationCard({
 
       {application.livenessVerification && (
         <div className="mb-3 flex items-center gap-2">
-          <span className="text-gray-500 text-xs">Liveness:</span>
+          <span className="text-ink-faint text-xs">Liveness:</span>
           {application.livenessVerification.passed ? (
-            <span className="text-green-400 text-xs">
-              ✓ Passed ({application.livenessVerification.completedChallenges}/{application.livenessVerification.totalChallenges})
+            <span className="inline-flex items-center gap-1 text-success text-xs">
+              <CheckCircle2 className="w-3.5 h-3.5" /> Passed ({application.livenessVerification.completedChallenges}/{application.livenessVerification.totalChallenges})
             </span>
           ) : (
-            <span className="text-red-400 text-xs">
-              ✗ Failed ({application.livenessVerification.completedChallenges}/{application.livenessVerification.totalChallenges})
+            <span className="inline-flex items-center gap-1 text-danger text-xs">
+              <XCircle className="w-3.5 h-3.5" /> Failed ({application.livenessVerification.completedChallenges}/{application.livenessVerification.totalChallenges})
             </span>
           )}
         </div>
       )}
 
-      <div className="mb-3 p-2 bg-gray-700/50 rounded-lg">
-        <span className="text-gray-500 text-xs">Requested Limit: </span>
-        <span className="text-white text-sm font-medium">
+      <div className="mb-3 p-2 bg-surface-overlay/50 rounded-lg">
+        <span className="text-ink-faint text-xs">Requested Limit: </span>
+        <span className="text-ink text-sm font-medium">
           {formatLimit(limit)}
         </span>
       </div>
@@ -601,7 +601,7 @@ function ApplicationCard({
       <div className="flex gap-2">
         <button
           onClick={onViewDetails}
-          className="flex-1 px-3 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg text-sm transition-colors"
+          className="flex-1 px-3 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg text-sm transition-colors"
         >
           View Details
         </button>
@@ -609,13 +609,13 @@ function ApplicationCard({
           <>
             <button
               onClick={onApprove}
-              className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm transition-colors"
+              className="flex-1 px-3 py-2 bg-success hover:bg-success/80 text-ink rounded-lg text-sm transition-colors"
             >
               Approve
             </button>
             <button
               onClick={onReject}
-              className="flex-1 px-3 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm transition-colors"
+              className="flex-1 px-3 py-2 bg-danger hover:bg-danger/80 text-ink rounded-lg text-sm transition-colors"
             >
               Reject
             </button>
@@ -642,49 +642,50 @@ function ApproveModal({
   const [notes, setNotes] = useState("");
   const [tierNumber, setTierNumber] = useState(application.requestedLevel);
   const [expiresInDays, setExpiresInDays] = useState(365);
+  const RequestedTierIcon = TIER_ICONS[application.requestedLevel];
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-xl max-w-md w-full p-6">
-        <h2 className="text-xl font-bold text-white mb-4">Approve KYC Application</h2>
+      <div className="bg-surface rounded-xl max-w-md w-full p-6">
+        <h2 className="text-xl font-bold text-ink mb-4">Approve KYC Application</h2>
         
-        <div className="bg-gray-700 rounded-lg p-4 mb-4">
-          <p className="text-white font-medium">
+        <div className="bg-surface-overlay rounded-lg p-4 mb-4">
+          <p className="text-ink font-medium">
             {application.firstName} {application.lastName}
           </p>
-          <p className="text-gray-400 text-sm">{application.email}</p>
-          <p className="text-gray-500 text-xs font-mono mt-1">
+          <p className="text-ink-muted text-sm">{application.email}</p>
+          <p className="text-ink-faint text-xs font-mono mt-1">
             {application.walletPreview}
           </p>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">
+          <label className="block text-sm text-ink-muted mb-2">
             Approved Tier
           </label>
           <select
             value={tierNumber}
             onChange={(e) => setTierNumber(parseInt(e.target.value))}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500"
+            className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-gold"
           >
-            <option value="1">🥉 Bronze - {formatLimit(tierLimits.Bronze)}</option>
-            <option value="2">🥈 Silver - {formatLimit(tierLimits.Silver)}</option>
-            <option value="3">🥇 Gold - {formatLimit(tierLimits.Gold)}</option>
-            <option value="4">💎 Diamond - Unlimited</option>
+            <option value="1">Bronze - {formatLimit(tierLimits.Bronze)}</option>
+            <option value="2">Silver - {formatLimit(tierLimits.Silver)}</option>
+            <option value="3">Gold - {formatLimit(tierLimits.Gold)}</option>
+            <option value="4">Diamond - Unlimited</option>
           </select>
-          <p className="text-xs text-gray-500 mt-1">
-            Requested: {TIER_ICONS[application.requestedLevel]} {TIER_NAMES[application.requestedLevel]}
+          <p className="text-xs text-ink-faint mt-1 flex items-center gap-1">
+            Requested: <RequestedTierIcon className="w-3.5 h-3.5" /> {TIER_NAMES[application.requestedLevel]}
           </p>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">
+          <label className="block text-sm text-ink-muted mb-2">
             Expires In
           </label>
           <select
             value={expiresInDays}
             onChange={(e) => setExpiresInDays(parseInt(e.target.value))}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-green-500"
+            className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-success"
           >
             <option value="90">90 days</option>
             <option value="180">180 days</option>
@@ -694,19 +695,19 @@ function ApproveModal({
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">
+          <label className="block text-sm text-ink-muted mb-2">
             Notes (optional)
           </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500"
+            className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-success"
             rows={3}
             placeholder="Add any notes about this approval..."
           />
         </div>
 
-        <p className="text-sm text-gray-400 mb-4">
+        <p className="text-sm text-ink-muted mb-4">
           Approving will generate a signed KYC proof. The user has already paid the registration fee.
         </p>
 
@@ -714,18 +715,18 @@ function ApproveModal({
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={() => onConfirm(tierNumber, expiresInDays, notes)}
             disabled={isProcessing}
-            className="flex-1 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-2 bg-success hover:bg-success/80 text-ink rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>
-                <span className="animate-spin">⟳</span>
+                <Loader2 className="w-4 h-4 animate-spin" />
                 Processing...
               </>
             ) : (
@@ -754,24 +755,24 @@ function RejectModal({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-800 rounded-xl max-w-md w-full p-6">
-        <h2 className="text-xl font-bold text-white mb-4">Reject KYC Application</h2>
+      <div className="bg-surface rounded-xl max-w-md w-full p-6">
+        <h2 className="text-xl font-bold text-ink mb-4">Reject KYC Application</h2>
         
-        <div className="bg-gray-700 rounded-lg p-4 mb-4">
-          <p className="text-white font-medium">
+        <div className="bg-surface-overlay rounded-lg p-4 mb-4">
+          <p className="text-ink font-medium">
             {application.firstName} {application.lastName}
           </p>
-          <p className="text-gray-400 text-sm">{application.email}</p>
+          <p className="text-ink-muted text-sm">{application.email}</p>
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">
+          <label className="block text-sm text-ink-muted mb-2">
             Rejection Reason *
           </label>
           <select
             value={reason}
             onChange={(e) => setReason(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-red-500"
+            className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-danger"
           >
             <option value="">Select a reason...</option>
             {REJECTION_REASONS.map((r) => (
@@ -783,38 +784,38 @@ function RejectModal({
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm text-gray-400 mb-2">
+          <label className="block text-sm text-ink-muted mb-2">
             Additional Notes
           </label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-red-500"
+            className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-danger"
             rows={3}
             placeholder="Provide details for the rejection..."
           />
         </div>
 
-        <p className="text-sm text-yellow-400 mb-4">
-          ⚠️ The user will be able to resubmit after rejection.
+        <p className="flex items-center gap-1.5 text-sm text-warning mb-4">
+          <AlertTriangle className="w-4 h-4" /> The user will be able to resubmit after rejection.
         </p>
 
         <div className="flex gap-3">
           <button
             onClick={onClose}
             disabled={isProcessing}
-            className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50"
+            className="flex-1 px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors disabled:opacity-50"
           >
             Cancel
           </button>
           <button
             onClick={() => onConfirm(reason, notes)}
             disabled={isProcessing || !reason}
-            className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+            className="flex-1 px-4 py-2 bg-danger hover:bg-danger/80 text-ink rounded-lg transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isProcessing ? (
               <>
-                <span className="animate-spin">⟳</span>
+                <Loader2 className="w-4 h-4 animate-spin" />
                 Processing...
               </>
             ) : (
@@ -883,7 +884,7 @@ function DetailsModal({
     fetchDocumentUrls();
   }, [application.documents, address]);
 
-  const renderDocument = (docType: string, label: string, emoji: string) => {
+  const renderDocument = (docType: string, label: string, Icon: LucideIcon) => {
     const docId = application.documents?.[docType as keyof typeof application.documents];
     if (!docId) return null;
 
@@ -891,14 +892,14 @@ function DetailsModal({
 
     return (
       <div className="text-center group">
-        <div 
-          className="bg-gray-600 rounded-lg aspect-video flex items-center justify-center mb-1 overflow-hidden relative cursor-pointer hover:ring-2 hover:ring-blue-500 transition-all"
+        <div
+          className="bg-border-strong rounded-lg aspect-video flex items-center justify-center mb-1 overflow-hidden relative cursor-pointer hover:ring-2 hover:ring-gold transition-all"
           onClick={() => docData?.url && setLightboxImage(docData.url)}
         >
           {loadingDocs ? (
             <div className="flex flex-col items-center">
-              <span className="animate-spin text-2xl mb-1">⟳</span>
-              <span className="text-xs text-gray-400">Loading...</span>
+              <Loader2 className="w-6 h-6 text-ink-muted animate-spin mb-1" />
+              <span className="text-xs text-ink-muted">Loading...</span>
             </div>
           ) : docData?.url ? (
             <>
@@ -909,20 +910,20 @@ function DetailsModal({
                 sandbox="allow-same-origin allow-scripts"
               />
               {/* Clickable overlay */}
-              <div 
+              <div
                 className="absolute inset-0 bg-transparent group-hover:bg-black/30 transition-all flex items-center justify-center"
                 onClick={() => setLightboxImage(docData.url)}
               >
-                <span className="text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded">
-                  🔍 Click to enlarge
+                <span className="flex items-center gap-1.5 text-ink text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity bg-black/50 px-2 py-1 rounded">
+                  <Search className="w-4 h-4" /> Click to enlarge
                 </span>
               </div>
             </>
           ) : (
-            <span className="text-4xl">{emoji}</span>
+            <Icon className="w-9 h-9 text-ink-faint" />
           )}
         </div>
-        <p className="text-xs text-gray-400 truncate" title={docData?.fileName || label}>
+        <p className="text-xs text-ink-muted truncate" title={docData?.fileName || label}>
           {label}
         </p>
         {docData?.url && (
@@ -931,7 +932,7 @@ function DetailsModal({
               e.stopPropagation();
               window.open(docData.url, '_blank');
             }}
-            className="text-xs text-gold-400 hover:text-gold-300 mt-1"
+            className="text-xs text-gold hover:text-gold-light mt-1"
           >
             Open Full Size ↗️
           </button>
@@ -952,13 +953,13 @@ function DetailsModal({
         onClick={() => setLightboxImage(null)}
       >
         <div 
-          className="relative w-full max-w-4xl h-[80vh] bg-gray-900 rounded-lg overflow-hidden"
+          className="relative w-full max-w-4xl h-[80vh] bg-surface-sunken rounded-lg overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close button */}
           <button
             onClick={() => setLightboxImage(null)}
-            className="absolute top-2 right-2 text-white text-2xl hover:text-gray-300 z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center"
+            className="absolute top-2 right-2 text-ink text-2xl hover:text-ink-muted z-10 bg-black/70 rounded-full w-10 h-10 flex items-center justify-center"
           >
             ×
           </button>
@@ -981,7 +982,7 @@ function DetailsModal({
           {/* Open in new tab button */}
           <button
             onClick={() => window.open(lightboxImage, '_blank')}
-            className="absolute bottom-4 right-4 bg-gold-600 hover:bg-gold-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="absolute bottom-4 right-4 bg-gold hover:bg-gold-light text-ink px-4 py-2 rounded-lg text-sm font-medium transition-colors"
           >
             Download / Open ↗️
           </button>
@@ -994,70 +995,70 @@ function DetailsModal({
     <>
       <Lightbox />
       <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-        <div className="bg-gray-800 rounded-xl max-w-2xl w-full p-6 my-8">
+        <div className="bg-surface rounded-xl max-w-2xl w-full p-6 my-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-white">Application Details</h2>
+            <h2 className="text-xl font-bold text-ink">Application Details</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white text-2xl"
+              className="text-ink-muted hover:text-ink text-2xl"
             >
               ×
             </button>
           </div>
 
-          <div className="bg-gray-700 rounded-lg p-4 mb-4">
-            <h3 className="text-sm text-gray-400 mb-3">Personal Information</h3>
+          <div className="bg-surface-overlay rounded-lg p-4 mb-4">
+            <h3 className="text-sm text-ink-muted mb-3">Personal Information</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-gray-500 text-xs">Full Name</p>
-                <p className="text-white">{application.firstName} {application.lastName}</p>
+                <p className="text-ink-faint text-xs">Full Name</p>
+                <p className="text-ink">{application.firstName} {application.lastName}</p>
               </div>
               <div>
-                <p className="text-gray-500 text-xs">Email</p>
-                <p className="text-white">{application.email}</p>
+                <p className="text-ink-faint text-xs">Email</p>
+                <p className="text-ink">{application.email}</p>
               </div>
               <div>
-                <p className="text-gray-500 text-xs">Date of Birth</p>
-                <p className="text-white">{application.dateOfBirth}</p>
+                <p className="text-ink-faint text-xs">Date of Birth</p>
+                <p className="text-ink">{application.dateOfBirth}</p>
               </div>
               <div>
-                <p className="text-gray-500 text-xs">Country</p>
-                <p className="text-white">{application.countryName}</p>
+                <p className="text-ink-faint text-xs">Country</p>
+                <p className="text-ink">{application.countryName}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-700 rounded-lg p-4 mb-4">
-            <h3 className="text-sm text-gray-400 mb-3">Verification Status</h3>
+          <div className="bg-surface-overlay rounded-lg p-4 mb-4">
+            <h3 className="text-sm text-ink-muted mb-3">Verification Status</h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-gray-500 text-xs">Status</p>
-                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${STATUS_COLORS[application.status]}`}>
+                <p className="text-ink-faint text-xs">Status</p>
+                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-ink ${STATUS_COLORS[application.status]}`}>
                   {application.status.toUpperCase()}
                 </span>
               </div>
               <div>
-                <p className="text-gray-500 text-xs">Requested Tier</p>
+                <p className="text-ink-faint text-xs">Requested Tier</p>
                 <TierBadge level={application.requestedLevel} />
               </div>
               <div>
-                <p className="text-gray-500 text-xs">Current Tier</p>
+                <p className="text-ink-faint text-xs">Current Tier</p>
                 <TierBadge level={application.currentLevel} />
               </div>
               <div>
-                <p className="text-gray-500 text-xs">Submitted</p>
-                <p className="text-white">{new Date(application.submittedAt).toLocaleString()}</p>
+                <p className="text-ink-faint text-xs">Submitted</p>
+                <p className="text-ink">{new Date(application.submittedAt).toLocaleString()}</p>
               </div>
               {application.reviewedAt && (
                 <div>
-                  <p className="text-gray-500 text-xs">Reviewed</p>
-                  <p className="text-white">{new Date(application.reviewedAt).toLocaleString()}</p>
+                  <p className="text-ink-faint text-xs">Reviewed</p>
+                  <p className="text-ink">{new Date(application.reviewedAt).toLocaleString()}</p>
                 </div>
               )}
               {application.expiresAt && (
                 <div>
-                  <p className="text-gray-500 text-xs">Expires</p>
-                  <p className="text-white">{new Date(application.expiresAt).toLocaleString()}</p>
+                  <p className="text-ink-faint text-xs">Expires</p>
+                  <p className="text-ink">{new Date(application.expiresAt).toLocaleString()}</p>
                 </div>
               )}
             </div>
@@ -1065,17 +1066,17 @@ function DetailsModal({
             {application.verificationScore !== undefined && (
               <div className="mt-4">
                 <div className="flex items-center justify-between text-xs mb-1">
-                  <span className="text-gray-500">Document Verification Score</span>
-                  <span className="text-white">{application.verificationScore}%</span>
+                  <span className="text-ink-faint">Document Verification Score</span>
+                  <span className="text-ink">{application.verificationScore}%</span>
                 </div>
-                <div className="h-2 bg-gray-600 rounded-full overflow-hidden">
+                <div className="h-2 bg-border-strong rounded-full overflow-hidden">
                   <div
                     className={`h-full ${
                       application.verificationScore >= 80
-                        ? "bg-green-500"
+                        ? "bg-success"
                         : application.verificationScore >= 50
-                        ? "bg-yellow-500"
-                        : "bg-red-500"
+                        ? "bg-warning"
+                        : "bg-danger"
                     }`}
                     style={{ width: `${application.verificationScore}%` }}
                   />
@@ -1084,17 +1085,17 @@ function DetailsModal({
             )}
 
             {application.livenessVerification && (
-              <div className="mt-4 p-3 bg-gray-600 rounded-lg">
+              <div className="mt-4 p-3 bg-border-strong rounded-lg">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Liveness Verification</span>
+                  <span className="text-ink-muted text-sm">Liveness Verification</span>
                   {application.livenessVerification.passed ? (
-                    <span className="text-green-400 text-sm font-medium">✓ Passed</span>
+                    <span className="inline-flex items-center gap-1 text-success text-sm font-medium"><CheckCircle2 className="w-4 h-4" /> Passed</span>
                   ) : (
-                    <span className="text-red-400 text-sm font-medium">✗ Failed</span>
+                    <span className="inline-flex items-center gap-1 text-danger text-sm font-medium"><XCircle className="w-4 h-4" /> Failed</span>
                   )}
                 </div>
                 {application.livenessVerification.completedChallenges !== undefined && (
-                  <p className="text-xs text-gray-500 mt-1">
+                  <p className="text-xs text-ink-faint mt-1">
                     Completed {application.livenessVerification.completedChallenges} of {application.livenessVerification.totalChallenges} challenges
                     {application.livenessVerification.score !== undefined && ` (Score: ${application.livenessVerification.score}%)`}
                   </p>
@@ -1103,63 +1104,63 @@ function DetailsModal({
             )}
           </div>
 
-          <div className="bg-gray-700 rounded-lg p-4 mb-4">
-            <h3 className="text-sm text-gray-400 mb-3">Wallet Information</h3>
-            <p className="text-gray-500 text-xs">Wallet Address</p>
-            <p className="text-white font-mono text-sm break-all">{application.walletAddress}</p>
+          <div className="bg-surface-overlay rounded-lg p-4 mb-4">
+            <h3 className="text-sm text-ink-muted mb-3">Wallet Information</h3>
+            <p className="text-ink-faint text-xs">Wallet Address</p>
+            <p className="text-ink font-mono text-sm break-all">{application.walletAddress}</p>
             {application.linkedWallets && application.linkedWallets.length > 0 && (
               <div className="mt-2">
-                <p className="text-gray-500 text-xs">Linked Wallets ({application.linkedWallets.length})</p>
+                <p className="text-ink-faint text-xs">Linked Wallets ({application.linkedWallets.length})</p>
                 {application.linkedWallets.map((wallet, i) => (
-                  <p key={i} className="text-white font-mono text-sm">{wallet}</p>
+                  <p key={i} className="text-ink font-mono text-sm">{wallet}</p>
                 ))}
               </div>
             )}
           </div>
 
           {application.documents && Object.keys(application.documents).length > 0 && (
-            <div className="bg-gray-700 rounded-lg p-4 mb-4">
+            <div className="bg-surface-overlay rounded-lg p-4 mb-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm text-gray-400">Documents</h3>
+                <h3 className="text-sm text-ink-muted">Documents</h3>
                 {loadingDocs && (
-                  <span className="text-xs text-gold-400 animate-pulse">Loading thumbnails...</span>
+                  <span className="text-xs text-gold animate-pulse">Loading thumbnails...</span>
                 )}
               </div>
               <div className="grid grid-cols-3 gap-3">
-                {renderDocument('idFront', 'ID Front', '🪪')}
-                {renderDocument('idBack', 'ID Back', '🪪')}
-                {renderDocument('selfie', 'Selfie', '🤳')}
-                {renderDocument('addressProof', 'Address Proof', '📄')}
-                {renderDocument('accreditedProof', 'Accredited Proof', '📋')}
-                {renderDocument('liveness_1', 'Liveness 1', '📸')}
-                {renderDocument('liveness_2', 'Liveness 2', '📸')}
-                {renderDocument('liveness_3', 'Liveness 3', '📸')}
+                {renderDocument('idFront', 'ID Front', IdCard)}
+                {renderDocument('idBack', 'ID Back', IdCard)}
+                {renderDocument('selfie', 'Selfie', Camera)}
+                {renderDocument('addressProof', 'Address Proof', FileText)}
+                {renderDocument('accreditedProof', 'Accredited Proof', ClipboardList)}
+                {renderDocument('liveness_1', 'Liveness 1', Camera)}
+                {renderDocument('liveness_2', 'Liveness 2', Camera)}
+                {renderDocument('liveness_3', 'Liveness 3', Camera)}
               </div>
-              <p className="text-xs text-gray-500 mt-3 text-center">
+              <p className="text-xs text-ink-faint mt-3 text-center">
                 Click on any document to preview • Use ↗️ to open in new tab
               </p>
             </div>
           )}
 
           {application.status === 'rejected' && application.rejectionReason && (
-            <div className="bg-red-900/30 border border-red-500/30 rounded-lg p-4 mb-4">
-              <h3 className="text-sm text-red-400 mb-2">Rejection Reason</h3>
-              <p className="text-white">
+            <div className="bg-danger-muted border border-danger/30 rounded-lg p-4 mb-4">
+              <h3 className="text-sm text-danger mb-2">Rejection Reason</h3>
+              <p className="text-ink">
                 {REJECTION_REASONS.find(r => r.id === application.rejectionReason)?.label || application.rejectionReason}
               </p>
             </div>
           )}
 
           {application.notes && (
-            <div className="bg-gray-700 rounded-lg p-4 mb-4">
-              <h3 className="text-sm text-gray-400 mb-2">Admin Notes</h3>
-              <p className="text-white">{application.notes}</p>
+            <div className="bg-surface-overlay rounded-lg p-4 mb-4">
+              <h3 className="text-sm text-ink-muted mb-2">Admin Notes</h3>
+              <p className="text-ink">{application.notes}</p>
             </div>
           )}
 
           <button
             onClick={onClose}
-            className="w-full py-3 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+            className="w-full py-3 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors"
           >
             Close
           </button>
@@ -1214,37 +1215,38 @@ function SettingsPanel({
   return (
     <div className="space-y-6">
       {/* Tier Limits Info */}
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4">Tier Investment Limits</h3>
+      <div className="bg-surface rounded-xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-ink mb-4">Tier Investment Limits</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[1, 2, 3, 4].map((level) => {
             const tierName = TIER_NAMES[level];
             const limit = tierLimits[tierName];
+            const Icon = TIER_ICONS[level];
             return (
-              <div key={level} className={`p-4 rounded-lg ${TIER_COLORS[level]}/20 border border-gray-600`}>
+              <div key={level} className={`p-4 rounded-lg ${TIER_COLORS[level]}/20 border border-border-strong`}>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-2xl">{TIER_ICONS[level]}</span>
-                  <span className="font-medium text-white">{tierName}</span>
+                  <Icon className="w-5 h-5 text-ink" />
+                  <span className="font-medium text-ink">{tierName}</span>
                 </div>
-                <p className="text-white font-bold">
+                <p className="text-ink font-bold">
                   {formatLimit(limit)}
                 </p>
               </div>
             );
           })}
         </div>
-        <p className="text-xs text-gray-500 mt-4">
+        <p className="text-xs text-ink-faint mt-4">
           Tier limits are stored in the database (kyc_tier_limits table). Update them via SQL or admin API.
         </p>
       </div>
 
       {/* Contract Settings */}
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4">Contract Settings</h3>
+      <div className="bg-surface rounded-xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-ink mb-4">Contract Settings</h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-2">
+            <label className="block text-sm text-ink-muted mb-2">
               Registration Fee ({getNativeCurrency()})
             </label>
             <div className="flex gap-2">
@@ -1252,13 +1254,13 @@ function SettingsPanel({
                 type="text"
                 value={newFee}
                 onChange={(e) => setNewFee(e.target.value)}
-                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
+                className="flex-1 px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-gold"
                 placeholder="0.05"
               />
               <button
                 onClick={() => onUpdateFee(newFee)}
                 disabled={isProcessing}
-                className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-gold hover:bg-gold-light text-ink rounded-lg transition-colors disabled:opacity-50"
               >
                 Update
               </button>
@@ -1266,19 +1268,19 @@ function SettingsPanel({
           </div>
 
           <div>
-            <label className="block text-sm text-gray-400 mb-2">Fee Recipient</label>
+            <label className="block text-sm text-ink-muted mb-2">Fee Recipient</label>
             <div className="flex gap-2">
               <input
                 type="text"
                 value={newRecipient}
                 onChange={(e) => setNewRecipient(e.target.value)}
-                className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white font-mono text-sm focus:outline-none focus:border-gold-500"
+                className="flex-1 px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink font-mono text-sm focus:outline-none focus:border-gold"
                 placeholder="0x..."
               />
               <button
                 onClick={() => onUpdateRecipient(newRecipient)}
                 disabled={isProcessing || !isAddress(newRecipient)}
-                className="px-4 py-2 bg-gold-600 hover:bg-gold-500 text-white rounded-lg transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-gold hover:bg-gold-light text-ink rounded-lg transition-colors disabled:opacity-50"
               >
                 Update
               </button>
@@ -1286,10 +1288,10 @@ function SettingsPanel({
           </div>
         </div>
 
-        <div className="flex items-center justify-between p-4 bg-gray-700 rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-surface-overlay rounded-lg">
           <div>
-            <p className="text-white font-medium">Contract Status</p>
-            <p className="text-sm text-gray-400">
+            <p className="text-ink font-medium">Contract Status</p>
+            <p className="text-sm text-ink-muted">
               {settings.isPaused
                 ? "Contract is paused - registrations disabled"
                 : "Contract is active - accepting registrations"}
@@ -1300,8 +1302,8 @@ function SettingsPanel({
             disabled={isProcessing}
             className={`px-4 py-2 rounded-lg transition-colors disabled:opacity-50 ${
               settings.isPaused
-                ? "bg-green-600 hover:bg-green-500 text-white"
-                : "bg-red-600 hover:bg-red-500 text-white"
+                ? "bg-success hover:bg-success/80 text-ink"
+                : "bg-danger hover:bg-danger/80 text-ink"
             }`}
           >
             {settings.isPaused ? "Unpause" : "Pause"}
@@ -1309,23 +1311,23 @@ function SettingsPanel({
         </div>
 
         {settings.trustedSigner && (
-          <div className="mt-4 p-4 bg-gray-700 rounded-lg">
-            <p className="text-sm text-gray-400">
+          <div className="mt-4 p-4 bg-surface-overlay rounded-lg">
+            <p className="text-sm text-ink-muted">
               Trusted Signer:{" "}
-              <span className="font-mono text-white">{settings.trustedSigner}</span>
+              <span className="font-mono text-ink">{settings.trustedSigner}</span>
             </p>
           </div>
         )}
       </div>
 
       {/* Auto-Approval Settings */}
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4">Auto-Approval Settings</h3>
+      <div className="bg-surface rounded-xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-ink mb-4">Auto-Approval Settings</h3>
 
         <div className="flex items-center justify-between mb-4">
           <div>
-            <p className="text-white font-medium">Enable Auto-Approval</p>
-            <p className="text-sm text-gray-400">
+            <p className="text-ink font-medium">Enable Auto-Approval</p>
+            <p className="text-sm text-ink-muted">
               Automatically approve applications up to a certain tier
             </p>
           </div>
@@ -1339,13 +1341,13 @@ function SettingsPanel({
               }}
               className="sr-only peer"
             />
-            <div className="w-11 h-6 bg-gray-600 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-600"></div>
+            <div className="w-11 h-6 bg-border-strong peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border-strong after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold"></div>
           </label>
         </div>
 
         {autoApprovalEnabled && (
           <div>
-            <label className="block text-sm text-gray-400 mb-2">
+            <label className="block text-sm text-ink-muted mb-2">
               Maximum Auto-Approval Tier
             </label>
             <select
@@ -1355,22 +1357,22 @@ function SettingsPanel({
                 setAutoApprovalMaxLevel(level);
                 onUpdateAutoApproval(autoApprovalEnabled, level);
               }}
-              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
+              className="w-full px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-gold"
             >
-              <option value="1">🥉 Bronze - auto-approve basic tier only</option>
-              <option value="2">🥈 Silver - auto-approve up to Silver</option>
+              <option value="1">Bronze - auto-approve basic tier only</option>
+              <option value="2">Silver - auto-approve up to Silver</option>
             </select>
-            <p className="text-xs text-gray-500 mt-2">
-              🥇 Gold and 💎 Diamond tiers always require manual review
+            <p className="text-xs text-ink-faint mt-2">
+              Gold and Diamond tiers always require manual review
             </p>
           </div>
         )}
       </div>
 
       {/* Restricted Countries */}
-      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
-        <h3 className="text-lg font-semibold text-white mb-4">Restricted Countries</h3>
-        <p className="text-sm text-gray-400 mb-4">
+      <div className="bg-surface rounded-xl p-6 border border-border">
+        <h3 className="text-lg font-semibold text-ink mb-4">Restricted Countries</h3>
+        <p className="text-sm text-ink-muted mb-4">
           Users from these countries will be blocked from KYC approval
         </p>
 
@@ -1378,12 +1380,12 @@ function SettingsPanel({
           {restrictedCountries.map((code) => (
             <span
               key={code}
-              className="inline-flex items-center gap-1 px-3 py-1 bg-red-900/30 border border-red-500/30 text-red-400 rounded-full text-sm"
+              className="inline-flex items-center gap-1 px-3 py-1 bg-danger-muted border border-danger/30 text-danger rounded-full text-sm"
             >
               {COUNTRY_NAMES[code] || `Code: ${code}`}
               <button
                 onClick={() => handleRemoveCountry(code)}
-                className="hover:text-red-300"
+                className="hover:text-danger/80"
               >
                 ×
               </button>
@@ -1396,13 +1398,13 @@ function SettingsPanel({
             type="text"
             value={newCountryCode}
             onChange={(e) => setNewCountryCode(e.target.value)}
-            className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:border-gold-500"
+            className="flex-1 px-3 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink focus:outline-none focus:border-gold"
             placeholder="Enter ISO 3166-1 numeric country code"
           />
           <button
             onClick={handleAddCountry}
             disabled={!newCountryCode}
-            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-danger hover:bg-danger/80 text-ink rounded-lg transition-colors disabled:opacity-50"
           >
             Add Restriction
           </button>
@@ -1680,11 +1682,11 @@ export function KYCManagement() {
   // Render states
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-          <div className="text-6xl mb-4">🔐</div>
-          <h1 className="text-2xl font-bold text-white mb-2">Connect Your Wallet</h1>
-          <p className="text-gray-400">
+          <Lock className="w-14 h-14 text-ink-faint mb-4 mx-auto" />
+          <h1 className="text-2xl font-display font-medium text-ink mb-2">Connect Your Wallet</h1>
+          <p className="text-ink-muted">
             Please connect your admin wallet to access the KYC management dashboard.
           </p>
         </div>
@@ -1694,34 +1696,34 @@ export function KYCManagement() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-surface-sunken">
         <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-          <div className="text-6xl mb-4">⛔</div>
-          <h1 className="text-2xl font-bold text-white mb-2">Access Denied</h1>
-          <p className="text-gray-400">This wallet does not have admin permissions.</p>
-          <p className="text-gray-500 text-sm mt-2 font-mono">Connected: {address}</p>
+          <Ban className="w-14 h-14 text-danger mb-4 mx-auto" />
+          <h1 className="text-2xl font-display font-medium text-ink mb-2">Access Denied</h1>
+          <p className="text-ink-muted">This wallet does not have admin permissions.</p>
+          <p className="text-ink-faint text-sm mt-2 font-mono">Connected: {address}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-surface-sunken">
       <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-white">KYC Management</h1>
-            <p className="text-gray-400">Manage KYC applications and verification settings</p>
+            <h1 className="text-2xl font-bold text-ink">KYC Management</h1>
+            <p className="text-ink-muted">Manage KYC applications and verification settings</p>
           </div>
           <div className="flex items-center gap-4">
-            <span className="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">
+            <span className="px-3 py-1 bg-success/15 text-success rounded-full text-sm">
               {chainName || `Chain ${chainId}`}
             </span>
             <button
               onClick={loadData}
               disabled={isLoading}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors disabled:opacity-50"
+              className="px-4 py-2 bg-surface-overlay hover:bg-border-strong text-ink rounded-lg transition-colors disabled:opacity-50"
             >
               {isLoading ? "Loading..." : "Refresh"}
             </button>
@@ -1730,9 +1732,9 @@ export function KYCManagement() {
 
         {/* Error Banner */}
         {error && (
-          <div className="mb-6 p-4 bg-red-900/30 border border-red-500/30 rounded-xl text-red-400">
+          <div className="mb-6 p-4 bg-danger-muted border border-danger/30 rounded-xl text-danger">
             {error}
-            <button onClick={() => setError(null)} className="ml-4 hover:text-red-300">
+            <button onClick={() => setError(null)} className="ml-4 hover:text-danger/80">
               Dismiss
             </button>
           </div>
@@ -1741,15 +1743,15 @@ export function KYCManagement() {
         {/* Stats */}
         {stats && (
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-            <StatCard title="Total Applications" value={stats.totalApplications} icon="📋" color="blue" />
-            <StatCard title="Pending Review" value={stats.pendingCount} icon="⏳" color="yellow" />
-            <StatCard title="Approved" value={stats.approvedCount} subtitle={`+${stats.approvedToday} today`} icon="✅" color="green" />
-            <StatCard title="Rejected" value={stats.rejectedCount} subtitle={`+${stats.rejectedToday} today`} icon="❌" color="red" />
+            <StatCard title="Total Applications" value={stats.totalApplications} icon={<ClipboardList className="w-7 h-7" />} color="gold" />
+            <StatCard title="Pending Review" value={stats.pendingCount} icon={<Clock className="w-7 h-7" />} color="warning" />
+            <StatCard title="Approved" value={stats.approvedCount} subtitle={`+${stats.approvedToday} today`} icon={<CheckCircle2 className="w-7 h-7" />} color="success" />
+            <StatCard title="Rejected" value={stats.rejectedCount} subtitle={`+${stats.rejectedToday} today`} icon={<XCircle className="w-7 h-7" />} color="danger" />
             <StatCard
               title="Fees Collected"
               value={`${stats.totalFeesCollected} ${getNativeCurrency()}`}
-              icon="💰"
-              color="purple"
+              icon={<DollarSign className="w-7 h-7" />}
+              color="gold"
             />
           </div>
         )}
@@ -1760,8 +1762,8 @@ export function KYCManagement() {
             onClick={() => setActiveTab("applications")}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "applications"
-                ? "bg-gold-600 text-white"
-                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                ? "bg-gold text-surface-sunken"
+                : "bg-surface text-ink-muted hover:bg-surface-overlay"
             }`}
           >
             Applications
@@ -1770,8 +1772,8 @@ export function KYCManagement() {
             onClick={() => setActiveTab("settings")}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "settings"
-                ? "bg-gold-600 text-white"
-                : "bg-gray-800 text-gray-400 hover:bg-gray-700"
+                ? "bg-gold text-surface-sunken"
+                : "bg-surface text-ink-muted hover:bg-surface-overlay"
             }`}
           >
             Settings
@@ -1786,7 +1788,7 @@ export function KYCManagement() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:border-gold-500"
+                className="px-4 py-2 bg-surface border border-border rounded-lg text-ink focus:outline-none focus:border-gold"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -1800,20 +1802,20 @@ export function KYCManagement() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search by name, email, or wallet..."
-                className="flex-1 min-w-[200px] px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-gold-500"
+                className="flex-1 min-w-[200px] px-4 py-2 bg-surface border border-border rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold"
               />
             </div>
 
             {/* Applications Grid */}
             {isLoading ? (
               <div className="text-center py-12">
-                <div className="animate-spin text-4xl mb-4">⟳</div>
-                <p className="text-gray-400">Loading applications...</p>
+                <Loader2 className="w-10 h-10 text-ink-muted animate-spin mb-4 mx-auto" />
+                <p className="text-ink-muted">Loading applications...</p>
               </div>
             ) : applications.length === 0 ? (
-              <div className="text-center py-12 bg-gray-800 rounded-xl">
-                <div className="text-4xl mb-4">📭</div>
-                <p className="text-gray-400">No applications found</p>
+              <div className="text-center py-12 bg-surface rounded-xl">
+                <Inbox className="w-10 h-10 text-ink-faint mb-4 mx-auto" />
+                <p className="text-ink-muted">No applications found</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

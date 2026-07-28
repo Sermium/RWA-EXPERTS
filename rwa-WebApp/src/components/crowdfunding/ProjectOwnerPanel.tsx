@@ -72,11 +72,11 @@ const PROJECT_STATE_LABELS: Record<number, string> = {
 
 const PROJECT_STATE_COLORS: Record<number, string> = {
   0: 'bg-border-strong/20 text-ink-muted',
-  1: 'bg-gold-500/20 text-gold-400',
+  1: 'bg-gold/20 text-gold',
   2: 'bg-success/10 text-success',
-  3: 'bg-gold-500/20 text-gold-400',
+  3: 'bg-gold/20 text-gold',
   4: 'bg-danger/10 text-danger',
-  5: 'bg-emerald-500/20 text-emerald-400',
+  5: 'bg-success/10 text-success',
 };
 
 const MILESTONE_STATE = {
@@ -99,7 +99,7 @@ const MILESTONE_STATE_LABELS: Record<number, string> = {
 
 const MILESTONE_STATE_COLORS: Record<number, string> = {
   0: 'bg-border-strong/20 text-ink-muted',
-  1: 'bg-gold-500/20 text-gold-400',
+  1: 'bg-gold/20 text-gold',
   2: 'bg-warning/10 text-warning',
   3: 'bg-success/10 text-success',
   4: 'bg-warning/10 text-warning',
@@ -196,11 +196,11 @@ function SubmitProofModal({
 
   return (
     <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-surface rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-ink">Submit Milestone Proof</h3>
+            <h3 className="text-xl font-semibold text-ink">Submit Milestone Proof</h3>
             <p className="text-sm text-ink-muted mt-1">
               Milestone {milestoneIndex + 1}: {milestone.description || 'Untitled'}
             </p>
@@ -251,7 +251,7 @@ function SubmitProofModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g., Phase 1 Completion - Development Done"
-              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold"
             />
           </div>
 
@@ -265,7 +265,7 @@ function SubmitProofModal({
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe what was accomplished, KPIs met, deliverables completed..."
               rows={4}
-              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 resize-none"
+              className="w-full px-4 py-3 bg-surface-overlay border border-border-strong rounded-xl text-ink placeholder-ink-faint focus:outline-none focus:border-gold resize-none"
             />
           </div>
 
@@ -277,7 +277,7 @@ function SubmitProofModal({
               </label>
               <button
                 onClick={handleAddDocument}
-                className="text-sm text-gold-400 hover:text-gold-300 flex items-center gap-1"
+                className="text-sm text-gold hover:text-gold-light flex items-center gap-1"
               >
                 <Plus className="w-4 h-4" /> Add Document
               </button>
@@ -296,7 +296,7 @@ function SubmitProofModal({
                         setDocuments(newDocs);
                       }}
                       placeholder="ipfs://... or https://..."
-                      className="w-full pl-10 pr-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 text-sm"
+                      className="w-full pl-10 pr-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold text-sm"
                     />
                   </div>
                   {documents.length > 1 && (
@@ -323,7 +323,7 @@ function SubmitProofModal({
               </label>
               <button
                 onClick={handleAddLink}
-                className="text-sm text-gold-400 hover:text-gold-300 flex items-center gap-1"
+                className="text-sm text-gold hover:text-gold-light flex items-center gap-1"
               >
                 <Plus className="w-4 h-4" /> Add Link
               </button>
@@ -342,7 +342,7 @@ function SubmitProofModal({
                         setLinks(newLinks);
                       }}
                       placeholder="https://..."
-                      className="w-full pl-10 pr-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold-500 text-sm"
+                      className="w-full pl-10 pr-4 py-2 bg-surface-overlay border border-border-strong rounded-lg text-ink placeholder-ink-faint focus:outline-none focus:border-gold text-sm"
                     />
                   </div>
                   {links.length > 1 && (
@@ -373,7 +373,7 @@ function SubmitProofModal({
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="flex-1 py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="flex-1 py-3 bg-gold hover:bg-gold-light disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-medium rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <><Loader2 className="w-5 h-5 animate-spin" /> Submitting...</>
@@ -410,17 +410,17 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
     switch (status) {
       case 'approved': return 'bg-success/10 text-success';
       case 'rejected': return 'bg-danger/10 text-danger';
-      default: return 'bg-gold-500/20 text-gold-400';
+      default: return 'bg-gold/20 text-gold';
     }
   };
 
   return (
     <div className="fixed inset-0 bg-surface-sunken/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-surface rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="p-6 border-b border-border flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-ink">{proof.title}</h3>
+            <h3 className="text-xl font-semibold text-ink">{proof.title}</h3>
             <p className="text-sm text-ink-muted mt-1">
               Submitted {new Date(proof.submittedAt).toLocaleDateString()}
             </p>
@@ -443,7 +443,7 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
           {/* Milestone Info */}
           <div className="bg-surface-overlay/50 rounded-xl p-4">
             <p className="text-sm text-ink-muted mb-1">Milestone Amount</p>
-            <p className="text-xl font-bold text-ink">{formatUSD(milestone.amount)}</p>
+            <p className="text-xl font-semibold text-ink">{formatUSD(milestone.amount)}</p>
           </div>
 
           {/* Admin Notes (if rejected) */}
@@ -473,8 +473,8 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 p-3 bg-surface-overlay/50 rounded-lg hover:bg-surface-overlay transition-colors"
                   >
-                    <FileText className="w-4 h-4 text-gold-400" />
-                    <span className="text-gold-400 text-sm truncate flex-1">{doc}</span>
+                    <FileText className="w-4 h-4 text-gold" />
+                    <span className="text-gold text-sm truncate flex-1">{doc}</span>
                     <ExternalLink className="w-4 h-4 text-ink-faint" />
                   </a>
                 ))}
@@ -495,8 +495,8 @@ function ViewProofModal({ proof, milestone, onClose }: ViewProofModalProps) {
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 p-3 bg-surface-overlay/50 rounded-lg hover:bg-surface-overlay transition-colors"
                   >
-                    <LinkIcon className="w-4 h-4 text-gold-400" />
-                    <span className="text-gold-400 text-sm truncate flex-1">{link}</span>
+                    <LinkIcon className="w-4 h-4 text-gold" />
+                    <span className="text-gold text-sm truncate flex-1">{link}</span>
                     <ExternalLink className="w-4 h-4 text-ink-faint" />
                   </a>
                 ))}
@@ -686,16 +686,16 @@ export default function ProjectOwnerPanel({
   // ============================================================================
 
   return (
-    <div className="bg-surface rounded-2xl border border-border overflow-hidden">
+    <div className="bg-surface rounded-xl border border-border overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-gold-500/20 rounded-lg">
-              <FileText className="w-5 h-5 text-gold-400" />
+            <div className="p-2 bg-gold/20 rounded-lg">
+              <FileText className="w-5 h-5 text-gold" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-ink">Project Owner Dashboard</h2>
+              <h2 className="text-xl font-semibold text-ink">Project Owner Dashboard</h2>
               <p className="text-sm text-ink-muted">Manage your crowdfunding project</p>
             </div>
           </div>
@@ -733,7 +733,7 @@ export default function ProjectOwnerPanel({
             <Target className="w-4 h-4" />
             Funding Goal
           </div>
-          <p className="text-xl font-bold text-ink">{formatUSD(fundingGoal)}</p>
+          <p className="text-xl font-semibold text-ink">{formatUSD(fundingGoal)}</p>
         </div>
 
         <div className="bg-surface-overlay/50 rounded-xl p-4">
@@ -750,7 +750,7 @@ export default function ProjectOwnerPanel({
             <TrendingUp className="w-4 h-4" />
             Released to You
           </div>
-          <p className="text-xl font-bold text-gold-400">{formatUSD(releasedFunds)}</p>
+          <p className="text-xl font-bold text-gold">{formatUSD(releasedFunds)}</p>
           <p className="text-xs text-ink-faint mt-1">Via milestones</p>
         </div>
 
@@ -765,12 +765,12 @@ export default function ProjectOwnerPanel({
       </div>
 
       {/* Info Banner */}
-      <div className="mx-6 mb-4 p-4 bg-gold-500/10 border border-gold-500/30 rounded-lg">
+      <div className="mx-6 mb-4 p-4 bg-gold/10 border border-gold/30 rounded-lg">
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-gold-400 flex-shrink-0 mt-0.5" />
+          <Info className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
           <div className="text-sm text-gold-300">
             <p className="font-medium mb-1">How to release funds:</p>
-            <ol className="list-decimal list-inside text-gold-400/80 space-y-1">
+            <ol className="list-decimal list-inside text-gold/80 space-y-1">
               <li>Complete the work for a milestone</li>
               <li>Click "Submit Proof" and provide documents/links as evidence</li>
               <li>Platform admin reviews your submission</li>
@@ -786,7 +786,7 @@ export default function ProjectOwnerPanel({
           <button
             onClick={handleActivateProject}
             disabled={isLoading}
-            className="w-full py-3 bg-gold-600 hover:bg-gold-700 disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+            className="w-full py-3 bg-gold hover:bg-gold-light disabled:bg-border-strong disabled:cursor-not-allowed text-ink font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
           >
             {isLoading ? (
               <><Loader2 className="w-5 h-5 animate-spin" /> Activating...</>
@@ -800,7 +800,7 @@ export default function ProjectOwnerPanel({
       {/* Milestones */}
       <div className="p-6 border-t border-border">
         <h3 className="text-lg font-semibold text-ink mb-4 flex items-center gap-2">
-          <Clock className="w-5 h-5 text-gold-400" />
+          <Clock className="w-5 h-5 text-gold" />
           Milestones
           <span className="text-sm font-normal text-ink-muted">
             ({milestones.filter(m => m.state === MILESTONE_STATE.RELEASED).length}/{milestones.length} released)
@@ -827,7 +827,7 @@ export default function ProjectOwnerPanel({
                       : milestone.state === MILESTONE_STATE.APPROVED
                       ? 'bg-warning/10 border-warning/30'
                       : proof?.status === 'pending'
-                      ? 'bg-gold-500/10 border-gold-500/30'
+                      ? 'bg-gold/10 border-gold/30'
                       : proof?.status === 'rejected'
                       ? 'bg-danger/10 border-danger/30'
                       : 'bg-surface-overlay/50 border-border-strong'
@@ -842,7 +842,7 @@ export default function ProjectOwnerPanel({
                           ? 'bg-warning text-ink'
                           : 'bg-border-strong text-ink-muted'
                       }`}>
-                        {milestone.state === MILESTONE_STATE.RELEASED ? '✓' : index + 1}
+                        {milestone.state === MILESTONE_STATE.RELEASED ? <CheckCircle className="w-4 h-4" /> : index + 1}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-ink font-medium">
@@ -863,13 +863,13 @@ export default function ProjectOwnerPanel({
                             <span className={`text-xs px-2 py-0.5 rounded-full ${
                               proof.status === 'approved' ? 'bg-success/10 text-success' :
                               proof.status === 'rejected' ? 'bg-danger/10 text-danger' :
-                              'bg-gold-500/20 text-gold-400'
+                              'bg-gold/20 text-gold'
                             }`}>
                               Proof: {proof.status}
                             </span>
                             <button
                               onClick={() => setViewProofModal({ proof, milestone })}
-                              className="text-xs text-gold-400 hover:text-gold-300 flex items-center gap-1"
+                              className="text-xs text-gold hover:text-gold-light flex items-center gap-1"
                             >
                               <Eye className="w-3 h-3" /> View
                             </button>
@@ -887,7 +887,7 @@ export default function ProjectOwnerPanel({
                       {canSubmit && (
                         <button
                           onClick={() => setSubmitProofModal({ milestone, index })}
-                          className="px-3 py-1.5 bg-gold-600 hover:bg-gold-700 text-ink text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
+                          className="px-3 py-1.5 bg-gold hover:bg-gold-light text-ink text-xs font-medium rounded-lg transition-colors flex items-center gap-1"
                         >
                           <Upload className="w-3 h-3" />
                           {proof?.status === 'rejected' ? 'Resubmit' : 'Submit Proof'}
@@ -917,7 +917,7 @@ export default function ProjectOwnerPanel({
             href={`${explorerUrl}/address/${escrowAddress}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gold-400 hover:text-gold-300 flex items-center gap-1"
+            className="text-gold hover:text-gold-light flex items-center gap-1"
           >
             {escrowAddress.slice(0, 6)}...{escrowAddress.slice(-4)}
             <ExternalLink className="w-3 h-3" />
