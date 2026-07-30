@@ -3,6 +3,7 @@
 
 import { useAccount, useConnect, useDisconnect, useChainId, useReconnect } from 'wagmi';
 import { createContext, useContext, useState, useCallback, useEffect, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { SupportedChainId } from '@/config/contracts';
 import { Wallet, AlertTriangle, ExternalLink, Link2 } from 'lucide-react';
@@ -302,9 +303,11 @@ function WalletModal({ onClose }: { onClose: () => void }) {
   // Check if any wallet is available
   const hasAnyWallet = typeof window !== 'undefined' && !!(window as any).ethereum;
 
-  return (
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div 
+      <div
         className="absolute inset-0 bg-surface-sunken/70 backdrop-blur-sm"
         onClick={onClose}
       />
@@ -414,7 +417,8 @@ function WalletModal({ onClose }: { onClose: () => void }) {
           </p>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
