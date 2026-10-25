@@ -1,143 +1,162 @@
 import { expect } from "chai";
-import { ethers, upgrades } from "hardhat";
+import { ethers } from "hardhat";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { cacheKYC, deployKYCVerifier, deploySecurityToken, kycProof, IRAN } from "../helpers/kyc";
 
 describe("RWASecurityToken", function () {
-    async function deployFixture() {
-        const [deployer, admin, investor1, investor2, feeRecipient, claimIssuer] = await ethers.getSigners();
+  async function fixture() {
+    const [admin, signer, alice, bob, carol] = await ethers.getSigners();
+    const verifier: any = await deployKYCVerifier(signer.address, admin.address);
+    const { token, compliance, module } = await deploySecurityToken(admin, verifier);
+    const cache = (wallets: string[], level = 1, country?: number) =>
+      cacheKYC(token, signer, verifier, wallets, level, country);
+    return { token, compliance, module, verifier, admin, signer, alice, bob, carol, cache };
+  }
 
-        // Deploy Registry Infrastructure
-        const ClaimTopicsRegistry = await ethers.getContractFactory("ClaimTopicsRegistry");
-        const claimTopicsRegistry = await upgrades.deployProxy(ClaimTopicsRegistry, [admin.address], { initializer: "initialize", kind: "uups" });
+  /** alice holds 100 tokens; alice, bob and carol all have cached KYC */
+  async function fundedFixture() {
+    const f = await fixture();
+    await f.cache([f.alice.address, f.bob.address, f.carol.address]);
+    await f.token.mint(f.alice.address, 100n);
+    return f;
+  }
 
-        const TrustedIssuersRegistry = await ethers.getContractFactory("TrustedIssuersRegistry");
-        const trustedIssuersRegistry = await upgrades.deployProxy(TrustedIssuersRegistry, [admin.address], { initializer: "initialize", kind: "uups" });
-
-        const IdentityRegistryStorage = await ethers.getContractFactory("IdentityRegistryStorage");
-        const identityRegistryStorage = await upgrades.deployProxy(IdentityRegistryStorage, [admin.address], { initializer: "initialize", kind: "uups" });
-
-        const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
-        const identityRegistry = await upgrades.deployProxy(
-            IdentityRegistry,
-            [admin.address, await claimTopicsRegistry.getAddress(), await trustedIssuersRegistry.getAddress(), await identityRegistryStorage.getAddress()],
-            { initializer: "initialize", kind: "uups" }
-        );
-
-        await identityRegistryStorage.connect(admin).bindIdentityRegistry(await identityRegistry.getAddress());
-
-        // Deploy Compliance
-        const ModularCompliance = await ethers.getContractFactory("ModularCompliance");
-        const modularCompliance = await upgrades.deployProxy(ModularCompliance, [admin.address], { initializer: "initialize", kind: "uups" });
-
-        // Deploy Project NFT
-        const RWAProjectNFT = await ethers.getContractFactory("RWAProjectNFT");
-        const projectNFT = await upgrades.deployProxy(RWAProjectNFT, [admin.address, "RWA Project NFT", "RWANFT"], { initializer: "initialize", kind: "uups" });
-
-        // Deploy Security Token
-        const RWASecurityToken = await ethers.getContractFactory("RWASecurityToken");
-        const securityToken = await upgrades.deployProxy(
-            RWASecurityToken,
-            ["Test Security Token", "TST", 18, 1, await projectNFT.getAddress(), await identityRegistry.getAddress(), await modularCompliance.getAddress(), 0, admin.address, ethers.ZeroAddress],
-            { initializer: "initialize", kind: "uups" }
-        );
-
-        // Deploy Mock Claim Issuer
-        const MockClaimIssuer = await ethers.getContractFactory("MockClaimIssuer");
-        const mockClaimIssuer = await MockClaimIssuer.deploy(claimIssuer.address);
-
-        // Setup claim topics
-        await claimTopicsRegistry.connect(admin).addClaimTopic(1); // KYC
-        await claimTopicsRegistry.connect(admin).addClaimTopic(2); // AML
-
-        // Add trusted issuer
-        await trustedIssuersRegistry.connect(admin).addTrustedIssuer(await mockClaimIssuer.getAddress(), [1, 2]);
-
-        // Create investor identity
-        const MockIdentity = await ethers.getContractFactory("MockIdentity");
-        const investorIdentity = await MockIdentity.deploy(investor1.address);
-
-        // Add claims
-        await investorIdentity.connect(investor1).addClaim(1, 1, await mockClaimIssuer.getAddress(), "0x", "0x", "");
-        await investorIdentity.connect(investor1).addClaim(2, 1, await mockClaimIssuer.getAddress(), "0x", "0x", "");
-
-        // Register investor
-        await identityRegistry.connect(admin).registerIdentity(investor1.address, await investorIdentity.getAddress(), 840);
-
-        return {
-            securityToken,
-            identityRegistry,
-            modularCompliance,
-            claimTopicsRegistry,
-            trustedIssuersRegistry,
-            projectNFT,
-            mockClaimIssuer,
-            investorIdentity,
-            deployer,
-            admin,
-            investor1,
-            investor2,
-            feeRecipient,
-            claimIssuer
-        };
-    }
-
-    describe("Initialization", function () {
-        it("should initialize with correct parameters", async function () {
-            const { securityToken, admin } = await loadFixture(deployFixture);
-            expect(await securityToken.name()).to.equal("Test Security Token");
-            expect(await securityToken.symbol()).to.equal("TST");
-            expect(await securityToken.decimals()).to.equal(18);
-        });
+  describe("KYC enforcement", function () {
+    it("is on for a freshly initialised token", async function () {
+      const { token } = await loadFixture(fixture);
+      expect(await token.kycEnforced()).to.equal(true);
     });
 
-    describe("Minting", function () {
-        it("should mint tokens to verified investor", async function () {
-            const { securityToken, admin, investor1 } = await loadFixture(deployFixture);
-            await securityToken.connect(admin).mint(investor1.address, ethers.parseEther("1000"));
-            expect(await securityToken.balanceOf(investor1.address)).to.equal(ethers.parseEther("1000"));
-        });
-
-        it("should not mint to unverified investor", async function () {
-            const { securityToken, admin, investor2 } = await loadFixture(deployFixture);
-            await expect(
-                securityToken.connect(admin).mint(investor2.address, ethers.parseEther("1000"))
-            ).to.be.reverted;
-        });
+    it("refuses to mint to a wallet without cached KYC", async function () {
+      const { token, alice, cache } = await loadFixture(fixture);
+      await expect(token.mint(alice.address, 10n)).to.be.revertedWithCustomError(token, "KYCNotVerified");
+      await cache([alice.address]);
+      await token.mint(alice.address, 10n);
+      expect(await token.balanceOf(alice.address)).to.equal(10n);
     });
 
-    describe("Freezing", function () {
-        it("should freeze investor address", async function () {
-            const { securityToken, admin, investor1 } = await loadFixture(deployFixture);
-            await securityToken.connect(admin).mint(investor1.address, ethers.parseEther("1000"));
-            await securityToken.connect(admin).setAddressFrozen(investor1.address, true);
-            expect(await securityToken.isFrozen(investor1.address)).to.be.true;
-        });
-
-        it("should unfreeze investor address", async function () {
-            const { securityToken, admin, investor1 } = await loadFixture(deployFixture);
-            await securityToken.connect(admin).setAddressFrozen(investor1.address, true);
-            await securityToken.connect(admin).setAddressFrozen(investor1.address, false);
-            expect(await securityToken.isFrozen(investor1.address)).to.be.false;
-        });
+    it("batchMint skips wallets without valid KYC", async function () {
+      const { token, alice, bob, cache } = await loadFixture(fixture);
+      await cache([alice.address]);
+      await token.batchMint([alice.address, bob.address], [5n, 7n]);
+      expect(await token.balanceOf(alice.address)).to.equal(5n);
+      expect(await token.balanceOf(bob.address)).to.equal(0n);
     });
 
-    describe("Snapshots", function () {
-        it("should create snapshot", async function () {
-            const { securityToken, admin, investor1 } = await loadFixture(deployFixture);
-            await securityToken.connect(admin).mint(investor1.address, ethers.parseEther("1000"));
-            await securityToken.connect(admin).snapshot();
-            const balance = await securityToken.balanceOfAt(investor1.address, 1);
-            expect(balance).to.equal(ethers.parseEther("1000"));
-        });
+    it("applies the minimum level and country restrictions", async function () {
+      const { token, alice, bob, cache } = await loadFixture(fixture);
+      await cache([alice.address], 1);
+      await cache([bob.address], 3, IRAN);
+      await token.setMinKYCLevel(2);
+      await expect(token.mint(alice.address, 1n)).to.be.revertedWithCustomError(token, "KYCNotVerified");
+      await expect(token.mint(bob.address, 1n)).to.be.revertedWithCustomError(token, "KYCNotVerified");
     });
 
-    describe("Pausing", function () {
-        it("should pause and unpause", async function () {
-            const { securityToken, admin } = await loadFixture(deployFixture);
-            await securityToken.connect(admin).pause();
-            expect(await securityToken.paused()).to.be.true;
-            await securityToken.connect(admin).unpause();
-            expect(await securityToken.paused()).to.be.false;
-        });
+    it("rejects KYC proofs not signed by the verifier's signer", async function () {
+      const { token, verifier, alice, bob } = await loadFixture(fixture);
+      const forged = await kycProof(bob, verifier, alice.address, 4);
+      await expect(token.cacheKYC(alice.address, forged)).to.be.revertedWithCustomError(token, "InvalidKYCProof");
     });
+
+    it("blocks transfers to a wallet without KYC", async function () {
+      const { token, alice } = await loadFixture(fundedFixture);
+      const stranger = ethers.Wallet.createRandom().address;
+      await expect(token.connect(alice).transfer(stranger, 1n)).to.be.revertedWithCustomError(token, "KYCNotVerified");
+    });
+  });
+
+  describe("forced transfers", function () {
+    it("moves tokens out of a frozen wallet", async function () {
+      const { token, alice, bob } = await loadFixture(fundedFixture);
+      await token.setAddressFrozen(alice.address, true);
+      await expect(token.connect(alice).transfer(bob.address, 1n)).to.be.revertedWithCustomError(token, "AddressIsFrozen");
+
+      await token.forcedTransfer(alice.address, bob.address, 60n);
+      expect(await token.balanceOf(alice.address)).to.equal(40n);
+      expect(await token.balanceOf(bob.address)).to.equal(60n);
+    });
+
+    it("unfreezes only the frozen tokens it has to move", async function () {
+      const { token, alice, bob } = await loadFixture(fundedFixture);
+      await token.freezePartialTokens(alice.address, 80n);
+      // 20 free + 30 of the 80 frozen
+      await expect(token.forcedTransfer(alice.address, bob.address, 50n))
+        .to.emit(token, "TokensUnfrozen").withArgs(alice.address, 30n);
+      expect(await token.getFrozenTokens(alice.address)).to.equal(50n);
+      expect(await token.balanceOf(alice.address)).to.equal(50n);
+    });
+
+    it("reports each forced transfer to compliance exactly once", async function () {
+      const { token, module, alice, bob, carol } = await loadFixture(fundedFixture);
+      const before = await module.transferActions();
+      await token.forcedTransfer(alice.address, bob.address, 10n);
+      expect(await module.transferActions()).to.equal(before + 1n);
+
+      await token.batchForcedTransfer([alice.address, alice.address], [bob.address, carol.address], [5n, 5n]);
+      expect(await module.transferActions()).to.equal(before + 3n);
+    });
+
+    it("still requires KYC on the receiver and a compliant transfer", async function () {
+      const { token, module, alice, bob } = await loadFixture(fundedFixture);
+      const stranger = ethers.Wallet.createRandom().address;
+      await expect(token.forcedTransfer(alice.address, stranger, 1n)).to.be.revertedWithCustomError(token, "KYCNotVerified");
+      await module.setBlockTransfers(true);
+      await expect(token.forcedTransfer(alice.address, bob.address, 1n)).to.be.revertedWithCustomError(token, "TransferNotCompliant");
+    });
+
+    it("is restricted to agents", async function () {
+      const { token, alice, bob } = await loadFixture(fundedFixture);
+      await expect(token.connect(bob).forcedTransfer(alice.address, bob.address, 1n)).to.be.reverted;
+    });
+
+    it("does not leave holder checks switched off afterwards", async function () {
+      const { token, alice, bob } = await loadFixture(fundedFixture);
+      await token.setAddressFrozen(alice.address, true);
+      await token.forcedTransfer(alice.address, bob.address, 10n);
+      await expect(token.connect(alice).transfer(bob.address, 1n)).to.be.revertedWithCustomError(token, "AddressIsFrozen");
+    });
+  });
+
+  describe("recoveryAddress", function () {
+    it("recovers a frozen wallet and carries its freeze state over", async function () {
+      const { token, module, alice, carol } = await loadFixture(fundedFixture);
+      await token.freezePartialTokens(alice.address, 10n);
+      await token.setAddressFrozen(alice.address, true);
+      const before = await module.transferActions();
+
+      await expect(token.recoveryAddress(alice.address, carol.address, ethers.Wallet.createRandom().address))
+        .to.emit(token, "RecoverySuccess");
+
+      expect(await token.balanceOf(alice.address)).to.equal(0n);
+      expect(await token.balanceOf(carol.address)).to.equal(100n);
+      expect(await token.isFrozen(alice.address)).to.equal(false);
+      expect(await token.isFrozen(carol.address)).to.equal(true);
+      expect(await token.getFrozenTokens(alice.address)).to.equal(0n);
+      expect(await token.getFrozenTokens(carol.address)).to.equal(10n);
+      expect(await module.transferActions()).to.equal(before + 1n);
+    });
+
+    it("requires KYC on the new wallet", async function () {
+      const { token, alice } = await loadFixture(fundedFixture);
+      const stranger = ethers.Wallet.createRandom().address;
+      await expect(token.recoveryAddress(alice.address, stranger, stranger))
+        .to.be.revertedWithCustomError(token, "KYCNotVerified");
+    });
+  });
+
+  describe("regular transfers", function () {
+    it("are reported to compliance once", async function () {
+      const { token, module, alice, bob } = await loadFixture(fundedFixture);
+      const before = await module.transferActions();
+      await token.connect(alice).transfer(bob.address, 5n);
+      expect(await module.transferActions()).to.equal(before + 1n);
+    });
+
+    it("cannot move partially frozen tokens", async function () {
+      const { token, alice, bob } = await loadFixture(fundedFixture);
+      await token.freezePartialTokens(alice.address, 95n);
+      await expect(token.connect(alice).transfer(bob.address, 6n)).to.be.revertedWithCustomError(token, "InsufficientUnfrozenBalance");
+      await token.connect(alice).transfer(bob.address, 5n);
+    });
+  });
 });

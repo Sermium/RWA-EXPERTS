@@ -926,9 +926,11 @@ async function main() {
     const factory = await ethers.getContractAt("RWALaunchpadFactory", state.factory!);
 
     const implSetters = [
-      { method: "setDividendDistributorImplementation", impl: state.dividendDistributorImpl, name: "DividendDistributor" },
-      { method: "setMaxBalanceModuleImplementation", impl: state.maxBalanceModuleImpl, name: "MaxBalanceModule" },
-      { method: "setLockupModuleImplementation", impl: state.lockupModuleImpl, name: "LockupModule" },
+      { method: "setDividendDistributorImpl", impl: state.dividendDistributorImpl, name: "DividendDistributor" },
+      { method: "setMaxBalanceModuleImpl", impl: state.maxBalanceModuleImpl, name: "MaxBalanceModule" },
+      { method: "setLockupModuleImpl", impl: state.lockupModuleImpl, name: "LockupModule" },
+      // Vaults the factory deploys report fees here
+      { method: "setPlatformFeeManager", impl: state.platformFeeManager, name: "PlatformFeeManager" },
     ];
 
     for (const setter of implSetters) {
@@ -945,6 +947,20 @@ async function main() {
             logWarning(`Could not set ${setter.name} implementation: ${errorMessage}`);
           }
         }
+      }
+    }
+
+    // Each vault the factory deploys needs ESCROW_ROLE and DISPUTE_MANAGER_ROLE on the fee manager,
+    // which the factory grants itself, so it needs ADMIN_ROLE there
+    if (state.platformFeeManager) {
+      try {
+        const platformFeeManager = await ethers.getContractAt("PlatformFeeManager", state.platformFeeManager);
+        const tx = await platformFeeManager.grantRole(await platformFeeManager.ADMIN_ROLE(), state.factory!);
+        await tx.wait();
+        logSuccess("ADMIN_ROLE granted to Launchpad Factory on PlatformFeeManager");
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        logWarning(`Could not grant ADMIN_ROLE on PlatformFeeManager: ${errorMessage}`);
       }
     }
 
@@ -1053,7 +1069,7 @@ async function main() {
 
       if (state.rwaTradeEscrowImpl) {
         try {
-          const tx1 = await tokenizationFactory.setImplementation(3, state.rwaTradeEscrowImpl);
+          const tx1 = await tokenizationFactory.setTradeEscrowImplementation(state.rwaTradeEscrowImpl);
           await tx1.wait();
           logSuccess("Trade Escrow implementation set");
         } catch (e: unknown) {
@@ -1061,12 +1077,22 @@ async function main() {
           logWarning(`Could not set Trade Escrow: ${errorMessage}`);
         }
       }
+      if (chainConfig.tokens.USDC !== ZERO) {
+        try {
+          const txs = await tokenizationFactory.setEscrowStablecoin(chainConfig.tokens.USDC);
+          await txs.wait();
+          logSuccess(`Trade escrow stablecoin set: ${chainConfig.tokens.USDC}`);
+        } catch (e: unknown) {
+          const errorMessage = e instanceof Error ? e.message : String(e);
+          logWarning(`Could not set trade escrow stablecoin: ${errorMessage}`);
+        }
+      }
       saveCheckpoint(chainId, 10, 28, state);
 
       log("29. Setting Dividend Distributor implementation on TokenizationFactory...");
       if (state.dividendDistributorImpl) {
         try {
-          const tx2 = await tokenizationFactory.setImplementation(4, state.dividendDistributorImpl);
+          const tx2 = await tokenizationFactory.setDividendDistributorImplementation(state.dividendDistributorImpl);
           await tx2.wait();
           logSuccess("Dividend Distributor implementation set");
         } catch (e: unknown) {
@@ -1215,6 +1241,24 @@ async function main() {
         const tx3 = await escrowVault.grantDisputeManagerRole(state.disputeManager);
         await tx3.wait();
         logSuccess("DISPUTE_MANAGER_ROLE granted to DisputeManager on EscrowVault");
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        if (errorMessage.includes("already")) {
+          logSuccess("DISPUTE_MANAGER_ROLE already granted");
+        } else {
+          logWarning(`Could not grant DISPUTE_MANAGER_ROLE: ${errorMessage}`);
+        }
+      }
+    }
+
+    // The EscrowVault itself pulls undistributed platform fees back when a dispute ends in refunds
+    if (state.platformFeeManager && state.escrowVault) {
+      log("42b. Granting DISPUTE_MANAGER_ROLE to EscrowVault on PlatformFeeManager...");
+      try {
+        const platformFeeManager = await ethers.getContractAt("PlatformFeeManager", state.platformFeeManager);
+        const tx4 = await platformFeeManager.grantDisputeManagerRole(state.escrowVault);
+        await tx4.wait();
+        logSuccess("DISPUTE_MANAGER_ROLE granted to EscrowVault on PlatformFeeManager");
       } catch (e: unknown) {
         const errorMessage = e instanceof Error ? e.message : String(e);
         if (errorMessage.includes("already")) {

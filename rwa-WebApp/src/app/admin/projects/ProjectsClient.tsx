@@ -7,6 +7,7 @@ import { useChainConfig } from '@/hooks/useChainConfig';
 import Link from 'next/link';
 import { ZERO_ADDRESS } from '@/config/contracts';
 import { RWAProjectNFTABI, RWAEscrowVaultABI } from '@/config/abis';
+import { readVaultFunding } from '@/lib/crowdfunding/vault';
 import MilestoneAdmin from '@/components/admin/MilestoneAdmin';
 import { STATUS_NAMES } from '../constants';
 import {
@@ -196,12 +197,8 @@ export default function ProjectsClient() {
           let refundsEnabled = false;
           if (data.escrowVault && data.escrowVault !== ZERO_ADDRESS) {
             try {
-              const funding = await publicClient.readContract({
-                address: data.escrowVault as `0x${string}`,
-                abi: RWAEscrowVaultABI,
-                functionName: 'getProjectFunding',
-                args: [BigInt(i)],
-              }) as any;
+              // Refunds are open once the vault project is cancelled
+              const funding = await readVaultFunding(publicClient, data.escrowVault as `0x${string}`, BigInt(i));
               refundsEnabled = funding.refundsEnabled;
             } catch (e) {
               console.error(`[${chainName}] Error checking refunds for project ${i}:`, e);

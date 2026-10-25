@@ -21,6 +21,13 @@ import {
 } from '../helpers';
 import { ProjectContractsModal } from '../components';
 import { ScrollText, AlertTriangle } from 'lucide-react';
+import {
+  fetchProjectEscrow,
+  milestoneRef,
+  reviewMilestoneProof,
+  toReviewMilestone,
+  type ProjectMilestone,
+} from '@/lib/crowdfunding/vault';
 
 interface ProjectManagementProps {
   projects: Project[];
@@ -34,6 +41,8 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
   const [processing, setProcessing] = useState(false);
   const [result, setResult] = useState<{ success: boolean; message: string } | null>(null);
   const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [escrowMilestones, setEscrowMilestones] = useState<ProjectMilestone[]>([]);
+  const [vaultProjectId, setVaultProjectId] = useState<bigint | null>(null);
   const [milestonesLoading, setMilestonesLoading] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [showRejectModal, setShowRejectModal] = useState(false);
@@ -53,96 +62,51 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
       setResult({ success: true, message: 'Transaction confirmed!' });
       setTimeout(() => {
         loadMilestones();
-        loadEscrowFunding();
         onRefresh();
       }, 2000);
       resetTx();
     }
   }, [txSuccess]);
 
+  // Milestones, funding and balances all come from the escrow summary
   const loadMilestones = useCallback(async () => {
     if (!selectedProject || selectedProject.escrowVault === ZERO_ADDRESS) return;
 
     setMilestonesLoading(true);
     try {
-      const data = await publicClient.readContract({
-        address: selectedProject.escrowVault as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getMilestones',
-        args: [BigInt(selectedProject.id)],
-      });
-      setMilestones(data as Milestone[]);
+      const escrow = await fetchProjectEscrow(publicClient.chain.id, selectedProject.id);
+      setVaultProjectId(escrow.vaultProjectId);
+      setEscrowMilestones(escrow.milestones);
+      setMilestones(escrow.milestones.map(toReviewMilestone));
+      setEscrowFunding(escrow.funding);
+      // A project settles in a single stablecoin
+      setTokenBalances(
+        escrow.funding && escrow.funding.paymentToken !== ZERO_ADDRESS
+          ? [{
+              token: escrow.funding.paymentToken,
+              symbol: getTokenSymbol(escrow.funding.paymentToken),
+              deposited: escrow.funding.heldAmount + escrow.funding.releasedAmount,
+              released: escrow.funding.releasedAmount,
+              available: escrow.funding.heldAmount,
+            }]
+          : []
+      );
     } catch (error) {
       console.error('Error loading milestones:', error);
       setMilestones([]);
+      setEscrowMilestones([]);
+      setEscrowFunding(null);
+      setTokenBalances([]);
     } finally {
       setMilestonesLoading(false);
-    }
-  }, [selectedProject]);
-
-  const loadEscrowFunding = useCallback(async () => {
-    if (!selectedProject || selectedProject.escrowVault === ZERO_ADDRESS) return;
-
-    try {
-      const data = await publicClient.readContract({
-        address: selectedProject.escrowVault as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getProjectFunding',
-        args: [BigInt(selectedProject.id)],
-      });
-      setEscrowFunding(data);
-    } catch (error) {
-      console.error('Error loading escrow funding:', error);
-      setEscrowFunding(null);
-    }
-  }, [selectedProject]);
-
-  const loadTokenBalances = useCallback(async () => {
-    if (!selectedProject || selectedProject.escrowVault === ZERO_ADDRESS) return;
-
-    try {
-      const tokens = await publicClient.readContract({
-        address: selectedProject.escrowVault as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getProjectTokens',
-        args: [BigInt(selectedProject.id)],
-      });
-
-      const balances: TokenBalance[] = [];
-      for (const token of tokens as string[]) {
-        try {
-          const balance = await publicClient.readContract({
-            address: selectedProject.escrowVault as `0x${string}`,
-            abi: RWAEscrowVaultABI,
-            functionName: 'getTokenBalance',
-            args: [BigInt(selectedProject.id), token as `0x${string}`],
-          });
-          const [deposited, released, available] = balance as [bigint, bigint, bigint];
-          balances.push({
-            token,
-            symbol: getTokenSymbol(token),
-            deposited,
-            released,
-            available,
-          });
-        } catch (e) {
-          console.error('Error loading token balance:', e);
-        }
-      }
-      setTokenBalances(balances);
-    } catch (error) {
-      console.error('Error loading token balances:', error);
-      setTokenBalances([]);
     }
   }, [selectedProject]);
 
   useEffect(() => {
     if (selectedProject && showDetailModal) {
       loadMilestones();
-      loadEscrowFunding();
-      loadTokenBalances();
     }
-  }, [selectedProject, showDetailModal, loadMilestones, loadEscrowFunding, loadTokenBalances]);
+  }, [selectedProject, showDetailModal, loadMilestones]);
 
   const openDetailModal = (project: Project) => {
     setSelectedProject(project);
@@ -166,64 +130,62 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
   };
 
   const handleSetMilestoneStatus = async () => {
-    if (!selectedProject || selectedProject.escrowVault === ZERO_ADDRESS || statusMilestoneIndex === null) return;
+    // The vault stores no milestone status: it follows the review of the milestone's proof
+    setShowStatusModal(false);
+    setResult({
+      success: false,
+      message: 'Milestone status is not stored on-chain. It follows the proof review: approve or reject the submitted proof.',
+    });
+  };
+
+  // Reviews go through the milestone-review API: approving releases the milestone's funds
+  const reviewMilestone = async (milestoneIndex: number, action: 'approve' | 'reject', adminNotes?: string) => {
+    if (!selectedProject) return;
     setProcessing(true);
     setResult(null);
-
     try {
-      writeContract({
-        address: selectedProject.escrowVault as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'setMilestoneStatus',
-        args: [BigInt(selectedProject.id), BigInt(statusMilestoneIndex), newMilestoneStatus],
+      const data = await reviewMilestoneProof({
+        chainId: publicClient.chain.id,
+        projectId: selectedProject.id,
+        milestoneIndex,
+        action,
+        adminNotes,
       });
-      setShowStatusModal(false);
+      setResult({
+        success: true,
+        message: action === 'approve'
+          ? `Milestone approved and ${formatUSD(BigInt(Math.round((data.releasedAmount || 0) * 1e6)))} released`
+          : 'Milestone proof rejected',
+      });
+      loadMilestones();
+      onRefresh();
     } catch (error) {
-      setResult({ success: false, message: 'Failed to set milestone status' });
+      setResult({ success: false, message: error instanceof Error ? error.message : `Failed to ${action} milestone` });
+    } finally {
       setProcessing(false);
     }
   };
 
   const handleApproveMilestone = async (milestoneIndex: number) => {
     if (!selectedProject || selectedProject.escrowVault === ZERO_ADDRESS) return;
-    setProcessing(true);
-    setResult(null);
-
-    try {
-      writeContract({
-        address: selectedProject.escrowVault as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'approveMilestone',
-        args: [BigInt(selectedProject.id), BigInt(milestoneIndex)],
-      });
-    } catch (error) {
-      setResult({ success: false, message: 'Failed to approve milestone' });
-      setProcessing(false);
-    }
+    await reviewMilestone(milestoneIndex, 'approve');
   };
 
   const handleRejectMilestone = async () => {
     if (!selectedProject || selectedProject.escrowVault === ZERO_ADDRESS || selectedMilestoneIndex === null) return;
-    setProcessing(true);
-    setResult(null);
-
-    try {
-      writeContract({
-        address: selectedProject.escrowVault as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'rejectMilestone',
-        args: [BigInt(selectedProject.id), BigInt(selectedMilestoneIndex), rejectReason],
-      });
-      setShowRejectModal(false);
-      setRejectReason('');
-    } catch (error) {
-      setResult({ success: false, message: 'Failed to reject milestone' });
-      setProcessing(false);
-    }
+    setShowRejectModal(false);
+    await reviewMilestone(selectedMilestoneIndex, 'reject', rejectReason);
+    setRejectReason('');
   };
 
+  // Release an approved milestone whose funds were not paid out: its share of the escrowed funds
   const handleReleaseFunds = async (milestoneIndex: number) => {
-    if (!selectedProject || selectedProject.escrowVault === ZERO_ADDRESS) return;
+    if (!selectedProject || selectedProject.escrowVault === ZERO_ADDRESS || vaultProjectId === null) return;
+    const milestone = escrowMilestones[milestoneIndex];
+    if (!milestone || milestone.amount <= BigInt(0)) {
+      setResult({ success: false, message: 'Nothing left to release for this milestone' });
+      return;
+    }
     setProcessing(true);
     setResult(null);
 
@@ -232,7 +194,7 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
         address: selectedProject.escrowVault as `0x${string}`,
         abi: RWAEscrowVaultABI,
         functionName: 'releaseMilestoneFunds',
-        args: [BigInt(selectedProject.id), BigInt(milestoneIndex)],
+        args: [vaultProjectId, milestone.amount, milestoneRef(selectedProject.id, milestoneIndex)],
       });
     } catch (error) {
       setResult({ success: false, message: 'Failed to release funds' });
@@ -242,8 +204,6 @@ export default function ProjectManagement({ projects, onRefresh }: ProjectManage
 
   const handleRefreshMilestones = () => {
     loadMilestones();
-    loadEscrowFunding();
-    loadTokenBalances();
   };
 
   return (

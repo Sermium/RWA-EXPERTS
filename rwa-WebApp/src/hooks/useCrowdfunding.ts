@@ -6,21 +6,27 @@ import { useChainConfig } from '@/hooks/useChainConfig';
 import { DEPLOYMENTS } from '@/config/deployments';
 import { RWAEscrowVaultABI, ERC20ABI } from '@/config/abis';
 import { SupportedChainId } from '@/config/chains';
+import { ensureOwnKYCCached } from '@/lib/kyc/ownProof';
+import { fetchProjectMilestones } from '@/lib/crowdfunding/vault';
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 // Types
 export interface Project {
   projectId: bigint;
   projectOwner: string;
   securityToken: string;
+  /** Stablecoin the project settles in; zero address until its first deposit */
   paymentToken: string;
-  priceFeed: string;
   fundingGoal: bigint;
   totalRaised: bigint;
   deadline: bigint;
   state: ProjectState;
   createdAt: bigint;
-  platformFeeBps: bigint;
-  maxPriceAge: bigint;
+  fundedAt: bigint;
+  completedAt: bigint;
+  totalSupply: bigint;
+  platformFeesTransferred: boolean;
 }
 
 export enum ProjectState {
@@ -84,22 +90,9 @@ export function useCrowdfunding() {
         abi: RWAEscrowVaultABI,
         functionName: 'getProject',
         args: [projectId],
-      }) as any;
+      });
 
-      return {
-        projectId: result.projectId,
-        projectOwner: result.projectOwner,
-        securityToken: result.securityToken,
-        paymentToken: result.paymentToken,
-        priceFeed: result.priceFeed,
-        fundingGoal: result.fundingGoal,
-        totalRaised: result.totalRaised,
-        deadline: result.deadline,
-        state: result.state as ProjectState,
-        createdAt: result.createdAt,
-        platformFeeBps: result.platformFeeBps,
-        maxPriceAge: result.maxPriceAge,
-      };
+      return { ...result, state: result.state as ProjectState };
     } catch (e) {
       console.error('Error fetching project:', e);
       return null;
@@ -201,26 +194,12 @@ export function useCrowdfunding() {
     }
   }, [publicClient, escrowAddress, address]);
 
+  // The escrow vault keeps no milestone list: milestones are defined in the database and the
+  // vault releases each one's share of the escrowed funds
   const getMilestones = useCallback(async (projectId: bigint) => {
-    if (!publicClient || !escrowAddress) return [];
-
     try {
-      const result = await publicClient.readContract({
-        address: escrowAddress,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getMilestones',
-        args: [projectId],
-      }) as readonly {
-        description: string;
-        amount: bigint;
-        deadline: bigint;
-        state: number;
-        releasedAt: bigint;
-        approvedAt: bigint;
-      }[];
-
-      return result.map((m, index) => ({
-        index,
+      return (await fetchProjectMilestones(chainId, projectId)).map((m) => ({
+        index: m.index,
         description: m.description,
         amount: m.amount,
         deadline: m.deadline,
@@ -232,7 +211,7 @@ export function useCrowdfunding() {
       console.error('Error fetching milestones:', e);
       return [];
     }
-  }, [publicClient, escrowAddress]);
+  }, [chainId]);
 
   // ============================================
   // WRITE FUNCTIONS
@@ -251,6 +230,17 @@ export function useCrowdfunding() {
       const paymentTokenAddress = params.paymentToken === 'USDC'
         ? tokens.USDC
         : tokens.USDT;
+
+      // Each project settles in one stablecoin, fixed by its first deposit
+      const project = await getProject(params.projectId);
+      if (
+        project &&
+        project.paymentToken !== ZERO_ADDRESS &&
+        project.paymentToken.toLowerCase() !== paymentTokenAddress.toLowerCase()
+      ) {
+        const accepted = project.paymentToken.toLowerCase() === tokens.USDC.toLowerCase() ? 'USDC' : 'USDT';
+        throw new Error(`This project only accepts ${accepted}`);
+      }
 
       const amount = parseUnits(params.amount, 6);
 
@@ -299,7 +289,7 @@ export function useCrowdfunding() {
     } finally {
       setIsLoading(false);
     }
-  }, [walletClient, publicClient, address, escrowAddress, tokens]);
+  }, [walletClient, publicClient, address, escrowAddress, tokens, getProject]);
 
   const claimTokens = useCallback(async (projectId: bigint): Promise<`0x${string}` | null> => {
     if (!walletClient || !publicClient || !escrowAddress) {
@@ -311,6 +301,12 @@ export function useCrowdfunding() {
     setError(null);
 
     try {
+      // The security token only mints to wallets with a cached KYC proof
+      const project = await getProject(projectId);
+      if (project) {
+        await ensureOwnKYCCached(publicClient, walletClient, chainId, project.securityToken as `0x${string}`);
+      }
+
       const hash = await walletClient.writeContract({
         address: escrowAddress,
         abi: RWAEscrowVaultABI,
@@ -327,7 +323,7 @@ export function useCrowdfunding() {
     } finally {
       setIsLoading(false);
     }
-  }, [walletClient, publicClient, escrowAddress]);
+  }, [walletClient, publicClient, escrowAddress, chainId, getProject]);
 
   const claimRefund = useCallback(async (projectId: bigint): Promise<`0x${string}` | null> => {
     if (!walletClient || !publicClient || !escrowAddress) {
@@ -339,10 +335,18 @@ export function useCrowdfunding() {
     setError(null);
 
     try {
+      // A completed project unwound by a dispute refunds holders from a pool instead
+      const disputeRefund = await publicClient.readContract({
+        address: escrowAddress,
+        abi: RWAEscrowVaultABI,
+        functionName: 'disputeRefundOpen',
+        args: [projectId],
+      });
+
       const hash = await walletClient.writeContract({
         address: escrowAddress,
         abi: RWAEscrowVaultABI,
-        functionName: 'claimRefund',
+        functionName: disputeRefund ? 'claimDisputeRefund' : 'claimRefund',
         args: [projectId],
       });
 

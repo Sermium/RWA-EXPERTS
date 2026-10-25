@@ -7,6 +7,14 @@ import { Address } from 'viem';
 import { RWAEscrowVaultABI } from '@/config/abis';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { AlertTriangle } from 'lucide-react';
+import {
+  fetchProjectEscrow,
+  milestoneRef,
+  reviewMilestoneProof,
+  toReviewMilestone,
+  type ProjectMilestone,
+  type ReviewMilestone,
+} from '@/lib/crowdfunding/vault';
 
 const MILESTONE_STATUS: Record<number, { label: string; color: string }> = {
   0: { label: 'Pending', color: 'bg-surface-overlay text-ink-muted' },
@@ -17,18 +25,9 @@ const MILESTONE_STATUS: Record<number, { label: string; color: string }> = {
   5: { label: 'Released', color: 'bg-success/20 text-success' },
 };
 
-interface Milestone {
-  description: string;
-  percentage: bigint;
-  status: number;
-  proofURI: string;
-  submittedAt: bigint;
-  approvedAt: bigint;
-  releasedAmount: bigint;
-  rejectionReason: string;
-  disputeRaiser: string;
-  disputeReason: string;
-}
+// The escrow vault keeps no milestone list: milestones come from the database and are
+// reviewed through their proofs (approving one releases its funds from the vault).
+type Milestone = ReviewMilestone;
 
 interface MilestoneAdminProps {
   projectId: number;
@@ -49,18 +48,32 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
   } = useChainConfig();
 
   const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [escrowMilestones, setEscrowMilestones] = useState<ProjectMilestone[]>([]);
+  const [vaultProjectId, setVaultProjectId] = useState<bigint | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [rejectionReason, setRejectionReason] = useState('');
 
-  const { writeContract: approve, data: approveHash, error: approveError } = useWriteContract();
-  const { writeContract: reject, data: rejectHash, error: rejectError } = useWriteContract();
-  const { writeContract: release, data: releaseHash, error: releaseError } = useWriteContract();
+  // Proof reviews go through the milestone-review API; only releases are sent from this wallet
+  const [review, setReview] = useState<{
+    action: 'approve' | 'reject';
+    pending: boolean;
+    error: Error | null;
+    txHash?: `0x${string}`;
+  } | null>(null);
+  const approvePending = review?.action === 'approve' && review.pending;
+  const rejectPending = review?.action === 'reject' && review.pending;
+  const approveSuccess = review?.action === 'approve' && !review.pending && !review.error;
+  const approveHash = review?.action === 'approve' ? review.txHash : undefined;
+  // Rejecting a proof is a database update: there is no transaction to link to
+  const rejectHash: `0x${string}` | undefined = undefined;
+  const rejectSuccess = false;
+  const approveError = review?.action === 'approve' ? review.error : null;
+  const rejectError = review?.action === 'reject' ? review.error : null;
 
-  const { isSuccess: approveSuccess, isLoading: approvePending } = useWaitForTransactionReceipt({ hash: approveHash });
-  const { isSuccess: rejectSuccess, isLoading: rejectPending } = useWaitForTransactionReceipt({ hash: rejectHash });
+  const { writeContract: release, data: releaseHash, error: releaseError } = useWriteContract();
   const { isSuccess: releaseSuccess, isLoading: releasePending } = useWaitForTransactionReceipt({ hash: releaseHash });
 
   // Validate escrow vault address
@@ -81,13 +94,10 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
       setLoading(true);
       setError(null);
       
-      const data = await publicClient.readContract({
-        address: escrowVaultAddress,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getMilestones',
-        args: [BigInt(projectId)],
-      });
-      setMilestones(data as Milestone[]);
+      const escrow = await fetchProjectEscrow(chainId, projectId);
+      setVaultProjectId(escrow.vaultProjectId);
+      setEscrowMilestones(escrow.milestones);
+      setMilestones(escrow.milestones.map(toReviewMilestone));
     } catch (err) {
       console.error('Failed to load milestones:', err);
       setError('Failed to load milestones');
@@ -103,46 +113,48 @@ export default function MilestoneAdmin({ projectId, escrowVault, onUpdate }: Mil
     }
   }, [escrowVaultAddress, projectId, chainId, publicClient]);
 
-  // Reload on successful transactions
+  // Reload once a release transaction is confirmed
   useEffect(() => {
-    if (approveSuccess || rejectSuccess || releaseSuccess) {
+    if (releaseSuccess) {
       loadMilestones();
-      setShowRejectModal(false);
-      setRejectionReason('');
       onUpdate?.();
     }
-  }, [approveSuccess, rejectSuccess, releaseSuccess]);
+  }, [releaseSuccess]);
+
+  const submitReview = async (index: number, action: 'approve' | 'reject', adminNotes?: string) => {
+    setReview({ action, pending: true, error: null });
+    try {
+      const result = await reviewMilestoneProof({ chainId, projectId, milestoneIndex: index, action, adminNotes });
+      setReview({ action, pending: false, error: null, txHash: result.txHash as `0x${string}` | undefined });
+      setShowRejectModal(false);
+      setRejectionReason('');
+      loadMilestones();
+      onUpdate?.();
+    } catch (err) {
+      setReview({ action, pending: false, error: err instanceof Error ? err : new Error(String(err)) });
+    }
+  };
 
   const handleApprove = (index: number) => {
     if (!escrowVaultAddress) return;
-    
-    approve({
-      address: escrowVaultAddress,
-      abi: RWAEscrowVaultABI,
-      functionName: 'approveMilestone',
-      args: [BigInt(projectId), BigInt(index)],
-    });
+    submitReview(index, 'approve');
   };
 
   const handleReject = () => {
     if (selectedIndex === null || !escrowVaultAddress) return;
-    
-    reject({
-      address: escrowVaultAddress,
-      abi: RWAEscrowVaultABI,
-      functionName: 'rejectMilestone',
-      args: [BigInt(projectId), BigInt(selectedIndex), rejectionReason],
-    });
+    submitReview(selectedIndex, 'reject', rejectionReason);
   };
 
+  // Pay out an approved milestone whose release did not go through: its share of the escrow
   const handleRelease = (index: number) => {
-    if (!escrowVaultAddress) return;
-    
+    const milestone = escrowMilestones[index];
+    if (!escrowVaultAddress || vaultProjectId === null || !milestone || milestone.amount <= BigInt(0)) return;
+
     release({
       address: escrowVaultAddress,
       abi: RWAEscrowVaultABI,
       functionName: 'releaseMilestoneFunds',
-      args: [BigInt(projectId), BigInt(index)],
+      args: [vaultProjectId, milestone.amount, milestoneRef(projectId, index)],
     });
   };
 

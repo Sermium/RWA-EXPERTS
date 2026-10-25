@@ -11,14 +11,18 @@ import "./KYCLib.sol";
 
 interface IModularCompliance {
     function bindToken(address _token) external;
+    function owner() external view returns (address);
+    function transferOwnership(address newOwner) external;
 }
 
 interface IRWAERC3643 {
     function mint(address _to, uint256 _amount) external;
     function grantRole(bytes32 role, address account) external;
     function renounceRole(bytes32 role, address account) external;
-    function MINTER_ROLE() external view returns (bytes32);
-    function DEFAULT_ADMIN_ROLE() external view returns (bytes32);
+    function hasRole(bytes32 role, address account) external view returns (bool);
+    function setMinKYCLevel(uint8 _level) external;
+    function setKYCEnforced(bool _enforced) external;
+    function compliance() external view returns (address);
 }
 
 /**
@@ -58,6 +62,15 @@ contract RWATokenizationFactory is
 
     enum DeploymentType { TOKEN_ONLY, NFT_ONLY, NFT_AND_TOKEN, NFT_TOKEN_ESCROW }
 
+    // RWASecurityToken roles. The factory holds them only while a deployment is in progress.
+    bytes32 private constant DEFAULT_ADMIN_ROLE = 0x00;
+    bytes32 private constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 private constant BURNER_ROLE = keccak256("BURNER_ROLE");
+    bytes32 private constant COMPLIANCE_ROLE = keccak256("COMPLIANCE_ROLE");
+    bytes32 private constant SNAPSHOT_ROLE = keccak256("SNAPSHOT_ROLE");
+    bytes32 private constant AGENT_ROLE = keccak256("AGENT_ROLE");
+    bytes32 private constant RECOVERY_ROLE = keccak256("RECOVERY_ROLE");
+
     Implementations public implementations;
     address public kycVerifier;
     address public platformFeeRecipient;
@@ -74,6 +87,10 @@ contract RWATokenizationFactory is
     bool public requireKYCForDeployment;
     uint8 public minKYCLevelForDeployment;
 
+    // ============ v2 storage (appended) ============
+    /// @notice Stablecoin that trade escrows settle in; required to deploy one
+    address public escrowStablecoin;
+
     event TokenDeployed(uint256 indexed deploymentId, address indexed owner, address securityToken, uint256 supply, DeploymentType deploymentType, uint8 minKYCLevel);
     event ProjectNFTDeployed(uint256 indexed deploymentId, address indexed owner, address projectNFT, DeploymentType deploymentType);
     event EscrowDeployed(uint256 indexed deploymentId, address indexed owner, address tradeEscrow);
@@ -82,6 +99,8 @@ contract RWATokenizationFactory is
     event DeployerApprovalUpdated(address indexed deployer, bool approved);
     event DeploymentDeactivated(uint256 indexed deploymentId);
     event KYCVerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
+    event EscrowStablecoinUpdated(address indexed oldStablecoin, address indexed newStablecoin);
+    event TokenReleasedToIssuer(uint256 indexed deploymentId, address indexed securityToken, address indexed issuer);
 
     error InvalidAddress();
     error DeployerNotApproved();
@@ -194,9 +213,8 @@ contract RWATokenizationFactory is
         if (_supply == 0) revert InvalidSupply();
         deploymentId = deploymentCounter++;
         address compliance = _deployCompliance();
-        securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance);
-        IRWAERC3643(securityToken).mint(msg.sender, _supply);
-        _transferTokenOwnership(securityToken, msg.sender);
+        securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance, _minKYCLevel);
+        _issueAndHandOver(securityToken, compliance, msg.sender, _supply);
 
         deployments[deploymentId] = TokenDeployment(deploymentId, msg.sender, securityToken, address(0), address(0), address(0), DeploymentType.TOKEN_ONLY, block.timestamp, true, _metadataURI, _minKYCLevel);
         ownerDeployments[msg.sender].push(deploymentId);
@@ -217,10 +235,9 @@ contract RWATokenizationFactory is
         if (_supply == 0) revert InvalidSupply();
         deploymentId = deploymentCounter++;
         address compliance = _deployCompliance();
-        securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance);
+        securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance, _minKYCLevel);
         projectNFT = _deployProjectNFT(string(abi.encodePacked(_name, " Project")), string(abi.encodePacked(_symbol, "PRJ")));
-        IRWAERC3643(securityToken).mint(msg.sender, _supply);
-        _transferTokenOwnership(securityToken, msg.sender);
+        _issueAndHandOver(securityToken, compliance, msg.sender, _supply);
 
         deployments[deploymentId] = TokenDeployment(deploymentId, msg.sender, securityToken, projectNFT, address(0), address(0), DeploymentType.NFT_AND_TOKEN, block.timestamp, true, _metadataURI, _minKYCLevel);
         ownerDeployments[msg.sender].push(deploymentId);
@@ -234,11 +251,10 @@ contract RWATokenizationFactory is
         if (implementations.tradeEscrow == address(0)) revert InvalidAddress();
         deploymentId = deploymentCounter++;
         address compliance = _deployCompliance();
-        securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance);
+        securityToken = _deploySecurityToken(_name, _symbol, _supply, compliance, _minKYCLevel);
         projectNFT = _deployProjectNFT(string(abi.encodePacked(_name, " Project")), string(abi.encodePacked(_symbol, "PRJ")));
         tradeEscrow = _deployTradeEscrow(securityToken);
-        IRWAERC3643(securityToken).mint(msg.sender, _supply);
-        _transferTokenOwnership(securityToken, msg.sender);
+        _issueAndHandOver(securityToken, compliance, msg.sender, _supply);
 
         deployments[deploymentId] = TokenDeployment(deploymentId, msg.sender, securityToken, projectNFT, tradeEscrow, address(0), DeploymentType.NFT_TOKEN_ESCROW, block.timestamp, true, _metadataURI, _minKYCLevel);
         ownerDeployments[msg.sender].push(deploymentId);
@@ -253,9 +269,10 @@ contract RWATokenizationFactory is
         return address(new ERC1967Proxy(implementations.compliance, abi.encodeWithSignature("initialize(address)", address(this))));
     }
 
-    function _deploySecurityToken(string calldata _name, string calldata _symbol, uint256 _maxSupply, address _compliance) internal returns (address) {
+    function _deploySecurityToken(string calldata _name, string calldata _symbol, uint256 _maxSupply, address _compliance, uint8 _minKYCLevel) internal returns (address) {
         address token = address(new ERC1967Proxy(implementations.securityToken, abi.encodeWithSignature("initialize(string,string,address,address,address,uint256)", _name, _symbol, address(this), _compliance, kycVerifier, _maxSupply)));
         IModularCompliance(_compliance).bindToken(token);
+        IRWAERC3643(token).setMinKYCLevel(_minKYCLevel);
         return token;
     }
 
@@ -264,14 +281,53 @@ contract RWATokenizationFactory is
     }
 
     function _deployTradeEscrow(address _securityToken) internal returns (address) {
-        return address(new ERC1967Proxy(implementations.tradeEscrow, abi.encodeWithSignature("initialize(address,address,address,address,uint256)", msg.sender, _securityToken, kycVerifier, platformFeeRecipient, escrowTransactionFeeBps)));
+        if (escrowStablecoin == address(0)) revert InvalidAddress();
+        return address(new ERC1967Proxy(implementations.tradeEscrow, abi.encodeWithSignature(
+            "initialize(address,address,address,address,address,uint256)",
+            msg.sender, _securityToken, escrowStablecoin, kycVerifier, platformFeeRecipient, escrowTransactionFeeBps
+        )));
     }
 
-    function _transferTokenOwnership(address _token, address _newOwner) internal {
+    /// @dev Mints the initial supply to the issuer, gives the issuer every token role and the
+    ///      compliance contract, and drops all of the factory's own powers over both.
+    ///      The initial issuance is the one mint that skips the holder KYC check: the issuer ends up
+    ///      with DEFAULT_ADMIN_ROLE (and could switch enforcement off anyway), and enforcement is
+    ///      back on before this function returns.
+    function _issueAndHandOver(address _token, address _compliance, address _issuer, uint256 _supply) internal {
         IRWAERC3643 token = IRWAERC3643(_token);
-        token.grantRole(token.DEFAULT_ADMIN_ROLE(), _newOwner);
-        token.grantRole(token.MINTER_ROLE(), _newOwner);
-        token.renounceRole(token.DEFAULT_ADMIN_ROLE(), address(this));
+        token.setKYCEnforced(false);
+        token.mint(_issuer, _supply);
+        token.setKYCEnforced(true);
+
+        bytes32[6] memory roles = [MINTER_ROLE, BURNER_ROLE, COMPLIANCE_ROLE, SNAPSHOT_ROLE, AGENT_ROLE, RECOVERY_ROLE];
+        token.grantRole(DEFAULT_ADMIN_ROLE, _issuer);
+        for (uint256 i = 0; i < roles.length; i++) {
+            token.grantRole(roles[i], _issuer);
+            token.renounceRole(roles[i], address(this));
+        }
+        token.renounceRole(DEFAULT_ADMIN_ROLE, address(this));
+
+        IModularCompliance(_compliance).transferOwnership(_issuer);
+    }
+
+    /// @notice Drop the operational roles and the compliance ownership the factory kept on tokens it
+    ///         deployed before this version (it only gave up DEFAULT_ADMIN_ROLE then). Compliance
+    ///         ownership goes to the deployment owner. Idempotent.
+    function releaseLegacyToken(uint256 _deploymentId) external nonReentrant {
+        TokenDeployment storage d = deployments[_deploymentId];
+        if (d.owner == address(0)) revert DeploymentNotFound();
+        if (msg.sender != d.owner && msg.sender != owner()) revert NotDeploymentOwner();
+        if (d.securityToken == address(0)) revert InvalidAddress();
+
+        IRWAERC3643 token = IRWAERC3643(d.securityToken);
+        bytes32[6] memory roles = [MINTER_ROLE, BURNER_ROLE, COMPLIANCE_ROLE, SNAPSHOT_ROLE, AGENT_ROLE, RECOVERY_ROLE];
+        for (uint256 i = 0; i < roles.length; i++) {
+            if (token.hasRole(roles[i], address(this))) token.renounceRole(roles[i], address(this));
+        }
+        IModularCompliance compliance = IModularCompliance(token.compliance());
+        if (compliance.owner() == address(this)) compliance.transferOwnership(d.owner);
+
+        emit TokenReleasedToIssuer(_deploymentId, d.securityToken, d.owner);
     }
 
     // ============ Add Modules ============
@@ -308,6 +364,7 @@ contract RWATokenizationFactory is
     function setKYCVerifier(address _v) external onlyOwner { if (_v == address(0)) revert InvalidAddress(); emit KYCVerifierUpdated(kycVerifier, _v); kycVerifier = _v; }
     function setEscrowTransactionFee(uint256 _feeBps) external onlyOwner { require(_feeBps <= 1000, "Max 10%"); escrowTransactionFeeBps = _feeBps; }
     function setPlatformFeeRecipient(address _r) external onlyOwner { if (_r == address(0)) revert InvalidAddress(); platformFeeRecipient = _r; }
+    function setEscrowStablecoin(address _s) external onlyOwner { if (_s == address(0)) revert InvalidAddress(); emit EscrowStablecoinUpdated(escrowStablecoin, _s); escrowStablecoin = _s; }
     function setRequireApproval(bool _r) external onlyOwner { requireApproval = _r; }
     function setDeployerApproval(address _d, bool _a) external onlyOwner { if (_d == address(0)) revert InvalidAddress(); approvedDeployers[_d] = _a; emit DeployerApprovalUpdated(_d, _a); }
     function deactivateDeployment(uint256 _id) external onlyOwner { if (deployments[_id].owner == address(0)) revert DeploymentNotFound(); deployments[_id].active = false; emit DeploymentDeactivated(_id); }

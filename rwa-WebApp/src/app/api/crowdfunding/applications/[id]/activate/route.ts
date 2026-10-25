@@ -20,6 +20,7 @@ export async function POST(
       security_token_address,
       compliance_address,
       project_nft_id,
+      vault_project_id,
       deployment_tx_hash,
       activation_tx_hash,
       chain_id,
@@ -75,6 +76,10 @@ export async function POST(
         security_token_address,
         compliance_address,
         project_nft_id: project_nft_id ? parseInt(project_nft_id) : null,  // Convert to number
+        // Id the escrow vault books the project under (needed for every vault call)
+        vault_project_id: vault_project_id !== undefined && vault_project_id !== null && vault_project_id !== ''
+          ? parseInt(vault_project_id)
+          : null,
         deployment_tx_hash,
         activation_tx_hash,
         deployed_chain_id: chain_id ? parseInt(chain_id) : null,  // Ensure it's a number

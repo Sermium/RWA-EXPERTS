@@ -13,6 +13,11 @@ import "../interfaces/IModularCompliance.sol";
 import "../interfaces/IRWAEscrowVault.sol";
 import "../libraries/Constants.sol";
 
+interface IPlatformFeeManagerRoles {
+    function grantEscrowRole(address escrow) external;
+    function grantDisputeManagerRole(address disputeManager) external;
+}
+
 /**
  * @title RWALaunchpadFactory
  * @notice Factory for deploying RWA investment projects
@@ -30,6 +35,14 @@ contract RWALaunchpadFactory is
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
     bytes32 public constant OPERATOR_ROLE = keccak256("OPERATOR_ROLE");
     bytes32 public constant DISPUTE_RESOLVER_ROLE = keccak256("DISPUTE_RESOLVER_ROLE");
+
+    // RWASecurityToken roles
+    bytes32 private constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 private constant BURNER_ROLE = keccak256("BURNER_ROLE");
+    bytes32 private constant COMPLIANCE_ROLE = keccak256("COMPLIANCE_ROLE");
+    bytes32 private constant SNAPSHOT_ROLE = keccak256("SNAPSHOT_ROLE");
+    bytes32 private constant AGENT_ROLE = keccak256("AGENT_ROLE");
+    bytes32 private constant RECOVERY_ROLE = keccak256("RECOVERY_ROLE");
 
     // ============ Structs ============
     struct Implementations {
@@ -70,6 +83,12 @@ contract RWALaunchpadFactory is
     
     uint16[] private _defaultRestrictedCountries;
     bool public requireApproval;
+
+    // ============ v2 storage (appended) ============
+    /// @notice PlatformFeeManager every new vault reports fees to (the factory needs its ADMIN_ROLE)
+    address public platformFeeManager;
+    /// @dev Vault-side project id (= project NFT id) + 1, per factory project id; 0 = pre-v2 deployment
+    mapping(uint256 => uint256) private _vaultProjectIdPlusOne;
 
     // ============ Events ============
     event ProjectDeployed(uint256 indexed projectId, address indexed deployer, address securityToken, address escrowVault, address compliance);
@@ -148,6 +167,7 @@ contract RWALaunchpadFactory is
         if (msg.value < creationFee) revert InsufficientFee();
         if (_deadlineDays < Constants.MIN_DEADLINE_DAYS) revert InvalidDeadline();
         if (_fundingGoal < Constants.MIN_FUNDING_GOAL) revert InvalidFee();
+        if (platformFeeManager == address(0)) revert InvalidAddress();
 
         projectId = projectCounter++;
         address platformOwner = owner();
@@ -172,18 +192,23 @@ contract RWALaunchpadFactory is
             impl.escrowVault,
             abi.encodeWithSignature(
                 "initialize(address,address,address)",
-                address(this), platformFeeRecipient, address(projectNFT)
+                address(this), platformFeeManager, address(projectNFT)
             )
         ));
 
-        // Configure escrow
-        _configureEscrow(escrowVault, projectId, securityToken, _fundingGoal, _deadlineDays, _maxSupply);
+        // Create NFT and link contracts. The vault books the project under the NFT id, so the
+        // status updates it sends to the NFT land on the right token.
+        uint256 nftId = _createAndLinkNFT(securityToken, escrowVault, compliance, _name, _category, _fundingGoal, _metadataUri);
+        _vaultProjectIdPlusOne[projectId] = nftId + 1;
+
+        // Configure escrow; the deployer owns the project (completion, milestone payouts)
+        _configureEscrow(escrowVault, nftId, securityToken, _fundingGoal, _deadlineDays, _maxSupply);
+        IRWAEscrowVault(escrowVault).transferProjectOwnership(nftId, msg.sender);
+        IPlatformFeeManagerRoles(platformFeeManager).grantEscrowRole(escrowVault);
+        IPlatformFeeManagerRoles(platformFeeManager).grantDisputeManagerRole(escrowVault);
 
         // Deploy and configure optional modules
         _deployModules(compliance, securityToken, platformOwner);
-
-        // Create NFT and link contracts
-        _createAndLinkNFT(projectId, securityToken, escrowVault, compliance, _name, _category, _fundingGoal, _metadataUri);
 
         // Transfer all ownership/roles to platform owner - CRITICAL
         _setupRoles(securityToken, escrowVault, compliance, platformOwner);
@@ -262,7 +287,6 @@ contract RWALaunchpadFactory is
     }
 
     function _createAndLinkNFT(
-        uint256 _projectId,
         address _securityToken,
         address _escrowVault,
         address _compliance,
@@ -270,8 +294,8 @@ contract RWALaunchpadFactory is
         string calldata _category,
         uint256 _fundingGoal,
         string calldata _metadataUri
-    ) internal {
-        uint256 nftId = projectNFT.createProject(msg.sender, _name, _category, _fundingGoal, _metadataUri);
+    ) internal returns (uint256 nftId) {
+        nftId = projectNFT.createProject(msg.sender, _name, _category, _fundingGoal, _metadataUri);
         projectNFT.linkSecurityToken(nftId, _securityToken);
         projectNFT.linkEscrowVault(nftId, _escrowVault);
         IModularCompliance(_compliance).bindToken(_securityToken);
@@ -283,12 +307,18 @@ contract RWALaunchpadFactory is
         address _compliance,
         address _platformOwner
     ) internal {
-        // Security Token: escrow can mint, project deployer + platform owner are admins
+        // Security Token: escrow mints claims and snapshots for disputes; project deployer and
+        // platform owner are admins. The factory keeps none of the roles it was initialised with.
         IRWASecurityToken token = IRWASecurityToken(_token);
-        token.grantRole(token.MINTER_ROLE(), _escrow);
-        token.grantRole(token.DEFAULT_ADMIN_ROLE(), msg.sender);  // Project deployer
-        token.grantRole(token.DEFAULT_ADMIN_ROLE(), _platformOwner);
-        token.renounceRole(token.DEFAULT_ADMIN_ROLE(), address(this));
+        token.grantRole(MINTER_ROLE, _escrow);
+        token.grantRole(SNAPSHOT_ROLE, _escrow);
+        token.grantRole(DEFAULT_ADMIN_ROLE, msg.sender);  // Project deployer
+        token.grantRole(DEFAULT_ADMIN_ROLE, _platformOwner);
+        bytes32[6] memory roles = [MINTER_ROLE, BURNER_ROLE, COMPLIANCE_ROLE, SNAPSHOT_ROLE, AGENT_ROLE, RECOVERY_ROLE];
+        for (uint256 i = 0; i < roles.length; i++) {
+            token.renounceRole(roles[i], address(this));
+        }
+        token.renounceRole(DEFAULT_ADMIN_ROLE, address(this));
 
         // Escrow Vault: platform owner gets all admin roles for upgrades
         IRWAEscrowVault vault = IRWAEscrowVault(_escrow);
@@ -320,18 +350,18 @@ contract RWALaunchpadFactory is
         IRWAEscrowVault(d.escrowVault).upgradeTo(_newImpl);
     }
 
-    function updateEscrowPriceFeed(uint256 _projectId, address _priceFeed) external onlyOwner {
-        Deployment storage d = deployments[_projectId];
-        if (d.deployer == address(0)) revert ProjectNotFound();
-        IRWAEscrowVault(d.escrowVault).updateProjectPriceFeed(_projectId, _priceFeed);
-    }
-
     // ============ Project Activation ============
     function activateProject(uint256 _projectId) external {
         Deployment storage d = deployments[_projectId];
         if (d.deployer == address(0)) revert ProjectNotFound();
         if (msg.sender != d.deployer && msg.sender != owner()) revert NotApproved();
-        IRWAEscrowVault(d.escrowVault).activateProject(_projectId);
+        IRWAEscrowVault(d.escrowVault).activateProject(getVaultProjectId(_projectId));
+    }
+
+    /// @notice Id the project has inside its escrow vault (the project NFT id since v2)
+    function getVaultProjectId(uint256 _projectId) public view returns (uint256) {
+        uint256 stored = _vaultProjectIdPlusOne[_projectId];
+        return stored == 0 ? _projectId : stored - 1;
     }
 
     function deactivateProject(uint256 _projectId) external onlyOwner {
@@ -392,6 +422,12 @@ contract RWALaunchpadFactory is
         emit ConfigUpdated("paymentTokens");
     }
     
+    function setPlatformFeeManager(address _m) external onlyOwner {
+        if (_m == address(0)) revert InvalidAddress();
+        platformFeeManager = _m;
+        emit ConfigUpdated("platformFeeManager");
+    }
+
     function setPlatformFeeRecipient(address _r) external onlyOwner { 
         if (_r == address(0)) revert InvalidAddress(); 
         platformFeeRecipient = _r; 

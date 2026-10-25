@@ -1,135 +1,143 @@
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
-import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
+import { cacheKYC, deployKYCVerifier, kycProof } from "../helpers/kyc";
+
+const USD = (n: number) => BigInt(n) * 10n ** 6n;
+const GOAL = USD(10_000);
+const SUPPLY = ethers.parseEther("100000");
+const TOKEN_ROLES = ["MINTER_ROLE", "BURNER_ROLE", "COMPLIANCE_ROLE", "SNAPSHOT_ROLE", "AGENT_ROLE", "RECOVERY_ROLE"];
 
 describe("RWALaunchpadFactory", function () {
-  let admin: SignerWithAddress;
-  let operator: SignerWithAddress;
-  let projectOwner: SignerWithAddress;
-  let feeRecipient: SignerWithAddress;
+  async function fixture() {
+    const [owner, signer, deployer, investor, feeReceiver, liquidity, treasury] = await ethers.getSigners();
+    const verifier: any = await deployKYCVerifier(signer.address, owner.address);
+    const MockERC20 = await ethers.getContractFactory("MockERC20");
+    const usdc: any = await MockERC20.deploy("USD Coin", "USDC", 6);
+    const usdt: any = await MockERC20.deploy("Tether", "USDT", 6);
 
-  let factory: any;
-  let projectNFT: any;
-  let identityRegistry: any;
-  let claimTopicsRegistry: any;
-  let trustedIssuersRegistry: any;
-  let identityRegistryStorage: any;
-  let securityTokenImpl: any;
-  let escrowVaultImpl: any;
-  let complianceImpl: any;
-
-  beforeEach(async function () {
-    [admin, operator, projectOwner, feeRecipient] = await ethers.getSigners();
-
-    // Deploy registry infrastructure
-    const ClaimTopicsRegistry = await ethers.getContractFactory("ClaimTopicsRegistry");
-    claimTopicsRegistry = await upgrades.deployProxy(ClaimTopicsRegistry, [admin.address], { kind: 'uups' });
-
-    const TrustedIssuersRegistry = await ethers.getContractFactory("TrustedIssuersRegistry");
-    trustedIssuersRegistry = await upgrades.deployProxy(TrustedIssuersRegistry, [admin.address], { kind: 'uups' });
-
-    const IdentityRegistryStorage = await ethers.getContractFactory("IdentityRegistryStorage");
-    identityRegistryStorage = await upgrades.deployProxy(IdentityRegistryStorage, [admin.address], { kind: 'uups' });
-
-    const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
-    identityRegistry = await upgrades.deployProxy(
-      IdentityRegistry,
-      [admin.address, await claimTopicsRegistry.getAddress(), await trustedIssuersRegistry.getAddress(), await identityRegistryStorage.getAddress()],
-      { kind: 'uups' }
+    const feeManager: any = await upgrades.deployProxy(
+      await ethers.getContractFactory("PlatformFeeManager"),
+      [owner.address, feeReceiver.address, liquidity.address, treasury.address],
+      { kind: "uups" }
     );
+    const nft: any = await upgrades.deployProxy(
+      await ethers.getContractFactory("RWAProjectNFT"),
+      ["RWA Projects", "RWAP", owner.address],
+      { kind: "uups" }
+    );
+    const tokenImpl = await (await ethers.getContractFactory("RWASecurityToken")).deploy();
+    const vaultImpl = await (await ethers.getContractFactory("RWAEscrowVault")).deploy();
+    const complianceImpl = await (await ethers.getContractFactory("ModularCompliance")).deploy();
 
-    await identityRegistryStorage.bindIdentityRegistry(await identityRegistry.getAddress());
-
-    // Deploy Project NFT
-    const RWAProjectNFT = await ethers.getContractFactory("RWAProjectNFT");
-    projectNFT = await upgrades.deployProxy(RWAProjectNFT, [admin.address, "RWA Projects", "RWAP"], { kind: 'uups' });
-
-    // Deploy implementation contracts
-    const RWASecurityToken = await ethers.getContractFactory("RWASecurityToken");
-    securityTokenImpl = await RWASecurityToken.deploy();
-
-    const RWAEscrowVault = await ethers.getContractFactory("RWAEscrowVault");
-    escrowVaultImpl = await RWAEscrowVault.deploy();
-
-    const ModularCompliance = await ethers.getContractFactory("ModularCompliance");
-    complianceImpl = await ModularCompliance.deploy();
-
-    // Deploy Factory
-    const RWALaunchpadFactory = await ethers.getContractFactory("RWALaunchpadFactory");
-    factory = await upgrades.deployProxy(
-      RWALaunchpadFactory,
+    const factory: any = await upgrades.deployProxy(
+      await ethers.getContractFactory("RWALaunchpadFactory"),
       [
-        admin.address,
-        feeRecipient.address,
-        await projectNFT.getAddress(),
-        await identityRegistry.getAddress(),
-        250, // 2.5% platform fee
-        100  // 1% creation fee
+        owner.address,
+        await tokenImpl.getAddress(),
+        await vaultImpl.getAddress(),
+        await complianceImpl.getAddress(),
+        await verifier.getAddress(),
+        await nft.getAddress(),
+        feeReceiver.address,
       ],
-      { kind: 'uups' }
+      { kind: "uups" }
     );
+    const factoryAddress = await factory.getAddress();
+    // platform wiring, as scripts/deploy-complete.ts does it
+    await nft.grantRole(await nft.MINTER_ROLE(), factoryAddress);
+    await nft.grantRole(await nft.MANAGER_ROLE(), factoryAddress);
+    await feeManager.grantRole(await feeManager.ADMIN_ROLE(), factoryAddress);
+    await factory.setPlatformFeeManager(await feeManager.getAddress());
+    await factory.setDefaultPaymentTokens(await usdc.getAddress(), await usdt.getAddress());
 
-    // Set implementations
-    await factory.setImplementations(
-      await securityTokenImpl.getAddress(),
-      await escrowVaultImpl.getAddress(),
-      await complianceImpl.getAddress()
+    await usdc.mint(investor.address, USD(1_000_000));
+    return { factory, factoryAddress, feeManager, nft, usdc, verifier, owner, signer, deployer, investor, liquidity, treasury };
+  }
+
+  async function deployedFixture() {
+    const f = await fixture();
+    await f.factory.connect(f.deployer).deployProject("Solar Farm", "SOLAR", "energy", SUPPLY, GOAL, 30, "ipfs://meta");
+    const d = await f.factory.getDeployment(0);
+    const vault: any = await ethers.getContractAt("RWAEscrowVault", d.escrowVault);
+    const token: any = await ethers.getContractAt("RWASecurityToken", d.securityToken);
+    const vaultProjectId = await f.factory.getVaultProjectId(0);
+    return { ...f, vault, token, vaultProjectId };
+  }
+
+  it("refuses to deploy before a fee manager is configured", async function () {
+    const { deployer, owner, verifier, nft } = await loadFixture(fixture);
+    const bare: any = await upgrades.deployProxy(
+      await ethers.getContractFactory("RWALaunchpadFactory"),
+      [
+        owner.address,
+        await (await (await ethers.getContractFactory("RWASecurityToken")).deploy()).getAddress(),
+        await (await (await ethers.getContractFactory("RWAEscrowVault")).deploy()).getAddress(),
+        await (await (await ethers.getContractFactory("ModularCompliance")).deploy()).getAddress(),
+        await verifier.getAddress(),
+        await nft.getAddress(),
+        owner.address,
+      ],
+      { kind: "uups" }
     );
-
-    // Grant factory role to factory on project NFT
-    const FACTORY_ROLE = ethers.keccak256(ethers.toUtf8Bytes("FACTORY_ROLE"));
-    await projectNFT.grantRole(FACTORY_ROLE, await factory.getAddress());
+    await expect(bare.connect(deployer).deployProject("A", "A", "x", SUPPLY, GOAL, 30, ""))
+      .to.be.revertedWithCustomError(bare, "InvalidAddress");
   });
 
-  describe("Initialization", function () {
-    it("should initialize with correct parameters", async function () {
-      expect(await factory.feeRecipient()).to.equal(feeRecipient.address);
-      expect(await factory.platformFeeBps()).to.equal(250);
-      expect(await factory.creationFeeBps()).to.equal(100);
-      expect(await factory.projectNFT()).to.equal(await projectNFT.getAddress());
-    });
+  it("books the project under its NFT id, owned by the deployer", async function () {
+    const { vault, nft, deployer, vaultProjectId, token } = await loadFixture(deployedFixture);
+    const project = await vault.getProject(vaultProjectId);
+    expect(project.projectOwner).to.equal(deployer.address);
+    expect(project.securityToken).to.equal(await token.getAddress());
+    expect(await nft.ownerOf(vaultProjectId)).to.equal(deployer.address);
   });
 
-  describe("Fee Management", function () {
-    it("should update platform fee", async function () {
-      await factory.setPlatformFee(500);
-      expect(await factory.platformFeeBps()).to.equal(500);
-    });
-
-    it("should not allow fee above maximum", async function () {
-      await expect(factory.setPlatformFee(1001)).to.be.reverted;
-    });
-
-    it("should update creation fee", async function () {
-      await factory.setCreationFee(200);
-      expect(await factory.creationFeeBps()).to.equal(200);
-    });
-
-    it("should update fee recipient", async function () {
-      await factory.setFeeRecipient(operator.address);
-      expect(await factory.feeRecipient()).to.equal(operator.address);
-    });
+  it("leaves the factory without operational roles on the token", async function () {
+    const { token, vault, factoryAddress, deployer, owner } = await loadFixture(deployedFixture);
+    for (const role of TOKEN_ROLES) {
+      expect(await token.hasRole(ethers.id(role), factoryAddress), role).to.equal(false);
+    }
+    expect(await token.hasRole(ethers.ZeroHash, factoryAddress)).to.equal(false);
+    expect(await token.hasRole(ethers.ZeroHash, deployer.address)).to.equal(true);
+    expect(await token.hasRole(ethers.ZeroHash, owner.address)).to.equal(true);
+    expect(await token.hasRole(ethers.id("MINTER_ROLE"), await vault.getAddress())).to.equal(true);
+    expect(await token.hasRole(ethers.id("SNAPSHOT_ROLE"), await vault.getAddress())).to.equal(true);
   });
 
-  describe("Admin Functions", function () {
-    it("should pause and unpause", async function () {
-      await factory.pause();
-      expect(await factory.paused()).to.be.true;
+  it("does not let another project's vault change this project's NFT status", async function () {
+    const f = await loadFixture(deployedFixture);
+    await f.factory.connect(f.deployer).deployProject("Wind Farm", "WIND", "energy", SUPPLY, GOAL, 30, "ipfs://meta2");
+    const other: any = await ethers.getContractAt("RWAEscrowVault", (await f.factory.getDeployment(1)).escrowVault);
+    await ethers.provider.send("hardhat_impersonateAccount", [await other.getAddress()]);
+    await ethers.provider.send("hardhat_setBalance", [await other.getAddress(), "0xDE0B6B3A7640000"]);
+    const otherVault = await ethers.getSigner(await other.getAddress());
+    await expect(f.nft.connect(otherVault).updateProjectStatus(f.vaultProjectId, 4))
+      .to.be.revertedWithCustomError(f.nft, "NotAuthorized");
+  });
 
-      await factory.unpause();
-      expect(await factory.paused()).to.be.false;
-    });
+  it("runs a raise end to end: invest, complete, claim, release", async function () {
+    const f = await loadFixture(deployedFixture);
+    const { factory, vault, token, usdc, feeManager, signer, verifier, deployer, investor, liquidity, treasury, owner } = f;
+    const pid = f.vaultProjectId;
+    expect(await feeManager.hasRole(await feeManager.ESCROW_ROLE(), await vault.getAddress())).to.equal(true);
 
-    it("should set identity registry", async function () {
-      const IdentityRegistry = await ethers.getContractFactory("IdentityRegistry");
-      const newRegistry = await upgrades.deployProxy(
-        IdentityRegistry,
-        [admin.address, await claimTopicsRegistry.getAddress(), await trustedIssuersRegistry.getAddress(), await identityRegistryStorage.getAddress()],
-        { kind: 'uups' }
-      );
+    await factory.connect(deployer).activateProject(0);
+    await usdc.connect(investor).approve(await vault.getAddress(), GOAL);
+    // The project's own vault may update its NFT status without MANAGER_ROLE
+    await expect(
+      vault.connect(investor).invest(pid, GOAL, await usdc.getAddress(), await kycProof(signer, verifier, investor.address))
+    ).to.not.emit(vault, "ProjectNFTUpdateFailed");
+    expect((await vault.getProject(pid)).state).to.equal(2); // FUNDED
+    expect((await f.nft.getProject(pid)).status).to.equal(2); // NFT FUNDED
 
-      await factory.setIdentityRegistry(await newRegistry.getAddress());
-      expect(await factory.identityRegistry()).to.equal(await newRegistry.getAddress());
-    });
+    await cacheKYC(token, signer, verifier, [liquidity.address, treasury.address, investor.address]);
+    await vault.connect(deployer).completeProject(pid);
+    expect(await usdc.balanceOf(await feeManager.getAddress())).to.equal(USD(150));
+
+    await vault.connect(investor).claimTokens(pid);
+    expect(await token.balanceOf(investor.address)).to.equal((SUPPLY * 99n) / 100n);
+
+    await expect(vault.connect(owner).releaseMilestoneFunds(pid, USD(9_850), "m1"))
+      .to.changeTokenBalance(usdc, deployer, USD(9_850));
   });
 });

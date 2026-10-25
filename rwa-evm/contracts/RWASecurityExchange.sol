@@ -10,9 +10,10 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./interfaces/IKYCVerifier.sol";
 
+/// @dev The freeze views RWASecurityToken exposes
 interface IRWASecurityToken {
-    function isLocked(address _account) external view returns (bool);
-    function frozen(address _account) external view returns (bool);
+    function isFrozen(address _account) external view returns (bool);
+    function getUnfrozenBalance(address _account) external view returns (uint256);
 }
 
 /**
@@ -113,6 +114,18 @@ contract RWASecurityExchange is
 
     bool public autoCreatePairs;
 
+    // ============ v2 storage (appended) ============
+    // Escrow accounting, so emergencyWithdraw can only take what no open order is owed.
+    /// @notice Tokens held for open orders, per token
+    mapping(address => uint256) public escrowedBalance;
+    bool public escrowAccountingActive;     // set by initialize, or by initializeEscrowAccounting after an upgrade
+    uint256 public escrowTrackedFrom;       // orders with id >= this are tracked as they happen
+    uint256 public escrowLegacySynced;      // orders with id < this were added up by syncLegacyEscrow
+    /// @notice Payment tokens still held for a buy order: its cost plus the fee reserve
+    mapping(uint256 => uint256) public buyOrderEscrow;
+    /// @dev buyOrderEscrow is set for buy orders created on v2; older ones hold price * remaining
+    mapping(uint256 => bool) private _buyEscrowRecorded;
+
     // ============ Events ============
     event TradingPairCreated(address indexed securityToken, address indexed paymentToken, bytes32 pairId, uint8 minKYCLevel);
     event TradingPairStatusChanged(bytes32 indexed pairId, bool active);
@@ -145,6 +158,9 @@ contract RWASecurityExchange is
     error PairDoesNotExist();
     error PaymentTokenNotAccepted();
     error InvalidSecurityToken();
+    error EscrowAccountingIncomplete();
+    error EscrowAccountingAlreadyActive();
+    error InsufficientBalance();
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -174,6 +190,7 @@ contract RWASecurityExchange is
         acceptedPaymentTokens[_defaultPaymentToken] = true;
         autoCreatePairs = true;
         defaultMinKYCLevel = 1; // BASIC level by default
+        escrowAccountingActive = true;
 
         // Set default restricted countries (OFAC list)
         defaultRestrictedCountries.push(408); // North Korea
@@ -362,18 +379,29 @@ contract RWASecurityExchange is
 
         // Check token restrictions
         IRWASecurityToken secToken = IRWASecurityToken(_securityToken);
-        if (secToken.frozen(msg.sender)) revert AccountFrozen();
+        if (secToken.isFrozen(msg.sender)) revert AccountFrozen();
 
+        address depositToken;
+        uint256 deposit;
         if (_side == OrderSide.Sell) {
-            if (secToken.isLocked(msg.sender)) revert TokensLocked();
-            IERC20(_securityToken).safeTransferFrom(msg.sender, address(this), _amount);
+            if (secToken.getUnfrozenBalance(msg.sender) < _amount) revert TokensLocked();
+            (depositToken, deposit) = (_securityToken, _amount);
         } else {
-            uint256 totalCost = (_price * _amount) / 1e18;
-            IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), totalCost);
+            // The buyer pays the trade fee on top of the price, so it is escrowed up front at the
+            // higher of the two fee rates; whatever is not used is refunded on fill or cancel.
+            uint256 cost = (_price * _amount) / 1e18;
+            uint256 feeBps = makerFeeBps > takerFeeBps ? makerFeeBps : takerFeeBps;
+            (depositToken, deposit) = (_paymentToken, cost + (cost * feeBps) / 10000);
         }
+        IERC20(depositToken).safeTransferFrom(msg.sender, address(this), deposit);
 
         _orderCounter++;
         orderId = _orderCounter;
+        if (_escrowTracked(orderId)) escrowedBalance[depositToken] += deposit;
+        if (_side == OrderSide.Buy) {
+            buyOrderEscrow[orderId] = deposit;
+            _buyEscrowRecorded[orderId] = true;
+        }
 
         orders[orderId] = Order({
             id: orderId,
@@ -417,10 +445,13 @@ contract RWASecurityExchange is
 
         if (order.side == OrderSide.Buy) {
             _removeFromOrderBook(buyOrderBook[pairId], _orderId);
-            uint256 refund = (order.price * remainingAmount) / 1e18;
+            uint256 refund = _buyEscrowOf(order);
+            buyOrderEscrow[_orderId] = 0;
+            _releaseEscrow(_orderId, order.paymentToken, refund);
             IERC20(order.paymentToken).safeTransfer(msg.sender, refund);
         } else {
             _removeFromOrderBook(sellOrderBook[pairId], _orderId);
+            _releaseEscrow(_orderId, order.securityToken, remainingAmount);
             IERC20(order.securityToken).safeTransfer(msg.sender, remainingAmount);
         }
 
@@ -481,8 +512,30 @@ contract RWASecurityExchange is
             sellerFee = temp;
         }
 
+        // Split the buy order's escrow: keep the share for the part still open, release the rest.
+        // The released part pays the seller and the buyer's fee; any excess goes back to the buyer.
+        uint256 escrowBefore = _buyEscrowOf(_buyOrder);
+        uint256 remainingBefore = _buyOrder.amount - _buyOrder.filled;
+        // Invariant: an open buy order holds at least price * remaining, so escrowBefore covers
+        // paymentAmount and what is kept still covers the rest of the order.
+        uint256 rest = remainingBefore - _amount;
+        uint256 keep = (escrowBefore * rest) / remainingBefore;
+        uint256 restCost = (_buyOrder.price * rest) / 1e18;
+        if (keep < restCost) keep = restCost;
+        if (keep > escrowBefore - paymentAmount) keep = escrowBefore - paymentAmount;
+        uint256 released = escrowBefore - keep;
+        // Fee rates raised after the order was placed cannot charge more than was escrowed
+        if (paymentAmount + buyerFee > released) buyerFee = released - paymentAmount;
+        uint256 buyerRefund = released - paymentAmount - buyerFee;
+        if (_buyEscrowRecorded[_buyOrder.id]) buyOrderEscrow[_buyOrder.id] = keep;
+
         _buyOrder.filled += _amount;
         _sellOrder.filled += _amount;
+
+        // Everything below leaves the two orders' escrow: the tokens from the sell order, and the
+        // released part of the buy order's payment (to seller, fees and buyer refund)
+        _releaseEscrow(_sellOrder.id, _sellOrder.securityToken, _amount);
+        _releaseEscrow(_buyOrder.id, _buyOrder.paymentToken, released);
 
         // Transfer tokens to buyer
         IERC20(_buyOrder.securityToken).safeTransfer(_buyOrder.trader, _amount);
@@ -491,8 +544,6 @@ contract RWASecurityExchange is
         IERC20(_buyOrder.paymentToken).safeTransfer(_sellOrder.trader, paymentAmount - sellerFee);
 
         // Refund excess payment to buyer
-        uint256 buyerPaid = (_buyOrder.price * _amount) / 1e18;
-        uint256 buyerRefund = buyerPaid - paymentAmount - buyerFee;
         if (buyerRefund > 0) {
             IERC20(_buyOrder.paymentToken).safeTransfer(_buyOrder.trader, buyerRefund);
         }
@@ -791,8 +842,70 @@ contract RWASecurityExchange is
         _unpause();
     }
 
+    /**
+     * @notice Withdraw tokens the exchange holds beyond what open orders are owed
+     *         (stray transfers, fees kept when no fee collector is set). Order escrow cannot be taken.
+     */
     function emergencyWithdraw(address _token, uint256 _amount) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (!escrowAccountingActive || escrowLegacySynced < escrowTrackedFrom) revert EscrowAccountingIncomplete();
+        if (IERC20(_token).balanceOf(address(this)) < escrowedBalance[_token] + _amount) revert InsufficientBalance();
         IERC20(_token).safeTransfer(msg.sender, _amount);
+    }
+
+    /// @notice Amount of `_token` that emergencyWithdraw could take right now
+    function withdrawableBalance(address _token) external view returns (uint256) {
+        if (!escrowAccountingActive || escrowLegacySynced < escrowTrackedFrom) return 0;
+        uint256 balance = IERC20(_token).balanceOf(address(this));
+        uint256 owed = escrowedBalance[_token];
+        return balance > owed ? balance - owed : 0;
+    }
+
+    /**
+     * @notice Turn on escrow accounting on a proxy upgraded from v1. Orders created from now on are
+     *         tracked live; existing ones are added up by syncLegacyEscrow, and emergencyWithdraw
+     *         stays disabled until that has covered all of them.
+     */
+    function initializeEscrowAccounting() external onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (escrowAccountingActive) revert EscrowAccountingAlreadyActive();
+        escrowAccountingActive = true;
+        escrowTrackedFrom = _orderCounter + 1;
+        escrowLegacySynced = 1;
+    }
+
+    /// @notice Add up the open escrow of up to `_maxOrders` pre-upgrade orders. Anyone may call.
+    function syncLegacyEscrow(uint256 _maxOrders) external {
+        if (!escrowAccountingActive) revert EscrowAccountingIncomplete();
+        uint256 id = escrowLegacySynced;
+        uint256 end = escrowTrackedFrom;
+        for (uint256 n = 0; id < end && n < _maxOrders; n++) {
+            Order storage order = orders[id];
+            if (order.status == OrderStatus.Active || order.status == OrderStatus.PartiallyFilled) {
+                uint256 remaining = order.amount - order.filled;
+                if (order.side == OrderSide.Sell) {
+                    escrowedBalance[order.securityToken] += remaining;
+                } else {
+                    escrowedBalance[order.paymentToken] += _buyEscrowOf(order);
+                }
+            }
+            id++;
+        }
+        escrowLegacySynced = id;
+    }
+
+    /// @dev Payment tokens a buy order still holds
+    function _buyEscrowOf(Order storage _order) internal view returns (uint256) {
+        if (_buyEscrowRecorded[_order.id]) return buyOrderEscrow[_order.id];
+        return (_order.price * (_order.amount - _order.filled)) / 1e18;
+    }
+
+    function _escrowTracked(uint256 _orderId) internal view returns (bool) {
+        return escrowAccountingActive && (_orderId >= escrowTrackedFrom || _orderId < escrowLegacySynced);
+    }
+
+    function _releaseEscrow(uint256 _orderId, address _token, uint256 _amount) internal {
+        if (!_escrowTracked(_orderId)) return;
+        uint256 owed = escrowedBalance[_token];
+        escrowedBalance[_token] = owed > _amount ? owed - _amount : 0;
     }
 
     function _authorizeUpgrade(address newImplementation) internal override onlyRole(UPGRADER_ROLE) {}

@@ -6,6 +6,9 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { ZERO_ADDRESS } from '@/config/contracts';
 import { RWAProjectNFTABI, RWAEscrowVaultABI } from '@/config/abis';
 
+import { openVaultRefunds, readVaultFunding } from '@/lib/crowdfunding/vault';
+import { resolveVaultProjectId } from '@/lib/crowdfunding/vaultProject';
+
 // ============================================================================
 // MULTICHAIN CONFIGURATION
 // ============================================================================
@@ -221,27 +224,24 @@ export async function POST(
       }, { status: 400 });
     }
 
-    // Enable refunds on the escrow vault
-    console.log(`[${chainConfig.name}] Calling enableRefunds on ${project.escrowVault}`);
-    
-    const hash = await walletClient.writeContract({
-      address: project.escrowVault as `0x${string}`,
-      abi: RWAEscrowVaultABI,
-      functionName: 'enableRefunds',
-      args: [BigInt(projectId)],
-    });
+    // The vault has no refund switch: cancelling the project is what lets each investor
+    // claim their refund (claimRefund). Completed projects are refunded through a dispute.
+    const vault = project.escrowVault as `0x${string}`;
+    const vaultProjectId = await resolveVaultProjectId(chainId, projectId);
+    console.log(`[${chainConfig.name}] Cancelling vault project ${vaultProjectId} on ${vault} to open refunds`);
 
-    console.log(`[${chainConfig.name}] Transaction hash:`, hash);
+    const hash = await openVaultRefunds(publicClient, walletClient, vault, vaultProjectId);
 
-    const receipt = await publicClient.waitForTransactionReceipt({ hash });
-    console.log(`[${chainConfig.name}] Transaction confirmed, block:`, receipt.blockNumber);
+    console.log(`[${chainConfig.name}] Transaction hash:`, hash ?? 'none (refunds already open)');
 
     return NextResponse.json({
       success: true,
-      message: `Refunds enabled successfully for project ${projectId} on ${chainConfig.name}`,
+      message: hash
+        ? `Refunds opened for project ${projectId} on ${chainConfig.name}: investors can now claim them`
+        : `Refunds were already open for project ${projectId} on ${chainConfig.name}`,
       transaction: hash,
-      txUrl: `${chainConfig.explorerUrl}/tx/${hash}`,
-      blockNumber: Number(receipt.blockNumber),
+      txUrl: hash ? `${chainConfig.explorerUrl}/tx/${hash}` : null,
+      vaultProjectId: vaultProjectId.toString(),
       escrowVault: project.escrowVault,
       escrowVaultUrl: `${chainConfig.explorerUrl}/address/${project.escrowVault}`,
       chainId,
@@ -329,47 +329,25 @@ export async function GET(
       });
     }
 
-    // Check if refunds are enabled
-    let refundsEnabled = false;
-    let refundableAmount = BigInt(0);
-    let investorCount = 0;
-
-    try {
-      refundsEnabled = await publicClient.readContract({
-        address: project.escrowVault as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'refundsEnabled',
-        args: [BigInt(projectId)],
-      }) as boolean;
-    } catch {
-      // Function might not exist or have different signature
-    }
-
-    try {
-      refundableAmount = await publicClient.readContract({
-        address: project.escrowVault as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getRefundableAmount',
-        args: [BigInt(projectId)],
-      }) as bigint;
-    } catch {
-      // Function might not exist
-    }
-
-    // Get investor count from project
-    investorCount = Number(project.investorCount || 0);
+    // Refunds are open once the vault project is cancelled; what is left to refund is what the
+    // vault still holds for the project
+    const vaultProjectId = await resolveVaultProjectId(chainId, projectId);
+    const status = await readVaultFunding(publicClient, project.escrowVault as `0x${string}`, vaultProjectId);
 
     return NextResponse.json({
       success: true,
       projectId,
+      vaultProjectId: vaultProjectId.toString(),
       hasEscrowVault: true,
       escrowVault: project.escrowVault,
       escrowVaultUrl: `${chainConfig.explorerUrl}/address/${project.escrowVault}`,
-      refundsEnabled,
-      refundableAmount: refundableAmount.toString(),
-      investorCount,
+      refundsEnabled: status.refundsEnabled,
+      disputeRefundOpen: status.disputeRefundOpen,
+      refundableAmount: status.heldAmount.toString(),
+      investorCount: status.investorCount,
       projectStatus: Number(project.status),
-      totalRaised: project.totalRaised?.toString() || '0',
+      vaultState: status.stateName,
+      totalRaised: status.totalRaised.toString(),
       chainId,
       chainName: chainConfig.name,
       isTestnet: chainConfig.isTestnet,
@@ -464,42 +442,24 @@ export async function PUT(request: NextRequest) {
           continue;
         }
 
-        // Check if refunds already enabled
-        try {
-          const alreadyEnabled = await publicClient.readContract({
-            address: project.escrowVault as `0x${string}`,
-            abi: RWAEscrowVaultABI,
-            functionName: 'refundsEnabled',
-            args: [BigInt(projectId)],
-          }) as boolean;
+        // Open refunds by cancelling the vault project (no-op if already cancelled)
+        const vaultProjectId = await resolveVaultProjectId(chainId, projectId);
+        const hash = await openVaultRefunds(publicClient, walletClient, project.escrowVault as `0x${string}`, vaultProjectId);
 
-          if (alreadyEnabled) {
-            results.push({
-              projectId,
-              status: 'skipped',
-              message: 'Refunds already enabled',
-              escrowVault: project.escrowVault,
-            });
-            continue;
-          }
-        } catch {
-          // Continue if we can't check
+        if (!hash) {
+          results.push({
+            projectId,
+            status: 'skipped',
+            message: 'Refunds already open',
+            escrowVault: project.escrowVault,
+          });
+          continue;
         }
-
-        // Enable refunds
-        const hash = await walletClient.writeContract({
-          address: project.escrowVault as `0x${string}`,
-          abi: RWAEscrowVaultABI,
-          functionName: 'enableRefunds',
-          args: [BigInt(projectId)],
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash });
 
         results.push({
           projectId,
           status: 'success',
-          message: 'Refunds enabled',
+          message: 'Refunds opened',
           txHash: hash,
           escrowVault: project.escrowVault,
         });
