@@ -1,6 +1,10 @@
 # verify-cronos.ps1
 
-$apiKey = "msQhXhA0pEiokwzkGalQdqzYKY5KIC38"
+$apiKey = $env:CRONOSCAN_API_KEY
+if ([string]::IsNullOrWhiteSpace($apiKey)) {
+    Write-Host "CRONOSCAN_API_KEY is not set. Set it before running this script, e.g.: `$env:CRONOSCAN_API_KEY = 'your-key'" -ForegroundColor Red
+    exit 1
+}
 
 # Get the build-info JSON file
 $buildInfoDir = "artifacts/build-info"
