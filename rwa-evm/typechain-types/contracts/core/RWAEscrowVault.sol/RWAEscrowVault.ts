@@ -24,34 +24,6 @@ import type {
 } from "../../../common";
 
 export declare namespace RWAEscrowVault {
-  export type InvestmentStruct = {
-    investor: AddressLike;
-    amount: BigNumberish;
-    tokenAmount: BigNumberish;
-    timestamp: BigNumberish;
-    refunded: boolean;
-    paymentReference: string;
-    paymentToken: AddressLike;
-  };
-
-  export type InvestmentStructOutput = [
-    investor: string,
-    amount: bigint,
-    tokenAmount: bigint,
-    timestamp: bigint,
-    refunded: boolean,
-    paymentReference: string,
-    paymentToken: string
-  ] & {
-    investor: string;
-    amount: bigint;
-    tokenAmount: bigint;
-    timestamp: bigint;
-    refunded: boolean;
-    paymentReference: string;
-    paymentToken: string;
-  };
-
   export type ProjectStruct = {
     projectId: BigNumberish;
     projectOwner: AddressLike;
@@ -119,6 +91,7 @@ export interface RWAEscrowVaultInterface extends Interface {
       | "ADMIN_ROLE"
       | "DEFAULT_ADMIN_ROLE"
       | "DISPUTE_MANAGER_ROLE"
+      | "FUNDED_COMPLETION_TIMEOUT"
       | "INVESTOR_TOKEN_BPS"
       | "OPERATOR_ROLE"
       | "PLATFORM_TOKEN_FEE_BPS"
@@ -126,16 +99,20 @@ export interface RWAEscrowVaultInterface extends Interface {
       | "activateProject"
       | "blockProject"
       | "cancelProject"
+      | "claimDisputeRefund"
       | "claimFeeBps"
       | "claimFeeRecipient"
       | "claimRefund"
       | "claimTokens"
       | "completeProject"
       | "createProject"
+      | "disputeRefundClaimed"
+      | "disputeRefundOpen"
+      | "disputeRefundPool"
       | "forceMarkFunded"
       | "getAvailableFunds"
       | "getClaimableTokens"
-      | "getInvestments"
+      | "getDisputeRefund"
       | "getInvestorAllocation"
       | "getInvestorContribution"
       | "getOffChainPending"
@@ -153,22 +130,29 @@ export interface RWAEscrowVaultInterface extends Interface {
       | "investmentTokens"
       | "investments"
       | "investorContribution"
+      | "investorOnChainContribution"
       | "investorTokenAllocation"
       | "isPaymentReferenceUsed"
       | "isProjectInvestor"
       | "kycVerifier"
+      | "migrateLegacyProject"
       | "pause"
       | "paused"
       | "platformFeeManager"
+      | "projectAccountingEnabled"
+      | "projectBalance"
       | "projectBlockedByDispute"
+      | "projectInjectedFunds"
       | "projectInvestorCount"
       | "projectInvestors"
       | "projectNFT"
       | "projectOffChainAmount"
+      | "projectOnChainRaised"
       | "projectReleasedFunds"
       | "projectSnapshotId"
       | "projects"
       | "proxiableUUID"
+      | "reclaimInjectedFunds"
       | "recordOffChainInvestment"
       | "refundForDispute"
       | "releaseMilestoneFunds"
@@ -179,7 +163,10 @@ export interface RWAEscrowVaultInterface extends Interface {
       | "setKYCVerifier"
       | "setPaymentTokens"
       | "setPlatformFeeManager"
+      | "setProjectPaymentToken"
       | "supportsInterface"
+      | "totalProjectBalances"
+      | "transferProjectOwnership"
       | "unblockProject"
       | "unpause"
       | "upgradeTo"
@@ -194,10 +181,14 @@ export interface RWAEscrowVaultInterface extends Interface {
       | "BeaconUpgraded"
       | "ClaimFeeRecipientUpdated"
       | "ClaimFeeUpdated"
+      | "DisputeRefundClaimed"
+      | "DisputeRefundOpened"
       | "DisputeRefundProcessed"
       | "Initialized"
+      | "InjectedFundsReclaimed"
       | "InvestmentReceived"
       | "KYCVerifierUpdated"
+      | "LegacyProjectMigrated"
       | "MilestoneFundsReleased"
       | "OffChainFundsInjected"
       | "OffChainInvestmentRecorded"
@@ -209,6 +200,9 @@ export interface RWAEscrowVaultInterface extends Interface {
       | "ProjectCreated"
       | "ProjectForceFunded"
       | "ProjectFunded"
+      | "ProjectNFTUpdateFailed"
+      | "ProjectOwnershipTransferred"
+      | "ProjectPaymentTokenSet"
       | "ProjectStateChanged"
       | "ProjectUnblocked"
       | "RefundClaimed"
@@ -230,6 +224,10 @@ export interface RWAEscrowVaultInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "DISPUTE_MANAGER_ROLE",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "FUNDED_COMPLETION_TIMEOUT",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -258,6 +256,10 @@ export interface RWAEscrowVaultInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "cancelProject",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "claimDisputeRefund",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -291,6 +293,18 @@ export interface RWAEscrowVaultInterface extends Interface {
     ]
   ): string;
   encodeFunctionData(
+    functionFragment: "disputeRefundClaimed",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "disputeRefundOpen",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "disputeRefundPool",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "forceMarkFunded",
     values: [BigNumberish, string]
   ): string;
@@ -303,8 +317,8 @@ export interface RWAEscrowVaultInterface extends Interface {
     values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
-    functionFragment: "getInvestments",
-    values: [BigNumberish]
+    functionFragment: "getDisputeRefund",
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "getInvestorAllocation",
@@ -380,6 +394,10 @@ export interface RWAEscrowVaultInterface extends Interface {
     values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "investorOnChainContribution",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "investorTokenAllocation",
     values: [BigNumberish, AddressLike]
   ): string;
@@ -395,6 +413,10 @@ export interface RWAEscrowVaultInterface extends Interface {
     functionFragment: "kycVerifier",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "migrateLegacyProject",
+    values: [BigNumberish, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "pause", values?: undefined): string;
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
@@ -402,7 +424,19 @@ export interface RWAEscrowVaultInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "projectAccountingEnabled",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "projectBalance",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "projectBlockedByDispute",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "projectInjectedFunds",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
@@ -422,6 +456,10 @@ export interface RWAEscrowVaultInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "projectOnChainRaised",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "projectReleasedFunds",
     values: [BigNumberish]
   ): string;
@@ -436,6 +474,10 @@ export interface RWAEscrowVaultInterface extends Interface {
   encodeFunctionData(
     functionFragment: "proxiableUUID",
     values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "reclaimInjectedFunds",
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "recordOffChainInvestment",
@@ -478,8 +520,20 @@ export interface RWAEscrowVaultInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(
+    functionFragment: "setProjectPaymentToken",
+    values: [BigNumberish, AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "supportsInterface",
     values: [BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "totalProjectBalances",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "transferProjectOwnership",
+    values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
     functionFragment: "unblockProject",
@@ -504,6 +558,10 @@ export interface RWAEscrowVaultInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "DISPUTE_MANAGER_ROLE",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "FUNDED_COMPLETION_TIMEOUT",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -535,6 +593,10 @@ export interface RWAEscrowVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "claimDisputeRefund",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "claimFeeBps",
     data: BytesLike
   ): Result;
@@ -559,6 +621,18 @@ export interface RWAEscrowVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "disputeRefundClaimed",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "disputeRefundOpen",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "disputeRefundPool",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "forceMarkFunded",
     data: BytesLike
   ): Result;
@@ -571,7 +645,7 @@ export interface RWAEscrowVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getInvestments",
+    functionFragment: "getDisputeRefund",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -625,6 +699,10 @@ export interface RWAEscrowVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "investorOnChainContribution",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "investorTokenAllocation",
     data: BytesLike
   ): Result;
@@ -640,6 +718,10 @@ export interface RWAEscrowVaultInterface extends Interface {
     functionFragment: "kycVerifier",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(
+    functionFragment: "migrateLegacyProject",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "pause", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
@@ -647,7 +729,19 @@ export interface RWAEscrowVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "projectAccountingEnabled",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "projectBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "projectBlockedByDispute",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "projectInjectedFunds",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -664,6 +758,10 @@ export interface RWAEscrowVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "projectOnChainRaised",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "projectReleasedFunds",
     data: BytesLike
   ): Result;
@@ -674,6 +772,10 @@ export interface RWAEscrowVaultInterface extends Interface {
   decodeFunctionResult(functionFragment: "projects", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "proxiableUUID",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "reclaimInjectedFunds",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -714,7 +816,19 @@ export interface RWAEscrowVaultInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setProjectPaymentToken",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "totalProjectBalances",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "transferProjectOwnership",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -785,6 +899,46 @@ export namespace ClaimFeeUpdatedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace DisputeRefundClaimedEvent {
+  export type InputTuple = [
+    projectId: BigNumberish,
+    holder: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [projectId: bigint, holder: string, amount: bigint];
+  export interface OutputObject {
+    projectId: bigint;
+    holder: string;
+    amount: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace DisputeRefundOpenedEvent {
+  export type InputTuple = [
+    projectId: BigNumberish,
+    pool: BigNumberish,
+    snapshotId: BigNumberish
+  ];
+  export type OutputTuple = [
+    projectId: bigint,
+    pool: bigint,
+    snapshotId: bigint
+  ];
+  export interface OutputObject {
+    projectId: bigint;
+    pool: bigint;
+    snapshotId: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace DisputeRefundProcessedEvent {
   export type InputTuple = [
     projectId: BigNumberish,
@@ -812,6 +966,24 @@ export namespace InitializedEvent {
   export type OutputTuple = [version: bigint];
   export interface OutputObject {
     version: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace InjectedFundsReclaimedEvent {
+  export type InputTuple = [
+    projectId: BigNumberish,
+    to: AddressLike,
+    amount: BigNumberish
+  ];
+  export type OutputTuple = [projectId: bigint, to: string, amount: bigint];
+  export interface OutputObject {
+    projectId: bigint;
+    to: string;
+    amount: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -853,6 +1025,28 @@ export namespace KYCVerifierUpdatedEvent {
   export interface OutputObject {
     oldVerifier: string;
     newVerifier: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace LegacyProjectMigratedEvent {
+  export type InputTuple = [
+    projectId: BigNumberish,
+    balance: BigNumberish,
+    onChainRaised: BigNumberish
+  ];
+  export type OutputTuple = [
+    projectId: bigint,
+    balance: bigint,
+    onChainRaised: bigint
+  ];
+  export interface OutputObject {
+    projectId: bigint;
+    balance: bigint;
+    onChainRaised: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1079,6 +1273,54 @@ export namespace ProjectFundedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace ProjectNFTUpdateFailedEvent {
+  export type InputTuple = [projectId: BigNumberish, status: BigNumberish];
+  export type OutputTuple = [projectId: bigint, status: bigint];
+  export interface OutputObject {
+    projectId: bigint;
+    status: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace ProjectOwnershipTransferredEvent {
+  export type InputTuple = [
+    projectId: BigNumberish,
+    previousOwner: AddressLike,
+    newOwner: AddressLike
+  ];
+  export type OutputTuple = [
+    projectId: bigint,
+    previousOwner: string,
+    newOwner: string
+  ];
+  export interface OutputObject {
+    projectId: bigint;
+    previousOwner: string;
+    newOwner: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace ProjectPaymentTokenSetEvent {
+  export type InputTuple = [projectId: BigNumberish, paymentToken: AddressLike];
+  export type OutputTuple = [projectId: bigint, paymentToken: string];
+  export interface OutputObject {
+    projectId: bigint;
+    paymentToken: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace ProjectStateChangedEvent {
   export type InputTuple = [projectId: BigNumberish, newState: BigNumberish];
   export type OutputTuple = [projectId: bigint, newState: bigint];
@@ -1285,6 +1527,8 @@ export interface RWAEscrowVault extends BaseContract {
 
   DISPUTE_MANAGER_ROLE: TypedContractMethod<[], [string], "view">;
 
+  FUNDED_COMPLETION_TIMEOUT: TypedContractMethod<[], [bigint], "view">;
+
   INVESTOR_TOKEN_BPS: TypedContractMethod<[], [bigint], "view">;
 
   OPERATOR_ROLE: TypedContractMethod<[], [string], "view">;
@@ -1306,6 +1550,12 @@ export interface RWAEscrowVault extends BaseContract {
   >;
 
   cancelProject: TypedContractMethod<
+    [_projectId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
+  claimDisputeRefund: TypedContractMethod<
     [_projectId: BigNumberish],
     [void],
     "nonpayable"
@@ -1345,6 +1595,24 @@ export interface RWAEscrowVault extends BaseContract {
     "nonpayable"
   >;
 
+  disputeRefundClaimed: TypedContractMethod<
+    [arg0: BigNumberish, arg1: AddressLike],
+    [boolean],
+    "view"
+  >;
+
+  disputeRefundOpen: TypedContractMethod<
+    [arg0: BigNumberish],
+    [boolean],
+    "view"
+  >;
+
+  disputeRefundPool: TypedContractMethod<
+    [arg0: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
   forceMarkFunded: TypedContractMethod<
     [_projectId: BigNumberish, _reason: string],
     [void],
@@ -1363,9 +1631,9 @@ export interface RWAEscrowVault extends BaseContract {
     "view"
   >;
 
-  getInvestments: TypedContractMethod<
-    [_projectId: BigNumberish],
-    [RWAEscrowVault.InvestmentStructOutput[]],
+  getDisputeRefund: TypedContractMethod<
+    [_projectId: BigNumberish, _holder: AddressLike],
+    [bigint],
     "view"
   >;
 
@@ -1490,6 +1758,12 @@ export interface RWAEscrowVault extends BaseContract {
     "view"
   >;
 
+  investorOnChainContribution: TypedContractMethod<
+    [arg0: BigNumberish, arg1: AddressLike],
+    [bigint],
+    "view"
+  >;
+
   investorTokenAllocation: TypedContractMethod<
     [arg0: BigNumberish, arg1: AddressLike],
     [bigint],
@@ -1510,15 +1784,35 @@ export interface RWAEscrowVault extends BaseContract {
 
   kycVerifier: TypedContractMethod<[], [string], "view">;
 
+  migrateLegacyProject: TypedContractMethod<
+    [_projectId: BigNumberish, _balance: BigNumberish, _injected: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   pause: TypedContractMethod<[], [void], "nonpayable">;
 
   paused: TypedContractMethod<[], [boolean], "view">;
 
   platformFeeManager: TypedContractMethod<[], [string], "view">;
 
+  projectAccountingEnabled: TypedContractMethod<
+    [arg0: BigNumberish],
+    [boolean],
+    "view"
+  >;
+
+  projectBalance: TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+
   projectBlockedByDispute: TypedContractMethod<
     [arg0: BigNumberish],
     [boolean],
+    "view"
+  >;
+
+  projectInjectedFunds: TypedContractMethod<
+    [arg0: BigNumberish],
+    [bigint],
     "view"
   >;
 
@@ -1537,6 +1831,12 @@ export interface RWAEscrowVault extends BaseContract {
   projectNFT: TypedContractMethod<[], [string], "view">;
 
   projectOffChainAmount: TypedContractMethod<
+    [arg0: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
+  projectOnChainRaised: TypedContractMethod<
     [arg0: BigNumberish],
     [bigint],
     "view"
@@ -1591,6 +1891,12 @@ export interface RWAEscrowVault extends BaseContract {
   >;
 
   proxiableUUID: TypedContractMethod<[], [string], "view">;
+
+  reclaimInjectedFunds: TypedContractMethod<
+    [_projectId: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
 
   recordOffChainInvestment: TypedContractMethod<
     [
@@ -1657,10 +1963,28 @@ export interface RWAEscrowVault extends BaseContract {
     "nonpayable"
   >;
 
+  setProjectPaymentToken: TypedContractMethod<
+    [_projectId: BigNumberish, _paymentToken: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   supportsInterface: TypedContractMethod<
     [interfaceId: BytesLike],
     [boolean],
     "view"
+  >;
+
+  totalProjectBalances: TypedContractMethod<
+    [arg0: AddressLike],
+    [bigint],
+    "view"
+  >;
+
+  transferProjectOwnership: TypedContractMethod<
+    [_projectId: BigNumberish, _newOwner: AddressLike],
+    [void],
+    "nonpayable"
   >;
 
   unblockProject: TypedContractMethod<
@@ -1701,6 +2025,9 @@ export interface RWAEscrowVault extends BaseContract {
     nameOrSignature: "DISPUTE_MANAGER_ROLE"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "FUNDED_COMPLETION_TIMEOUT"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "INVESTOR_TOKEN_BPS"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -1720,6 +2047,9 @@ export interface RWAEscrowVault extends BaseContract {
   ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "cancelProject"
+  ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "claimDisputeRefund"
   ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "claimFeeBps"
@@ -1750,6 +2080,19 @@ export interface RWAEscrowVault extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "disputeRefundClaimed"
+  ): TypedContractMethod<
+    [arg0: BigNumberish, arg1: AddressLike],
+    [boolean],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "disputeRefundOpen"
+  ): TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "disputeRefundPool"
+  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+  getFunction(
     nameOrSignature: "forceMarkFunded"
   ): TypedContractMethod<
     [_projectId: BigNumberish, _reason: string],
@@ -1767,10 +2110,10 @@ export interface RWAEscrowVault extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "getInvestments"
+    nameOrSignature: "getDisputeRefund"
   ): TypedContractMethod<
-    [_projectId: BigNumberish],
-    [RWAEscrowVault.InvestmentStructOutput[]],
+    [_projectId: BigNumberish, _holder: AddressLike],
+    [bigint],
     "view"
   >;
   getFunction(
@@ -1900,6 +2243,13 @@ export interface RWAEscrowVault extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "investorOnChainContribution"
+  ): TypedContractMethod<
+    [arg0: BigNumberish, arg1: AddressLike],
+    [bigint],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "investorTokenAllocation"
   ): TypedContractMethod<
     [arg0: BigNumberish, arg1: AddressLike],
@@ -1920,6 +2270,13 @@ export interface RWAEscrowVault extends BaseContract {
     nameOrSignature: "kycVerifier"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "migrateLegacyProject"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _balance: BigNumberish, _injected: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "pause"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -1929,8 +2286,17 @@ export interface RWAEscrowVault extends BaseContract {
     nameOrSignature: "platformFeeManager"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "projectAccountingEnabled"
+  ): TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "projectBalance"
+  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+  getFunction(
     nameOrSignature: "projectBlockedByDispute"
   ): TypedContractMethod<[arg0: BigNumberish], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "projectInjectedFunds"
+  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
   getFunction(
     nameOrSignature: "projectInvestorCount"
   ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
@@ -1946,6 +2312,9 @@ export interface RWAEscrowVault extends BaseContract {
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "projectOffChainAmount"
+  ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "projectOnChainRaised"
   ): TypedContractMethod<[arg0: BigNumberish], [bigint], "view">;
   getFunction(
     nameOrSignature: "projectReleasedFunds"
@@ -1993,6 +2362,9 @@ export interface RWAEscrowVault extends BaseContract {
   getFunction(
     nameOrSignature: "proxiableUUID"
   ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "reclaimInjectedFunds"
+  ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "recordOffChainInvestment"
   ): TypedContractMethod<
@@ -2049,8 +2421,25 @@ export interface RWAEscrowVault extends BaseContract {
     nameOrSignature: "setPlatformFeeManager"
   ): TypedContractMethod<[_feeManager: AddressLike], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setProjectPaymentToken"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _paymentToken: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
     nameOrSignature: "supportsInterface"
   ): TypedContractMethod<[interfaceId: BytesLike], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "totalProjectBalances"
+  ): TypedContractMethod<[arg0: AddressLike], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "transferProjectOwnership"
+  ): TypedContractMethod<
+    [_projectId: BigNumberish, _newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
   getFunction(
     nameOrSignature: "unblockProject"
   ): TypedContractMethod<[_projectId: BigNumberish], [void], "nonpayable">;
@@ -2107,6 +2496,20 @@ export interface RWAEscrowVault extends BaseContract {
     ClaimFeeUpdatedEvent.OutputObject
   >;
   getEvent(
+    key: "DisputeRefundClaimed"
+  ): TypedContractEvent<
+    DisputeRefundClaimedEvent.InputTuple,
+    DisputeRefundClaimedEvent.OutputTuple,
+    DisputeRefundClaimedEvent.OutputObject
+  >;
+  getEvent(
+    key: "DisputeRefundOpened"
+  ): TypedContractEvent<
+    DisputeRefundOpenedEvent.InputTuple,
+    DisputeRefundOpenedEvent.OutputTuple,
+    DisputeRefundOpenedEvent.OutputObject
+  >;
+  getEvent(
     key: "DisputeRefundProcessed"
   ): TypedContractEvent<
     DisputeRefundProcessedEvent.InputTuple,
@@ -2121,6 +2524,13 @@ export interface RWAEscrowVault extends BaseContract {
     InitializedEvent.OutputObject
   >;
   getEvent(
+    key: "InjectedFundsReclaimed"
+  ): TypedContractEvent<
+    InjectedFundsReclaimedEvent.InputTuple,
+    InjectedFundsReclaimedEvent.OutputTuple,
+    InjectedFundsReclaimedEvent.OutputObject
+  >;
+  getEvent(
     key: "InvestmentReceived"
   ): TypedContractEvent<
     InvestmentReceivedEvent.InputTuple,
@@ -2133,6 +2543,13 @@ export interface RWAEscrowVault extends BaseContract {
     KYCVerifierUpdatedEvent.InputTuple,
     KYCVerifierUpdatedEvent.OutputTuple,
     KYCVerifierUpdatedEvent.OutputObject
+  >;
+  getEvent(
+    key: "LegacyProjectMigrated"
+  ): TypedContractEvent<
+    LegacyProjectMigratedEvent.InputTuple,
+    LegacyProjectMigratedEvent.OutputTuple,
+    LegacyProjectMigratedEvent.OutputObject
   >;
   getEvent(
     key: "MilestoneFundsReleased"
@@ -2210,6 +2627,27 @@ export interface RWAEscrowVault extends BaseContract {
     ProjectFundedEvent.InputTuple,
     ProjectFundedEvent.OutputTuple,
     ProjectFundedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ProjectNFTUpdateFailed"
+  ): TypedContractEvent<
+    ProjectNFTUpdateFailedEvent.InputTuple,
+    ProjectNFTUpdateFailedEvent.OutputTuple,
+    ProjectNFTUpdateFailedEvent.OutputObject
+  >;
+  getEvent(
+    key: "ProjectOwnershipTransferred"
+  ): TypedContractEvent<
+    ProjectOwnershipTransferredEvent.InputTuple,
+    ProjectOwnershipTransferredEvent.OutputTuple,
+    ProjectOwnershipTransferredEvent.OutputObject
+  >;
+  getEvent(
+    key: "ProjectPaymentTokenSet"
+  ): TypedContractEvent<
+    ProjectPaymentTokenSetEvent.InputTuple,
+    ProjectPaymentTokenSetEvent.OutputTuple,
+    ProjectPaymentTokenSetEvent.OutputObject
   >;
   getEvent(
     key: "ProjectStateChanged"
@@ -2320,6 +2758,28 @@ export interface RWAEscrowVault extends BaseContract {
       ClaimFeeUpdatedEvent.OutputObject
     >;
 
+    "DisputeRefundClaimed(uint256,address,uint256)": TypedContractEvent<
+      DisputeRefundClaimedEvent.InputTuple,
+      DisputeRefundClaimedEvent.OutputTuple,
+      DisputeRefundClaimedEvent.OutputObject
+    >;
+    DisputeRefundClaimed: TypedContractEvent<
+      DisputeRefundClaimedEvent.InputTuple,
+      DisputeRefundClaimedEvent.OutputTuple,
+      DisputeRefundClaimedEvent.OutputObject
+    >;
+
+    "DisputeRefundOpened(uint256,uint256,uint256)": TypedContractEvent<
+      DisputeRefundOpenedEvent.InputTuple,
+      DisputeRefundOpenedEvent.OutputTuple,
+      DisputeRefundOpenedEvent.OutputObject
+    >;
+    DisputeRefundOpened: TypedContractEvent<
+      DisputeRefundOpenedEvent.InputTuple,
+      DisputeRefundOpenedEvent.OutputTuple,
+      DisputeRefundOpenedEvent.OutputObject
+    >;
+
     "DisputeRefundProcessed(uint256,uint256,uint256)": TypedContractEvent<
       DisputeRefundProcessedEvent.InputTuple,
       DisputeRefundProcessedEvent.OutputTuple,
@@ -2342,6 +2802,17 @@ export interface RWAEscrowVault extends BaseContract {
       InitializedEvent.OutputObject
     >;
 
+    "InjectedFundsReclaimed(uint256,address,uint256)": TypedContractEvent<
+      InjectedFundsReclaimedEvent.InputTuple,
+      InjectedFundsReclaimedEvent.OutputTuple,
+      InjectedFundsReclaimedEvent.OutputObject
+    >;
+    InjectedFundsReclaimed: TypedContractEvent<
+      InjectedFundsReclaimedEvent.InputTuple,
+      InjectedFundsReclaimedEvent.OutputTuple,
+      InjectedFundsReclaimedEvent.OutputObject
+    >;
+
     "InvestmentReceived(uint256,address,uint256,uint256,address)": TypedContractEvent<
       InvestmentReceivedEvent.InputTuple,
       InvestmentReceivedEvent.OutputTuple,
@@ -2362,6 +2833,17 @@ export interface RWAEscrowVault extends BaseContract {
       KYCVerifierUpdatedEvent.InputTuple,
       KYCVerifierUpdatedEvent.OutputTuple,
       KYCVerifierUpdatedEvent.OutputObject
+    >;
+
+    "LegacyProjectMigrated(uint256,uint256,uint256)": TypedContractEvent<
+      LegacyProjectMigratedEvent.InputTuple,
+      LegacyProjectMigratedEvent.OutputTuple,
+      LegacyProjectMigratedEvent.OutputObject
+    >;
+    LegacyProjectMigrated: TypedContractEvent<
+      LegacyProjectMigratedEvent.InputTuple,
+      LegacyProjectMigratedEvent.OutputTuple,
+      LegacyProjectMigratedEvent.OutputObject
     >;
 
     "MilestoneFundsReleased(uint256,uint256,string)": TypedContractEvent<
@@ -2483,6 +2965,39 @@ export interface RWAEscrowVault extends BaseContract {
       ProjectFundedEvent.InputTuple,
       ProjectFundedEvent.OutputTuple,
       ProjectFundedEvent.OutputObject
+    >;
+
+    "ProjectNFTUpdateFailed(uint256,uint8)": TypedContractEvent<
+      ProjectNFTUpdateFailedEvent.InputTuple,
+      ProjectNFTUpdateFailedEvent.OutputTuple,
+      ProjectNFTUpdateFailedEvent.OutputObject
+    >;
+    ProjectNFTUpdateFailed: TypedContractEvent<
+      ProjectNFTUpdateFailedEvent.InputTuple,
+      ProjectNFTUpdateFailedEvent.OutputTuple,
+      ProjectNFTUpdateFailedEvent.OutputObject
+    >;
+
+    "ProjectOwnershipTransferred(uint256,address,address)": TypedContractEvent<
+      ProjectOwnershipTransferredEvent.InputTuple,
+      ProjectOwnershipTransferredEvent.OutputTuple,
+      ProjectOwnershipTransferredEvent.OutputObject
+    >;
+    ProjectOwnershipTransferred: TypedContractEvent<
+      ProjectOwnershipTransferredEvent.InputTuple,
+      ProjectOwnershipTransferredEvent.OutputTuple,
+      ProjectOwnershipTransferredEvent.OutputObject
+    >;
+
+    "ProjectPaymentTokenSet(uint256,address)": TypedContractEvent<
+      ProjectPaymentTokenSetEvent.InputTuple,
+      ProjectPaymentTokenSetEvent.OutputTuple,
+      ProjectPaymentTokenSetEvent.OutputObject
+    >;
+    ProjectPaymentTokenSet: TypedContractEvent<
+      ProjectPaymentTokenSetEvent.InputTuple,
+      ProjectPaymentTokenSetEvent.OutputTuple,
+      ProjectPaymentTokenSetEvent.OutputObject
     >;
 
     "ProjectStateChanged(uint256,uint8)": TypedContractEvent<

@@ -21,14 +21,26 @@ import type {
 } from "../../../common";
 
 export interface IModularComplianceInterface extends Interface {
-  getFunction(nameOrSignature: "bindToken"): FunctionFragment;
+  getFunction(
+    nameOrSignature: "bindToken" | "owner" | "transferOwnership"
+  ): FunctionFragment;
 
   encodeFunctionData(
     functionFragment: "bindToken",
     values: [AddressLike]
   ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
+  encodeFunctionData(
+    functionFragment: "transferOwnership",
+    values: [AddressLike]
+  ): string;
 
   decodeFunctionResult(functionFragment: "bindToken", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
 }
 
 export interface IModularCompliance extends BaseContract {
@@ -76,6 +88,14 @@ export interface IModularCompliance extends BaseContract {
 
   bindToken: TypedContractMethod<[_token: AddressLike], [void], "nonpayable">;
 
+  owner: TypedContractMethod<[], [string], "view">;
+
+  transferOwnership: TypedContractMethod<
+    [newOwner: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -83,6 +103,12 @@ export interface IModularCompliance extends BaseContract {
   getFunction(
     nameOrSignature: "bindToken"
   ): TypedContractMethod<[_token: AddressLike], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "owner"
+  ): TypedContractMethod<[], [string], "view">;
+  getFunction(
+    nameOrSignature: "transferOwnership"
+  ): TypedContractMethod<[newOwner: AddressLike], [void], "nonpayable">;
 
   filters: {};
 }

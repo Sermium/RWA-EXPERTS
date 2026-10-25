@@ -24,23 +24,25 @@ import type {
 export interface IRWAERC3643Interface extends Interface {
   getFunction(
     nameOrSignature:
-      | "DEFAULT_ADMIN_ROLE"
-      | "MINTER_ROLE"
+      | "compliance"
       | "grantRole"
+      | "hasRole"
       | "mint"
       | "renounceRole"
+      | "setKYCEnforced"
+      | "setMinKYCLevel"
   ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: "DEFAULT_ADMIN_ROLE",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "MINTER_ROLE",
+    functionFragment: "compliance",
     values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "grantRole",
+    values: [BytesLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "hasRole",
     values: [BytesLike, AddressLike]
   ): string;
   encodeFunctionData(
@@ -51,19 +53,29 @@ export interface IRWAERC3643Interface extends Interface {
     functionFragment: "renounceRole",
     values: [BytesLike, AddressLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "setKYCEnforced",
+    values: [boolean]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setMinKYCLevel",
+    values: [BigNumberish]
+  ): string;
 
-  decodeFunctionResult(
-    functionFragment: "DEFAULT_ADMIN_ROLE",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "MINTER_ROLE",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "compliance", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "grantRole", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "hasRole", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "mint", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceRole",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setKYCEnforced",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setMinKYCLevel",
     data: BytesLike
   ): Result;
 }
@@ -111,14 +123,18 @@ export interface IRWAERC3643 extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  DEFAULT_ADMIN_ROLE: TypedContractMethod<[], [string], "view">;
-
-  MINTER_ROLE: TypedContractMethod<[], [string], "view">;
+  compliance: TypedContractMethod<[], [string], "view">;
 
   grantRole: TypedContractMethod<
     [role: BytesLike, account: AddressLike],
     [void],
     "nonpayable"
+  >;
+
+  hasRole: TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
   >;
 
   mint: TypedContractMethod<
@@ -133,15 +149,24 @@ export interface IRWAERC3643 extends BaseContract {
     "nonpayable"
   >;
 
+  setKYCEnforced: TypedContractMethod<
+    [_enforced: boolean],
+    [void],
+    "nonpayable"
+  >;
+
+  setMinKYCLevel: TypedContractMethod<
+    [_level: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "DEFAULT_ADMIN_ROLE"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
-    nameOrSignature: "MINTER_ROLE"
+    nameOrSignature: "compliance"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "grantRole"
@@ -149,6 +174,13 @@ export interface IRWAERC3643 extends BaseContract {
     [role: BytesLike, account: AddressLike],
     [void],
     "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "hasRole"
+  ): TypedContractMethod<
+    [role: BytesLike, account: AddressLike],
+    [boolean],
+    "view"
   >;
   getFunction(
     nameOrSignature: "mint"
@@ -164,6 +196,12 @@ export interface IRWAERC3643 extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "setKYCEnforced"
+  ): TypedContractMethod<[_enforced: boolean], [void], "nonpayable">;
+  getFunction(
+    nameOrSignature: "setMinKYCLevel"
+  ): TypedContractMethod<[_level: BigNumberish], [void], "nonpayable">;
 
   filters: {};
 }

@@ -21,7 +21,7 @@ import type {
   TypedLogDescription,
   TypedListener,
   TypedContractMethod,
-} from "../../common";
+} from "../../../common";
 
 export declare namespace RWALaunchpadFactory {
   export type DeploymentStruct = {
@@ -98,6 +98,7 @@ export interface RWALaunchpadFactoryInterface extends Interface {
       | "getDeployerProjects"
       | "getDeployment"
       | "getImplementations"
+      | "getVaultProjectId"
       | "grantEscrowRole"
       | "impl"
       | "initialize"
@@ -106,6 +107,7 @@ export interface RWALaunchpadFactoryInterface extends Interface {
       | "pause"
       | "paused"
       | "platformFeeBps"
+      | "platformFeeManager"
       | "platformFeeRecipient"
       | "projectCounter"
       | "projectNFT"
@@ -125,13 +127,13 @@ export interface RWALaunchpadFactoryInterface extends Interface {
       | "setLockupModuleImpl"
       | "setMaxBalanceModuleImpl"
       | "setPlatformFeeBps"
+      | "setPlatformFeeManager"
       | "setPlatformFeeRecipient"
       | "setProjectNFT"
       | "setRequireApproval"
       | "setSecurityTokenImpl"
       | "transferOwnership"
       | "unpause"
-      | "updateEscrowPriceFeed"
       | "upgradeEscrowVault"
       | "upgradeTo"
       | "upgradeToAndCall"
@@ -229,6 +231,10 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "getVaultProjectId",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
     functionFragment: "grantEscrowRole",
     values: [BigNumberish, BytesLike, AddressLike]
   ): string;
@@ -254,6 +260,10 @@ export interface RWALaunchpadFactoryInterface extends Interface {
   encodeFunctionData(functionFragment: "paused", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "platformFeeBps",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "platformFeeManager",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -333,6 +343,10 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "setPlatformFeeManager",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setPlatformFeeRecipient",
     values: [AddressLike]
   ): string;
@@ -353,10 +367,6 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     values: [AddressLike]
   ): string;
   encodeFunctionData(functionFragment: "unpause", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "updateEscrowPriceFeed",
-    values: [BigNumberish, AddressLike]
-  ): string;
   encodeFunctionData(
     functionFragment: "upgradeEscrowVault",
     values: [BigNumberish, AddressLike]
@@ -436,6 +446,10 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getVaultProjectId",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "grantEscrowRole",
     data: BytesLike
   ): Result;
@@ -450,6 +464,10 @@ export interface RWALaunchpadFactoryInterface extends Interface {
   decodeFunctionResult(functionFragment: "paused", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "platformFeeBps",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "platformFeeManager",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -526,6 +544,10 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setPlatformFeeManager",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setPlatformFeeRecipient",
     data: BytesLike
   ): Result;
@@ -546,10 +568,6 @@ export interface RWALaunchpadFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "unpause", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "updateEscrowPriceFeed",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "upgradeEscrowVault",
     data: BytesLike
@@ -838,6 +856,12 @@ export interface RWALaunchpadFactory extends BaseContract {
     "view"
   >;
 
+  getVaultProjectId: TypedContractMethod<
+    [_projectId: BigNumberish],
+    [bigint],
+    "view"
+  >;
+
   grantEscrowRole: TypedContractMethod<
     [_projectId: BigNumberish, _role: BytesLike, _account: AddressLike],
     [void],
@@ -887,6 +911,8 @@ export interface RWALaunchpadFactory extends BaseContract {
   paused: TypedContractMethod<[], [boolean], "view">;
 
   platformFeeBps: TypedContractMethod<[], [bigint], "view">;
+
+  platformFeeManager: TypedContractMethod<[], [string], "view">;
 
   platformFeeRecipient: TypedContractMethod<[], [string], "view">;
 
@@ -978,6 +1004,12 @@ export interface RWALaunchpadFactory extends BaseContract {
     "nonpayable"
   >;
 
+  setPlatformFeeManager: TypedContractMethod<
+    [_m: AddressLike],
+    [void],
+    "nonpayable"
+  >;
+
   setPlatformFeeRecipient: TypedContractMethod<
     [_r: AddressLike],
     [void],
@@ -1001,12 +1033,6 @@ export interface RWALaunchpadFactory extends BaseContract {
   >;
 
   unpause: TypedContractMethod<[], [void], "nonpayable">;
-
-  updateEscrowPriceFeed: TypedContractMethod<
-    [_projectId: BigNumberish, _priceFeed: AddressLike],
-    [void],
-    "nonpayable"
-  >;
 
   upgradeEscrowVault: TypedContractMethod<
     [_projectId: BigNumberish, _newImpl: AddressLike],
@@ -1115,6 +1141,9 @@ export interface RWALaunchpadFactory extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "getVaultProjectId"
+  ): TypedContractMethod<[_projectId: BigNumberish], [bigint], "view">;
+  getFunction(
     nameOrSignature: "grantEscrowRole"
   ): TypedContractMethod<
     [_projectId: BigNumberish, _role: BytesLike, _account: AddressLike],
@@ -1168,6 +1197,9 @@ export interface RWALaunchpadFactory extends BaseContract {
   getFunction(
     nameOrSignature: "platformFeeBps"
   ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "platformFeeManager"
+  ): TypedContractMethod<[], [string], "view">;
   getFunction(
     nameOrSignature: "platformFeeRecipient"
   ): TypedContractMethod<[], [string], "view">;
@@ -1238,6 +1270,9 @@ export interface RWALaunchpadFactory extends BaseContract {
     nameOrSignature: "setPlatformFeeBps"
   ): TypedContractMethod<[_bps: BigNumberish], [void], "nonpayable">;
   getFunction(
+    nameOrSignature: "setPlatformFeeManager"
+  ): TypedContractMethod<[_m: AddressLike], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "setPlatformFeeRecipient"
   ): TypedContractMethod<[_r: AddressLike], [void], "nonpayable">;
   getFunction(
@@ -1255,13 +1290,6 @@ export interface RWALaunchpadFactory extends BaseContract {
   getFunction(
     nameOrSignature: "unpause"
   ): TypedContractMethod<[], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "updateEscrowPriceFeed"
-  ): TypedContractMethod<
-    [_projectId: BigNumberish, _priceFeed: AddressLike],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "upgradeEscrowVault"
   ): TypedContractMethod<

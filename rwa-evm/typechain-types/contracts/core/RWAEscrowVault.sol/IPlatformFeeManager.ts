@@ -27,7 +27,7 @@ export interface IPlatformFeeManagerInterface extends Interface {
       | "feeReceiver"
       | "liquidityWallet"
       | "receiveFees"
-      | "refundUSDTForDispute"
+      | "refundForDispute"
       | "treasuryWallet"
   ): FunctionFragment;
 
@@ -44,7 +44,7 @@ export interface IPlatformFeeManagerInterface extends Interface {
     values: [BigNumberish, AddressLike, BigNumberish, AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "refundUSDTForDispute",
+    functionFragment: "refundForDispute",
     values: [BigNumberish, AddressLike]
   ): string;
   encodeFunctionData(
@@ -65,7 +65,7 @@ export interface IPlatformFeeManagerInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "refundUSDTForDispute",
+    functionFragment: "refundForDispute",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -133,7 +133,7 @@ export interface IPlatformFeeManager extends BaseContract {
     "nonpayable"
   >;
 
-  refundUSDTForDispute: TypedContractMethod<
+  refundForDispute: TypedContractMethod<
     [projectId: BigNumberish, escrowAddress: AddressLike],
     [void],
     "nonpayable"
@@ -165,7 +165,7 @@ export interface IPlatformFeeManager extends BaseContract {
     "nonpayable"
   >;
   getFunction(
-    nameOrSignature: "refundUSDTForDispute"
+    nameOrSignature: "refundForDispute"
   ): TypedContractMethod<
     [projectId: BigNumberish, escrowAddress: AddressLike],
     [void],

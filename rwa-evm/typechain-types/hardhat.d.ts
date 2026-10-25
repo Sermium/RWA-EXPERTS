@@ -246,6 +246,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RWAEscrowVault__factory>;
     getContractFactory(
+      name: "IPlatformFeeManagerRoles",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IPlatformFeeManagerRoles__factory>;
+    getContractFactory(
       name: "RWALaunchpadFactory",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.RWALaunchpadFactory__factory>;
@@ -334,6 +338,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockClaimIssuer__factory>;
     getContractFactory(
+      name: "MockComplianceModule",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockComplianceModule__factory>;
+    getContractFactory(
       name: "MockERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockERC20__factory>;
@@ -341,6 +349,10 @@ declare module "hardhat/types/runtime" {
       name: "MockIdentity",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.MockIdentity__factory>;
+    getContractFactory(
+      name: "MockProjectNFT",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.MockProjectNFT__factory>;
     getContractFactory(
       name: "IRWAProjectNFT",
       signerOrOptions?: ethers.Signer | FactoryOptions
@@ -685,6 +697,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.RWAEscrowVault>;
     getContractAt(
+      name: "IPlatformFeeManagerRoles",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IPlatformFeeManagerRoles>;
+    getContractAt(
       name: "RWALaunchpadFactory",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -795,6 +812,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.MockClaimIssuer>;
     getContractAt(
+      name: "MockComplianceModule",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockComplianceModule>;
+    getContractAt(
       name: "MockERC20",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -804,6 +826,11 @@ declare module "hardhat/types/runtime" {
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.MockIdentity>;
+    getContractAt(
+      name: "MockProjectNFT",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.MockProjectNFT>;
     getContractAt(
       name: "IRWAProjectNFT",
       address: string | ethers.Addressable,
@@ -1103,6 +1130,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.RWAEscrowVault>;
     deployContract(
+      name: "IPlatformFeeManagerRoles",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPlatformFeeManagerRoles>;
+    deployContract(
       name: "RWALaunchpadFactory",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.RWALaunchpadFactory>;
@@ -1191,6 +1222,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockClaimIssuer>;
     deployContract(
+      name: "MockComplianceModule",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockComplianceModule>;
+    deployContract(
       name: "MockERC20",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockERC20>;
@@ -1198,6 +1233,10 @@ declare module "hardhat/types/runtime" {
       name: "MockIdentity",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockIdentity>;
+    deployContract(
+      name: "MockProjectNFT",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockProjectNFT>;
     deployContract(
       name: "IRWAProjectNFT",
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1542,6 +1581,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.RWAEscrowVault>;
     deployContract(
+      name: "IPlatformFeeManagerRoles",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IPlatformFeeManagerRoles>;
+    deployContract(
       name: "RWALaunchpadFactory",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1652,6 +1696,11 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockClaimIssuer>;
     deployContract(
+      name: "MockComplianceModule",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockComplianceModule>;
+    deployContract(
       name: "MockERC20",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
@@ -1661,6 +1710,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.MockIdentity>;
+    deployContract(
+      name: "MockProjectNFT",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.MockProjectNFT>;
     deployContract(
       name: "IRWAProjectNFT",
       args: any[],

@@ -21,16 +21,24 @@ import type {
 } from "../../common";
 
 export interface IRWASecurityTokenInterface extends Interface {
-  getFunction(nameOrSignature: "frozen" | "isLocked"): FunctionFragment;
+  getFunction(
+    nameOrSignature: "getUnfrozenBalance" | "isFrozen"
+  ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "frozen", values: [AddressLike]): string;
   encodeFunctionData(
-    functionFragment: "isLocked",
+    functionFragment: "getUnfrozenBalance",
+    values: [AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "isFrozen",
     values: [AddressLike]
   ): string;
 
-  decodeFunctionResult(functionFragment: "frozen", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "isLocked", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getUnfrozenBalance",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "isFrozen", data: BytesLike): Result;
 }
 
 export interface IRWASecurityToken extends BaseContract {
@@ -76,19 +84,23 @@ export interface IRWASecurityToken extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  frozen: TypedContractMethod<[_account: AddressLike], [boolean], "view">;
+  getUnfrozenBalance: TypedContractMethod<
+    [_account: AddressLike],
+    [bigint],
+    "view"
+  >;
 
-  isLocked: TypedContractMethod<[_account: AddressLike], [boolean], "view">;
+  isFrozen: TypedContractMethod<[_account: AddressLike], [boolean], "view">;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "frozen"
-  ): TypedContractMethod<[_account: AddressLike], [boolean], "view">;
+    nameOrSignature: "getUnfrozenBalance"
+  ): TypedContractMethod<[_account: AddressLike], [bigint], "view">;
   getFunction(
-    nameOrSignature: "isLocked"
+    nameOrSignature: "isFrozen"
   ): TypedContractMethod<[_account: AddressLike], [boolean], "view">;
 
   filters: {};

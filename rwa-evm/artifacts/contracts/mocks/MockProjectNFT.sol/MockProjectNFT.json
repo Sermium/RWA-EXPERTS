@@ -1,0 +1,48 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "MockProjectNFT",
+  "sourceName": "contracts/mocks/MockProjectNFT.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "name": "status",
+      "outputs": [
+        {
+          "internalType": "enum IRWAProjectNFT.ProjectStatus",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "enum IRWAProjectNFT.ProjectStatus",
+          "name": "_status",
+          "type": "uint8"
+        }
+      ],
+      "name": "updateProjectStatus",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x608080604052346100155760ee908161001b8239f35b600080fdfe6080806040526004361015601257600080fd5b600090813560e01c90816342d21ef7146072575063d11d498b14603457600080fd5b34606f576040366003190112606f576024356005811015606b57600435825281602052604082209060ff8019835416911617905580f35b5080fd5b80fd5b905034606b576020366003190112606b5760043582528160205260ff604083205416600581101560a457602092508152f35b634e487b7160e01b83526021600452602483fdfea264697066735822122027ca202c0c46928ebcfea76813696a0460a8db9c9d08c0a1b99da14e10f4b09264736f6c63430008140033",
+  "deployedBytecode": "0x6080806040526004361015601257600080fd5b600090813560e01c90816342d21ef7146072575063d11d498b14603457600080fd5b34606f576040366003190112606f576024356005811015606b57600435825281602052604082209060ff8019835416911617905580f35b5080fd5b80fd5b905034606b576020366003190112606b5760043582528160205260ff604083205416600581101560a457602092508152f35b634e487b7160e01b83526021600452602483fdfea264697066735822122027ca202c0c46928ebcfea76813696a0460a8db9c9d08c0a1b99da14e10f4b09264736f6c63430008140033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

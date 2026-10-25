@@ -17,12 +17,12 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "frozen",
+    name: "getUnfrozenBalance",
     outputs: [
       {
-        internalType: "bool",
+        internalType: "uint256",
         name: "",
-        type: "bool",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -36,7 +36,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "isLocked",
+    name: "isFrozen",
     outputs: [
       {
         internalType: "bool",

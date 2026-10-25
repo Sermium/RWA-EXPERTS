@@ -106,6 +106,11 @@ export interface RWATradeEscrowInterface extends Interface {
       | "defaultExpirationTime"
       | "defaultMinKYCLevel"
       | "emergencyWithdraw"
+      | "escrowAccountingActive"
+      | "escrowLegacySynced"
+      | "escrowTrackedFrom"
+      | "escrowedStable"
+      | "escrowedTokens"
       | "expireTrade"
       | "getActiveTradesCount"
       | "getBuyerTrades"
@@ -116,6 +121,7 @@ export interface RWATradeEscrowInterface extends Interface {
       | "getStats"
       | "getTrade"
       | "initialize"
+      | "initializeEscrowAccounting"
       | "isCountryRestricted"
       | "isKYCValid"
       | "kycCacheValidityDuration"
@@ -143,6 +149,7 @@ export interface RWATradeEscrowInterface extends Interface {
       | "setPlatformFee"
       | "setPlatformFeeRecipient"
       | "stablecoin"
+      | "syncLegacyEscrow"
       | "totalFees"
       | "totalVolume"
       | "tradeCounter"
@@ -151,6 +158,7 @@ export interface RWATradeEscrowInterface extends Interface {
       | "unpause"
       | "upgradeTo"
       | "upgradeToAndCall"
+      | "withdrawableBalance"
   ): FunctionFragment;
 
   getEvent(
@@ -266,6 +274,26 @@ export interface RWATradeEscrowInterface extends Interface {
     values: [AddressLike, BigNumberish]
   ): string;
   encodeFunctionData(
+    functionFragment: "escrowAccountingActive",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "escrowLegacySynced",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "escrowTrackedFrom",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "escrowedStable",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "escrowedTokens",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
     functionFragment: "expireTrade",
     values: [BigNumberish]
   ): string;
@@ -308,6 +336,10 @@ export interface RWATradeEscrowInterface extends Interface {
       AddressLike,
       BigNumberish
     ]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "initializeEscrowAccounting",
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "isCountryRestricted",
@@ -408,6 +440,10 @@ export interface RWATradeEscrowInterface extends Interface {
     functionFragment: "stablecoin",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "syncLegacyEscrow",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(functionFragment: "totalFees", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "totalVolume",
@@ -433,6 +469,10 @@ export interface RWATradeEscrowInterface extends Interface {
   encodeFunctionData(
     functionFragment: "upgradeToAndCall",
     values: [AddressLike, BytesLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawableBalance",
+    values: [AddressLike]
   ): string;
 
   decodeFunctionResult(
@@ -505,6 +545,26 @@ export interface RWATradeEscrowInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "escrowAccountingActive",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "escrowLegacySynced",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "escrowTrackedFrom",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "escrowedStable",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "escrowedTokens",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "expireTrade",
     data: BytesLike
   ): Result;
@@ -535,6 +595,10 @@ export interface RWATradeEscrowInterface extends Interface {
   decodeFunctionResult(functionFragment: "getStats", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getTrade", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "initialize", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "initializeEscrowAccounting",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
     functionFragment: "isCountryRestricted",
     data: BytesLike
@@ -628,6 +692,10 @@ export interface RWATradeEscrowInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "stablecoin", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "syncLegacyEscrow",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "totalFees", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "totalVolume",
@@ -646,6 +714,10 @@ export interface RWATradeEscrowInterface extends Interface {
   decodeFunctionResult(functionFragment: "upgradeTo", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "upgradeToAndCall",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawableBalance",
     data: BytesLike
   ): Result;
 }
@@ -1199,6 +1271,16 @@ export interface RWATradeEscrow extends BaseContract {
     "nonpayable"
   >;
 
+  escrowAccountingActive: TypedContractMethod<[], [boolean], "view">;
+
+  escrowLegacySynced: TypedContractMethod<[], [bigint], "view">;
+
+  escrowTrackedFrom: TypedContractMethod<[], [bigint], "view">;
+
+  escrowedStable: TypedContractMethod<[], [bigint], "view">;
+
+  escrowedTokens: TypedContractMethod<[], [bigint], "view">;
+
   expireTrade: TypedContractMethod<
     [_tradeId: BigNumberish],
     [void],
@@ -1272,6 +1354,8 @@ export interface RWATradeEscrow extends BaseContract {
     [void],
     "nonpayable"
   >;
+
+  initializeEscrowAccounting: TypedContractMethod<[], [void], "nonpayable">;
 
   isCountryRestricted: TypedContractMethod<
     [_countryCode: BigNumberish],
@@ -1383,6 +1467,12 @@ export interface RWATradeEscrow extends BaseContract {
 
   stablecoin: TypedContractMethod<[], [string], "view">;
 
+  syncLegacyEscrow: TypedContractMethod<
+    [_maxTrades: BigNumberish],
+    [void],
+    "nonpayable"
+  >;
+
   totalFees: TypedContractMethod<[], [bigint], "view">;
 
   totalVolume: TypedContractMethod<[], [bigint], "view">;
@@ -1443,6 +1533,12 @@ export interface RWATradeEscrow extends BaseContract {
     [newImplementation: AddressLike, data: BytesLike],
     [void],
     "payable"
+  >;
+
+  withdrawableBalance: TypedContractMethod<
+    [_token: AddressLike],
+    [bigint],
+    "view"
   >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
@@ -1570,6 +1666,21 @@ export interface RWATradeEscrow extends BaseContract {
     "nonpayable"
   >;
   getFunction(
+    nameOrSignature: "escrowAccountingActive"
+  ): TypedContractMethod<[], [boolean], "view">;
+  getFunction(
+    nameOrSignature: "escrowLegacySynced"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "escrowTrackedFrom"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "escrowedStable"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "escrowedTokens"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
     nameOrSignature: "expireTrade"
   ): TypedContractMethod<[_tradeId: BigNumberish], [void], "nonpayable">;
   getFunction(
@@ -1641,6 +1752,9 @@ export interface RWATradeEscrow extends BaseContract {
     [void],
     "nonpayable"
   >;
+  getFunction(
+    nameOrSignature: "initializeEscrowAccounting"
+  ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "isCountryRestricted"
   ): TypedContractMethod<[_countryCode: BigNumberish], [boolean], "view">;
@@ -1743,6 +1857,9 @@ export interface RWATradeEscrow extends BaseContract {
     nameOrSignature: "stablecoin"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
+    nameOrSignature: "syncLegacyEscrow"
+  ): TypedContractMethod<[_maxTrades: BigNumberish], [void], "nonpayable">;
+  getFunction(
     nameOrSignature: "totalFees"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -1808,6 +1925,9 @@ export interface RWATradeEscrow extends BaseContract {
     [void],
     "payable"
   >;
+  getFunction(
+    nameOrSignature: "withdrawableBalance"
+  ): TypedContractMethod<[_token: AddressLike], [bigint], "view">;
 
   getEvent(
     key: "AdminChanged"

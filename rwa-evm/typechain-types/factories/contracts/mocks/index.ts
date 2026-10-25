@@ -2,5 +2,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export { MockClaimIssuer__factory } from "./MockClaimIssuer__factory";
+export { MockComplianceModule__factory } from "./MockComplianceModule__factory";
 export { MockERC20__factory } from "./MockERC20__factory";
 export { MockIdentity__factory } from "./MockIdentity__factory";
+export { MockProjectNFT__factory } from "./MockProjectNFT__factory";
