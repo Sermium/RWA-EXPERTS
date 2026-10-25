@@ -338,7 +338,8 @@ describe('fundraising confirm-payment confirms only a proven payment', () => {
     const { POST } = await import('../../fundraising/confirm-payment/route');
     const res = await POST(post({ investmentId: 'inv-1', paymentIntentId: 'pi_good' }));
     expect(res.status).toBe(200);
-    expect(confirmed()[0].payload).toMatchObject({ status: 'confirmed', stripe_payment_intent_id: 'pi_good', tx_hash: null });
+    expect(confirmed()[0].payload).toMatchObject({ status: 'confirmed', stripe_payment_intent_id: 'pi_good' });
+    expect(confirmed()[0].payload).not.toHaveProperty('tx_hash');
     expect(writes('token_allocations')[0].payload).toMatchObject({ status: 'confirmed' });
     const raised = calls.find((c) => c.table === 'rpc:increment_round_raised')!;
     expect(raised.payload).toEqual({ p_round_id: 'round-1', p_amount: 250 });

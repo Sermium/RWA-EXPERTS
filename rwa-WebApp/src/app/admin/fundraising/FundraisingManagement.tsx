@@ -1,6 +1,7 @@
 ﻿'use client';
 
 import { useState, useEffect } from 'react';
+import { useAccount } from 'wagmi';
 import { 
   Rocket, Lock, CheckCircle, TrendingUp, Users, DollarSign, 
   Edit, Eye, Check, X, RefreshCw, Clock, AlertCircle,
@@ -270,6 +271,7 @@ function EditRoundModal({ round, onClose, onSave }: EditModalProps) {
 }
 
 export default function FundraisingManagement() {
+  const { address } = useAccount();
   const [rounds, setRounds] = useState<Round[]>([]);
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -350,19 +352,26 @@ export default function FundraisingManagement() {
   const confirmInvestment = async (investmentId: string, confirm: boolean) => {
     setUpdating(investmentId);
     try {
-      const res = await fetch('/api/fundraising/confirm-payment', {
+      const note = window.prompt(
+        confirm
+          ? 'Confirm this investment as paid off-platform. Note (e.g. bank transfer reference):'
+          : 'Reject this investment. Reason (optional):'
+      );
+      if (note === null) return; // cancelled
+
+      const res = await fetch(`/api/admin/fundraising/investments/${investmentId}/review`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          investmentId, 
-          status: confirm ? 'confirmed' : 'failed' 
-        })
+        headers: { 'Content-Type': 'application/json', 'x-wallet-address': address || '' },
+        body: JSON.stringify({ confirm, note })
       });
-      
+
       if (res.ok) {
         setSuccessMessage(`Investment ${confirm ? 'confirmed' : 'rejected'}`);
         setTimeout(() => setSuccessMessage(''), 3000);
         fetchData();
+      } else {
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || `Failed to ${confirm ? 'confirm' : 'reject'} investment`);
       }
     } catch (error) {
       console.error('Confirm error:', error);

@@ -40,26 +40,31 @@ export type ConfirmResult =
  * Marks a pending fundraising investment confirmed with its proof, then its
  * allocations, the round's raised amount and investor count. Only the call
  * that flips the status does the counting.
+ *
+ * `proof` is the PaymentIntent or tx hash (none for an admin attesting to an
+ * off-platform payment). `options.extra` adds columns to the same update
+ * (e.g. who reviewed it); `options.excludeStatuses` lists the statuses the
+ * investment must not be in for the update to apply (default: confirmed).
  */
 export async function confirmFundraisingInvestment(
   supabase: SupabaseClient,
   investment: { id: string; round_id: string | null; wallet_address: string; investment_amount_usd: number | string },
   proof: { stripe_payment_intent_id?: string; tx_hash?: string },
+  options: { extra?: Record<string, unknown>; excludeStatuses?: string[] } = {},
 ): Promise<ConfirmResult> {
   const now = new Date().toISOString();
-  const { data: updated, error } = await supabase
+  let query = supabase
     .from('fundraising_investments')
     .update({
+      ...(options.extra ?? {}),
+      ...proof,
       status: 'confirmed',
       payment_confirmed_at: now,
-      stripe_payment_intent_id: proof.stripe_payment_intent_id ?? null,
-      tx_hash: proof.tx_hash ?? null,
       updated_at: now,
     })
-    .eq('id', investment.id)
-    .neq('status', 'confirmed')
-    .select()
-    .maybeSingle();
+    .eq('id', investment.id);
+  for (const status of options.excludeStatuses ?? ['confirmed']) query = query.neq('status', status);
+  const { data: updated, error } = await query.select().maybeSingle();
 
   if (error) return isUniqueViolation(error) ? { status: 'reused' } : { status: 'error', error };
   if (!updated) return { status: 'already_confirmed' };
