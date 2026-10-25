@@ -1,7 +1,7 @@
 // src/lib/admin.ts
 import { getSupabaseAdmin } from './supabase';
 import { NextRequest, NextResponse } from 'next/server';
-import { getSessionWallet } from './admin-session';
+import { getSessionWallet, signInRequired } from './wallet-session';
 
 export type AdminRole = 'super_admin' | 'admin' | null;
 
@@ -51,9 +51,9 @@ export type AdminAccess =
   | { isValid: false; walletAddress: string | null; error: NextResponse };
 
 /**
- * The admin making this request, from the signed admin session cookie
- * (see lib/admin-session.ts) and a fresh admin_roles lookup. The
- * `x-wallet-address` header is not read: anyone can set it.
+ * The admin making this request, from the signed session cookie (see
+ * lib/wallet-session.ts) and a fresh admin_roles lookup. The
+ * `x-wallet-address` header is not trusted: anyone can set it.
  *
  *   const auth = await validateAdminAccess(request);
  *   if (!auth.isValid) return auth.error;
@@ -66,11 +66,7 @@ export async function validateAdminAccess(
   const walletAddress = getSessionWallet(request);
 
   if (!walletAddress) {
-    return {
-      isValid: false,
-      walletAddress: null,
-      error: NextResponse.json({ error: 'Admin sign-in required' }, { status: 401 }),
-    };
+    return { isValid: false, walletAddress: null, error: signInRequired() };
   }
 
   const role = await getAdminRole(walletAddress);
@@ -393,4 +389,17 @@ export async function getAdminActivityLog(limit: number = 50): Promise<AdminActi
     console.error('Failed to get activity log:', err);
     return [];
   }
+}
+/**
+ * For routes about one wallet's own data (its KYC email, documents, linked
+ * wallets): the signed-in wallet must be that wallet, or an admin.
+ */
+export async function validateSelfOrAdminAccess(
+  request: NextRequest,
+  wallet: string
+): Promise<{ isValid: true; walletAddress: string } | { isValid: false; error: NextResponse }> {
+  const session = getSessionWallet(request);
+  if (!session) return { isValid: false, error: signInRequired() };
+  if (session === wallet.toLowerCase()) return { isValid: true, walletAddress: session };
+  return validateAdminAccess(request);
 }

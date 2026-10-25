@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getKYCEmail, saveKYCEmail } from '@/lib/supabase';
+import { validateSelfOrAdminAccess } from '@/lib/admin';
 
 export async function GET(
   request: NextRequest,
@@ -11,6 +12,10 @@ export async function GET(
     if (!address || !/^0x[a-fA-F0-9]{40}$/.test(address)) {
       return NextResponse.json({ found: false, error: 'Invalid address' }, { status: 400 });
     }
+
+    // A wallet's KYC email is its owner's, and the reviewers'.
+    const auth = await validateSelfOrAdminAccess(request, address);
+    if (!auth.isValid) return auth.error;
 
     // Try Supabase first
     try {
@@ -51,6 +56,10 @@ export async function POST(
     if (!address || !/^0x[a-fA-F0-9]{40}$/.test(address)) {
       return NextResponse.json({ error: 'Invalid address' }, { status: 400 });
     }
+
+    // A wallet's KYC email is its owner's, and the reviewers'.
+    const auth = await validateSelfOrAdminAccess(request, address);
+    if (!auth.isValid) return auth.error;
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: 'Invalid email' }, { status: 400 });

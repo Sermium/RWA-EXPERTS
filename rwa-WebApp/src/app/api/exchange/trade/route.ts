@@ -1,15 +1,14 @@
 // src/app/api/exchange/trade/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { executeTrade } from '@/lib/exchange-service';
 import { EXCHANGE_CONFIG, type PairSymbol } from '@/config/exchange';
 
 export async function POST(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
-    
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
     
     const body = await request.json();
     const { pairSymbol, side, quantity } = body;

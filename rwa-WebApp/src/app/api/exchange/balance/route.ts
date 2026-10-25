@@ -1,14 +1,13 @@
 // src/app/api/exchange/balance/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { getAllUserBalances } from '@/lib/exchange-service';
 
 export async function GET(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
-    
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
     
     const balances = await getAllUserBalances(walletAddress);
     

@@ -1,5 +1,6 @@
 // src/app/api/exchange/mexc/trade/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { executeMexcMarketOrder, calculatePlatformRevenue, getMexcTicker } from '@/lib/mexc';
 import { MEXC_CONFIG, type MexcPairSymbol } from '@/config/exchange';
 import { getSupabaseAdmin } from '@/lib/supabase';
@@ -10,11 +11,9 @@ const PLATFORM_SECRET_KEY = process.env.MEXC_SECRET_KEY!;
 
 export async function POST(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
-    
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
     
     const body = await request.json();
     const { symbol, side, quantity } = body;

@@ -3,24 +3,40 @@ import { NextRequest, NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
+import { requireSessionWallet } from '@/lib/wallet-session';
 
 // Max file size (10MB)
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-const ALLOWED_TYPES = [
-  'application/pdf',
-  'image/jpeg',
-  'image/png',
-  'image/webp',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-];
+// The extension comes from the checked MIME type, never from the uploaded
+// file's name: a name ending in .html or .svg would otherwise be served from
+// this site as a page.
+const EXTENSIONS: Record<string, string> = {
+  'application/pdf': 'pdf',
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+};
+const ALLOWED_TYPES = Object.keys(EXTENSIONS);
+
+// `type` names the folder the file goes in, so it may not contain path
+// separators or dots: "../../app" used to write outside public/uploads.
+const SAFE_TYPE = /^[a-z0-9_-]{1,32}$/i;
 
 export async function POST(request: NextRequest) {
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File | null;
     const type = formData.get('type') as string || 'document';
+
+    if (!SAFE_TYPE.test(type)) {
+      return NextResponse.json({ error: 'Invalid upload type' }, { status: 400 });
+    }
 
     if (!file) {
       return NextResponse.json(
@@ -48,7 +64,7 @@ export async function POST(request: NextRequest) {
     // Generate unique filename
     const timestamp = Date.now();
     const randomId = Math.random().toString(36).substring(2, 8);
-    const extension = file.name.split('.').pop() || 'bin';
+    const extension = EXTENSIONS[file.type];
     const filename = `${type}_${timestamp}_${randomId}.${extension}`;
 
     // Create uploads directory if it doesn't exist

@@ -1,6 +1,8 @@
 // src/app/api/notifications/send/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
+import { timingSafeEqual } from 'crypto';
+import { validateAdminAccess } from '@/lib/admin';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { emailTemplates, sendEmail } from '@/lib/notifications/email-templates';
 
@@ -29,14 +31,23 @@ interface SendNotificationRequest {
   emailData?: Record<string, any>;
 }
 
+function hasInternalApiKey(request: NextRequest): boolean {
+  const expected = process.env.INTERNAL_API_KEY;
+  const given = request.headers.get('x-api-key');
+  if (!expected || !given) return false;
+  const a = Buffer.from(given);
+  const b = Buffer.from(expected);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
+
 export async function POST(request: NextRequest) {
-  // Verify internal API call or admin
-  const apiKey = request.headers.get('x-api-key');
-  const adminAddress = request.headers.get('x-wallet-address');
-  
-  // Simple auth check - in production use proper API key validation
-  if (apiKey !== process.env.INTERNAL_API_KEY && !adminAddress) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  const supabase = getSupabaseAdmin();
+  // An internal call with INTERNAL_API_KEY, or a signed-in admin. This used
+  // to let in anyone who sent any x-wallet-address header -- and, with
+  // INTERNAL_API_KEY unset, anyone who sent no key at all.
+  if (!hasInternalApiKey(request)) {
+    const auth = await validateAdminAccess(request);
+    if (!auth.isValid) return auth.error;
   }
 
   try {

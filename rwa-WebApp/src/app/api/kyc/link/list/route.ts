@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 import { getAddress, keccak256, toHex } from "viem";
+import { validateSelfOrAdminAccess } from "@/lib/admin";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -22,6 +23,11 @@ export async function GET(request: NextRequest) {
 
     // Normalize address
     const normalizedWallet = getAddress(wallet);
+
+    // Which wallets belong to the same person is theirs to see, and the
+    // reviewers'; anyone else could map wallets to identities.
+    const auth = await validateSelfOrAdminAccess(request, normalizedWallet);
+    if (!auth.isValid) return auth.error;
 
     // Generate wallet hash
     const walletHashSecret = process.env.KYC_WALLET_HASH_SECRET!;

@@ -1,5 +1,6 @@
 // src/app/api/trade/documents/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -7,10 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 export async function POST(request: NextRequest) {
   try {
     const supabase = getSupabaseAdmin();
-    const walletAddress = request.headers.get('x-wallet-address');
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -114,11 +114,26 @@ export async function POST(request: NextRequest) {
 // GET - List documents for a deal
 export async function GET(request: NextRequest) {
   try {
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+
     const { searchParams } = new URL(request.url);
     const dealId = searchParams.get('dealId');
 
     if (!dealId) {
       return NextResponse.json({ error: 'Deal ID required' }, { status: 400 });
+    }
+
+    // A deal's documents are for its buyer and seller, as on the deal page.
+    const supabase = getSupabaseAdmin();
+    const { data: deal } = await supabase
+      .from('trade_deals')
+      .select('buyer_wallet, seller_wallet')
+      .eq('id', dealId)
+      .single();
+    const wallet = session.wallet.toLowerCase();
+    if (!deal || (deal.buyer_wallet !== wallet && deal.seller_wallet !== wallet)) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 });
     }
 
     const { data: documents, error } = await supabase

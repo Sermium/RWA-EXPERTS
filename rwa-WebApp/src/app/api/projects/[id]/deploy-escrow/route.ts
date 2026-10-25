@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createWalletClient, createPublicClient, http, parseUnits } from 'viem';
 import { avalancheFuji } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
@@ -35,6 +36,10 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  // Signs with the server's key: admins only.
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   const { id: projectId } = await params;
 
   try {

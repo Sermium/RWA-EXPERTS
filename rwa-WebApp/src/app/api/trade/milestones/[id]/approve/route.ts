@@ -1,5 +1,6 @@
 // src/app/api/trade/milestones/[id]/approve/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { createClient } from '@supabase/supabase-js';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
@@ -11,10 +12,9 @@ export async function POST(
 ) {
   try {
     const supabase = getSupabaseAdmin();
-    const walletAddress = request.headers.get('x-wallet-address');
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
 
     const milestoneId = params.id;
     const body = await request.json();
