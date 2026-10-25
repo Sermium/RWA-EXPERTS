@@ -22,6 +22,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "Missing fields" }, { status: 400 });
     }
 
+    // A signed message is good for five minutes, or a leaked one could be
+    // replayed for ever.
+    if (Math.abs(Math.floor(Date.now() / 1000) - Number(timestamp)) > 300) {
+      return NextResponse.json({ success: false, error: "Request expired. Please try again." }, { status: 400 });
+    }
+
     // Verify signature
     const message = `KYC Application\nWallet: ${walletAddress}\nLevel: ${level}\nTimestamp: ${timestamp}`;
     const isValid = await verifyMessage({
@@ -40,28 +46,33 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: false, error: "KYC not deployed on this chain" }, { status: 400 });
     }
 
-    // Determine country code - use provided or fetch from existing application
-    let countryCode = providedCountryCode;
-    
+    // The proof IS the credential: contracts that check KYC verify this
+    // signature and nothing else. So it is signed only for a level a reviewer
+    // has approved for this wallet, with the country from that approved
+    // application -- never for a level or country the caller merely asks for.
+    // This route used to sign whatever it was sent, which made KYC, at any
+    // level and from any country, self-service.
+    void providedCountryCode;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    const walletHash = keccak256(toHex(`${walletAddress.toLowerCase()}:${process.env.KYC_WALLET_HASH_SECRET}`));
+    const { data: approvedApp } = await supabase
+      .from("kyc_applications")
+      .select("status, current_level, country_code")
+      .eq("wallet_hash", walletHash)
+      .eq("status", "approved")
+      .order("current_level", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (!approvedApp || Number(approvedApp.current_level) < Number(level)) {
+      return NextResponse.json(
+        { success: false, error: "No approved KYC application at this level for this wallet" },
+        { status: 403 }
+      );
+    }
+    const countryCode = approvedApp.country_code;
     if (!countryCode) {
-      const supabase = createClient(supabaseUrl, supabaseKey);
-      const walletHash = keccak256(toHex(`${walletAddress.toLowerCase()}:${process.env.KYC_WALLET_HASH_SECRET}`));
-      
-      const { data: existingApp } = await supabase
-        .from("kyc_applications")
-        .select("country_code")
-        .eq("wallet_hash", walletHash)
-        .gte("current_level", 1)
-        .order("current_level", { ascending: false })
-        .limit(1)
-        .single();
-      
-      if (existingApp?.country_code) {
-        countryCode = existingApp.country_code;
-        console.log("[Generate Proof] Using existing country code:", countryCode);
-      } else {
-        return NextResponse.json({ success: false, error: "Country code required" }, { status: 400 });
-      }
+      return NextResponse.json({ success: false, error: "The approved application has no country" }, { status: 409 });
     }
 
     // Generate proof

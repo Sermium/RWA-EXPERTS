@@ -904,13 +904,6 @@ export function KYCSubmissionForm() {
         }
       }
 
-      // Check balance
-      if (!hasEnoughBalance) {
-        setError(`Insufficient balance. You need ${getKycFeeFormatted(chainId)} ${getNativeToken()}`);
-        setIsSubmitting(false);
-        return;
-      }
-
       // 1. SINGLE SIGNATURE for everything
       const timestamp = Math.floor(Date.now() / 1000).toString();
       const message = `KYC Application\nWallet: ${address}\nLevel: ${selectedTier}\nTimestamp: ${timestamp}`;
@@ -963,62 +956,12 @@ export function KYCSubmissionForm() {
 
       console.log('[KYC] Documents uploaded:', Object.keys(uploadedDocs));
 
-      // 3. PAY FIRST - before submit
-      console.log('[KYC] Step 3: Processing payment...');
+      // 3. SUBMIT for review. Payment comes after approval: the fee is paid
+      // by registering on chain with the proof a reviewer's approval
+      // produces, which does not exist before then (see completeRegistration).
+      console.log('[KYC] Step 3: Submitting KYC application for review...');
       setStep('processing');
-      
-      // Generate proof for payment
-      const proofResponse = await fetch('/api/kyc/generate-proof', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'x-chain-id': chainId?.toString() || '80002',
-        },
-        body: JSON.stringify({
-          walletAddress: address,
-          level: selectedTier,
-          countryCode: effectiveTier === 0 ? countryCode : undefined,
-          signature,
-          timestamp,
-        }),
-      });
-      
-      const proofDataResponse = await proofResponse.json();
-      if (!proofResponse.ok || !proofDataResponse.success) {
-        throw new Error(proofDataResponse.error || 'Failed to generate proof');
-      }
 
-      const kycVerifierAddress = CONTRACTS.KYCVerifier;
-      if (!kycVerifierAddress) {
-        throw new Error('KYC Verifier contract not configured for this chain');
-      }
-
-      const hash = await writeContract(config, {
-        address: kycVerifierAddress as `0x${string}`,
-        abi: KYC_VERIFIER_ABI,
-        functionName: 'registerWithProof',
-        args: [
-          proofDataResponse.proof.level,
-          proofDataResponse.proof.countryCode,
-          BigInt(proofDataResponse.proof.expiry),
-          proofDataResponse.proof.signature as `0x${string}`,
-        ],
-        value: BigInt(getKycFee(chainId)),
-      });
-
-      console.log('[KYC] TX Hash:', hash);
-      setTxHash(hash);
-
-      const receipt = await waitForTransactionReceipt(config, { hash });
-      console.log('[KYC] TX confirmed:', receipt.status);
-
-      if (receipt.status !== 'success') {
-        throw new Error('Transaction failed');
-      }
-
-      // 4. SUBMIT to DB after payment confirmed
-      console.log('[KYC] Step 4: Submitting KYC application to DB...');
-      
       const nameParts = fullName.trim().split(' ');
       const firstNamePart = nameParts[0] || '';
       const lastNamePart = nameParts.slice(1).join(' ') || '';
@@ -1029,8 +972,9 @@ export function KYCSubmissionForm() {
         timestamp: parseInt(timestamp),
         requestedLevel: selectedTier,
         documents: uploadedDocs,
+        // The browser's own OCR confidence. Kept for the reviewer, marked as
+        // reported by the browser; the server decides nothing on it.
         verificationScore: idValidation?.confidence,
-        txHash: hash,
       };
 
       if (effectiveTier === 0) {
@@ -1071,7 +1015,7 @@ export function KYCSubmissionForm() {
       }
 
       await refreshKYC();
-      setStep('success');
+      setStep('pending');
 
     } catch (err: any) {
       console.error('[KYC] Error:', err);
@@ -1083,6 +1027,33 @@ export function KYCSubmissionForm() {
       setStep('form');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  /**
+   * After approval: ask the server for the signed proof of the approved level
+   * and open the payment screen, where registering on chain pays the fee.
+   * The server signs only for a level a reviewer approved for this wallet.
+   */
+  const completeRegistration = async () => {
+    if (!address) return;
+    setError(null);
+    try {
+      const level = effectiveTier;
+      const timestamp = Math.floor(Date.now() / 1000).toString();
+      const message = `KYC Application\nWallet: ${address}\nLevel: ${level}\nTimestamp: ${timestamp}`;
+      const signature = await signMessageAsync({ message });
+      const res = await fetch('/api/kyc/generate-proof', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-chain-id': chainId?.toString() || '80002' },
+        body: JSON.stringify({ walletAddress: address, level, signature, timestamp }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.error || 'Could not prepare your registration');
+      setProofData(data.proof);
+      setStep('payment');
+    } catch (err: any) {
+      setError(err.message?.includes('User rejected') ? 'Signature cancelled' : err.message || 'Could not prepare your registration');
     }
   };
 
@@ -1119,7 +1090,7 @@ export function KYCSubmissionForm() {
       console.log('[KYC] TX confirmed:', receipt.status);
 
       if (receipt.status === 'success') {
-        await fetch('/api/kyc/confirm-payment', {
+        const confirm = await fetch('/api/kyc/confirm-payment', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -1130,6 +1101,10 @@ export function KYCSubmissionForm() {
             txHash: hash,
           }),
         });
+        const confirmed = await confirm.json().catch(() => null);
+        if (!confirm.ok || !confirmed?.success) {
+          throw new Error(confirmed?.error || 'Your registration could not be recorded. Contact support with the transaction hash.');
+        }
 
         await refreshKYC();
         setStep('success');
@@ -1205,6 +1180,28 @@ export function KYCSubmissionForm() {
               <p className="text-ink-muted mt-1">Your application is being processed. This usually takes a few minutes to a few days depending on tier.</p>
             </div>
           </div>
+        </div>
+      );
+    }
+
+    if (isApproved && kycData.needsRegistration) {
+      return (
+        <div className="bg-success/10 border border-success/40 rounded-xl p-6 mb-8">
+          <div className="flex items-center justify-between flex-wrap gap-4">
+            <div>
+              <h2 className="text-xl font-semibold text-success">Approved: one step left</h2>
+              <p className="text-ink-muted mt-1">
+                Your application was approved. Register on-chain and pay the one-time fee of {getKycFeeFormatted(chainId)} {getNativeToken()} to activate it.
+              </p>
+            </div>
+            <button
+              onClick={completeRegistration}
+              className="px-6 py-3 bg-success hover:bg-success/80 text-ink font-semibold rounded-lg transition-all"
+            >
+              Complete registration
+            </button>
+          </div>
+          {error && <p className="text-danger text-sm mt-3">{error}</p>}
         </div>
       );
     }
@@ -1689,7 +1686,7 @@ export function KYCSubmissionForm() {
       </div>
       <h3 className="text-xl font-semibold text-ink mb-2">Application Submitted</h3>
       <p className="text-ink-muted mb-4">
-        Your upgrade to {TIER_CONFIG[selectedTier as keyof typeof TIER_CONFIG].name} requires manual review.
+        Your application for {TIER_CONFIG[selectedTier as keyof typeof TIER_CONFIG].name} is being reviewed. Once it is approved, you complete registration here by paying the one-time fee.
       </p>
       <p className="text-ink-faint text-sm">
         You'll be notified once your application is approved.

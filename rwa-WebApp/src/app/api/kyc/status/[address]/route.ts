@@ -183,6 +183,9 @@ export async function GET(
       rejectionReason: kycData.rejection_reason,
       linkedWallets,
       primaryWallet: kycData.wallet_address,
+      // Approved, but the registration fee has not been paid on chain for
+      // this approval yet: the applicant still has a step to do.
+      needsRegistration: isApproved && !kycData.tx_hash,
       isPending: effectiveStatus === 'pending',
       isRejected: effectiveStatus === 'rejected',
       canResubmit: effectiveStatus === 'rejected' || effectiveStatus === 'expired',
