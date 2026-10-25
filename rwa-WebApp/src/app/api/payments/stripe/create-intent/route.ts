@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { PROJECT_LIMITS } from '@/config/deployments';
 import { getDefaultChain, isValidChainId, getChainById, type SupportedChainId } from '@/config/chains';
+import { getSupabaseAdmin } from '@/lib/supabase';
+import { fundraisingCardChargeCents } from '@/lib/payment-records';
 
 const SUBMISSION_FEE_USD = 500;
 
@@ -36,6 +38,11 @@ export async function POST(request: NextRequest) {
     // Handle submission fee payments
     if (type === 'submission_fee') {
       return handleSubmissionFee(stripe, body);
+    }
+
+    // Handle platform fundraising round investments (/raise)
+    if (type === 'fundraising_investment') {
+      return handleFundraisingInvestment(stripe, body);
     }
 
     // Handle investment payments (existing logic)
@@ -181,6 +188,58 @@ async function handleSubmissionFee(stripe: Stripe, body: Record<string, unknown>
     clientSecret: paymentIntent.client_secret,
     paymentIntentId: paymentIntent.id,
     amount: SUBMISSION_FEE_USD,
+  });
+}
+
+/**
+ * The charge for a pending fundraising investment is computed here from the
+ * stored investment (amount plus card surcharge), not taken from the client,
+ * and the PaymentIntent names the investment so confirm-payment and the
+ * webhook can match it.
+ */
+async function handleFundraisingInvestment(stripe: Stripe, body: Record<string, unknown>) {
+  const { investmentId, metadata } = body;
+  if (!investmentId || typeof investmentId !== 'string') {
+    return NextResponse.json({ error: 'Missing required field: investmentId' }, { status: 400 });
+  }
+
+  const { data: investment } = await getSupabaseAdmin()
+    .from('fundraising_investments')
+    .select('id, status, wallet_address, round_id, investment_amount_usd')
+    .eq('id', investmentId)
+    .maybeSingle();
+
+  if (!investment) {
+    return NextResponse.json({ error: 'Investment not found' }, { status: 404 });
+  }
+  if (investment.status !== 'pending') {
+    return NextResponse.json({ error: 'Investment is not awaiting payment' }, { status: 400 });
+  }
+
+  const amountCents = fundraisingCardChargeCents(Number(investment.investment_amount_usd));
+  const extra: Record<string, string> = {};
+  if (metadata && typeof metadata === 'object') {
+    for (const [k, v] of Object.entries(metadata as Record<string, unknown>)) extra[k] = String(v ?? '');
+  }
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amountCents,
+    currency: 'usd',
+    metadata: {
+      ...extra,
+      type: 'fundraising_investment',
+      investmentId: investment.id,
+      walletAddress: investment.wallet_address,
+      roundId: String(investment.round_id ?? ''),
+    },
+    description: `Fundraising investment ${investment.id}`,
+    automatic_payment_methods: { enabled: true },
+  });
+
+  return NextResponse.json({
+    clientSecret: paymentIntent.client_secret,
+    paymentIntentId: paymentIntent.id,
+    amount: amountCents / 100,
   });
 }
 

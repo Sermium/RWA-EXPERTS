@@ -2,11 +2,12 @@
 import crypto from 'crypto';
 import { getSupabaseAdmin } from './supabase';
 import { EXCHANGE_CONFIG, type TokenSymbol, type PairSymbol } from '@/config/exchange';
-import { createPublicClient, createWalletClient, http, parseUnits, formatUnits, type Chain } from 'viem';
+import { createPublicClient, createWalletClient, http, parseUnits, formatUnits, getAddress, isAddress, type Chain } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { CHAINS, type SupportedChainId } from '@/config/chains';
 import { DEPLOYMENTS } from '@/config/deployments';
 import { TOKEN_CONFIGS } from '@/config/tokens';
+import { isTxHash, isUniqueViolation, verifyErc20Transfer, verifyNativeTransfer } from './payment-verification';
 
 // Import chain definitions from viem
 import { 
@@ -317,71 +318,131 @@ async function updateUserBalance(
 // DEPOSIT HANDLING - MULTICHAIN
 // =============================================================================
 
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
+
+/** Where users send exchange deposits. Server-only; unset means deposits are refused. */
+export function getExchangeDepositAddress(): `0x${string}` | null {
+  const configured = process.env.EXCHANGE_DEPOSIT_ADDRESS;
+  if (!configured || !isAddress(configured) || configured.toLowerCase() === ZERO_ADDRESS) return null;
+  return getAddress(configured);
+}
+
+/** The asset a deposit of `tokenSymbol` on `chainId` must arrive in. */
+function resolveDepositAsset(
+  chainId: number,
+  tokenSymbol: string
+): { address: string; decimals: number; isNative: boolean } | null {
+  const config = TOKEN_CONFIGS[chainId];
+  if (!config) return null;
+  const symbol = tokenSymbol.toUpperCase();
+  const native = config.nativeCurrency.symbol.toUpperCase();
+  if (symbol === native || (symbol === 'MATIC' && native === 'POL')) {
+    return { address: ZERO_ADDRESS, decimals: config.nativeCurrency.decimals, isNative: true };
+  }
+  const token = config.tokens.find((t) => t.symbol.toUpperCase() === symbol);
+  return token ? { address: token.address, decimals: token.decimals, isNative: false } : null;
+}
+
+/**
+ * Credits an exchange deposit once the chain shows it.
+ *
+ * The transaction must have succeeded and must move the asset itself --
+ * the configured token contract's Transfer events (or, for the native coin,
+ * the transaction's own value) -- from the depositing wallet to the
+ * platform's deposit address (EXCHANGE_DEPOSIT_ADDRESS). The amount credited
+ * is what the chain says arrived; no amount from the client is used.
+ *
+ * A transaction is credited once: the deposit row is claimed with a
+ * conditional update or an insert guarded by the unique index on
+ * (chain_id, lower(tx_hash)), and only the caller that claims it credits.
+ */
 export async function confirmDeposit(
   walletAddress: string,
   tokenSymbol: string,
-  amount: number,
   txHash: string,
   chainId: SupportedChainId
-): Promise<{ success: boolean; error?: string }> {
+): Promise<{ success: boolean; error?: string; status?: number; amount?: number }> {
   const supabase = getSupabaseAdmin();
   const normalized = walletAddress.toLowerCase();
-  
-  // Get token info for this chain
-  const token = getTokenForChain(chainId, tokenSymbol);
-  if (!token) {
-    return { success: false, error: `Token ${tokenSymbol} not supported on chain ${chainId}` };
+
+  if (!isAddress(walletAddress)) {
+    return { success: false, error: 'Invalid wallet address', status: 400 };
   }
-  
+  if (!isTxHash(txHash)) {
+    return { success: false, error: 'Malformed transaction hash', status: 400 };
+  }
+  const hash = txHash.toLowerCase();
+
+  const asset = resolveDepositAsset(chainId, tokenSymbol);
+  if (!asset) {
+    return { success: false, error: `Token ${tokenSymbol} not supported on chain ${chainId}`, status: 400 };
+  }
+
+  const depositAddress = getExchangeDepositAddress();
+  if (!depositAddress) {
+    console.error('[exchange] EXCHANGE_DEPOSIT_ADDRESS is not configured; refusing deposits');
+    return { success: false, error: 'Deposits are not available', status: 503 };
+  }
+
   // Check if already processed
   const { data: existing } = await supabase
     .from('exchange_deposits')
     .select('id, status')
-    .eq('tx_hash', txHash)
+    .eq('tx_hash', hash)
     .eq('chain_id', chainId)
-    .single();
-  
+    .maybeSingle();
+
   if (existing?.status === 'confirmed') {
-    return { success: false, error: 'Deposit already confirmed' };
+    return { success: false, error: 'Deposit already confirmed', status: 409 };
   }
-  
+
   // Verify transaction on-chain
-  try {
-    const publicClient = getPublicClient(chainId);
-    const receipt = await publicClient.getTransactionReceipt({ hash: txHash as `0x${string}` });
-    
-    if (!receipt || receipt.status !== 'success') {
-      return { success: false, error: 'Transaction not confirmed on chain' };
-    }
-  } catch (err) {
-    return { success: false, error: 'Could not verify transaction' };
+  const verified = asset.isNative
+    ? await verifyNativeTransfer({ chainId, txHash: hash, from: walletAddress, to: depositAddress })
+    : await verifyErc20Transfer({ chainId, txHash: hash, token: asset.address, from: walletAddress, to: depositAddress });
+  if (!verified.ok) {
+    return { success: false, error: verified.error, status: verified.status };
   }
-  
-  // Record or update deposit
+  const amount = Number(formatUnits(verified.value.amount, asset.decimals));
+
+  const record = {
+    wallet_address: normalized,
+    token_symbol: tokenSymbol,
+    token_address: asset.address.toLowerCase(),
+    amount,
+    status: 'confirmed',
+    confirmed_at: new Date().toISOString(),
+  };
+
+  // Claim the deposit row; only the claimant credits.
   if (existing) {
-    await supabase
+    const { data: claimed, error } = await supabase
       .from('exchange_deposits')
-      .update({ status: 'confirmed', confirmed_at: new Date().toISOString() })
-      .eq('id', existing.id);
+      .update(record)
+      .eq('id', existing.id)
+      .neq('status', 'confirmed')
+      .select('id')
+      .maybeSingle();
+    if (error || !claimed) {
+      return { success: false, error: 'Deposit already confirmed', status: 409 };
+    }
   } else {
-    await supabase
+    const { error } = await supabase
       .from('exchange_deposits')
-      .insert({
-        wallet_address: normalized,
-        token_symbol: tokenSymbol,
-        token_address: token.address,
-        amount,
-        tx_hash: txHash,
-        chain_id: chainId,
-        status: 'confirmed',
-        confirmed_at: new Date().toISOString(),
-      });
+      .insert({ ...record, tx_hash: hash, chain_id: chainId });
+    if (error) {
+      if (isUniqueViolation(error)) {
+        return { success: false, error: 'Deposit already confirmed', status: 409 };
+      }
+      console.error('[exchange] Failed to record deposit:', error);
+      return { success: false, error: 'Failed to record deposit', status: 500 };
+    }
   }
-  
+
   // Credit user balance
   await updateUserBalance(normalized, tokenSymbol, amount, chainId);
-  
-  return { success: true };
+
+  return { success: true, amount };
 }
 
 export async function getPendingDeposit(txHash: string, chainId?: SupportedChainId): Promise<any> {
@@ -390,8 +451,8 @@ export async function getPendingDeposit(txHash: string, chainId?: SupportedChain
   let query = supabase
     .from('exchange_deposits')
     .select('*')
-    .eq('tx_hash', txHash);
-  
+    .eq('tx_hash', txHash.toLowerCase());
+
   if (chainId) {
     query = query.eq('chain_id', chainId);
   }

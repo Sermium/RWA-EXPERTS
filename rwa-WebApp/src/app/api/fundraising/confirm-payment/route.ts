@@ -1,16 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
+import {
+  isTxHash,
+  platformFeeReceiver,
+  retrievePaymentIntent,
+  verifyStablecoinPayment,
+  type Stablecoin,
+} from '@/lib/payment-verification';
+import { checkFundraisingIntent, confirmFundraisingInvestment } from '@/lib/payment-records';
 
+/**
+ * Confirms a pending fundraising investment once its payment is proven:
+ *
+ * - card: the Stripe PaymentIntent, retrieved here, has succeeded for this
+ *   investment's amount plus the card surcharge, in USD, and its metadata
+ *   names this investment;
+ * - crypto: the transaction moved at least the investment amount of the
+ *   chain's USDC/USDT from the investing wallet to the platform fee receiver
+ *   (where /raise sends it), and has not confirmed anything before.
+ *
+ * Without proof nothing changes. The Stripe webhook confirms card payments
+ * through the same code, so whichever arrives second finds it done.
+ */
 export async function POST(request: NextRequest) {
   try {
     const supabase = getSupabaseAdmin();
-    
+
     const body = await request.json();
     const {
       investmentId,
       paymentIntentId,
       txHash,
-      paymentMethod,
       token,
       chainId
     } = body;
@@ -29,78 +49,66 @@ export async function POST(request: NextRequest) {
     if (fetchError || !existingInvestment) {
       return NextResponse.json({ error: 'Investment not found' }, { status: 404 });
     }
-
-    // Update investment status
-    const { data: investment, error: updateError } = await supabase
-      .from('fundraising_investments')
-      .update({
-        status: 'confirmed',
-        payment_confirmed_at: new Date().toISOString(),
-        stripe_payment_intent_id: paymentIntentId || null,
-        tx_hash: txHash || null,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', investmentId)
-      .select()
-      .single();
-
-    if (updateError) {
-      console.error('Investment update error:', updateError);
-      return NextResponse.json({ error: 'Failed to confirm investment' }, { status: 500 });
+    if (existingInvestment.status === 'confirmed') {
+      return NextResponse.json({ error: 'Investment already confirmed' }, { status: 409 });
     }
 
-    // Update token allocations status
-    const { error: allocUpdateError } = await supabase
-      .from('token_allocations')
-      .update({
-        status: 'confirmed',
-        updated_at: new Date().toISOString()
-      })
-      .eq('investment_id', investmentId);
+    let proof: { stripe_payment_intent_id?: string; tx_hash?: string };
 
-    if (allocUpdateError) {
-      console.error('Token allocation update error:', allocUpdateError);
-    }
+    if (paymentIntentId) {
+      const retrieved = await retrievePaymentIntent(paymentIntentId);
+      if (!retrieved.ok) return NextResponse.json({ error: retrieved.error }, { status: retrieved.status });
+      const checked = checkFundraisingIntent(retrieved.value, existingInvestment);
+      if (!checked.ok) return NextResponse.json({ error: checked.error }, { status: checked.status });
+      proof = { stripe_payment_intent_id: retrieved.value.id };
+    } else if (txHash) {
+      if (!isTxHash(txHash)) {
+        return NextResponse.json({ error: 'Malformed transaction hash' }, { status: 400 });
+      }
+      const hash = txHash.toLowerCase();
+      const paymentChainId = Number(existingInvestment.chain_id ?? chainId);
+      const symbol = String(existingInvestment.payment_token ?? token ?? '').toUpperCase();
+      if (symbol !== 'USDC' && symbol !== 'USDT') {
+        return NextResponse.json({ error: 'Unsupported payment token' }, { status: 400 });
+      }
 
-    // Update round raised amount
-    const { error: roundUpdateError } = await supabase
-      .from('fundraising_rounds')
-      .update({
-        raised_amount_usd: existingInvestment.round_id ? 
-          supabase.rpc('get_round_raised', { p_round_id: existingInvestment.round_id }) + investment.investment_amount_usd :
-          investment.investment_amount_usd,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', existingInvestment.round_id);
+      const { data: reused } = await supabase
+        .from('fundraising_investments')
+        .select('id')
+        .eq('tx_hash', hash)
+        .neq('id', investmentId)
+        .limit(1)
+        .maybeSingle();
+      if (reused) {
+        return NextResponse.json({ error: 'This transaction has already been used' }, { status: 409 });
+      }
 
-    // Alternative: Use RPC function
-    if (roundUpdateError) {
-      await supabase.rpc('increment_round_raised', {
-        p_round_id: existingInvestment.round_id,
-        p_amount: investment.investment_amount_usd
+      const verified = await verifyStablecoinPayment({
+        chainId: paymentChainId,
+        txHash: hash,
+        from: existingInvestment.wallet_address,
+        to: platformFeeReceiver(paymentChainId),
+        minUsd: Number(existingInvestment.investment_amount_usd),
+        symbol: symbol as Stablecoin,
       });
+      if (!verified.ok) return NextResponse.json({ error: verified.error }, { status: verified.status });
+      proof = { tx_hash: hash };
+    } else {
+      return NextResponse.json({ error: 'Payment proof required (paymentIntentId or txHash)' }, { status: 402 });
     }
 
-    // Check if new investor for this round
-    const { data: existingInvestments, error: checkError } = await supabase
-      .from('fundraising_investments')
-      .select('id')
-      .eq('round_id', existingInvestment.round_id)
-      .eq('wallet_address', existingInvestment.wallet_address)
-      .eq('status', 'confirmed')
-      .neq('id', investmentId);
-
-    if (!checkError && (!existingInvestments || existingInvestments.length === 0)) {
-      // New investor - increment count
-      await supabase.rpc('increment_round_investors', {
-        p_round_id: existingInvestment.round_id
-      });
+    const result = await confirmFundraisingInvestment(supabase, existingInvestment, proof);
+    switch (result.status) {
+      case 'confirmed':
+        return NextResponse.json({ success: true, investment: result.record });
+      case 'already_confirmed':
+        return NextResponse.json({ error: 'Investment already confirmed' }, { status: 409 });
+      case 'reused':
+        return NextResponse.json({ error: 'This payment has already been used' }, { status: 409 });
+      default:
+        console.error('Investment update error:', result.error);
+        return NextResponse.json({ error: 'Failed to confirm investment' }, { status: 500 });
     }
-
-    return NextResponse.json({
-      success: true,
-      investment
-    });
 
   } catch (error) {
     console.error('Confirm payment error:', error);
