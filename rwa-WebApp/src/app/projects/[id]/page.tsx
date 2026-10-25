@@ -585,7 +585,11 @@ function InvestmentCard({
   // Create Stripe payment intent
   const createStripeIntent = async () => {
     if (!isValidAmount) return;
-    
+    if (!address) {
+      setError('Connect your wallet first: the tokens you buy by card are allocated to it');
+      return;
+    }
+
     setPaymentMethod('card');
     setError('');
     setIsProcessing(true);
@@ -594,12 +598,14 @@ function InvestmentCard({
       const res = await fetch('/api/payments/stripe/create-intent', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        // Field names and units the create-intent handler expects. The Stripe webhook books the
+        // payment on the escrow under projectId, so send the vault's project id once it exists.
         body: JSON.stringify({
-          amount: Math.round(numericAmount * 100),
           type: 'investment',
-          projectId: project.id,
-          walletAddress: address,
-          metadata: { project_name: project.name, token_symbol: project.tokenSymbol },
+          projectId: vaultProjectId !== null ? vaultProjectId.toString() : project.id,
+          amountUSD: numericAmount,
+          investorAddress: address,
+          chainId: targetChainId,
         }),
       });
 
