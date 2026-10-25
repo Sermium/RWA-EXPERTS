@@ -61,6 +61,9 @@ contract RWASecurityToken is
     mapping(uint16 => bool) private _restrictedCountries;
     uint256 public kycCacheValidityDuration;
     bool public kycEnforced;
+    // Appended in v2.2 (storage-compatible): set only while an agent forced transfer or a
+    // wallet recovery moves tokens, so _beforeTokenTransfer skips the holder-side checks.
+    bool private _agentTransferInProgress;
 
     event UpdatedTokenInformation(string indexed _newName, string indexed _newSymbol, uint8 _newDecimals, string _newVersion, address indexed _newOnchainID);
     event KYCVerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
@@ -129,10 +132,10 @@ contract RWASecurityToken is
         compliance = IModularCompliance(_compliance);
         kycVerifier = IKYCVerifier(_kycVerifier);
         maxSupply = _maxSupply;
-        version = "2.1.0";
+        version = "2.2.0";
         minKYCLevel = 1;
         kycCacheValidityDuration = 1 hours;
-        kycEnforced = false;
+        kycEnforced = true;
         
         _restrictedCountries[408] = true;
         _restrictedCountries[364] = true;
@@ -172,11 +175,28 @@ contract RWASecurityToken is
         for (uint256 i = 0; i < _fromList.length; ++i) {
             if (_fromList[i] != address(0) && _toList[i] != address(0) && _hasValidKYC(_toList[i])) {
                 if (compliance.canTransfer(_fromList[i], _toList[i], _amounts[i])) {
-                    _transfer(_fromList[i], _toList[i], _amounts[i]);
-                    compliance.transferred(_fromList[i], _toList[i], _amounts[i]);
+                    _agentTransfer(_fromList[i], _toList[i], _amounts[i]);
                 }
             }
         }
+    }
+
+    /// @dev Moves tokens on behalf of an agent. Frozen wallets and frozen tokens do not block it
+    ///      (that is the point of a forced transfer); frozen tokens that have to move are unfrozen
+    ///      first. compliance.transferred is reported once, by _afterTokenTransfer.
+    function _agentTransfer(address _from, address _to, uint256 _amount) internal {
+        uint256 balance = balanceOf(_from);
+        uint256 frozenTokens = _frozenTokens[_from];
+        uint256 free = balance > frozenTokens ? balance - frozenTokens : 0;
+        if (_amount > free) {
+            uint256 toUnfreeze = _amount - free;
+            if (toUnfreeze > frozenTokens) toUnfreeze = frozenTokens;
+            _frozenTokens[_from] = frozenTokens - toUnfreeze;
+            emit TokensUnfrozen(_from, toUnfreeze);
+        }
+        _agentTransferInProgress = true;
+        _transfer(_from, _to, _amount);
+        _agentTransferInProgress = false;
     }
     
     function _hasValidKYC(address _wallet) internal view returns (bool) {
@@ -350,8 +370,7 @@ contract RWASecurityToken is
         if (_from == address(0) || _to == address(0)) revert InvalidAddress();
         if (!_hasValidKYC(_to)) revert KYCNotVerified();
         if (!compliance.canTransfer(_from, _to, _amount)) revert TransferNotCompliant();
-        _transfer(_from, _to, _amount);
-        compliance.transferred(_from, _to, _amount);
+        _agentTransfer(_from, _to, _amount);
         return true;
     }
 
@@ -360,11 +379,16 @@ contract RWASecurityToken is
         if (!_hasValidKYC(_newWallet)) revert KYCNotVerified();
         uint256 balance = balanceOf(_lostWallet);
         if (balance == 0) revert RecoveryFailed();
-        _frozenTokens[_newWallet] = _frozenTokens[_lostWallet];
-        _frozenTokens[_lostWallet] = 0;
-        _frozen[_newWallet] = _frozen[_lostWallet];
-        _frozen[_lostWallet] = false;
+        uint256 frozenTokens = _frozenTokens[_lostWallet];
+        bool wasFrozen = _frozen[_lostWallet];
+        _agentTransferInProgress = true;
         _transfer(_lostWallet, _newWallet, balance);
+        _agentTransferInProgress = false;
+        // Carry the freeze state over to the new wallet after the move
+        _frozenTokens[_lostWallet] = 0;
+        _frozenTokens[_newWallet] += frozenTokens;
+        _frozen[_lostWallet] = false;
+        if (wasFrozen) _frozen[_newWallet] = true;
         emit RecoverySuccess(_lostWallet, _newWallet, _investorOnchainID);
         return true;
     }
@@ -382,7 +406,7 @@ contract RWASecurityToken is
     // ============ Transfer Hooks ============
 
     function _beforeTokenTransfer(address from, address to, uint256 amount) internal override(ERC20Upgradeable, ERC20PausableUpgradeable, ERC20SnapshotUpgradeable) {
-        if (from != address(0) && to != address(0)) {
+        if (from != address(0) && to != address(0) && !_agentTransferInProgress) {
             if (_frozen[from]) revert AddressIsFrozen();
             if (_frozen[to]) revert AddressIsFrozen();
             if (amount > balanceOf(from) - _frozenTokens[from]) revert InsufficientUnfrozenBalance();

@@ -21,18 +21,27 @@ interface IPlatformFeeManager {
         address securityToken,
         uint256 tokenAmount
     ) external;
-    function refundUSDTForDispute(uint256 projectId, address escrowAddress) external;
+    function refundForDispute(uint256 projectId, address escrowAddress) external;
     function liquidityWallet() external view returns (address);
     function treasuryWallet() external view returns (address);
     function feeReceiver() external view returns (address);
 }
 
-contract RWAEscrowVault is 
-    Initializable, 
-    AccessControlUpgradeable, 
-    UUPSUpgradeable, 
-    PausableUpgradeable, 
-    ReentrancyGuardUpgradeable 
+/**
+ * @title RWAEscrowVault
+ * @notice Crowdfunding escrow. Since v2 every stablecoin the vault holds is booked to exactly one
+ *         project (projectBalance), each project settles in a single payment token, and refunds
+ *         are claimed by investors rather than pushed in a loop.
+ * @dev Storage layout of v1 is unchanged; v2 state is appended at the end. Projects created before
+ *      the v2 upgrade have no per-project balance and stay frozen for fund movements until an
+ *      admin runs migrateLegacyProject for them.
+ */
+contract RWAEscrowVault is
+    Initializable,
+    AccessControlUpgradeable,
+    UUPSUpgradeable,
+    PausableUpgradeable,
+    ReentrancyGuardUpgradeable
 {
     using SafeERC20 for IERC20;
 
@@ -80,6 +89,9 @@ contract RWAEscrowVault is
     uint256 public constant PLATFORM_TOKEN_FEE_BPS = 100;   // 1% of token supply
     uint256 public constant INVESTOR_TOKEN_BPS = 9900;      // 99% of token supply
 
+    /// @notice A FUNDED project that has not been completed this long after funding becomes refundable
+    uint256 public constant FUNDED_COMPLETION_TIMEOUT = 90 days;
+
     // Storage
     mapping(uint256 => Project) public projects;
     mapping(uint256 => Investment[]) public investments;
@@ -94,7 +106,7 @@ contract RWAEscrowVault is
     mapping(uint256 => bool) public projectBlockedByDispute;
     mapping(uint256 => uint256) public projectSnapshotId;
     mapping(string => bool) private _usedPaymentReferences;
-    
+
 
     // Claim fee
     uint256 public claimFeeBps;
@@ -108,6 +120,27 @@ contract RWAEscrowVault is
     IERC20 public usdt;
 
     mapping(uint256 => uint256) public projectOffChainAmount;
+
+    // ============ v2 storage (appended) ============
+
+    /// @notice True for projects whose funds are booked per project (created on v2, or migrated)
+    mapping(uint256 => bool) public projectAccountingEnabled;
+    /// @notice Stablecoins (in the project's payment token) the vault holds for each project
+    mapping(uint256 => uint256) public projectBalance;
+    /// @notice Sum of projectBalance per payment token; never exceeds the vault's token balance
+    mapping(address => uint256) public totalProjectBalances;
+    /// @notice Stablecoins each investor actually paid in on-chain (refundable amount)
+    mapping(uint256 => mapping(address => uint256)) public investorOnChainContribution;
+    /// @notice Outstanding on-chain contributions per project
+    mapping(uint256 => uint256) public projectOnChainRaised;
+    /// @notice Injected off-chain funds still held for the project (reclaimable by admin on failure)
+    mapping(uint256 => uint256) public projectInjectedFunds;
+    /// @dev ProjectState + 1 recorded when a dispute blocks the project; 0 = unknown (blocked pre-v2)
+    mapping(uint256 => uint8) private _stateBeforeDispute;
+    /// @notice Dispute refunds for completed projects: pool split by token balance at the snapshot
+    mapping(uint256 => bool) public disputeRefundOpen;
+    mapping(uint256 => uint256) public disputeRefundPool;
+    mapping(uint256 => mapping(address => bool)) public disputeRefundClaimed;
 
     // Events
     event ProjectCreated(uint256 indexed projectId, address indexed owner, uint256 fundingGoal, uint256 deadline, uint256 totalSupply);
@@ -129,6 +162,11 @@ contract RWAEscrowVault is
     event KYCVerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
     event PlatformFeeManagerUpdated(address indexed oldManager, address indexed newManager);
     event OffChainFundsInjected(uint256 indexed projectId, uint256 amount, uint256 remainingOffChain, address paymentToken);
+    event ProjectPaymentTokenSet(uint256 indexed projectId, address paymentToken);
+    event DisputeRefundOpened(uint256 indexed projectId, uint256 pool, uint256 snapshotId);
+    event DisputeRefundClaimed(uint256 indexed projectId, address indexed holder, uint256 amount);
+    event InjectedFundsReclaimed(uint256 indexed projectId, address indexed to, uint256 amount);
+    event LegacyProjectMigrated(uint256 indexed projectId, uint256 balance, uint256 onChainRaised);
 
     // Errors
     error InvalidProject();
@@ -148,6 +186,9 @@ contract RWAEscrowVault is
     error FeeTooHigh();
     error NothingToRelease();
     error PlatformFeesNotTransferred();
+    error PaymentTokenMismatch();
+    error LegacyProject();
+    error NothingToRefund();
 
     modifier validProject(uint256 _projectId) {
         if (projects[_projectId].projectOwner == address(0)) revert InvalidProject();
@@ -164,6 +205,12 @@ contract RWAEscrowVault is
         _;
     }
 
+    /// @dev Fund movements need per-project books; pre-v2 projects must be migrated first
+    modifier accounted(uint256 _projectId) {
+        if (!projectAccountingEnabled[_projectId]) revert LegacyProject();
+        _;
+    }
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -174,7 +221,7 @@ contract RWAEscrowVault is
         address _platformFeeManager,
         address _projectNFT
     ) external initializer {
-        if (_admin == address(0) || _platformFeeManager == address(0) || _projectNFT == address(0)) 
+        if (_admin == address(0) || _platformFeeManager == address(0) || _projectNFT == address(0))
             revert InvalidAddress();
 
         __AccessControl_init();
@@ -188,7 +235,7 @@ contract RWAEscrowVault is
 
         platformFeeManager = IPlatformFeeManager(_platformFeeManager);
         projectNFT = IRWAProjectNFT(_projectNFT);
-        
+
         claimFeeBps = 0;
     }
 
@@ -272,6 +319,7 @@ contract RWAEscrowVault is
             totalSupply: _totalSupply,
             platformFeesTransferred: false
         });
+        projectAccountingEnabled[_projectId] = true;
 
         emit ProjectCreated(_projectId, msg.sender, _fundingGoal, _deadline, _totalSupply);
         emit ProjectStateChanged(_projectId, ProjectState.INACTIVE);
@@ -280,15 +328,28 @@ contract RWAEscrowVault is
     /**
      * @notice Admin activates project after reviewing documentation
      */
-    function activateProject(uint256 _projectId) 
-        external 
-        onlyRole(OPERATOR_ROLE) 
-        validProject(_projectId) 
-        inState(_projectId, ProjectState.INACTIVE) 
+    function activateProject(uint256 _projectId)
+        external
+        onlyRole(OPERATOR_ROLE)
+        validProject(_projectId)
+        inState(_projectId, ProjectState.INACTIVE)
     {
         projects[_projectId].state = ProjectState.ACTIVE;
         emit ProjectActivated(_projectId);
         emit ProjectStateChanged(_projectId, ProjectState.ACTIVE);
+    }
+
+    /**
+     * @notice Choose the stablecoin a project settles in, before it has received any.
+     *         Without this call the first investment or injection fixes it.
+     */
+    function setProjectPaymentToken(uint256 _projectId, address _paymentToken) external validProject(_projectId) {
+        Project storage project = projects[_projectId];
+        if (msg.sender != project.projectOwner && !hasRole(OPERATOR_ROLE, msg.sender)) revert NotAuthorized();
+        if (_paymentToken != address(usdc) && _paymentToken != address(usdt)) revert InvalidAddress();
+        if (project.paymentToken != address(0)) revert PaymentTokenMismatch();
+        project.paymentToken = _paymentToken;
+        emit ProjectPaymentTokenSet(_projectId, _paymentToken);
     }
 
     // ============================================
@@ -297,15 +358,16 @@ contract RWAEscrowVault is
 
     /**
      * @notice Invest in a project with KYC proof
+     * @dev Every investment in a project must use the project's payment token
      */
     function invest(
         uint256 _projectId,
         uint256 _amount,
         address _paymentToken,
         KYCProof calldata _kycProof
-    ) external nonReentrant whenNotPaused validProject(_projectId) inState(_projectId, ProjectState.ACTIVE) {
+    ) external nonReentrant whenNotPaused validProject(_projectId) accounted(_projectId) inState(_projectId, ProjectState.ACTIVE) {
         Project storage project = projects[_projectId];
-        
+
         if (block.timestamp > project.deadline) revert DeadlinePassed();
         if (_amount == 0) revert InvalidAmount();
         if (_paymentToken != address(usdc) && _paymentToken != address(usdt)) revert InvalidAddress();
@@ -318,16 +380,15 @@ contract RWAEscrowVault is
         // Check funding goal not exceeded
         if (project.totalRaised + _amount > project.fundingGoal) revert FundingGoalExceeded();
 
+        _usePaymentToken(_projectId, _paymentToken);
+
         // Transfer payment
         IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), _amount);
-
-        // Set payment token on first investment
-        if (project.paymentToken == address(0)) {
-            project.paymentToken = _paymentToken;
-        }
+        _credit(_projectId, _amount);
 
         // Update project
         project.totalRaised += _amount;
+        projectOnChainRaised[_projectId] += _amount;
 
         // Track investor
         if (!isProjectInvestor[_projectId][msg.sender]) {
@@ -337,6 +398,7 @@ contract RWAEscrowVault is
         }
 
         investorContribution[_projectId][msg.sender] += _amount;
+        investorOnChainContribution[_projectId][msg.sender] += _amount;
         investmentTokens[_projectId][msg.sender] = _paymentToken;
 
         // Calculate token allocation (proportional to contribution, 99% of supply for investors)
@@ -363,6 +425,7 @@ contract RWAEscrowVault is
 
     /**
      * @notice Record off-chain investment (fiat, wire transfer, etc.)
+     * @dev Only books the allocation. The stablecoins arrive later through injectOffChainFunds.
      */
     function recordOffChainInvestment(
         uint256 _projectId,
@@ -418,11 +481,11 @@ contract RWAEscrowVault is
     /**
      * @notice Force mark project as funded (admin override)
      */
-    function forceMarkFunded(uint256 _projectId, string calldata _reason) 
-        external 
-        onlyRole(ADMIN_ROLE) 
-        validProject(_projectId) 
-        inState(_projectId, ProjectState.ACTIVE) 
+    function forceMarkFunded(uint256 _projectId, string calldata _reason)
+        external
+        onlyRole(ADMIN_ROLE)
+        validProject(_projectId)
+        inState(_projectId, ProjectState.ACTIVE)
     {
         Project storage project = projects[_projectId];
         if (project.totalRaised == 0) revert NoFundsRaised();
@@ -453,61 +516,64 @@ contract RWAEscrowVault is
 
     /**
      * @notice Owner terminates fundraising and moves to COMPLETED
-     * @dev Transfers platform fees (1.5% USDT + 1% tokens)
-     *      Investors can then claim their 99% tokens via dashboard
-     *      98.5% USDT remains in escrow for milestone releases
+     * @dev Transfers platform fees: 1.5% of the stablecoins actually held for this project, and 1%
+     *      of the token supply. Off-chain amounts that were never injected are not on-chain, so no
+     *      on-chain fee is taken on them. Investors can then claim their tokens; the rest of the
+     *      project's balance stays in escrow for milestone releases.
      */
-    function completeProject(uint256 _projectId) 
-    external 
-    nonReentrant 
-    validProject(_projectId) 
-    inState(_projectId, ProjectState.FUNDED) 
-{
-    Project storage project = projects[_projectId];
-    if (msg.sender != project.projectOwner && !hasRole(ADMIN_ROLE, msg.sender)) revert NotAuthorized();
-    if (project.platformFeesTransferred) revert InvalidState();
+    function completeProject(uint256 _projectId)
+        external
+        nonReentrant
+        validProject(_projectId)
+        accounted(_projectId)
+        inState(_projectId, ProjectState.FUNDED)
+    {
+        Project storage project = projects[_projectId];
+        if (msg.sender != project.projectOwner && !hasRole(ADMIN_ROLE, msg.sender)) revert NotAuthorized();
+        if (project.platformFeesTransferred) revert InvalidState();
 
-    // Calculate platform fees
-    uint256 platformUSDT = (project.totalRaised * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
-    uint256 platformTokens = (project.totalSupply * PLATFORM_TOKEN_FEE_BPS) / Constants.BPS_DENOMINATOR;
+        // Calculate platform fees
+        uint256 platformUSDT = (projectBalance[_projectId] * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
+        uint256 platformTokens = (project.totalSupply * PLATFORM_TOKEN_FEE_BPS) / Constants.BPS_DENOMINATOR;
 
-    // Get wallet addresses directly from fee manager public variables
-    address liquidityWallet = platformFeeManager.liquidityWallet();
-    address treasuryWallet = platformFeeManager.treasuryWallet();
+        // Get wallet addresses directly from fee manager public variables
+        address liquidityWallet = platformFeeManager.liquidityWallet();
+        address treasuryWallet = platformFeeManager.treasuryWallet();
 
-    // Mint platform tokens directly to wallets (50/50 split)
-    uint256 tokensToLiquidity = platformTokens / 2;
-    uint256 tokensToTreasury = platformTokens - tokensToLiquidity;
+        project.platformFeesTransferred = true;
+        project.completedAt = block.timestamp;
+        project.state = ProjectState.COMPLETED;
 
-    IRWASecurityToken securityToken = IRWASecurityToken(project.securityToken);
-    if (tokensToLiquidity > 0) {
-        securityToken.mint(liquidityWallet, tokensToLiquidity);
+        // Mint platform tokens directly to wallets (50/50 split)
+        uint256 tokensToLiquidity = platformTokens / 2;
+        uint256 tokensToTreasury = platformTokens - tokensToLiquidity;
+
+        IRWASecurityToken securityToken = IRWASecurityToken(project.securityToken);
+        if (tokensToLiquidity > 0) {
+            securityToken.mint(liquidityWallet, tokensToLiquidity);
+        }
+        if (tokensToTreasury > 0) {
+            securityToken.mint(treasuryWallet, tokensToTreasury);
+        }
+
+        // Transfer stablecoin fees to platform fee manager (for 34/33/33 distribution)
+        if (platformUSDT > 0) {
+            _debit(_projectId, platformUSDT);
+            IERC20(project.paymentToken).safeApprove(address(platformFeeManager), platformUSDT);
+            platformFeeManager.receiveFees(
+                _projectId,
+                project.paymentToken,
+                platformUSDT,
+                project.securityToken,
+                0
+            );
+        }
+
+        emit ProjectCompleted(_projectId, platformUSDT, platformTokens, liquidityWallet, treasuryWallet);
+        emit ProjectStateChanged(_projectId, ProjectState.COMPLETED);
+
+        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.COMPLETED);
     }
-    if (tokensToTreasury > 0) {
-        securityToken.mint(treasuryWallet, tokensToTreasury);
-    }
-
-    // Transfer USDT fees to platform fee manager (for 34/33/33 distribution)
-    if (project.paymentToken != address(0) && platformUSDT > 0) {
-        IERC20(project.paymentToken).safeApprove(address(platformFeeManager), platformUSDT);
-        platformFeeManager.receiveFees(
-            _projectId,
-            project.paymentToken,
-            platformUSDT,
-            project.securityToken,
-            0
-        );
-    }
-
-    project.platformFeesTransferred = true;
-    project.completedAt = block.timestamp;
-    project.state = ProjectState.COMPLETED;
-
-    emit ProjectCompleted(_projectId, platformUSDT, platformTokens, liquidityWallet, treasuryWallet);
-    emit ProjectStateChanged(_projectId, ProjectState.COMPLETED);
-
-    projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.COMPLETED);
-}
 
     // ============================================
     // TOKEN CLAIMING (Investors via dashboard)
@@ -515,12 +581,13 @@ contract RWAEscrowVault is
 
     /**
      * @notice Investor claims their token allocation
-     * @dev Applies claim fee if set
+     * @dev Applies claim fee if set. The security token enforces KYC on mint, so the investor (and
+     *      the claim fee recipient) need a valid cached KYC on the token.
      */
-    function claimTokens(uint256 _projectId) 
-        external 
-        nonReentrant 
-        validProject(_projectId) 
+    function claimTokens(uint256 _projectId)
+        external
+        nonReentrant
+        validProject(_projectId)
         notBlocked(_projectId)
     {
         Project storage project = projects[_projectId];
@@ -536,7 +603,7 @@ contract RWAEscrowVault is
         // Calculate fee
         uint256 fee = 0;
         uint256 netAmount = allocation;
-        
+
         if (claimFeeBps > 0 && claimFeeRecipient != address(0)) {
             fee = (allocation * claimFeeBps) / Constants.BPS_DENOMINATOR;
             netAmount = allocation - fee;
@@ -558,7 +625,7 @@ contract RWAEscrowVault is
      */
     function getClaimableTokens(uint256 _projectId, address _investor) external view returns (uint256) {
         Project storage project = projects[_projectId];
-        
+
         if (project.state != ProjectState.COMPLETED) return 0;
         if (!project.platformFeesTransferred) return 0;
         if (hasClaimed[_projectId][_investor]) return 0;
@@ -572,7 +639,7 @@ contract RWAEscrowVault is
 
     /**
      * @notice Admin releases milestone funds to project owner
-     * @dev Milestones are managed in DB, this just releases amounts
+     * @dev Milestones are managed in DB, this just releases amounts out of the project's own balance
      * @param _projectId Project ID
      * @param _amount Amount to release
      * @param _milestoneRef DB reference for the milestone (for tracking)
@@ -581,29 +648,23 @@ contract RWAEscrowVault is
         uint256 _projectId,
         uint256 _amount,
         string calldata _milestoneRef
-    ) 
-        external 
-        nonReentrant 
-        onlyRole(OPERATOR_ROLE) 
-        validProject(_projectId) 
-        notBlocked(_projectId) 
+    )
+        external
+        nonReentrant
+        onlyRole(OPERATOR_ROLE)
+        validProject(_projectId)
+        accounted(_projectId)
+        notBlocked(_projectId)
     {
         Project storage project = projects[_projectId];
         if (project.state != ProjectState.COMPLETED) revert InvalidState();
         if (_amount == 0) revert InvalidAmount();
+        if (_amount > projectBalance[_projectId]) revert InsufficientBalance();
 
-        // Calculate available funds (total - platform fee - already released)
-        uint256 platformFee = (project.totalRaised * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
-        uint256 availableFunds = project.totalRaised - platformFee - projectReleasedFunds[_projectId];
-
-        if (_amount > availableFunds) revert InsufficientBalance();
-
+        _debit(_projectId, _amount);
         projectReleasedFunds[_projectId] += _amount;
 
-        // Transfer to project owner
-        if (project.paymentToken != address(0)) {
-            IERC20(project.paymentToken).safeTransfer(project.projectOwner, _amount);
-        }
+        IERC20(project.paymentToken).safeTransfer(project.projectOwner, _amount);
 
         emit MilestoneFundsReleased(_projectId, _amount, _milestoneRef);
     }
@@ -612,12 +673,8 @@ contract RWAEscrowVault is
      * @notice Get remaining funds available for milestone releases
      */
     function getAvailableFunds(uint256 _projectId) external view returns (uint256) {
-        Project storage project = projects[_projectId];
-        uint256 platformFee = (project.totalRaised * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
-        uint256 released = projectReleasedFunds[_projectId];
-        
-        if (project.totalRaised <= platformFee + released) return 0;
-        return project.totalRaised - platformFee - released;
+        if (projects[_projectId].state != ProjectState.COMPLETED) return 0;
+        return projectBalance[_projectId];
     }
 
     // ============================================
@@ -625,46 +682,66 @@ contract RWAEscrowVault is
     // ============================================
 
     /**
-     * @notice Investor claims refund if project failed to reach goal
+     * @notice Investor claims back what they paid on-chain when the raise failed
+     * @dev Refundable when the project was cancelled before completion, when an ACTIVE raise missed
+     *      its goal by the deadline, or when a FUNDED project was not completed within
+     *      FUNDED_COMPLETION_TIMEOUT. The first claim in the last two cases cancels the project.
+     *      Off-chain contributions are refunded off-chain (see reclaimInjectedFunds).
      */
-    function claimRefund(uint256 _projectId) 
-        external 
-        nonReentrant 
-        validProject(_projectId) 
+    function claimRefund(uint256 _projectId)
+        external
+        nonReentrant
+        validProject(_projectId)
+        accounted(_projectId)
     {
         Project storage project = projects[_projectId];
-        
-        // Can refund if: CANCELLED OR (ACTIVE and deadline passed and goal not met)
-        bool canRefund = project.state == ProjectState.CANCELLED ||
-            (project.state == ProjectState.ACTIVE && 
-             block.timestamp > project.deadline && 
-             project.totalRaised < project.fundingGoal);
-        
-        if (!canRefund) revert InvalidState();
 
-        uint256 contribution = investorContribution[_projectId][msg.sender];
-        if (contribution == 0) revert NotInvestor();
+        if (project.state != ProjectState.CANCELLED) {
+            bool raiseFailed = project.state == ProjectState.ACTIVE &&
+                block.timestamp > project.deadline &&
+                project.totalRaised < project.fundingGoal;
+            bool completionTimedOut = project.state == ProjectState.FUNDED &&
+                block.timestamp > project.fundedAt + FUNDED_COMPLETION_TIMEOUT;
+            if (!raiseFailed && !completionTimedOut) revert InvalidState();
+            _cancel(_projectId);
+        } else if (disputeRefundOpen[_projectId]) {
+            revert InvalidState(); // completed project refunded through a dispute: claimDisputeRefund
+        }
 
-        address paymentToken = investmentTokens[_projectId][msg.sender];
+        if (investorContribution[_projectId][msg.sender] == 0) revert NotInvestor();
+        uint256 refund = investorOnChainContribution[_projectId][msg.sender];
+        if (refund == 0) revert NothingToRefund();
 
         // Clear investor data
         investorContribution[_projectId][msg.sender] = 0;
+        investorOnChainContribution[_projectId][msg.sender] = 0;
         investorTokenAllocation[_projectId][msg.sender] = 0;
+        projectOnChainRaised[_projectId] -= refund;
 
-        // Mark investments as refunded
-        Investment[] storage projectInvestments = investments[_projectId];
-        for (uint256 i = 0; i < projectInvestments.length; i++) {
-            if (projectInvestments[i].investor == msg.sender) {
-                projectInvestments[i].refunded = true;
-            }
-        }
+        _debit(_projectId, refund);
+        IERC20(project.paymentToken).safeTransfer(msg.sender, refund);
 
-        // Transfer refund
-        if (paymentToken != address(0) && contribution > 0) {
-            IERC20(paymentToken).safeTransfer(msg.sender, contribution);
-        }
+        emit RefundClaimed(_projectId, msg.sender, refund);
+    }
 
-        emit RefundClaimed(_projectId, msg.sender, contribution);
+    /**
+     * @notice Return injected off-chain funds of a failed project to the admin, who refunds the
+     *         off-chain investors through the channel they paid with
+     */
+    function reclaimInjectedFunds(uint256 _projectId)
+        external
+        nonReentrant
+        onlyRole(ADMIN_ROLE)
+        validProject(_projectId)
+        accounted(_projectId)
+        inState(_projectId, ProjectState.CANCELLED)
+    {
+        uint256 amount = projectInjectedFunds[_projectId];
+        if (amount == 0) revert NothingToRelease();
+        projectInjectedFunds[_projectId] = 0;
+        _debit(_projectId, amount);
+        IERC20(projects[_projectId].paymentToken).safeTransfer(msg.sender, amount);
+        emit InjectedFundsReclaimed(_projectId, msg.sender, amount);
     }
 
     // ============================================
@@ -674,15 +751,18 @@ contract RWAEscrowVault is
     /**
      * @notice Block project and take snapshot for fair refund calculation
      */
-    function blockProject(uint256 _projectId) 
-        external 
-        onlyRole(DISPUTE_MANAGER_ROLE) 
-        validProject(_projectId) 
+    function blockProject(uint256 _projectId)
+        external
+        onlyRole(DISPUTE_MANAGER_ROLE)
+        validProject(_projectId)
     {
         Project storage project = projects[_projectId];
+        if (project.state == ProjectState.DISPUTED || project.state == ProjectState.CANCELLED) revert InvalidState();
+
+        _stateBeforeDispute[_projectId] = uint8(project.state) + 1;
         projectBlockedByDispute[_projectId] = true;
         project.state = ProjectState.DISPUTED;
-        
+
         // Take snapshot for fair refund calculation
         uint256 snapshotId = IRWASecurityToken(project.securityToken).snapshot();
         projectSnapshotId[_projectId] = snapshotId;
@@ -692,159 +772,97 @@ contract RWAEscrowVault is
     }
 
     /**
-     * @notice Unblock project (dispute dismissed)
+     * @notice Unblock project (dispute dismissed): the project returns to the state it was in
      */
-    function unblockProject(uint256 _projectId) 
-        external 
-        onlyRole(DISPUTE_MANAGER_ROLE) 
-        validProject(_projectId) 
+    function unblockProject(uint256 _projectId)
+        external
+        onlyRole(DISPUTE_MANAGER_ROLE)
+        validProject(_projectId)
+        inState(_projectId, ProjectState.DISPUTED)
     {
+        ProjectState previous = _previousState(_projectId);
+        delete _stateBeforeDispute[_projectId];
         projectBlockedByDispute[_projectId] = false;
-        projects[_projectId].state = ProjectState.COMPLETED;
-        
+        projects[_projectId].state = previous;
+
         emit ProjectUnblocked(_projectId);
-        emit ProjectStateChanged(_projectId, ProjectState.COMPLETED);
+        emit ProjectStateChanged(_projectId, previous);
     }
 
     /**
-     * @notice Process USDT refund for dispute resolution
-     * @dev Refunds remaining USDT proportionally to token holders at snapshot
-     *      Tokens are NOT returned - they become worthless
+     * @notice Resolve a dispute with refunds
+     * @dev Project disputed before completion: it is cancelled and investors use claimRefund
+     *      (their on-chain contribution in full). Completed project: platform stablecoin fees are
+     *      pulled back if the fee manager still holds them, and what is left of the project's
+     *      balance becomes a pool that token holders at the dispute snapshot claim pro rata with
+     *      claimDisputeRefund. Tokens are NOT returned - they become worthless.
      */
-    function refundForDispute(uint256 _projectId) 
-        external 
-        nonReentrant 
-        onlyRole(DISPUTE_MANAGER_ROLE) 
-        validProject(_projectId) 
+    function refundForDispute(uint256 _projectId)
+        external
+        nonReentrant
+        onlyRole(DISPUTE_MANAGER_ROLE)
+        validProject(_projectId)
+        accounted(_projectId)
+        inState(_projectId, ProjectState.DISPUTED)
     {
         Project storage project = projects[_projectId];
-        if (project.state != ProjectState.DISPUTED) revert InvalidState();
-
-        // Calculate remaining USDT
-        uint256 platformFee = (project.totalRaised * PLATFORM_USDT_FEE_BPS) / Constants.BPS_DENOMINATOR;
-        uint256 remainingFunds = project.totalRaised - platformFee - projectReleasedFunds[_projectId];
-
-        // Try to get platform USDT back (if not distributed)
-        try platformFeeManager.refundUSDTForDispute(_projectId, address(this)) {
-            // Platform USDT returned
-        } catch {
-            // Already distributed to wallets - continue without it
-        }
-
-        // Get current balance (may include returned platform fees)
-        uint256 refundPool = 0;
-        if (project.paymentToken != address(0)) {
-            uint256 balance = IERC20(project.paymentToken).balanceOf(address(this));
-            refundPool = balance < remainingFunds ? balance : remainingFunds;
-        }
-
-        if (refundPool == 0) {
-            // No funds to refund, just cancel
-            project.state = ProjectState.CANCELLED;
-            emit ProjectStateChanged(_projectId, ProjectState.CANCELLED);
-            projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
-            return;
-        }
-
-        // Get snapshot data
         IRWASecurityToken securityToken = IRWASecurityToken(project.securityToken);
         uint256 snapshotId = projectSnapshotId[_projectId];
-        uint256 totalSupplyAtSnapshot = securityToken.totalSupplyAt(snapshotId);
+        uint256 supplyAtSnapshot = securityToken.totalSupplyAt(snapshotId);
 
-        if (totalSupplyAtSnapshot == 0) {
-            // No tokens minted yet, refund based on contributions
-            _refundByContribution(_projectId, refundPool);
-        } else {
-            // Refund based on token holdings at snapshot
-            _refundBySnapshot(_projectId, refundPool, snapshotId, totalSupplyAtSnapshot);
+        if (_previousState(_projectId) == ProjectState.COMPLETED && supplyAtSnapshot > 0) {
+            // Try to get the platform's stablecoin fee back (fails once it was distributed)
+            if (project.paymentToken != address(0)) {
+                IERC20 paymentToken = IERC20(project.paymentToken);
+                uint256 before = paymentToken.balanceOf(address(this));
+                try platformFeeManager.refundForDispute(_projectId, address(this)) {} catch {}
+                uint256 returned = paymentToken.balanceOf(address(this)) - before;
+                if (returned > 0) _credit(_projectId, returned);
+            }
+
+            uint256 pool = projectBalance[_projectId];
+            // Injected funds were spent alongside investor funds; whatever is left belongs to holders
+            projectInjectedFunds[_projectId] = 0;
+            if (pool > 0) {
+                disputeRefundOpen[_projectId] = true;
+                disputeRefundPool[_projectId] = pool;
+                emit DisputeRefundOpened(_projectId, pool, snapshotId);
+            }
         }
 
-        project.state = ProjectState.CANCELLED;
-        emit ProjectStateChanged(_projectId, ProjectState.CANCELLED);
-        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
+        projectBlockedByDispute[_projectId] = false;
+        delete _stateBeforeDispute[_projectId];
+        _cancel(_projectId);
     }
 
-    function _refundByContribution(uint256 _projectId, uint256 _refundPool) internal {
+    /**
+     * @notice Token holder at the dispute snapshot claims their share of the refund pool
+     */
+    function claimDisputeRefund(uint256 _projectId) external nonReentrant validProject(_projectId) {
+        if (!disputeRefundOpen[_projectId]) revert InvalidState();
+        if (disputeRefundClaimed[_projectId][msg.sender]) revert AlreadyClaimed();
+
         Project storage project = projects[_projectId];
-        address[] memory investors = projectInvestors[_projectId];
-        
-        uint256 totalRefunded = 0;
-        uint256 holdersRefunded = 0;
+        uint256 amount = getDisputeRefund(_projectId, msg.sender);
+        if (amount == 0) revert NothingToRefund();
 
-        for (uint256 i = 0; i < investors.length; i++) {
-            address investor = investors[i];
-            uint256 contribution = investorContribution[_projectId][investor];
-            
-            if (contribution > 0) {
-                uint256 refundAmount = (_refundPool * contribution) / project.totalRaised;
-                
-                if (refundAmount > 0 && project.paymentToken != address(0)) {
-                    IERC20(project.paymentToken).safeTransfer(investor, refundAmount);
-                    totalRefunded += refundAmount;
-                    holdersRefunded++;
-                }
-            }
-        }
+        disputeRefundClaimed[_projectId][msg.sender] = true;
+        _debit(_projectId, amount);
+        IERC20(project.paymentToken).safeTransfer(msg.sender, amount);
 
-        emit DisputeRefundProcessed(_projectId, totalRefunded, holdersRefunded);
+        emit DisputeRefundClaimed(_projectId, msg.sender, amount);
     }
 
-    function _refundBySnapshot(
-        uint256 _projectId, 
-        uint256 _refundPool, 
-        uint256 _snapshotId,
-        uint256 _totalSupply
-    ) internal {
-        Project storage project = projects[_projectId];
-        IRWASecurityToken securityToken = IRWASecurityToken(project.securityToken);
-        
-        // Get all potential holders (investors + platform wallets)
-        address[] memory investors = projectInvestors[_projectId];
-        
-        // Get wallet addresses directly from public variables
-        address feeReceiver = platformFeeManager.feeReceiver();
-        address liquidityWallet = platformFeeManager.liquidityWallet();
-        address treasuryWallet = platformFeeManager.treasuryWallet();
-
-        uint256 totalRefunded = 0;
-        uint256 holdersRefunded = 0;
-
-        // Refund investors
-        for (uint256 i = 0; i < investors.length; i++) {
-            address holder = investors[i];
-            uint256 balanceAtSnapshot = securityToken.balanceOfAt(holder, _snapshotId);
-            
-            if (balanceAtSnapshot > 0) {
-                uint256 refundAmount = (_refundPool * balanceAtSnapshot) / _totalSupply;
-                
-                if (refundAmount > 0 && project.paymentToken != address(0)) {
-                    IERC20(project.paymentToken).safeTransfer(holder, refundAmount);
-                    totalRefunded += refundAmount;
-                    holdersRefunded++;
-                }
-            }
-        }
-
-        // Refund platform wallets (they hold tokens too)
-        address[3] memory platformWallets = [feeReceiver, liquidityWallet, treasuryWallet];
-        
-        for (uint256 i = 0; i < 3; i++) {
-            if (platformWallets[i] != address(0)) {
-                uint256 balanceAtSnapshot = securityToken.balanceOfAt(platformWallets[i], _snapshotId);
-                
-                if (balanceAtSnapshot > 0) {
-                    uint256 refundAmount = (_refundPool * balanceAtSnapshot) / _totalSupply;
-                    
-                    if (refundAmount > 0 && project.paymentToken != address(0)) {
-                        IERC20(project.paymentToken).safeTransfer(platformWallets[i], refundAmount);
-                        totalRefunded += refundAmount;
-                        holdersRefunded++;
-                    }
-                }
-            }
-        }
-
-        emit DisputeRefundProcessed(_projectId, totalRefunded, holdersRefunded);
+    /**
+     * @notice Amount a holder can still claim from a project's dispute refund pool
+     */
+    function getDisputeRefund(uint256 _projectId, address _holder) public view returns (uint256) {
+        if (!disputeRefundOpen[_projectId] || disputeRefundClaimed[_projectId][_holder]) return 0;
+        IRWASecurityToken securityToken = IRWASecurityToken(projects[_projectId].securityToken);
+        uint256 snapshotId = projectSnapshotId[_projectId];
+        uint256 supply = securityToken.totalSupplyAt(snapshotId);
+        if (supply == 0) return 0;
+        return (disputeRefundPool[_projectId] * securityToken.balanceOfAt(_holder, snapshotId)) / supply;
     }
 
     // ============================================
@@ -852,25 +870,103 @@ contract RWAEscrowVault is
     // ============================================
 
     /**
-     * @notice Cancel project (admin only)
+     * @notice Cancel a project that has not completed (admin only). Investors then claim refunds.
+     *         A completed project can only be unwound through a dispute.
      */
-    function cancelProject(uint256 _projectId) 
-        external 
-        onlyRole(ADMIN_ROLE) 
-        validProject(_projectId) 
+    function cancelProject(uint256 _projectId)
+        external
+        onlyRole(ADMIN_ROLE)
+        validProject(_projectId)
     {
-        Project storage project = projects[_projectId];
-        if (project.state == ProjectState.COMPLETED || project.state == ProjectState.CANCELLED) 
+        ProjectState state = projects[_projectId].state;
+        if (state != ProjectState.INACTIVE && state != ProjectState.ACTIVE && state != ProjectState.FUNDED)
             revert InvalidState();
 
-        project.state = ProjectState.CANCELLED;
-        emit ProjectStateChanged(_projectId, ProjectState.CANCELLED);
-        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
+        _cancel(_projectId);
     }
 
     function grantDisputeManagerRole(address _disputeManager) external onlyRole(ADMIN_ROLE) {
         if (_disputeManager == address(0)) revert InvalidAddress();
         _grantRole(DISPUTE_MANAGER_ROLE, _disputeManager);
+    }
+
+    /**
+     * @notice Book a project created before v2 into per-project accounting
+     * @dev The admin states how much of the vault's balance belongs to the project; the books can
+     *      never claim more than the vault holds. Investors' refundable amounts are rebuilt from the
+     *      investment records in the project's payment token. Gas grows with the number of
+     *      investments of the project.
+     * @param _balance Stablecoins (in the project's payment token) held for the project
+     * @param _injected Part of _balance that came from injected off-chain funds
+     */
+    function migrateLegacyProject(uint256 _projectId, uint256 _balance, uint256 _injected)
+        external
+        onlyRole(ADMIN_ROLE)
+        validProject(_projectId)
+    {
+        if (projectAccountingEnabled[_projectId]) revert InvalidState();
+        Project storage project = projects[_projectId];
+        if (_injected > _balance) revert InvalidAmount();
+        if (_balance > 0 && project.paymentToken == address(0)) revert InvalidAddress();
+
+        projectAccountingEnabled[_projectId] = true;
+
+        uint256 onChainRaised;
+        Investment[] storage list = investments[_projectId];
+        for (uint256 i = 0; i < list.length; i++) {
+            Investment storage inv = list[i];
+            // claimRefund zeroed the contribution of investors already refunded
+            if (inv.paymentToken != project.paymentToken || inv.paymentToken == address(0)) continue;
+            if (inv.refunded || investorContribution[_projectId][inv.investor] == 0) continue;
+            investorOnChainContribution[_projectId][inv.investor] += inv.amount;
+            onChainRaised += inv.amount;
+        }
+        projectOnChainRaised[_projectId] = onChainRaised;
+        projectInjectedFunds[_projectId] = _injected;
+        if (_balance > 0) _credit(_projectId, _balance);
+
+        emit LegacyProjectMigrated(_projectId, _balance, onChainRaised);
+    }
+
+    // ============================================
+    // INTERNAL ACCOUNTING
+    // ============================================
+
+    /// @dev Fix the project's payment token on first use and reject any other token afterwards
+    function _usePaymentToken(uint256 _projectId, address _paymentToken) internal {
+        Project storage project = projects[_projectId];
+        if (project.paymentToken == address(0)) {
+            project.paymentToken = _paymentToken;
+            emit ProjectPaymentTokenSet(_projectId, _paymentToken);
+        } else if (project.paymentToken != _paymentToken) {
+            revert PaymentTokenMismatch();
+        }
+    }
+
+    function _credit(uint256 _projectId, uint256 _amount) internal {
+        address token = projects[_projectId].paymentToken;
+        projectBalance[_projectId] += _amount;
+        totalProjectBalances[token] += _amount;
+        if (totalProjectBalances[token] > IERC20(token).balanceOf(address(this))) revert InsufficientBalance();
+    }
+
+    function _debit(uint256 _projectId, uint256 _amount) internal {
+        if (_amount > projectBalance[_projectId]) revert InsufficientBalance();
+        projectBalance[_projectId] -= _amount;
+        totalProjectBalances[projects[_projectId].paymentToken] -= _amount;
+    }
+
+    function _cancel(uint256 _projectId) internal {
+        projects[_projectId].state = ProjectState.CANCELLED;
+        emit ProjectStateChanged(_projectId, ProjectState.CANCELLED);
+        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
+    }
+
+    /// @dev State recorded when the dispute blocked the project. Projects blocked before v2 have
+    ///      no record; they were blocked after completion in practice, as v1 assumed.
+    function _previousState(uint256 _projectId) internal view returns (ProjectState) {
+        uint8 recorded = _stateBeforeDispute[_projectId];
+        return recorded == 0 ? ProjectState.COMPLETED : ProjectState(recorded - 1);
     }
 
     // ============================================
@@ -921,40 +1017,37 @@ contract RWAEscrowVault is
 
     /**
      * @notice Inject USDC/USDT to convert off-chain recorded payments to on-chain
-     * @dev Decreases projectOffChainAmount until it reaches 0
+     * @dev Decreases projectOffChainAmount until it reaches 0. Only before completion: the platform
+     *      fee is taken on the project's balance at completion.
      * @param _projectId Project ID
      * @param _amount Amount to inject
-     * @param _paymentToken USDC or USDT address
+     * @param _paymentToken The project's payment token
      */
     function injectOffChainFunds(
         uint256 _projectId,
         uint256 _amount,
         address _paymentToken
-    ) external nonReentrant onlyRole(ADMIN_ROLE) validProject(_projectId) {
+    ) external nonReentrant onlyRole(ADMIN_ROLE) validProject(_projectId) accounted(_projectId) {
         if (_amount == 0) revert InvalidAmount();
         if (_paymentToken != address(usdc) && _paymentToken != address(usdt)) revert InvalidAddress();
-        
+
         Project storage project = projects[_projectId];
-        
-        // Can inject for active, funded, or completed projects
-        if (project.state == ProjectState.INACTIVE || 
-            project.state == ProjectState.CANCELLED ||
-            project.state == ProjectState.DISPUTED) revert InvalidState();
+
+        if (project.state != ProjectState.ACTIVE && project.state != ProjectState.FUNDED) revert InvalidState();
 
         // Cannot inject more than off-chain amount
         uint256 offChainRemaining = projectOffChainAmount[_projectId];
         if (_amount > offChainRemaining) revert InvalidAmount();
 
+        _usePaymentToken(_projectId, _paymentToken);
+
         // Transfer funds from admin to escrow
         IERC20(_paymentToken).safeTransferFrom(msg.sender, address(this), _amount);
+        _credit(_projectId, _amount);
+        projectInjectedFunds[_projectId] += _amount;
 
         // Decrease off-chain tracking
         projectOffChainAmount[_projectId] -= _amount;
-
-        // Set payment token if not set
-        if (project.paymentToken == address(0)) {
-            project.paymentToken = _paymentToken;
-        }
 
         emit OffChainFundsInjected(_projectId, _amount, projectOffChainAmount[_projectId], _paymentToken);
     }

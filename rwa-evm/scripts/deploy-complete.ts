@@ -1225,6 +1225,24 @@ async function main() {
       }
     }
 
+    // The EscrowVault itself pulls undistributed platform fees back when a dispute ends in refunds
+    if (state.platformFeeManager && state.escrowVault) {
+      log("42b. Granting DISPUTE_MANAGER_ROLE to EscrowVault on PlatformFeeManager...");
+      try {
+        const platformFeeManager = await ethers.getContractAt("PlatformFeeManager", state.platformFeeManager);
+        const tx4 = await platformFeeManager.grantDisputeManagerRole(state.escrowVault);
+        await tx4.wait();
+        logSuccess("DISPUTE_MANAGER_ROLE granted to EscrowVault on PlatformFeeManager");
+      } catch (e: unknown) {
+        const errorMessage = e instanceof Error ? e.message : String(e);
+        if (errorMessage.includes("already")) {
+          logSuccess("DISPUTE_MANAGER_ROLE already granted");
+        } else {
+          logWarning(`Could not grant DISPUTE_MANAGER_ROLE: ${errorMessage}`);
+        }
+      }
+    }
+
     state.crowdfundingRolesConfigured = true;
     saveCheckpoint(chainId, 12, 42, state);
   }

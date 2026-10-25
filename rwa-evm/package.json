@@ -5,13 +5,13 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "test:core": "hardhat test test/core/*.test.ts",
-    "test:registry": "hardhat test test/registry/*.test.ts",
-    "test:integration": "hardhat test test/integration/*.test.ts",
+    "test:core": "hardhat test test/core/KYCVerifier.test.ts test/core/RWASecurityToken.test.ts test/core/RWAEscrowVault.test.ts",
+    "test:tokenize": "hardhat test test/tokenize/RWATokenizationFactory.test.ts test/tokenize/RWATradeEscrow.test.ts",
+    "test:exchange": "hardhat test test/exchange/RWASecurityExchange.test.ts",
     "test:gas": "set REPORT_GAS=true && hardhat test",
     "test:coverage": "hardhat coverage",
-    "deploy:local": "hardhat run scripts/deploy.ts --network localhost",
-    "deploy:amoy": "hardhat run scripts/deploy.ts --network polygonAmoy",
+    "deploy:local": "hardhat run scripts/deploy-complete.ts --network localhost",
+    "deploy:amoy": "hardhat run scripts/deploy-complete.ts --network amoy",
     "node": "hardhat node",
     "clean": "hardhat clean"
   },

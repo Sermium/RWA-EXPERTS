@@ -56,13 +56,13 @@ Run from `rwa-evm/`:
 npm run compile                    # hardhat compile
 npm test                              # hardhat test (all)
 npm run test:core                # hardhat test test/core/*.test.ts
-npm run test:registry           # hardhat test test/registry/*.test.ts
-npm run test:integration      # hardhat test test/integration/*.test.ts
+npm run test:tokenize           # tokenization factory + trade escrow tests
+npm run test:exchange            # security exchange tests
 npm run test:coverage           # hardhat coverage
 npm run test:gas                    # gas reporter enabled
 npm run node                          # local hardhat node
-npm run deploy:local               # scripts/deploy.ts on localhost
-npm run deploy:amoy                # scripts/deploy.ts on Polygon Amoy
+npm run deploy:local               # scripts/deploy-complete.ts on localhost
+npm run deploy:amoy                # scripts/deploy-complete.ts on Polygon Amoy
 ```
 Run a single test file: `npx hardhat test test/core/SomeContract.test.ts`.
 

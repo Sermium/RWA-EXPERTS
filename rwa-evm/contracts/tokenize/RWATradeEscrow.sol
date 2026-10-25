@@ -96,6 +96,14 @@ contract RWATradeEscrow is
     uint256 public totalVolume;
     uint256 public totalFees;
 
+    // ============ v2 storage (appended) ============
+    // Escrow accounting, so emergencyWithdraw can only take what no trade is owed.
+    uint256 public escrowedTokens;          // security tokens deposited into open trades
+    uint256 public escrowedStable;          // stablecoins deposited into open trades
+    bool public escrowAccountingActive;     // set by initialize, or by initializeEscrowAccounting after an upgrade
+    uint256 public escrowTrackedFrom;       // trades with id >= this are tracked as they happen
+    uint256 public escrowLegacySynced;      // trades with id < this were added up by syncLegacyEscrow
+
     // ============ Events ============
 
     event TradeCreated(
@@ -183,6 +191,8 @@ contract RWATradeEscrow is
     error CountryRestricted();
     error KYCNotVerified();
     error InvalidKYCLevel();
+    error EscrowAccountingIncomplete();
+    error EscrowAccountingAlreadyActive();
 
     // ============ Modifiers ============
 
@@ -266,6 +276,7 @@ contract RWATradeEscrow is
         defaultMinKYCLevel = 1; // Basic KYC required by default
         kycCacheValidityDuration = 1 hours;
         kycEnforced = true;
+        escrowAccountingActive = true;
         
         // Add default restricted countries (OFAC)
         _restrictedCountries[408] = true; // North Korea
@@ -520,7 +531,7 @@ contract RWATradeEscrow is
 
         sellerTrades[msg.sender].push(tradeId);
 
-        securityToken.safeTransferFrom(msg.sender, address(this), _tokenAmount);
+        _depositTokens(tradeId, _tokenAmount);
 
         emit TradeCreated(tradeId, msg.sender, _tokenAmount, _pricePerToken, stableAmount, buyerMinLevel);
         emit SellerDeposited(tradeId, msg.sender, _tokenAmount);
@@ -565,7 +576,7 @@ contract RWATradeEscrow is
 
         sellerTrades[msg.sender].push(tradeId);
 
-        securityToken.safeTransferFrom(msg.sender, address(this), _tokenAmount);
+        _depositTokens(tradeId, _tokenAmount);
 
         emit TradeCreated(tradeId, msg.sender, _tokenAmount, _pricePerToken, stableAmount, buyerMinLevel);
         emit SellerDeposited(tradeId, msg.sender, _tokenAmount);
@@ -648,7 +659,7 @@ contract RWATradeEscrow is
             trade.status = TradeStatus.SELLER_DEPOSITED;
         }
 
-        securityToken.safeTransferFrom(msg.sender, address(this), trade.tokenAmount);
+        _depositTokens(_tradeId, trade.tokenAmount);
 
         emit SellerDeposited(_tradeId, msg.sender, trade.tokenAmount);
 
@@ -676,7 +687,7 @@ contract RWATradeEscrow is
         trade.buyerDeposited = true;
         trade.status = TradeStatus.BUYER_DEPOSITED;
 
-        stablecoin.safeTransferFrom(msg.sender, address(this), trade.stableAmount);
+        _depositStable(_tradeId, trade.stableAmount);
 
         emit BuyerDeposited(_tradeId, msg.sender, trade.stableAmount);
 
@@ -710,7 +721,7 @@ contract RWATradeEscrow is
         
         buyerTrades[msg.sender].push(_tradeId);
 
-        stablecoin.safeTransferFrom(msg.sender, address(this), trade.stableAmount);
+        _depositStable(_tradeId, trade.stableAmount);
 
         emit BuyerAssigned(_tradeId, msg.sender);
         emit BuyerDeposited(_tradeId, msg.sender, trade.stableAmount);
@@ -745,7 +756,7 @@ contract RWATradeEscrow is
         
         buyerTrades[msg.sender].push(_tradeId);
 
-        stablecoin.safeTransferFrom(msg.sender, address(this), trade.stableAmount);
+        _depositStable(_tradeId, trade.stableAmount);
 
         emit BuyerAssigned(_tradeId, msg.sender);
         emit BuyerDeposited(_tradeId, msg.sender, trade.stableAmount);
@@ -772,14 +783,14 @@ contract RWATradeEscrow is
         trade.status = TradeStatus.COMPLETED;
 
         // Transfer tokens to buyer
-        securityToken.safeTransfer(trade.buyer, trade.tokenAmount);
+        _payTokens(_tradeId, trade.buyer, trade.tokenAmount);
 
         // Transfer stablecoin to seller (minus fee)
-        stablecoin.safeTransfer(trade.seller, sellerReceives);
+        _payStable(_tradeId, trade.seller, sellerReceives);
 
         // Transfer fee to platform
         if (platformFee > 0) {
-            stablecoin.safeTransfer(platformFeeRecipient, platformFee);
+            _payStable(_tradeId, platformFeeRecipient, platformFee);
         }
 
         // Update stats
@@ -810,17 +821,19 @@ contract RWATradeEscrow is
     {
         Trade storage trade = trades[_tradeId];
         
-        if (trade.status == TradeStatus.COMPLETED || trade.status == TradeStatus.CANCELLED) {
+        if (trade.status == TradeStatus.COMPLETED || 
+            trade.status == TradeStatus.CANCELLED || 
+            trade.status == TradeStatus.EXPIRED) {
             revert InvalidTradeStatus();
         }
 
         // Refund deposited amounts
         if (trade.sellerDeposited) {
-            securityToken.safeTransfer(trade.seller, trade.tokenAmount);
+            _payTokens(_tradeId, trade.seller, trade.tokenAmount);
         }
         
         if (trade.buyerDeposited) {
-            stablecoin.safeTransfer(trade.buyer, trade.stableAmount);
+            _payStable(_tradeId, trade.buyer, trade.stableAmount);
         }
 
         trade.status = TradeStatus.CANCELLED;
@@ -844,11 +857,11 @@ contract RWATradeEscrow is
 
         // Refund deposited amounts
         if (trade.sellerDeposited) {
-            securityToken.safeTransfer(trade.seller, trade.tokenAmount);
+            _payTokens(_tradeId, trade.seller, trade.tokenAmount);
         }
         
         if (trade.buyerDeposited) {
-            stablecoin.safeTransfer(trade.buyer, trade.stableAmount);
+            _payStable(_tradeId, trade.buyer, trade.stableAmount);
         }
 
         trade.status = TradeStatus.EXPIRED;
@@ -870,7 +883,9 @@ contract RWATradeEscrow is
     {
         Trade storage trade = trades[_tradeId];
         
-        if (trade.status == TradeStatus.COMPLETED || trade.status == TradeStatus.CANCELLED) {
+        if (trade.status == TradeStatus.COMPLETED || 
+            trade.status == TradeStatus.CANCELLED || 
+            trade.status == TradeStatus.EXPIRED) {
             revert InvalidTradeStatus();
         }
 
@@ -897,22 +912,22 @@ contract RWATradeEscrow is
         if (_sellerWins) {
             // Return tokens to seller, stables to buyer
             if (trade.sellerDeposited) {
-                securityToken.safeTransfer(trade.seller, trade.tokenAmount);
+                _payTokens(_tradeId, trade.seller, trade.tokenAmount);
             }
             if (trade.buyerDeposited) {
-                stablecoin.safeTransfer(trade.buyer, trade.stableAmount);
+                _payStable(_tradeId, trade.buyer, trade.stableAmount);
             }
         } else {
             // Complete trade in buyer's favor
             if (trade.sellerDeposited && trade.buyer != address(0)) {
-                securityToken.safeTransfer(trade.buyer, trade.tokenAmount);
+                _payTokens(_tradeId, trade.buyer, trade.tokenAmount);
             }
             if (trade.buyerDeposited) {
                 uint256 platformFee = (trade.stableAmount * platformFeeBps) / 10000;
                 uint256 sellerReceives = trade.stableAmount - platformFee;
-                stablecoin.safeTransfer(trade.seller, sellerReceives);
+                _payStable(_tradeId, trade.seller, sellerReceives);
                 if (platformFee > 0) {
-                    stablecoin.safeTransfer(platformFeeRecipient, platformFee);
+                    _payStable(_tradeId, platformFeeRecipient, platformFee);
                 }
             }
         }
@@ -994,8 +1009,82 @@ contract RWATradeEscrow is
         _unpause();
     }
 
+    /**
+     * @notice Withdraw tokens the escrow holds beyond what open trades are owed
+     *         (stray transfers, fees left behind). Deposits of open trades cannot be taken.
+     */
     function emergencyWithdraw(address _token, uint256 _amount) external onlyOwner {
+        if (_token == address(securityToken) || _token == address(stablecoin)) {
+            if (!escrowAccountingActive || escrowLegacySynced < escrowTrackedFrom) revert EscrowAccountingIncomplete();
+            uint256 owed = _token == address(securityToken) ? escrowedTokens : escrowedStable;
+            if (IERC20(_token).balanceOf(address(this)) < owed + _amount) revert InsufficientBalance();
+        }
         IERC20(_token).safeTransfer(owner(), _amount);
+    }
+
+    /// @notice Amount of `_token` that emergencyWithdraw could take right now
+    function withdrawableBalance(address _token) external view returns (uint256) {
+        uint256 balance = IERC20(_token).balanceOf(address(this));
+        if (_token != address(securityToken) && _token != address(stablecoin)) return balance;
+        if (!escrowAccountingActive || escrowLegacySynced < escrowTrackedFrom) return 0;
+        uint256 owed = _token == address(securityToken) ? escrowedTokens : escrowedStable;
+        return balance > owed ? balance - owed : 0;
+    }
+
+    /**
+     * @notice Turn on escrow accounting on a proxy upgraded from v1. Trades created from now on are
+     *         tracked live; existing ones are added up by syncLegacyEscrow, and emergencyWithdraw
+     *         stays disabled for the escrowed tokens until that has covered all of them.
+     */
+    function initializeEscrowAccounting() external onlyOwner {
+        if (escrowAccountingActive) revert EscrowAccountingAlreadyActive();
+        escrowAccountingActive = true;
+        escrowTrackedFrom = tradeCounter;
+        escrowLegacySynced = 0;
+    }
+
+    /// @notice Add up the open deposits of up to `_maxTrades` pre-upgrade trades. Anyone may call.
+    function syncLegacyEscrow(uint256 _maxTrades) external {
+        if (!escrowAccountingActive) revert EscrowAccountingIncomplete();
+        uint256 id = escrowLegacySynced;
+        uint256 end = escrowTrackedFrom;
+        for (uint256 n = 0; id < end && n < _maxTrades; n++) {
+            Trade storage trade = trades[id];
+            if (trade.status != TradeStatus.COMPLETED &&
+                trade.status != TradeStatus.CANCELLED &&
+                trade.status != TradeStatus.EXPIRED) {
+                if (trade.sellerDeposited) escrowedTokens += trade.tokenAmount;
+                if (trade.buyerDeposited) escrowedStable += trade.stableAmount;
+            }
+            id++;
+        }
+        escrowLegacySynced = id;
+    }
+
+    // ============ Escrow Accounting ============
+
+    function _escrowTracked(uint256 _tradeId) internal view returns (bool) {
+        return escrowAccountingActive && (_tradeId >= escrowTrackedFrom || _tradeId < escrowLegacySynced);
+    }
+
+    function _depositTokens(uint256 _tradeId, uint256 _amount) internal {
+        securityToken.safeTransferFrom(msg.sender, address(this), _amount);
+        if (_escrowTracked(_tradeId)) escrowedTokens += _amount;
+    }
+
+    function _depositStable(uint256 _tradeId, uint256 _amount) internal {
+        stablecoin.safeTransferFrom(msg.sender, address(this), _amount);
+        if (_escrowTracked(_tradeId)) escrowedStable += _amount;
+    }
+
+    function _payTokens(uint256 _tradeId, address _to, uint256 _amount) internal {
+        if (_escrowTracked(_tradeId)) escrowedTokens = escrowedTokens > _amount ? escrowedTokens - _amount : 0;
+        securityToken.safeTransfer(_to, _amount);
+    }
+
+    function _payStable(uint256 _tradeId, address _to, uint256 _amount) internal {
+        if (_escrowTracked(_tradeId)) escrowedStable = escrowedStable > _amount ? escrowedStable - _amount : 0;
+        stablecoin.safeTransfer(_to, _amount);
     }
 
     // ============ View Functions ============
