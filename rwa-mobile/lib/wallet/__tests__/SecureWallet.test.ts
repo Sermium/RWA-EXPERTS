@@ -4,15 +4,31 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createHash, randomBytes as nodeRandomBytes } from 'node:crypto';
 
 const store = vi.hoisted(() => new Map<string, string>());
+// Options each item was written with, and a switch simulating the user's answer to the OS prompt.
+const storeOptions = vi.hoisted(() => new Map<string, Record<string, unknown>>());
+const biometricPrompt = vi.hoisted(() => ({ approve: true, prompts: 0 }));
 
 vi.mock('expo-secure-store', () => ({
   WHEN_UNLOCKED_THIS_DEVICE_ONLY: 6,
-  getItemAsync: vi.fn(async (key: string) => (store.has(key) ? store.get(key)! : null)),
-  setItemAsync: vi.fn(async (key: string, value: string) => {
+  WHEN_PASSCODE_SET_THIS_DEVICE_ONLY: 7,
+  canUseBiometricAuthentication: () => true,
+  getItemAsync: vi.fn(async (key: string, options: Record<string, unknown> = {}) => {
+    if (!store.has(key)) return null;
+    if (storeOptions.get(key)?.requireAuthentication) {
+      // Like the real Keychain/Keystore: protected items are only released through the prompt.
+      if (!options.requireAuthentication) throw new Error('item requires authentication');
+      biometricPrompt.prompts++;
+      if (!biometricPrompt.approve) throw new Error('User canceled the authentication');
+    }
+    return store.get(key)!;
+  }),
+  setItemAsync: vi.fn(async (key: string, value: string, options: Record<string, unknown> = {}) => {
     store.set(key, value);
+    storeOptions.set(key, options);
   }),
   deleteItemAsync: vi.fn(async (key: string) => {
     store.delete(key);
+    storeOptions.delete(key);
   }),
 }));
 
@@ -27,7 +43,14 @@ vi.mock('expo-crypto', async () => {
   };
 });
 
-vi.mock('expo-local-authentication', () => ({}));
+vi.mock('expo-local-authentication', () => ({
+  hasHardwareAsync: vi.fn(async () => true),
+  isEnrolledAsync: vi.fn(async () => true),
+  // Biometric unlock must go through the protected keychain entry, not this bare yes/no prompt.
+  authenticateAsync: vi.fn(async () => {
+    throw new Error('authenticateAsync must not be used to unlock the vault');
+  }),
+}));
 
 // Keep ethers real, but stop JsonRpcProvider from making network calls.
 vi.mock('ethers', async (importOriginal) => {
@@ -102,6 +125,118 @@ function seedLegacyInstall(pin: string) {
 
 beforeEach(() => {
   store.clear();
+  storeOptions.clear();
+  biometricPrompt.approve = true;
+  biometricPrompt.prompts = 0;
+});
+
+const BIO_ENTRY = 'wallet_biometric_vault_key_v2';
+
+describe('SecureWallet biometric unlock', () => {
+  /** Create a wallet with a PIN, enable biometrics, then simulate an app restart (locked). */
+  async function setupWithBiometrics() {
+    let wallet = await freshWallet();
+    const created = await wallet.createWalletGroup(PIN, 'Main');
+    await wallet.setBiometricEnabled(true);
+    wallet = await freshWallet();
+    return { wallet, created };
+  }
+
+  it('stores the vault key only behind the OS biometric prompt, on this device', async () => {
+    await setupWithBiometrics();
+    expect(store.has(BIO_ENTRY)).toBe(true);
+    expect(storeOptions.get(BIO_ENTRY)).toMatchObject({
+      requireAuthentication: true,
+      keychainAccessible: 7, // WHEN_PASSCODE_SET_THIS_DEVICE_ONLY
+    });
+    expect(store.get('biometric_enabled')).toBe('true');
+  }, 30_000);
+
+  it('loads the key, so wallets can be created and switched afterwards', async () => {
+    const { wallet, created } = await setupWithBiometrics();
+    expect(wallet.isUnlocked()).toBe(false);
+
+    expect(await wallet.unlockWithBiometrics()).toBe(created.address);
+    expect(biometricPrompt.prompts).toBe(1);
+    expect(wallet.isUnlocked()).toBe(true);
+
+    // These used to fail with "Please unlock the app first" after a biometric unlock.
+    const second = await wallet.createNewWallet('Second');
+    expect(JSON.parse(groups()[1].encryptedSecret).v).toBe(2);
+    await wallet.setActiveWalletByAddress(created.address);
+    expect(await wallet.getStoredAddress()).toBe(created.address);
+    const derived = await wallet.deriveNewAccount(second.groupId, 'Account 2');
+    await wallet.setActiveWalletByAddress(derived.address);
+
+    // Everything written after a biometric unlock still opens with the PIN.
+    const again = await freshWallet();
+    expect(await again.unlockWallet(PIN)).toBe(derived.address);
+    expect(await again.exportMnemonic(PIN, second.groupId)).toBe(second.mnemonic);
+  }, 30_000);
+
+  it('stays locked when the user cancels the biometric prompt', async () => {
+    const { wallet } = await setupWithBiometrics();
+    biometricPrompt.approve = false;
+    await expect(wallet.unlockWithBiometrics()).rejects.toThrow(/canceled/);
+    expect(wallet.isUnlocked()).toBe(false);
+    // A cancel is not a reason to throw the entry away.
+    expect(store.has(BIO_ENTRY)).toBe(true);
+    expect(await wallet.isBiometricEnabled()).toBe(true);
+  }, 30_000);
+
+  it('disabling biometrics removes the stored key', async () => {
+    const { wallet } = await setupWithBiometrics();
+    await wallet.setBiometricEnabled(false);
+    expect(store.has(BIO_ENTRY)).toBe(false);
+    expect(await wallet.isBiometricEnabled()).toBe(false);
+    await expect(wallet.unlockWithBiometrics()).rejects.toThrow(/not enabled/);
+    expect(wallet.isUnlocked()).toBe(false);
+  }, 30_000);
+
+  it('cannot be enabled while the app is locked', async () => {
+    let wallet = await freshWallet();
+    await wallet.createWalletGroup(PIN, 'Main');
+    wallet = await freshWallet();
+    await expect(wallet.setBiometricEnabled(true)).rejects.toThrow(/Unlock with your PIN/);
+    expect(store.has(BIO_ENTRY)).toBe(false);
+  }, 30_000);
+
+  it('re-wraps the stored key when the PIN is set again', async () => {
+    let wallet = await freshWallet();
+    await wallet.createWalletGroup(PIN, 'Main');
+    await wallet.setBiometricEnabled(true);
+    const before = store.get(BIO_ENTRY);
+
+    await wallet.setPin('246800');
+    expect(store.get(BIO_ENTRY)).not.toBe(before);
+    expect(storeOptions.get(BIO_ENTRY)).toMatchObject({ requireAuthentication: true });
+
+    // The re-wrapped key matches the new PIN verifier and opens data written under the new PIN.
+    const after = await wallet.createNewWallet('After PIN change');
+    wallet = await freshWallet();
+    expect(await wallet.unlockWithBiometrics()).toBe(after.address);
+  }, 30_000);
+
+  it('rejects and removes a stale stored key instead of unlocking', async () => {
+    const { wallet } = await setupWithBiometrics();
+    // Replace the entry with a key that does not match the PIN verifier.
+    const entry = JSON.parse(store.get(BIO_ENTRY)!);
+    entry.keys[0].key = 'ab'.repeat(32);
+    store.set(BIO_ENTRY, JSON.stringify(entry));
+
+    await expect(wallet.unlockWithBiometrics()).rejects.toThrow(/out of date/);
+    expect(wallet.isUnlocked()).toBe(false);
+    expect(store.has(BIO_ENTRY)).toBe(false);
+    expect(await wallet.isBiometricEnabled()).toBe(false);
+  }, 30_000);
+
+  it('deleting all wallets removes the stored key', async () => {
+    let wallet = await freshWallet();
+    await wallet.createWalletGroup(PIN, 'Main');
+    await wallet.setBiometricEnabled(true);
+    await wallet.deleteAllWallets();
+    expect(store.has(BIO_ENTRY)).toBe(false);
+  }, 30_000);
 });
 
 describe('SecureWallet (v2 storage)', () => {

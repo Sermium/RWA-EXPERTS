@@ -6,6 +6,7 @@ import { ethers } from 'ethers';
 import {
   VaultKey,
   WrongPinError,
+  checkKeyAgainstVerifier,
   constantTimeEqual,
   createPinVerifier,
   createVaultKey,
@@ -19,6 +20,8 @@ import {
   openPinVerifier,
   parseDeviceSecret,
   parseStoredSecret,
+  parseVaultKeys,
+  serializeVaultKeys,
   wipe,
 } from './vaultCrypto';
 
@@ -31,11 +34,21 @@ const SALT_KEY = 'wallet_salt'; // legacy (v1): salt for the PIN hash / XOR key,
 const PIN_VERIFIER_KEY = 'wallet_pin_verifier_v2'; // v2: AEAD blob that proves the PIN
 const DEVICE_SECRET_KEY = 'wallet_device_secret_v2'; // v2: random secret mixed into the KDF
 const BIOMETRIC_ENABLED_KEY = 'biometric_enabled';
+const BIOMETRIC_VAULT_KEY = 'wallet_biometric_vault_key_v2'; // v2: vault key, released only by biometrics
 const NETWORK_KEY = 'selected_network';
 
 // The device secret never leaves this device (not synced via iCloud Keychain or restored from backups).
 const DEVICE_SECRET_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
   keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+};
+
+// The biometric copy of the vault key can only be read after the OS biometric prompt succeeds
+// (iOS: Keychain access control bound to the current biometric set; Android: Keystore key that
+// requires user authentication). It never leaves the device and is gone if the passcode is removed.
+const BIOMETRIC_KEY_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
+  requireAuthentication: true,
+  keychainAccessible: SecureStore.WHEN_PASSCODE_SET_THIS_DEVICE_ONLY,
+  authenticationPrompt: 'Unlock your wallet',
 };
 
 const randomBytes = (length: number): Uint8Array => Crypto.getRandomBytes(length);
@@ -295,8 +308,73 @@ class SecureWalletService {
     return enabled === 'true';
   }
 
+  /**
+   * Enabling stores the current vault key behind the OS biometric prompt (requires the app to be
+   * unlocked with the PIN). Disabling deletes that entry.
+   */
   async setBiometricEnabled(enabled: boolean): Promise<void> {
-    await SecureStore.setItemAsync(BIOMETRIC_ENABLED_KEY, enabled ? 'true' : 'false');
+    if (!enabled) {
+      await this.disableBiometrics();
+      return;
+    }
+    if (!this.sessionKey) throw new Error('Unlock with your PIN before enabling biometric unlock');
+    if (!(await this.checkBiometricSupport()) || !SecureStore.canUseBiometricAuthentication()) {
+      throw new Error('Biometric authentication is not available on this device');
+    }
+    await this.storeBiometricKey();
+    await SecureStore.setItemAsync(BIOMETRIC_ENABLED_KEY, 'true');
+  }
+
+  private async storeBiometricKey(): Promise<void> {
+    const sessionKey = this.requireSessionKey();
+    const others = [...this.vaultKeys.values()].filter((k) => k.saltHex !== sessionKey.saltHex);
+    await SecureStore.setItemAsync(
+      BIOMETRIC_VAULT_KEY,
+      serializeVaultKeys([sessionKey, ...others]),
+      BIOMETRIC_KEY_STORE_OPTIONS
+    );
+  }
+
+  private async disableBiometrics(): Promise<void> {
+    await SecureStore.deleteItemAsync(BIOMETRIC_VAULT_KEY, BIOMETRIC_KEY_STORE_OPTIONS);
+    await SecureStore.setItemAsync(BIOMETRIC_ENABLED_KEY, 'false');
+  }
+
+  /**
+   * Biometric unlock: the OS prompt releases the stored vault key, which is checked against the PIN
+   * verifier and then used exactly like a key derived from the PIN. Throws if the user cancels, if
+   * biometrics are not set up, or if the stored key is stale (in which case it is removed and the
+   * user has to use the PIN).
+   */
+  async unlockWithBiometrics(): Promise<string> {
+    if (!(await this.isBiometricEnabled())) throw new Error('Biometric unlock is not enabled');
+
+    // Shows the biometric prompt; throws if the user cancels or authentication fails.
+    const stored = await SecureStore.getItemAsync(BIOMETRIC_VAULT_KEY, BIOMETRIC_KEY_STORE_OPTIONS);
+    if (!stored) {
+      await this.disableBiometrics();
+      throw new Error('Biometric unlock is no longer set up. Unlock with your PIN.');
+    }
+
+    const verifier = await SecureStore.getItemAsync(PIN_VERIFIER_KEY);
+    let keys: VaultKey[];
+    try {
+      if (!verifier) throw new WrongPinError('No PIN verifier');
+      keys = parseVaultKeys(stored);
+      checkKeyAgainstVerifier(verifier, keys[0]);
+    } catch (e) {
+      await this.disableBiometrics();
+      throw new Error('Biometric unlock is out of date. Unlock with your PIN and enable it again.');
+    }
+
+    this.setSessionKey(keys[0]);
+    for (const k of keys.slice(1)) this.vaultKeys.set(k.saltHex, k);
+    try {
+      return await this.openActiveWallet();
+    } catch (e) {
+      this.lockWallet();
+      throw e;
+    }
   }
 
   async authenticateWithBiometrics(): Promise<boolean> {
@@ -467,6 +545,18 @@ class SecureWalletService {
     await SecureStore.setItemAsync(PIN_VERIFIER_KEY, createPinVerifier(vaultKey, randomBytes));
     await SecureStore.deleteItemAsync(PIN_HASH_KEY);
     this.setSessionKey(vaultKey);
+
+    // Any biometric copy holds the old key: re-wrap it with the new one, or remove it.
+    if (await this.isBiometricEnabled()) {
+      try {
+        await this.storeBiometricKey();
+      } catch (e) {
+        console.warn('Could not re-wrap the biometric key after a PIN change; biometrics disabled', e);
+        await this.disableBiometrics();
+      }
+    } else {
+      await SecureStore.deleteItemAsync(BIOMETRIC_VAULT_KEY, BIOMETRIC_KEY_STORE_OPTIONS);
+    }
   }
 
   /** Verify the PIN if one exists, otherwise set it. Throws 'Invalid PIN' on a wrong PIN. */
@@ -904,7 +994,11 @@ class SecureWalletService {
   async unlockWallet(pin: string): Promise<string> {
     // Verifies the PIN and caches the vault key for PIN-less switching
     if (!(await this.authenticate(pin))) throw new Error('Invalid PIN');
+    return this.openActiveWallet();
+  }
 
+  /** Decrypt and load the active wallet. Requires the vault key to be cached already. */
+  private async openActiveWallet(): Promise<string> {
     await this.loadWalletGroups();
 
     if (this.walletGroups.length === 0) throw new Error('No wallet found');
@@ -1100,6 +1194,7 @@ class SecureWalletService {
     await SecureStore.deleteItemAsync(PIN_VERIFIER_KEY);
     await SecureStore.deleteItemAsync(DEVICE_SECRET_KEY, DEVICE_SECRET_STORE_OPTIONS);
     await SecureStore.deleteItemAsync(BIOMETRIC_ENABLED_KEY);
+    await SecureStore.deleteItemAsync(BIOMETRIC_VAULT_KEY, BIOMETRIC_KEY_STORE_OPTIONS);
 
     this.walletGroups = [];
     this.activeGroupId = null;

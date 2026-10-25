@@ -275,6 +275,48 @@ export async function openPinVerifier(pin: string, deviceSecret: Uint8Array, ver
   return vaultKey;
 }
 
+/**
+ * Check an already-derived key (e.g. one released by biometrics) against the PIN verifier.
+ * Throws WrongPinError if the key no longer opens it (for example after the PIN was reset).
+ */
+export function checkKeyAgainstVerifier(verifier: string, vaultKey: VaultKey): void {
+  const blob = parseV2(verifier);
+  if (blob.salt.toLowerCase() !== vaultKey.saltHex.toLowerCase()) throw new WrongPinError('Stale vault key');
+  if (decryptV2(blob, vaultKey) !== PIN_VERIFIER_PLAINTEXT) throw new WrongPinError('Stale vault key');
+}
+
+// ==================== KEY EXPORT (for the biometric-protected keychain entry) ====================
+//
+// The derived vault keys can be saved so that biometrics can release them instead of the PIN.
+// The caller must store this string only behind OS user authentication (expo-secure-store with
+// requireAuthentication + a this-device-only accessibility class); it is the key itself.
+
+export function serializeVaultKeys(keys: VaultKey[]): string {
+  if (keys.length === 0) throw new InvalidVaultDataError('No vault keys to serialize');
+  return JSON.stringify({
+    v: 2,
+    keys: keys.map((k) => ({ salt: k.saltHex, kdf: k.kdf, key: bytesToHex(k.key) })),
+  });
+}
+
+/** Inverse of serializeVaultKeys. The first key is the session key. */
+export function parseVaultKeys(serialized: string): VaultKey[] {
+  let parsed: any;
+  try {
+    parsed = JSON.parse(serialized);
+  } catch {
+    throw new InvalidVaultDataError('Stored vault keys are not valid JSON');
+  }
+  if (!parsed || parsed.v !== 2 || !Array.isArray(parsed.keys) || parsed.keys.length === 0) {
+    throw new InvalidVaultDataError('Unsupported stored vault keys');
+  }
+  return parsed.keys.map((k: any) => {
+    assertKdfParams(k?.kdf);
+    if (!isHex(k.salt, SALT_BYTES) || !isHex(k.key, 32)) throw new InvalidVaultDataError('Invalid stored vault key');
+    return { key: hexToBytes(k.key), salt: hexToBytes(k.salt), saltHex: k.salt.toLowerCase(), kdf: { ...k.kdf } };
+  });
+}
+
 // ==================== LEGACY V1 (read-only, for migration) ====================
 
 function sha256Hex(input: string): string {

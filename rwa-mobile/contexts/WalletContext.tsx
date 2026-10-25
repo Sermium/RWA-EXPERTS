@@ -354,13 +354,21 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   );
 
   const unlockAppWithBiometrics = useCallback(async () => {
-    const success = await secureWallet.authenticateWithBiometrics();
-    if (success) {
+    try {
+      // The OS biometric prompt releases the stored vault key; this unlocks exactly like a PIN.
+      const addr = await secureWallet.unlockWithBiometrics();
+      setAddress(addr);
       setIsAppUnlocked(true);
       await refreshWallets();
+      await refreshBalance();
+      return true;
+    } catch (error) {
+      console.warn('Biometric unlock failed:', error);
+      // The entry may have been removed because it was stale; keep the toggle in sync.
+      setBiometricEnabledState(await secureWallet.isBiometricEnabled());
+      return false;
     }
-    return success;
-  }, [refreshWallets]);
+  }, [refreshWallets, refreshBalance]);
 
   const lockApp = useCallback(() => {
     secureWallet.lockWallet();
