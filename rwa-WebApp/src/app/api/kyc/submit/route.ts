@@ -212,11 +212,11 @@ export async function POST(request: NextRequest) {
           status: newStatus,
           documents: mergedDocuments,
           verification_score: null,
-          // Cleared: the on-chain registration for the new level happens
-          // after approval, and confirm-payment records it here.
-          tx_hash: null,
+          // tx_hash and approved_at are kept: the level already held stays
+          // approved and registered while the upgrade is reviewed. Approving
+          // the upgrade clears tx_hash (admin/kyc/approve), so the applicant
+          // then registers the new level on chain.
           updated_at: new Date().toISOString(),
-          approved_at: null,
         })
         .eq("id", existingUser.id);
 

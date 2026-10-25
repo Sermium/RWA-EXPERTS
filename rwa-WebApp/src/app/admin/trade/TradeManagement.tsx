@@ -65,7 +65,8 @@ interface TradeDeal {
   totalValue: number;
   currency: string;
   incoterm: string;
-  riskScore: number;
+  /** Null until something has scored the deal. */
+  riskScore: number | null;
   flagged: boolean;
   flagReason?: string;
   createdAt: Date;
@@ -185,12 +186,14 @@ function DealRow({
   const sellerKycInfo = KYC_LEVEL_INFO[deal.sellerKycLevel];
 
   const getRiskColor = () => {
+    if (deal.riskScore == null) return 'text-ink-faint';
     if (deal.riskScore >= 80) return 'text-danger';
     if (deal.riskScore >= 50) return 'text-warning';
     return 'text-success';
   };
 
   const getRiskBgColor = () => {
+    if (deal.riskScore == null) return 'bg-transparent';
     if (deal.riskScore >= 80) return 'bg-danger';
     if (deal.riskScore >= 50) return 'bg-warning';
     return 'bg-success';
@@ -250,11 +253,11 @@ function DealRow({
           <div className="w-16 h-2 bg-surface-overlay rounded-full overflow-hidden mr-2">
             <div 
               className={`h-full ${getRiskBgColor()}`}
-              style={{ width: `${deal.riskScore}%` }}
+              style={{ width: `${deal.riskScore ?? 0}%` }}
             />
           </div>
           <span className={`text-sm font-medium ${getRiskColor()}`}>
-            {deal.riskScore}
+            {deal.riskScore ?? 'n/a'}
           </span>
         </div>
       </td>
@@ -497,17 +500,19 @@ function DealDetailModal({
                   <div className="flex-1 h-3 bg-surface-overlay rounded-full overflow-hidden mr-3">
                     <div 
                       className={`h-full ${
+                        deal.riskScore == null ? 'bg-transparent' :
                         deal.riskScore >= 80 ? 'bg-danger' :
                         deal.riskScore >= 50 ? 'bg-warning' : 'bg-success'
                       }`}
-                      style={{ width: `${deal.riskScore}%` }}
+                      style={{ width: `${deal.riskScore ?? 0}%` }}
                     />
                   </div>
                   <span className={`text-lg font-bold ${
+                    deal.riskScore == null ? 'text-ink-faint' :
                     deal.riskScore >= 80 ? 'text-danger' :
                     deal.riskScore >= 50 ? 'text-warning' : 'text-success'
                   }`}>
-                    {deal.riskScore}
+                    {deal.riskScore ?? 'n/a'}
                   </span>
                 </div>
               </div>
@@ -623,7 +628,8 @@ export default function TradeManagement({ onRefresh }: TradeManagementProps) {
           totalValue: d.product_total_value,
           currency: d.product_currency,
           incoterm: d.incoterm,
-          riskScore: d.risk_score || Math.floor(Math.random() * 100),
+          // Was a random number when the deal had no score: admins saw invented risk.
+          riskScore: d.risk_score ?? null,
           flagged: d.flagged || false,
           flagReason: d.flag_reason,
           createdAt: new Date(d.created_at),
@@ -745,7 +751,7 @@ export default function TradeManagement({ onRefresh }: TradeManagementProps) {
         d.sellerCompany,
         d.totalValue,
         d.stage,
-        d.riskScore,
+        d.riskScore ?? '',
       ].join(',')),
     ].join('\n');
 

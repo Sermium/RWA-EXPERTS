@@ -55,11 +55,14 @@ export async function POST(request: NextRequest) {
     void providedCountryCode;
     const supabase = createClient(supabaseUrl, supabaseKey);
     const walletHash = keccak256(toHex(`${walletAddress.toLowerCase()}:${process.env.KYC_WALLET_HASH_SECRET}`));
+    // "pending" with a level already held is an upgrade under review: the
+    // level approved before it is still the applicant's.
     const { data: approvedApp } = await supabase
       .from("kyc_applications")
       .select("status, current_level, country_code")
       .eq("wallet_hash", walletHash)
-      .eq("status", "approved")
+      .in("status", ["approved", "pending"])
+      .gte("current_level", 1)
       .order("current_level", { ascending: false })
       .limit(1)
       .maybeSingle();
