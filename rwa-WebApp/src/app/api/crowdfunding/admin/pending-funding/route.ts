@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createClient } from '@supabase/supabase-js';
 import { createPublicClient, http } from 'viem';
 import { getChainById, type SupportedChainId } from '@/config/chains';
@@ -27,6 +28,9 @@ interface EscrowProject {
 }
 
 export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     // Get deployed and active projects
     const { data: applications, error: appError } = await supabase

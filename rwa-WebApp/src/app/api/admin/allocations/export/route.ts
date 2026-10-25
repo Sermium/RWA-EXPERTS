@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     const { searchParams } = new URL(request.url);

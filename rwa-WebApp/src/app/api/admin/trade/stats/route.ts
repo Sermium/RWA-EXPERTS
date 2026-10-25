@@ -1,16 +1,13 @@
 // src/app/api/admin/trade/stats/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
-import { isAdmin } from '@/lib/admin';
+import { validateAdminAccess } from '@/lib/admin';
 
 export async function GET(request: NextRequest) {
   try {
     const supabase = getSupabaseAdmin();
-    const walletAddress = request.headers.get('x-wallet-address');
-    
-    if (!walletAddress || !isAdmin(walletAddress)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await validateAdminAccess(request);
+    if (!auth.isValid) return auth.error;
 
     // Get total deals count
     const { count: total } = await supabase

@@ -1,4 +1,5 @@
 ﻿import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -8,6 +9,9 @@ const supabase = createClient(
 
 // GET - Get all posts for admin (including pending)
 export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
@@ -57,6 +61,9 @@ export async function GET(request: NextRequest) {
 
 // PUT - Approve or reject a post
 export async function PUT(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const body = await request.json();
     const { id, action, rejection_reason } = body;
@@ -108,6 +115,9 @@ export async function PUT(request: NextRequest) {
 
 // DELETE - Delete a post
 export async function DELETE(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');

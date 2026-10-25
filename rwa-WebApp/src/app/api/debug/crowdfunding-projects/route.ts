@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createClient } from '@supabase/supabase-js';
 import { createPublicClient, http } from 'viem';
 import { getChainById, getDeployedChainIds, type SupportedChainId } from '@/config/chains';
@@ -31,6 +32,9 @@ const supabase = createClient(
 );
 
 export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   const { searchParams } = new URL(request.url);
   const chainIdParam = searchParams.get('chainId');
   

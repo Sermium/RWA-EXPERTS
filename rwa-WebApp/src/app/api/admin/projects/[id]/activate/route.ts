@@ -1,5 +1,6 @@
 // src/app/api/admin/projects/[id]/activate/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createWalletClient, createPublicClient, http, formatUnits, type Chain } from 'viem';
 import { avalancheFuji, polygonAmoy, sepolia, avalanche, polygon, mainnet } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
@@ -159,6 +160,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   const startTime = Date.now();
   
   try {
@@ -357,6 +361,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const { id } = await params;
     const projectId = parseInt(id);
@@ -451,6 +458,9 @@ export async function GET(
 // ============================================
 
 export async function PUT(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   const startTime = Date.now();
   
   try {

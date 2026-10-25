@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { isAdmin } from "@/lib/admin";
+import { validateAdminAccess } from '@/lib/admin';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -21,15 +21,9 @@ const REJECTION_REASONS: Record<string, string> = {
 export async function POST(request: NextRequest) {
   try {
     // Auth check
-    const walletAddress = request.headers.get("x-wallet-address");
-    if (!walletAddress) {
-      return NextResponse.json({ error: "Unauthorized - No wallet address" }, { status: 401 });
-    }
-
-    const adminCheck = await isAdmin(walletAddress);
-    if (!adminCheck) {
-      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
-    }
+    const auth = await validateAdminAccess(request);
+    if (!auth.isValid) return auth.error;
+    const walletAddress = auth.walletAddress;
 
     // Parse body
     let body;

@@ -1,9 +1,13 @@
 // src/app/api/admin/trade/disputes/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 // GET - Fetch trade disputes with pagination and filters
 export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     
@@ -79,6 +83,9 @@ export async function GET(request: NextRequest) {
 
 // POST - Create a new dispute
 export async function POST(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     const body = await request.json();
@@ -127,6 +134,9 @@ export async function POST(request: NextRequest) {
 
 // PATCH - Update dispute status
 export async function PATCH(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     const body = await request.json();

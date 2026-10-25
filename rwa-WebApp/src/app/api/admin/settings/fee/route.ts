@@ -1,5 +1,6 @@
 // src/app/api/admin/settings/fee/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { 
   DEFAULT_PLATFORM_FEES, 
@@ -10,7 +11,10 @@ import {
   type ChainFees
 } from '@/config/deployments';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     
@@ -61,6 +65,9 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     const { type, chainId, fees } = await request.json();

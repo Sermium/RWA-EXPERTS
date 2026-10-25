@@ -1,5 +1,6 @@
 // src/app/api/admin/projects/[id]/cancel/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createPublicClient, createWalletClient, http, Chain, formatUnits } from 'viem';
 import { avalancheFuji, polygon, polygonAmoy, avalanche, mainnet, sepolia } from 'viem/chains';
 import { privateKeyToAccount } from 'viem/accounts';
@@ -156,6 +157,9 @@ export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     // Await params in Next.js 15+
     const { id } = await params;
@@ -343,6 +347,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const { id } = await params;
     const projectId = parseInt(id);
@@ -440,6 +447,9 @@ export async function GET(
 // ============================================================================
 
 export async function PUT(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const body = await request.json();
     // Refunds open whenever a project with an escrow is cancelled; there is no separate switch

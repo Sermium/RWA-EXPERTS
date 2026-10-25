@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 // GET - Fetch all allocations with filters
 export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     const { searchParams } = new URL(request.url);
@@ -101,6 +105,9 @@ export async function GET(request: NextRequest) {
 
 // PUT - Update allocation status (mark as distributed)
 export async function PUT(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     const body = await request.json();

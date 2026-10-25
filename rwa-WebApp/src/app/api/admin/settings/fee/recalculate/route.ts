@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { DEFAULT_PLATFORM_FEES, DEFAULT_CHAIN_FEES } from '@/lib/feesService';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
 
@@ -49,6 +53,9 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const body = await request.json();
     const { type, chainId, fees, platformFees } = body;

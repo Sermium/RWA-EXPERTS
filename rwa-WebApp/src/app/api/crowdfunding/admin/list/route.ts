@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -10,6 +11,9 @@ const supabase = createClient(
 const ADMIN_VISIBLE_STATUSES = ['pending_review', 'approved', 'rejected', 'deployed'];
 
 export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status') || 'pending_review';

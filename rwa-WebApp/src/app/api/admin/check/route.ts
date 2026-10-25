@@ -3,6 +3,9 @@ import { isAdmin, isSuperAdmin, getAdminRole } from '@/lib/admin';
 
 export async function GET(request: NextRequest) {
   try {
+    // A public lookup of the role a wallet holds, for showing or hiding admin
+    // UI. It grants nothing: admin routes take the caller from the signed
+    // admin session (validateAdminAccess), never from this header.
     const walletAddress = request.headers.get('x-wallet-address');
     
     if (!walletAddress) {
