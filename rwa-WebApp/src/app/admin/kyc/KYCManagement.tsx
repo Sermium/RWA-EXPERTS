@@ -260,11 +260,13 @@ async function fetchKYCApplications(
     reviewedBy: null,
     expiresAt: null,
     documents: app.documents || {},
-    verificationScore: app.verificationScore,
+    // What the applicant's browser reported about its own checks. Shown to
+    // the reviewer as that, never as a verified result.
+    verificationScore: app.documents?.clientReported?.verificationScore ?? app.verificationScore ?? undefined,
     rejectionReason: app.rejectionReason,
     notes: app.notes,
     linkedWallets: app.linkedWallets || [],
-    livenessVerification: null,
+    livenessVerification: app.documents?.clientReported?.livenessVerification ?? app.documents?.livenessVerification ?? null,
     isUpgrade: false,
     idValidation: null,
   }));
@@ -555,30 +557,23 @@ function ApplicationCard({
         </div>
       </div>
 
-      {application.verificationScore !== undefined && (
+      {application.verificationScore != null && (
         <div className="mb-3">
           <div className="flex items-center justify-between text-xs mb-1">
-            <span className="text-gray-500">Document Score</span>
-            <span className="text-white">{application.verificationScore}%</span>
+            <span className="text-gray-500" title="Computed in the applicant's browser and sent by it. The server has not checked it.">
+              Document score (reported by browser, unverified)
+            </span>
+            <span className="text-gray-300">{application.verificationScore}%</span>
           </div>
           <div className="h-2 bg-gray-700 rounded-full overflow-hidden">
-            <div
-              className={`h-full transition-all ${
-                application.verificationScore >= 80
-                  ? "bg-green-500"
-                  : application.verificationScore >= 50
-                  ? "bg-yellow-500"
-                  : "bg-red-500"
-              }`}
-              style={{ width: `${application.verificationScore}%` }}
-            />
+            <div className="h-full bg-gray-500" style={{ width: `${application.verificationScore}%` }} />
           </div>
         </div>
       )}
 
       {application.livenessVerification && (
         <div className="mb-3 flex items-center gap-2">
-          <span className="text-gray-500 text-xs">Liveness:</span>
+          <span className="text-gray-500 text-xs" title="Reported by the applicant's browser. The server has not checked it.">Liveness (reported by browser, unverified):</span>
           {application.livenessVerification.passed ? (
             <span className="text-green-400 text-xs">
               ✓ Passed ({application.livenessVerification.completedChallenges}/{application.livenessVerification.totalChallenges})

@@ -179,9 +179,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Common variables
-    const hasPaid = !!body.txHash;
-    const isBronze = requestedLevel === 1;
+    // What the applicant's browser says about its own checks -- the OCR
+    // confidence, the liveness result -- is kept for the reviewer and decides
+    // nothing. It is computed on the applicant's machine, so it is whatever
+    // the applicant chooses to send. Approval is a reviewer's decision, and
+    // the registration fee is paid afterwards, with the proof that approval
+    // produces (see generate-proof and confirm-payment).
+    const clientReported = {
+      verificationScore: verificationScore ?? null,
+      livenessVerification: livenessVerification ?? null,
+      note: "Reported by the applicant's browser. Not verified by the server.",
+    };
 
     // Handle UPGRADE flow
     if (isUpgrade) {
@@ -190,41 +198,25 @@ export async function POST(request: NextRequest) {
       const mergedDocuments = {
         ...(existingUser.documents || {}),
         ...(documents || {}),
+        clientReported,
       };
 
-      if (livenessVerification) {
-        (mergedDocuments as any).livenessVerification = livenessVerification;
-      }
-
-      // Bronze upgrade with payment can be auto-approved
-      const canAutoApproveUpgrade = settings?.auto_approval_enabled && isBronze && hasPaid && (verificationScore === undefined || verificationScore >= 80);
-
-      // Determine status
-      let newStatus: string;
-      let newCurrentLevel: number;
-      
-      if (canAutoApproveUpgrade) {
-        newStatus = "approved";
-        newCurrentLevel = requestedLevel;
-      } else if (hasPaid) {
-        newStatus = "pending"; // Paid but needs manual review (Silver/Gold/Diamond)
-        newCurrentLevel = existingUser.current_level;
-      } else {
-        newStatus = "pending_payment";
-        newCurrentLevel = existingUser.current_level;
-      }
+      // Every upgrade is reviewed. The level held so far stays until then.
+      const newStatus = "pending";
 
       const { error: updateError } = await supabase
         .from("kyc_applications")
         .update({
           requested_level: requestedLevel,
-          current_level: newCurrentLevel,
+          current_level: existingUser.current_level,
           status: newStatus,
           documents: mergedDocuments,
-          verification_score: verificationScore || existingUser.verification_score,
-          tx_hash: body.txHash || null,
+          verification_score: null,
+          // Cleared: the on-chain registration for the new level happens
+          // after approval, and confirm-payment records it here.
+          tx_hash: null,
           updated_at: new Date().toISOString(),
-          approved_at: newStatus === "approved" ? new Date().toISOString() : null,
+          approved_at: null,
         })
         .eq("id", existingUser.id);
 
@@ -241,13 +233,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: true,
         status: newStatus,
-        autoApproved: newStatus === "approved",
+        autoApproved: false,
         applicationId: existingUser.id,
-        message: newStatus === "approved" 
-          ? "Your upgrade has been approved!"
-          : newStatus === "pending"
-            ? "Your upgrade request has been submitted and is pending review."
-            : "Please complete payment to finalize your upgrade.",
+        message: "Your upgrade request has been submitted and is pending review.",
       });
     }
 
@@ -300,25 +288,14 @@ export async function POST(request: NextRequest) {
       dateOfBirth ? encryptField(dateOfBirth) : null,
     ]);
 
-    // Bronze with payment and good score can be auto-approved
-    const canAutoApprove = settings?.auto_approval_enabled && isBronze && hasPaid && (verificationScore === undefined || verificationScore >= 80);
-
-    // Determine status
-    let newStatus: string;
-    let newCurrentLevel: number;
-    
-    if (canAutoApprove) {
-      newStatus = "approved";
-      newCurrentLevel = requestedLevel;
-    } else if (hasPaid) {
-      newStatus = "pending"; // Paid but needs manual review (Silver/Gold/Diamond)
-      newCurrentLevel = 0;
-    } else {
-      newStatus = "pending_payment";
-      newCurrentLevel = 0;
-    }
-
-    console.log('[KYC Submit] New user status:', newStatus, 'canAutoApprove:', canAutoApprove);
+    // Auto-approval used to fire for Bronze on the browser's own score -- or
+    // on no score at all -- plus any string in `txHash`. Nothing the server
+    // has verified says who this applicant is, so every application waits
+    // for a reviewer. `kyc_settings.auto_approval_enabled` is ignored until
+    // there is a server-side check for it to rest on.
+    void settings?.auto_approval_enabled;
+    const newStatus = "pending";
+    const newCurrentLevel = 0;
 
     // Insert application
     const { data: application, error: insertError } = await supabase
@@ -334,12 +311,12 @@ export async function POST(request: NextRequest) {
         requested_level: requestedLevel,
         current_level: newCurrentLevel,
         status: newStatus,
-        verification_score: verificationScore,
-        documents,
-        tx_hash: body.txHash || null,
+        verification_score: null,
+        documents: { ...(documents || {}), clientReported },
+        tx_hash: null,
         submitted_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-        approved_at: newStatus === "approved" ? new Date().toISOString() : null,
+        approved_at: null,
       })
       .select()
       .single();
@@ -363,68 +340,12 @@ export async function POST(request: NextRequest) {
       { onConflict: "wallet_address" }
     );
 
-    // If auto-approved, also store proof for future use
-    if (canAutoApprove) {
-      const { signTypedData } = await import("viem/accounts");
-      const signerPrivateKey = process.env.VERIFIER_PRIVATE_KEY as `0x${string}`;
-      
-      const PROOF_VALIDITY_DAYS = parseInt(process.env.KYC_VALIDITY_DAYS || "365");
-      const expiry = Math.floor(Date.now() / 1000) + PROOF_VALIDITY_DAYS * 24 * 60 * 60;
-
-      const DOMAIN = {
-        name: "RWA KYC Verifier",
-        version: "1",
-        chainId,
-        verifyingContract: getAddress(deployment.contracts.KYCVerifier),
-      };
-      
-      const KYC_PROOF_TYPES = {
-        KYCProof: [
-          { name: "wallet", type: "address" },
-          { name: "level", type: "uint8" },
-          { name: "countryCode", type: "uint16" },
-          { name: "expiry", type: "uint256" },
-        ],
-      } as const;
-
-      const proofSignature = await signTypedData({
-        privateKey: signerPrivateKey,
-        domain: DOMAIN,
-        types: KYC_PROOF_TYPES,
-        primaryType: "KYCProof",
-        message: {
-          wallet: getAddress(walletAddress),
-          level: requestedLevel,
-          countryCode: countryCode!,
-          expiry: BigInt(expiry),
-        },
-      });
-
-      await supabase.from("kyc_proofs").upsert(
-        {
-          wallet_hash: walletHash,
-          wallet_address: walletAddress,
-          level: requestedLevel,
-          country_code: countryCode,
-          expiry,
-          signature: proofSignature,
-          application_id: application.id,
-          created_at: new Date().toISOString(),
-        },
-        { onConflict: "wallet_hash" }
-      );
-    }
-
     return NextResponse.json({
       success: true,
       status: newStatus,
-      autoApproved: newStatus === "approved",
+      autoApproved: false,
       applicationId: application.id,
-      message: newStatus === "approved"
-        ? "Your KYC has been approved!"
-        : newStatus === "pending"
-          ? "Your KYC application has been submitted and is pending review."
-          : "Please complete payment to activate your KYC.",
+      message: "Your KYC application has been submitted and is pending review. Once it is approved, you complete registration by paying the fee.",
     });
 
   } catch (error) {

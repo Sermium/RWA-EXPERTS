@@ -25,6 +25,8 @@ export interface KYCData {
   expiresAt: string | null;
   canInvest: boolean;
   canResubmit: boolean;
+  /** Approved, with the on-chain registration (and its fee) still to do. */
+  needsRegistration: boolean;
 }
 
 export interface TierInfo {
@@ -284,6 +286,7 @@ async function fetchKYCStatusGlobal(address: string, forceRefresh = false): Prom
         expiresAt: data.expiresAt || null,
         canInvest: data.canInvest ?? false,
         canResubmit: data.canResubmit ?? false,
+        needsRegistration: data.needsRegistration ?? false,
       };
 
       globalCache.kycStatus[address.toLowerCase()] = {
@@ -353,6 +356,7 @@ const defaultKYCData: KYCData = {
   expiresAt: null,
   canInvest: false,
   canResubmit: true,
+  needsRegistration: false,
 };
 
 const KYCContext = createContext<KYCContextValue | undefined>(undefined);
