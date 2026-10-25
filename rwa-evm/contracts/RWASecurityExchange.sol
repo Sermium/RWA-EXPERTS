@@ -10,9 +10,10 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./interfaces/IKYCVerifier.sol";
 
+/// @dev The freeze views RWASecurityToken exposes
 interface IRWASecurityToken {
-    function isLocked(address _account) external view returns (bool);
-    function frozen(address _account) external view returns (bool);
+    function isFrozen(address _account) external view returns (bool);
+    function getUnfrozenBalance(address _account) external view returns (uint256);
 }
 
 /**
@@ -120,6 +121,10 @@ contract RWASecurityExchange is
     bool public escrowAccountingActive;     // set by initialize, or by initializeEscrowAccounting after an upgrade
     uint256 public escrowTrackedFrom;       // orders with id >= this are tracked as they happen
     uint256 public escrowLegacySynced;      // orders with id < this were added up by syncLegacyEscrow
+    /// @notice Payment tokens still held for a buy order: its cost plus the fee reserve
+    mapping(uint256 => uint256) public buyOrderEscrow;
+    /// @dev buyOrderEscrow is set for buy orders created on v2; older ones hold price * remaining
+    mapping(uint256 => bool) private _buyEscrowRecorded;
 
     // ============ Events ============
     event TradingPairCreated(address indexed securityToken, address indexed paymentToken, bytes32 pairId, uint8 minKYCLevel);
@@ -374,21 +379,29 @@ contract RWASecurityExchange is
 
         // Check token restrictions
         IRWASecurityToken secToken = IRWASecurityToken(_securityToken);
-        if (secToken.frozen(msg.sender)) revert AccountFrozen();
+        if (secToken.isFrozen(msg.sender)) revert AccountFrozen();
 
         address depositToken;
         uint256 deposit;
         if (_side == OrderSide.Sell) {
-            if (secToken.isLocked(msg.sender)) revert TokensLocked();
+            if (secToken.getUnfrozenBalance(msg.sender) < _amount) revert TokensLocked();
             (depositToken, deposit) = (_securityToken, _amount);
         } else {
-            (depositToken, deposit) = (_paymentToken, (_price * _amount) / 1e18);
+            // The buyer pays the trade fee on top of the price, so it is escrowed up front at the
+            // higher of the two fee rates; whatever is not used is refunded on fill or cancel.
+            uint256 cost = (_price * _amount) / 1e18;
+            uint256 feeBps = makerFeeBps > takerFeeBps ? makerFeeBps : takerFeeBps;
+            (depositToken, deposit) = (_paymentToken, cost + (cost * feeBps) / 10000);
         }
         IERC20(depositToken).safeTransferFrom(msg.sender, address(this), deposit);
 
         _orderCounter++;
         orderId = _orderCounter;
         if (_escrowTracked(orderId)) escrowedBalance[depositToken] += deposit;
+        if (_side == OrderSide.Buy) {
+            buyOrderEscrow[orderId] = deposit;
+            _buyEscrowRecorded[orderId] = true;
+        }
 
         orders[orderId] = Order({
             id: orderId,
@@ -432,7 +445,8 @@ contract RWASecurityExchange is
 
         if (order.side == OrderSide.Buy) {
             _removeFromOrderBook(buyOrderBook[pairId], _orderId);
-            uint256 refund = (order.price * remainingAmount) / 1e18;
+            uint256 refund = _buyEscrowOf(order);
+            buyOrderEscrow[_orderId] = 0;
             _releaseEscrow(_orderId, order.paymentToken, refund);
             IERC20(order.paymentToken).safeTransfer(msg.sender, refund);
         } else {
@@ -498,13 +512,30 @@ contract RWASecurityExchange is
             sellerFee = temp;
         }
 
+        // Split the buy order's escrow: keep the share for the part still open, release the rest.
+        // The released part pays the seller and the buyer's fee; any excess goes back to the buyer.
+        uint256 escrowBefore = _buyEscrowOf(_buyOrder);
+        uint256 remainingBefore = _buyOrder.amount - _buyOrder.filled;
+        // Invariant: an open buy order holds at least price * remaining, so escrowBefore covers
+        // paymentAmount and what is kept still covers the rest of the order.
+        uint256 rest = remainingBefore - _amount;
+        uint256 keep = (escrowBefore * rest) / remainingBefore;
+        uint256 restCost = (_buyOrder.price * rest) / 1e18;
+        if (keep < restCost) keep = restCost;
+        if (keep > escrowBefore - paymentAmount) keep = escrowBefore - paymentAmount;
+        uint256 released = escrowBefore - keep;
+        // Fee rates raised after the order was placed cannot charge more than was escrowed
+        if (paymentAmount + buyerFee > released) buyerFee = released - paymentAmount;
+        uint256 buyerRefund = released - paymentAmount - buyerFee;
+        if (_buyEscrowRecorded[_buyOrder.id]) buyOrderEscrow[_buyOrder.id] = keep;
+
         _buyOrder.filled += _amount;
         _sellOrder.filled += _amount;
 
         // Everything below leaves the two orders' escrow: the tokens from the sell order, and the
-        // buyer's payment for this fill (to seller, refund and fees) from the buy order
+        // released part of the buy order's payment (to seller, fees and buyer refund)
         _releaseEscrow(_sellOrder.id, _sellOrder.securityToken, _amount);
-        _releaseEscrow(_buyOrder.id, _buyOrder.paymentToken, (_buyOrder.price * _amount) / 1e18);
+        _releaseEscrow(_buyOrder.id, _buyOrder.paymentToken, released);
 
         // Transfer tokens to buyer
         IERC20(_buyOrder.securityToken).safeTransfer(_buyOrder.trader, _amount);
@@ -513,8 +544,6 @@ contract RWASecurityExchange is
         IERC20(_buyOrder.paymentToken).safeTransfer(_sellOrder.trader, paymentAmount - sellerFee);
 
         // Refund excess payment to buyer
-        uint256 buyerPaid = (_buyOrder.price * _amount) / 1e18;
-        uint256 buyerRefund = buyerPaid - paymentAmount - buyerFee;
         if (buyerRefund > 0) {
             IERC20(_buyOrder.paymentToken).safeTransfer(_buyOrder.trader, buyerRefund);
         }
@@ -855,12 +884,18 @@ contract RWASecurityExchange is
                 if (order.side == OrderSide.Sell) {
                     escrowedBalance[order.securityToken] += remaining;
                 } else {
-                    escrowedBalance[order.paymentToken] += (order.price * remaining) / 1e18;
+                    escrowedBalance[order.paymentToken] += _buyEscrowOf(order);
                 }
             }
             id++;
         }
         escrowLegacySynced = id;
+    }
+
+    /// @dev Payment tokens a buy order still holds
+    function _buyEscrowOf(Order storage _order) internal view returns (uint256) {
+        if (_buyEscrowRecorded[_order.id]) return buyOrderEscrow[_order.id];
+        return (_order.price * (_order.amount - _order.filled)) / 1e18;
     }
 
     function _escrowTracked(uint256 _orderId) internal view returns (bool) {

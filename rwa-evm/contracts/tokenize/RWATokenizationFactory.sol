@@ -87,6 +87,10 @@ contract RWATokenizationFactory is
     bool public requireKYCForDeployment;
     uint8 public minKYCLevelForDeployment;
 
+    // ============ v2 storage (appended) ============
+    /// @notice Stablecoin that trade escrows settle in; required to deploy one
+    address public escrowStablecoin;
+
     event TokenDeployed(uint256 indexed deploymentId, address indexed owner, address securityToken, uint256 supply, DeploymentType deploymentType, uint8 minKYCLevel);
     event ProjectNFTDeployed(uint256 indexed deploymentId, address indexed owner, address projectNFT, DeploymentType deploymentType);
     event EscrowDeployed(uint256 indexed deploymentId, address indexed owner, address tradeEscrow);
@@ -95,6 +99,7 @@ contract RWATokenizationFactory is
     event DeployerApprovalUpdated(address indexed deployer, bool approved);
     event DeploymentDeactivated(uint256 indexed deploymentId);
     event KYCVerifierUpdated(address indexed oldVerifier, address indexed newVerifier);
+    event EscrowStablecoinUpdated(address indexed oldStablecoin, address indexed newStablecoin);
     event TokenReleasedToIssuer(uint256 indexed deploymentId, address indexed securityToken, address indexed issuer);
 
     error InvalidAddress();
@@ -276,7 +281,11 @@ contract RWATokenizationFactory is
     }
 
     function _deployTradeEscrow(address _securityToken) internal returns (address) {
-        return address(new ERC1967Proxy(implementations.tradeEscrow, abi.encodeWithSignature("initialize(address,address,address,address,uint256)", msg.sender, _securityToken, kycVerifier, platformFeeRecipient, escrowTransactionFeeBps)));
+        if (escrowStablecoin == address(0)) revert InvalidAddress();
+        return address(new ERC1967Proxy(implementations.tradeEscrow, abi.encodeWithSignature(
+            "initialize(address,address,address,address,address,uint256)",
+            msg.sender, _securityToken, escrowStablecoin, kycVerifier, platformFeeRecipient, escrowTransactionFeeBps
+        )));
     }
 
     /// @dev Mints the initial supply to the issuer, gives the issuer every token role and the
@@ -355,6 +364,7 @@ contract RWATokenizationFactory is
     function setKYCVerifier(address _v) external onlyOwner { if (_v == address(0)) revert InvalidAddress(); emit KYCVerifierUpdated(kycVerifier, _v); kycVerifier = _v; }
     function setEscrowTransactionFee(uint256 _feeBps) external onlyOwner { require(_feeBps <= 1000, "Max 10%"); escrowTransactionFeeBps = _feeBps; }
     function setPlatformFeeRecipient(address _r) external onlyOwner { if (_r == address(0)) revert InvalidAddress(); platformFeeRecipient = _r; }
+    function setEscrowStablecoin(address _s) external onlyOwner { if (_s == address(0)) revert InvalidAddress(); emit EscrowStablecoinUpdated(escrowStablecoin, _s); escrowStablecoin = _s; }
     function setRequireApproval(bool _r) external onlyOwner { requireApproval = _r; }
     function setDeployerApproval(address _d, bool _a) external onlyOwner { if (_d == address(0)) revert InvalidAddress(); approvedDeployers[_d] = _a; emit DeployerApprovalUpdated(_d, _a); }
     function deactivateDeployment(uint256 _id) external onlyOwner { if (deployments[_id].owner == address(0)) revert DeploymentNotFound(); deployments[_id].active = false; emit DeploymentDeactivated(_id); }

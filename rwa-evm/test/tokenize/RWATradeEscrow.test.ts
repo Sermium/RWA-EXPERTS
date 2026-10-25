@@ -103,6 +103,28 @@ describe("RWATradeEscrow", function () {
     });
   });
 
+  describe("disputed trades", function () {
+    async function disputedFixture() {
+      const f = await fixture();
+      await f.listWithDeposit(TOKENS(100));
+      await f.escrow.connect(f.seller).raiseDispute(0, "buyer never paid");
+      return f;
+    }
+
+    it("cannot be cancelled or expired by a participant", async function () {
+      const { escrow, seller } = await loadFixture(disputedFixture);
+      await expect(escrow.connect(seller).cancelTrade(0)).to.be.revertedWithCustomError(escrow, "InvalidTradeStatus");
+      await time.increase(25 * 3600);
+      await expect(escrow.expireTrade(0)).to.be.revertedWithCustomError(escrow, "InvalidTradeStatus");
+    });
+
+    it("are settled by the arbitrator", async function () {
+      const { escrow, sec, owner, seller } = await loadFixture(disputedFixture);
+      await expect(escrow.connect(owner).resolveDispute(0, true)).to.changeTokenBalance(sec, seller, TOKENS(100));
+      expect(await escrow.escrowedTokens()).to.equal(0n);
+    });
+  });
+
   describe("after an upgrade from v1", function () {
     async function upgradedFixture() {
       const f = await openTradesFixture();

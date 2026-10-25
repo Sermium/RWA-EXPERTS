@@ -109,6 +109,45 @@ describe("RWATokenizationFactory", function () {
       .to.be.revertedWithCustomError(factory, "DeployerNotApproved");
   });
 
+  describe("trade escrow", function () {
+    async function escrowReadyFixture() {
+      const f = await fixture();
+      const escrowImpl = await (await ethers.getContractFactory("RWATradeEscrow")).deploy();
+      const usdc = await (await ethers.getContractFactory("MockERC20")).deploy("USD Coin", "USDC", 6);
+      await f.factory.connect(f.owner).setTradeEscrowImplementation(await escrowImpl.getAddress());
+      return { ...f, usdc };
+    }
+
+    it("is not deployed until a settlement stablecoin is configured", async function () {
+      const { factory, issuer } = await loadFixture(escrowReadyFixture);
+      await expect(factory.connect(issuer).deployWithEscrow("Asset", "AST", SUPPLY, ""))
+        .to.be.revertedWithCustomError(factory, "InvalidAddress");
+    });
+
+    it("deployWithEscrow initialises the escrow for the issuer's token", async function () {
+      const { factory, owner, issuer, usdc } = await loadFixture(escrowReadyFixture);
+      await factory.connect(owner).setEscrowStablecoin(await usdc.getAddress());
+      await factory.connect(issuer).deployWithEscrow("Asset", "AST", SUPPLY, "ipfs://meta");
+      const d = await factory.getDeployment(0);
+      const escrow: any = await ethers.getContractAt("RWATradeEscrow", d.tradeEscrow);
+      expect(await escrow.owner()).to.equal(issuer.address);
+      expect(await escrow.securityToken()).to.equal(d.securityToken);
+      expect(await escrow.stablecoin()).to.equal(await usdc.getAddress());
+      expect(await escrow.platformFeeBps()).to.equal(await factory.escrowTransactionFeeBps());
+      expect(await escrow.kycEnforced()).to.equal(true);
+    });
+
+    it("addEscrow adds one to an existing deployment", async function () {
+      const { factory, owner, issuer, usdc } = await loadFixture(escrowReadyFixture);
+      await factory.connect(issuer).deployToken("Asset", "AST", SUPPLY, "");
+      await factory.connect(owner).setEscrowStablecoin(await usdc.getAddress());
+      await factory.connect(issuer).addEscrow(0);
+      const d = await factory.getDeployment(0);
+      const escrow: any = await ethers.getContractAt("RWATradeEscrow", d.tradeEscrow);
+      expect(await escrow.securityToken()).to.equal(d.securityToken);
+    });
+  });
+
   describe("releaseLegacyToken", function () {
     /** Put a deployment back in the state v1 of the factory left tokens in */
     async function legacyFixture() {

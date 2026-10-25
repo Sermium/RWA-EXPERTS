@@ -821,9 +821,11 @@ contract RWATradeEscrow is
     {
         Trade storage trade = trades[_tradeId];
         
+        // A disputed trade is settled by an arbitrator through resolveDispute only
         if (trade.status == TradeStatus.COMPLETED || 
             trade.status == TradeStatus.CANCELLED || 
-            trade.status == TradeStatus.EXPIRED) {
+            trade.status == TradeStatus.EXPIRED ||
+            trade.status == TradeStatus.DISPUTED) {
             revert InvalidTradeStatus();
         }
 
@@ -851,7 +853,8 @@ contract RWATradeEscrow is
         if (block.timestamp <= trade.expiresAt) revert InvalidTradeStatus();
         if (trade.status == TradeStatus.COMPLETED || 
             trade.status == TradeStatus.CANCELLED || 
-            trade.status == TradeStatus.EXPIRED) {
+            trade.status == TradeStatus.EXPIRED ||
+            trade.status == TradeStatus.DISPUTED) {
             revert InvalidTradeStatus();
         }
 

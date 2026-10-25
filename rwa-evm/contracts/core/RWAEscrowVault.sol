@@ -167,6 +167,8 @@ contract RWAEscrowVault is
     event DisputeRefundClaimed(uint256 indexed projectId, address indexed holder, uint256 amount);
     event InjectedFundsReclaimed(uint256 indexed projectId, address indexed to, uint256 amount);
     event LegacyProjectMigrated(uint256 indexed projectId, uint256 balance, uint256 onChainRaised);
+    event ProjectOwnershipTransferred(uint256 indexed projectId, address indexed previousOwner, address indexed newOwner);
+    event ProjectNFTUpdateFailed(uint256 indexed projectId, IRWAProjectNFT.ProjectStatus status);
 
     // Errors
     error InvalidProject();
@@ -340,6 +342,18 @@ contract RWAEscrowVault is
     }
 
     /**
+     * @notice Hand a project (completion rights, milestone payouts) to a new owner.
+     *         Used by RWALaunchpadFactory, which creates projects on behalf of their deployer.
+     */
+    function transferProjectOwnership(uint256 _projectId, address _newOwner) external validProject(_projectId) {
+        Project storage project = projects[_projectId];
+        if (msg.sender != project.projectOwner && !hasRole(ADMIN_ROLE, msg.sender)) revert NotAuthorized();
+        if (_newOwner == address(0)) revert InvalidAddress();
+        emit ProjectOwnershipTransferred(_projectId, project.projectOwner, _newOwner);
+        project.projectOwner = _newOwner;
+    }
+
+    /**
      * @notice Choose the stablecoin a project settles in, before it has received any.
      *         Without this call the first investment or injection fixes it.
      */
@@ -496,7 +510,7 @@ contract RWAEscrowVault is
         emit ProjectForceFunded(_projectId, project.totalRaised, project.fundingGoal, _reason);
         emit ProjectStateChanged(_projectId, ProjectState.FUNDED);
 
-        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.FUNDED);
+        _setNFTStatus(_projectId, IRWAProjectNFT.ProjectStatus.FUNDED);
     }
 
     function _markProjectFunded(uint256 _projectId) internal {
@@ -507,7 +521,7 @@ contract RWAEscrowVault is
         emit ProjectFunded(_projectId, project.totalRaised);
         emit ProjectStateChanged(_projectId, ProjectState.FUNDED);
 
-        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.FUNDED);
+        _setNFTStatus(_projectId, IRWAProjectNFT.ProjectStatus.FUNDED);
     }
 
     // ============================================
@@ -572,7 +586,7 @@ contract RWAEscrowVault is
         emit ProjectCompleted(_projectId, platformUSDT, platformTokens, liquidityWallet, treasuryWallet);
         emit ProjectStateChanged(_projectId, ProjectState.COMPLETED);
 
-        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.COMPLETED);
+        _setNFTStatus(_projectId, IRWAProjectNFT.ProjectStatus.COMPLETED);
     }
 
     // ============================================
@@ -956,10 +970,17 @@ contract RWAEscrowVault is
         totalProjectBalances[projects[_projectId].paymentToken] -= _amount;
     }
 
+    /// @dev The project NFT only mirrors the status; a missing role or NFT must not block funds
+    function _setNFTStatus(uint256 _projectId, IRWAProjectNFT.ProjectStatus _status) internal {
+        try projectNFT.updateProjectStatus(_projectId, _status) {} catch {
+            emit ProjectNFTUpdateFailed(_projectId, _status);
+        }
+    }
+
     function _cancel(uint256 _projectId) internal {
         projects[_projectId].state = ProjectState.CANCELLED;
         emit ProjectStateChanged(_projectId, ProjectState.CANCELLED);
-        projectNFT.updateProjectStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
+        _setNFTStatus(_projectId, IRWAProjectNFT.ProjectStatus.CANCELLED);
     }
 
     /// @dev State recorded when the dispute blocked the project. Projects blocked before v2 have
@@ -975,10 +996,6 @@ contract RWAEscrowVault is
 
     function getProject(uint256 _projectId) external view returns (Project memory) {
         return projects[_projectId];
-    }
-
-    function getInvestments(uint256 _projectId) external view returns (Investment[] memory) {
-        return investments[_projectId];
     }
 
     function getProjectInvestors(uint256 _projectId) external view returns (address[] memory) {
