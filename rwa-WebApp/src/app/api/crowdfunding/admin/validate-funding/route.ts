@@ -4,7 +4,7 @@ import { createPublicClient, createWalletClient, http, parseUnits } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
 import { getChainById, type SupportedChainId } from '@/config/chains';
 import { DEPLOYMENTS } from '@/config/deployments';
-import { RWAEscrowVaultABI, ERC20ABI, RWASecurityTokenABI } from '@/config/abis';
+import { RWAEscrowVaultABI, ERC20ABI, RWASecurityTokenABI, PlatformFeeManagerABI } from '@/config/abis';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -70,17 +70,23 @@ export async function POST(request: NextRequest) {
       transport: http(chainInfo.rpcUrl),
     });
 
-    // Get project data with proper typing
+    // Get project data (typed by the ABI)
     const projectData = await publicClient.readContract({
       address: escrowAddress,
       abi: RWAEscrowVaultABI,
       functionName: 'getProject',
       args: [BigInt(projectId)],
-    }) as EscrowProject;
+    });
 
     const totalRaisedOnChain = Number(projectData.totalRaised) / 1e6;
     const fundingGoal = Number(projectData.fundingGoal) / 1e6;
-    const platformFeeBps = Number(projectData.platformFeeBps);
+    const platformFeeBps = Number(await publicClient.readContract({
+      address: escrowAddress,
+      abi: RWAEscrowVaultABI,
+      functionName: 'PLATFORM_USDT_FEE_BPS',
+    }));
+    // A project settles in one stablecoin: the one it already holds, or USDC for a first deposit
+    const paymentToken = projectData.paymentToken !== ZERO_ADDRESS ? projectData.paymentToken : usdcAddress;
 
     // Get pending off-chain payments
     const { data: pendingPayments } = await supabase
@@ -108,12 +114,12 @@ export async function POST(request: NextRequest) {
     } = {};
 
     // Inject off-chain funds if any
-    if (totalOffchain > 0 && usdcAddress && usdcAddress !== ZERO_ADDRESS) {
+    if (totalOffchain > 0 && paymentToken && paymentToken !== ZERO_ADDRESS) {
       const amountToInject = parseUnits(totalOffchain.toFixed(6), 6);
 
-      // Approve USDC spending
+      // Approve the project's payment token
       const approveTx = await walletClient.writeContract({
-        address: usdcAddress,
+        address: paymentToken,
         abi: ERC20ABI,
         functionName: 'approve',
         args: [escrowAddress, amountToInject],
@@ -126,7 +132,7 @@ export async function POST(request: NextRequest) {
         address: escrowAddress,
         abi: RWAEscrowVaultABI,
         functionName: 'injectOffChainFunds',
-        args: [BigInt(projectId), amountToInject, usdcAddress],
+        args: [BigInt(projectId), amountToInject, paymentToken],
       });
       await publicClient.waitForTransactionReceipt({ hash: injectionTx });
       txHashes.injection = injectionTx;
@@ -143,6 +149,26 @@ export async function POST(request: NextRequest) {
         .eq('chain_id', chainId)
         .eq('project_id', projectId)
         .eq('status', 'pending');
+    }
+
+    // The security token enforces KYC on holders: completion mints platform tokens to the
+    // liquidity and treasury wallets, so they need a cached KYC proof first
+    const { ensureKYCCached, getApprovedKYC, platformWalletKYC } = await import('@/lib/kyc/onchainCache');
+    const kycVerifier = deployment.contracts.KYCVerifier as `0x${string}`;
+    const feeManager = await publicClient.readContract({
+      address: escrowAddress,
+      abi: RWAEscrowVaultABI,
+      functionName: 'platformFeeManager',
+    });
+    const platformWallets = await Promise.all([
+      publicClient.readContract({ address: feeManager, abi: PlatformFeeManagerABI, functionName: 'liquidityWallet' }),
+      publicClient.readContract({ address: feeManager, abi: PlatformFeeManagerABI, functionName: 'treasuryWallet' }),
+    ]);
+    for (const wallet of platformWallets) {
+      await ensureKYCCached({
+        publicClient, walletClient, chainId, verifier: kycVerifier,
+        token: projectData.securityToken, wallet, kyc: platformWalletKYC(),
+      });
     }
 
     // Complete the project funding
@@ -177,6 +203,17 @@ export async function POST(request: NextRequest) {
         );
 
         try {
+          // Minting needs the investor's KYC on the token, from their approved application
+          const investorKYC = await getApprovedKYC(payment.investor_address);
+          if (!investorKYC) {
+            console.error(`No approved KYC for ${payment.investor_address}, tokens not minted`);
+            continue;
+          }
+          await ensureKYCCached({
+            publicClient, walletClient, chainId, verifier: kycVerifier,
+            token: projectData.securityToken, wallet: payment.investor_address as `0x${string}`, kyc: investorKYC,
+          });
+
           const mintTx = await walletClient.writeContract({
             address: projectData.securityToken,
             abi: RWASecurityTokenABI,

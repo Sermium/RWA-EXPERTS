@@ -10,6 +10,7 @@ import {
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { RWAEscrowVaultABI, RWASecurityTokenABI } from '@/config/abis';
 import { PROJECT_STATE } from '@/config/deployments';
+import { ensureOwnKYCCached } from '@/lib/kyc/ownProof';
 
 // ============================================================================
 // TYPES
@@ -47,7 +48,7 @@ export default function InvestorClaimPanel({
   const { address, isConnected } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { explorerUrl } = useChainConfig();
+  const { explorerUrl, chainId } = useChainConfig();
 
   // State
   const [stats, setStats] = useState<InvestorStats | null>(null);
@@ -127,6 +128,11 @@ export default function InvestorClaimPanel({
     setTxHash(null);
 
     try {
+      // The security token only mints to wallets with a cached KYC proof
+      if (securityTokenAddress) {
+        await ensureOwnKYCCached(publicClient, walletClient, chainId, securityTokenAddress as `0x${string}`);
+      }
+
       const hash = await walletClient.writeContract({
         address: escrowAddress as `0x${string}`,
         abi: RWAEscrowVaultABI,
@@ -157,10 +163,18 @@ export default function InvestorClaimPanel({
     setTxHash(null);
 
     try {
+      // A completed project unwound by a dispute refunds holders from a pool instead
+      const disputeRefund = await publicClient.readContract({
+        address: escrowAddress as `0x${string}`,
+        abi: RWAEscrowVaultABI,
+        functionName: 'disputeRefundOpen',
+        args: [BigInt(projectId)],
+      }).catch(() => false);
+
       const hash = await walletClient.writeContract({
         address: escrowAddress as `0x${string}`,
         abi: RWAEscrowVaultABI,
-        functionName: 'claimRefund',
+        functionName: disputeRefund ? 'claimDisputeRefund' : 'claimRefund',
         args: [BigInt(projectId)],
       });
 

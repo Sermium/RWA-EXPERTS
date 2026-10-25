@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useSwitchChain } from 'wagmi';
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt, useSwitchChain, usePublicClient, useWalletClient } from 'wagmi';
 import { 
   ArrowLeft, 
   ExternalLink, 
@@ -39,12 +39,16 @@ import {
 // Import configs
 import { getChainById, type SupportedChainId } from '@/config/chains';
 import { DEPLOYMENTS } from '@/config/deployments';
+import { RWAEscrowVaultABI } from '@/config/abis';
+import { requestKYCProof } from '@/lib/kyc/ownProof';
 
 // Stripe
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+
+const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
 // Get stablecoin addresses from deployment config
 function getStablecoins(chainId: number): { USDT?: string; USDC?: string } {
@@ -134,6 +138,8 @@ interface ProjectData {
   socialLinks: { twitter?: string; telegram?: string; discord?: string; linkedin?: string; github?: string };
   contractAddress: string;
   escrowAddress: string;
+  /** Id of the project inside the escrow vault (its project NFT id); null until it is on-chain */
+  vaultProjectId: bigint | null;
   walletAddress: string;
   _raw?: Record<string, unknown>;
 }
@@ -395,8 +401,27 @@ function InvestmentCard({
   // ERC20 ABI
   const erc20Abi = [
     { name: 'balanceOf', type: 'function', stateMutability: 'view', inputs: [{ name: 'account', type: 'address' }], outputs: [{ name: '', type: 'uint256' }] },
-    { name: 'transfer', type: 'function', stateMutability: 'nonpayable', inputs: [{ name: 'to', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ name: '', type: 'bool' }] },
+    { name: 'approve', type: 'function', stateMutability: 'nonpayable', inputs: [{ name: 'spender', type: 'address' }, { name: 'amount', type: 'uint256' }], outputs: [{ name: '', type: 'bool' }] },
   ] as const;
+
+  // The escrow books each investment to the project and settles it in one stablecoin
+  const vaultProjectId = project.vaultProjectId;
+  const { data: escrowProject } = useReadContract({
+    address: hasEscrow ? (project.escrowAddress as `0x${string}`) : undefined,
+    abi: RWAEscrowVaultABI,
+    functionName: 'getProject',
+    args: vaultProjectId !== null ? [vaultProjectId] : undefined,
+    chainId: targetChainId,
+    query: { enabled: hasEscrow && vaultProjectId !== null },
+  });
+  const settlementToken =
+    escrowProject && escrowProject.paymentToken !== ZERO_ADDRESS ? escrowProject.paymentToken.toLowerCase() : null;
+  const settlementSymbol = settlementToken && settlementToken === chainTokens.usdc?.toLowerCase() ? 'USDC' : 'USDT';
+  const acceptsToken = (token: 'usdc' | 'usdt') =>
+    !settlementToken || chainTokens[token]?.toLowerCase() === settlementToken;
+
+  const publicClient = usePublicClient({ chainId: targetChainId });
+  const { data: walletClient } = useWalletClient();
 
   // Read balances
   const { data: usdcBalance } = useReadContract({
@@ -491,13 +516,24 @@ function InvestmentCard({
       return;
     }
 
+    if (vaultProjectId === null) {
+      setError('This project is not open for on-chain investment yet. Please use card payment.');
+      return;
+    }
+
+    if (!acceptsToken(token)) {
+      setError(`This project only accepts ${settlementSymbol}`);
+      return;
+    }
+
     const balance = token === 'usdc' ? usdcBal : usdtBal;
     if (parseFloat(balance) < numericAmount) {
       setError(`Insufficient ${token.toUpperCase()} balance. You have ${balance} ${token.toUpperCase()}`);
       return;
     }
 
-    // Send to ESCROW contract (not owner wallet)
+    // Invest through the ESCROW contract (not a plain transfer): the escrow books the funds to
+    // this project and checks the investor's KYC proof
     const escrowAddress = project.escrowAddress as `0x${string}`;
 
     setIsProcessing(true);
@@ -505,16 +541,26 @@ function InvestmentCard({
     setPaymentMethod(token);
 
     try {
+      if (!walletClient || !publicClient) throw new Error('Wallet not ready, please try again');
       const amountInWei = BigInt(Math.floor(numericAmount * 1e6));
+      const kycProof = await requestKYCProof(walletClient, targetChainId);
 
-      const hash = await writeContractAsync({
+      const approveHash = await writeContractAsync({
         address: tokenAddress,
         abi: erc20Abi,
-        functionName: 'transfer',
+        functionName: 'approve',
         args: [escrowAddress, amountInWei],
       });
+      await publicClient.waitForTransactionReceipt({ hash: approveHash });
 
-      console.log('[Investment] Transaction sent to escrow:', hash);
+      const hash = await writeContractAsync({
+        address: escrowAddress,
+        abi: RWAEscrowVaultABI,
+        functionName: 'invest',
+        args: [vaultProjectId, amountInWei, tokenAddress, kycProof],
+      });
+
+      console.log('[Investment] Investment sent to escrow:', hash);
       setPendingTx(hash);
       setTxHash(hash);
     } catch (err: any) {
@@ -716,7 +762,7 @@ function InvestmentCard({
             {chainTokens.usdc && (
               <button
                 onClick={() => handleCryptoPayment('usdc')}
-                disabled={!isConnected || !hasEscrow}
+                disabled={!isConnected || !hasEscrow || !acceptsToken('usdc')}
                 className="w-full flex items-center justify-between p-4 bg-surface-overlay/50 border-2 border-surface-overlay rounded-xl hover:border-success hover:bg-surface-overlay transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
@@ -728,6 +774,8 @@ function InvestmentCard({
                     <p className="text-xs text-surface-overlay">
                       {!hasEscrow ? (
                         <span className="text-orange-400">Escrow not configured</span>
+                      ) : !acceptsToken('usdc') ? (
+                        <span className="text-orange-400">This project settles in {settlementSymbol}</span>
                       ) : isConnected ? (
                         `Balance: ${usdcBal} USDC`
                       ) : (
@@ -750,7 +798,7 @@ function InvestmentCard({
             {chainTokens.usdt && (
               <button
                 onClick={() => handleCryptoPayment('usdt')}
-                disabled={!isConnected || !hasEscrow}
+                disabled={!isConnected || !hasEscrow || !acceptsToken('usdt')}
                 className="w-full flex items-center justify-between p-4 bg-surface-overlay/50 border-2 border-surface-overlay rounded-xl hover:border-gold hover:bg-surface-overlay transition-all group disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="flex items-center gap-3">
@@ -762,6 +810,8 @@ function InvestmentCard({
                     <p className="text-xs text-surface-overlay">
                       {!hasEscrow ? (
                         <span className="text-orange-400">Escrow not configured</span>
+                      ) : !acceptsToken('usdt') ? (
+                        <span className="text-orange-400">This project settles in {settlementSymbol}</span>
                       ) : isConnected ? (
                         `Balance: ${usdtBal} USDT`
                       ) : (
@@ -1024,7 +1074,8 @@ function ProjectPageContent() {
         teamMembers,
         socialLinks,
         contractAddress: raw.contract_address || '',
-        escrowAddress: raw.escrow_address || '',
+        escrowAddress: raw.escrow_vault_address || raw.escrow_address || '',
+        vaultProjectId: raw.project_nft_id !== null && raw.project_nft_id !== undefined ? BigInt(raw.project_nft_id) : null,
         walletAddress: raw.wallet_address || '',
         _raw: raw,
       };

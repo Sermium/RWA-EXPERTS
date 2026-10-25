@@ -57,21 +57,22 @@ export async function GET(request: NextRequest) {
           transport: http(chainInfo.rpcUrl),
         });
 
-        // Get project data from escrow with proper typing
+        // Get project data from escrow (typed by the ABI)
         const projectData = await publicClient.readContract({
           address: deployment.contracts.RWAEscrowVault as `0x${string}`,
           abi: RWAEscrowVaultABI,
           functionName: 'getProject',
           args: [BigInt(app.project_id)],
-        }) as EscrowProject;
+        });
 
         // Extract values from the properly typed struct
         const totalRaised = Number(projectData.totalRaised) / 1e6; // Assuming 6 decimals
         const fundingGoal = Number(projectData.fundingGoal) / 1e6;
         const state = projectData.state;
 
-        // State 1 = Active (fundraising), check if goal reached
-        if (state !== 1 || totalRaised < fundingGoal) continue;
+        // State 2 = Funded: the escrow moves a project there as soon as its goal is reached.
+        // State 1 = Active, with the goal reached by amounts it has not counted yet.
+        if (state !== 2 && (state !== 1 || totalRaised < fundingGoal)) continue;
 
         // Get pending off-chain payments
         const { data: payments } = await supabase

@@ -261,6 +261,15 @@ export const RWASecurityTokenABI = [
   { inputs: [{ internalType: "address[]", name: "_toList", type: "address[]" }, { internalType: "uint256[]", name: "_amounts", type: "uint256[]" }], name: "batchMint", outputs: [], stateMutability: "nonpayable", type: "function"},
   { anonymous: false, inputs: [{ indexed: true, name: "from", type: "address" }, { indexed: true, name: "to", type: "address" }, { indexed: false, name: "value", type: "uint256" }], name: "Transfer", type: "event" },
   { anonymous: false, inputs: [{ indexed: true, name: "owner", type: "address" }, { indexed: true, name: "spender", type: "address" }, { indexed: false, name: "value", type: "uint256" }], name: "Approval", type: "event" },
+  // KYC cache: holders need a valid cached proof while kycEnforced is on (the default)
+  { inputs: [], name: "kycEnforced", outputs: [{ type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "minKYCLevel", outputs: [{ type: "uint8" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "_wallet", type: "address" }], name: "isKYCValid", outputs: [{ type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "_wallet", type: "address" }], name: "getCachedKYC", outputs: [{ type: "uint8" }, { type: "uint16" }, { type: "uint256" }, { type: "uint256" }, { type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "_wallet", type: "address" }, { name: "_proof", type: "tuple", components: [{ name: "level", type: "uint8" }, { name: "countryCode", type: "uint16" }, { name: "expiry", type: "uint256" }, { name: "signature", type: "bytes" }] }], name: "cacheKYC", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "_enforced", type: "bool" }], name: "setKYCEnforced", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [], name: "KYCNotVerified", type: "error" },
+  { inputs: [], name: "InvalidKYCProof", type: "error" },
   { anonymous: false, inputs: [{ indexed: true, name: "account", type: "address" }, { indexed: false, name: "isFrozen", type: "bool" }], name: "AddressFrozen", type: "event" },
   { anonymous: false, inputs: [{ indexed: true, name: "account", type: "address" }, { indexed: false, name: "amount", type: "uint256" }], name: "TokensFrozen", type: "event" },
   { anonymous: false, inputs: [{ indexed: true, name: "account", type: "address" }, { indexed: false, name: "amount", type: "uint256" }], name: "TokensUnfrozen", type: "event" },
@@ -286,7 +295,7 @@ export const RWAEscrowVaultABI = [
   { inputs: [{ name: "_projectId", type: "uint256" }, { name: "_securityToken", type: "address" }, { name: "_paymentToken", type: "address" }, { name: "_priceFeed", type: "address" }, { name: "_fundingGoal", type: "uint256" }, { name: "_deadline", type: "uint256" }, { name: "_platformFeeBps", type: "uint256" }, { name: "_maxPriceAge", type: "uint256" }], name: "createProject", outputs: [], stateMutability: "nonpayable", type: "function" },
   { inputs: [{ name: "_projectId", type: "uint256" }], name: "cancelProject", outputs: [], stateMutability: "nonpayable", type: "function" },
   { inputs: [{ name: "_projectId", type: "uint256" }], name: "forceMarkFunded", outputs: [], stateMutability: "nonpayable", type: "function" },
-  { inputs: [{ name: "_projectId", type: "uint256" }], name: "getProject", outputs: [{ type: "tuple", components: [{ name: "projectId", type: "uint256" }, { name: "projectOwner", type: "address" }, { name: "securityToken", type: "address" }, { name: "paymentToken", type: "address" }, { name: "priceFeed", type: "address" }, { name: "fundingGoal", type: "uint256" }, { name: "totalRaised", type: "uint256" }, { name: "deadline", type: "uint256" }, { name: "state", type: "uint8" }, { name: "createdAt", type: "uint256" }, { name: "platformFeeBps", type: "uint256" }, { name: "maxPriceAge", type: "uint256" }] }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "_projectId", type: "uint256" }], name: "getProject", outputs: [{ type: "tuple", components: [{ name: "projectId", type: "uint256" }, { name: "projectOwner", type: "address" }, { name: "securityToken", type: "address" }, { name: "paymentToken", type: "address" }, { name: "fundingGoal", type: "uint256" }, { name: "totalRaised", type: "uint256" }, { name: "deadline", type: "uint256" }, { name: "state", type: "uint8" }, { name: "createdAt", type: "uint256" }, { name: "fundedAt", type: "uint256" }, { name: "completedAt", type: "uint256" }, { name: "totalSupply", type: "uint256" }, { name: "platformFeesTransferred", type: "bool" }] }], stateMutability: "view", type: "function" },
   { inputs: [{ name: "_projectId", type: "uint256" }], name: "getProjectFunding", outputs: [{ type: "tuple", components: [{ name: "fundingGoal", type: "uint256" }, { name: "totalRaised", type: "uint256" }, { name: "deadline", type: "uint256" }, { name: "state", type: "uint8" }, { name: "investorCount", type: "uint256" }, { name: "milestonesCount", type: "uint256" }, { name: "milestonesReleased", type: "uint256" }, { name: "refundsEnabled", type: "bool" }, { name: "feesDistributed", type: "bool" }] }], stateMutability: "view", type: "function" },
   { inputs: [{ name: "_projectId", type: "uint256" }, { name: "_amount", type: "uint256" }, { name: "_paymentToken", type: "address" }, { name: "_kycProof", type: "tuple", components: [{ name: "level", type: "uint8" }, { name: "countryCode", type: "uint16" }, { name: "expiry", type: "uint256" }, { name: "signature", type: "bytes" }] }], name: "invest", outputs: [], stateMutability: "nonpayable", type: "function" },
   { inputs: [{ name: "_projectId", type: "uint256" }, { name: "_investor", type: "address" }], name: "getInvestorContribution", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
@@ -321,6 +330,27 @@ export const RWAEscrowVaultABI = [
   { inputs: [{ name: "_reference", type: "string" }], name: "isPaymentReferenceUsed", outputs: [{ type: "bool" }], stateMutability: "view", type: "function" },
   { inputs: [], name: "pause", outputs: [], stateMutability: "nonpayable", type: "function" },
   { inputs: [], name: "unpause", outputs: [], stateMutability: "nonpayable", type: "function" },
+  // Per-project custody (vault v2): one payment token per project, balances booked per project
+  { inputs: [], name: "platformFeeManager", outputs: [{ type: "address" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "FUNDED_COMPLETION_TIMEOUT", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [], name: "PLATFORM_USDT_FEE_BPS", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "_projectId", type: "uint256" }, { name: "_paymentToken", type: "address" }], name: "setProjectPaymentToken", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "_projectId", type: "uint256" }, { name: "_newOwner", type: "address" }], name: "transferProjectOwnership", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "", type: "uint256" }], name: "projectAccountingEnabled", outputs: [{ type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "", type: "uint256" }], name: "projectBalance", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "", type: "uint256" }, { name: "", type: "address" }], name: "investorOnChainContribution", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "", type: "uint256" }], name: "projectInjectedFunds", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "_projectId", type: "uint256" }], name: "reclaimInjectedFunds", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { inputs: [{ name: "_projectId", type: "uint256" }, { name: "_balance", type: "uint256" }, { name: "_injected", type: "uint256" }], name: "migrateLegacyProject", outputs: [], stateMutability: "nonpayable", type: "function" },
+  // Dispute refunds: holders at the dispute snapshot pull their share
+  { inputs: [{ name: "", type: "uint256" }], name: "disputeRefundOpen", outputs: [{ type: "bool" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "", type: "uint256" }], name: "disputeRefundPool", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "_projectId", type: "uint256" }, { name: "_holder", type: "address" }], name: "getDisputeRefund", outputs: [{ type: "uint256" }], stateMutability: "view", type: "function" },
+  { inputs: [{ name: "_projectId", type: "uint256" }], name: "claimDisputeRefund", outputs: [], stateMutability: "nonpayable", type: "function" },
+  { anonymous: false, inputs: [{ indexed: true, name: "projectId", type: "uint256" }, { indexed: false, name: "paymentToken", type: "address" }], name: "ProjectPaymentTokenSet", type: "event" },
+  { anonymous: false, inputs: [{ indexed: true, name: "projectId", type: "uint256" }, { indexed: false, name: "pool", type: "uint256" }, { indexed: false, name: "snapshotId", type: "uint256" }], name: "DisputeRefundOpened", type: "event" },
+  { anonymous: false, inputs: [{ indexed: true, name: "projectId", type: "uint256" }, { indexed: true, name: "holder", type: "address" }, { indexed: false, name: "amount", type: "uint256" }], name: "DisputeRefundClaimed", type: "event" },
+  { anonymous: false, inputs: [{ indexed: true, name: "projectId", type: "uint256" }, { indexed: true, name: "to", type: "address" }, { indexed: false, name: "amount", type: "uint256" }], name: "InjectedFundsReclaimed", type: "event" },
   { anonymous: false, inputs: [{ indexed: true, name: "projectId", type: "uint256" }, { indexed: false, name: "securityToken", type: "address" }, { indexed: false, name: "fundingGoal", type: "uint256" }, { indexed: false, name: "deadline", type: "uint256" }], name: "ProjectCreated", type: "event" },
   { anonymous: false, inputs: [{ indexed: true, name: "projectId", type: "uint256" }], name: "ProjectActivated", type: "event" },
   { anonymous: false, inputs: [{ indexed: true, name: "projectId", type: "uint256" }], name: "ProjectCompleted", type: "event" },
@@ -348,6 +378,13 @@ export const RWAEscrowVaultABI = [
   { inputs: [], name: "InvalidPrice", type: "error" },
   { inputs: [], name: "NoOffChainPending", type: "error" },
   { inputs: [], name: "RefundsNotEnabled", type: "error" },
+  { inputs: [], name: "PaymentTokenMismatch", type: "error" },
+  { inputs: [], name: "LegacyProject", type: "error" },
+  { inputs: [], name: "NothingToRefund", type: "error" },
+  { inputs: [], name: "InvalidState", type: "error" },
+  { inputs: [], name: "NotInvestor", type: "error" },
+  { inputs: [], name: "FundingGoalExceeded", type: "error" },
+  { inputs: [], name: "DeadlinePassed", type: "error" },
   { stateMutability: "payable", type: "receive" }
 ] as const;
 
@@ -453,6 +490,9 @@ export const DividendDistributorABI = [
 export const PlatformFeeManagerABI = [
   { name: 'distributeFees', type: 'function', stateMutability: 'nonpayable', inputs: [{ name: '_projectId', type: 'uint256' }], outputs: [],},
   { name: 'getProjectFees', type: 'function', stateMutability: 'view', inputs: [{ name: '_projectId', type: 'uint256' }], outputs: [{ name: 'totalFees', type: 'uint256' }, { name: 'distributed', type: 'bool' },],},
+  { name: 'feeReceiver', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { name: 'liquidityWallet', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
+  { name: 'treasuryWallet', type: 'function', stateMutability: 'view', inputs: [], outputs: [{ type: 'address' }] },
 ] as const;
 
 // ============================================================================
