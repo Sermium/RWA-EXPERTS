@@ -3,16 +3,42 @@ import * as SecureStore from 'expo-secure-store';
 import * as Crypto from 'expo-crypto';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { ethers } from 'ethers';
+import {
+  VaultKey,
+  WrongPinError,
+  constantTimeEqual,
+  createPinVerifier,
+  createVaultKey,
+  decryptV2,
+  deriveKeyForBlob,
+  deriveLegacyKey,
+  encryptV2,
+  generateDeviceSecret,
+  legacyHashPin,
+  legacyXorDecrypt,
+  openPinVerifier,
+  parseDeviceSecret,
+  parseStoredSecret,
+  wipe,
+} from './vaultCrypto';
 
 // Storage keys
 const WALLET_GROUPS_KEY = 'wallet_groups';
 const ACTIVE_GROUP_KEY = 'active_group_id';
 const ACTIVE_WALLET_KEY = 'active_wallet_index';
-const PIN_HASH_KEY = 'wallet_pin_hash';
-const SALT_KEY = 'wallet_salt';
+const PIN_HASH_KEY = 'wallet_pin_hash'; // legacy (v1): fast SHA-256 PIN hash, removed after migration
+const SALT_KEY = 'wallet_salt'; // legacy (v1): salt for the PIN hash / XOR key, removed after migration
+const PIN_VERIFIER_KEY = 'wallet_pin_verifier_v2'; // v2: AEAD blob that proves the PIN
+const DEVICE_SECRET_KEY = 'wallet_device_secret_v2'; // v2: random secret mixed into the KDF
 const BIOMETRIC_ENABLED_KEY = 'biometric_enabled';
 const NETWORK_KEY = 'selected_network';
-const ENCRYPTION_KEY_CACHE = 'encryption_key_cache'; // For PIN-less switching
+
+// The device secret never leaves this device (not synced via iCloud Keychain or restored from backups).
+const DEVICE_SECRET_STORE_OPTIONS: SecureStore.SecureStoreOptions = {
+  keychainAccessible: SecureStore.WHEN_UNLOCKED_THIS_DEVICE_ONLY,
+};
+
+const randomBytes = (length: number): Uint8Array => Crypto.getRandomBytes(length);
 
 // Network configurations
 export const NETWORKS: Record<string, NetworkConfig> = {
@@ -113,8 +139,6 @@ export const NETWORKS: Record<string, NetworkConfig> = {
 // Set Avalanche Fuji as default
 const DEFAULT_NETWORK = 'avalancheFuji';
 
-const DEFAULT_NETWORK = 'polygonAmoy';
-
 // Types
 export interface NetworkConfig {
   name: string;
@@ -164,7 +188,10 @@ class SecureWalletService {
   private walletGroups: WalletGroup[] = [];
   private activeGroupId: string | null = null;
   private activeWalletIndex: number = 0;
-  private cachedEncryptionKey: string | null = null; // Cache key after unlock
+  // Vault keys derived after a successful PIN entry, kept in memory only (for PIN-less switching).
+  // sessionKey encrypts new secrets; vaultKeys holds every key seen, indexed by salt (hex).
+  private sessionKey: VaultKey | null = null;
+  private vaultKeys: Map<string, VaultKey> = new Map();
 
   constructor() {
     this.initializeNetwork();
@@ -286,84 +313,200 @@ class SecureWalletService {
   }
 
   // ==================== PIN MANAGEMENT ====================
+  //
+  // v2: the PIN is checked by decrypting a small AEAD verifier blob with a key derived from
+  // scrypt(HMAC(deviceSecret, pin), salt). There is no fast hash of the PIN in storage any more.
+  // Legacy installs (SHA-256 PIN hash + XOR-encrypted secrets) are migrated on the first correct
+  // PIN entry: see authenticate() and migrateLegacySecrets().
 
-  private async hashPin(pin: string, salt: string): Promise<string> {
-    const combined = pin + salt;
-    const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, combined);
-    return hash;
+  private async getDeviceSecret(createIfMissing: boolean): Promise<Uint8Array | null> {
+    const existing = await SecureStore.getItemAsync(DEVICE_SECRET_KEY, DEVICE_SECRET_STORE_OPTIONS);
+    if (existing) return parseDeviceSecret(existing);
+    if (!createIfMissing) return null;
+    const created = generateDeviceSecret(randomBytes);
+    await SecureStore.setItemAsync(DEVICE_SECRET_KEY, created, DEVICE_SECRET_STORE_OPTIONS);
+    return parseDeviceSecret(created);
   }
 
-  private async generateSalt(): Promise<string> {
-    const randomBytes = await Crypto.getRandomBytesAsync(32);
-    return Array.from(new Uint8Array(randomBytes))
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
+  private setSessionKey(vaultKey: VaultKey): void {
+    this.clearKeys();
+    this.sessionKey = vaultKey;
+    this.vaultKeys.set(vaultKey.saltHex, vaultKey);
   }
 
-  private async deriveKey(pin: string, salt: string): Promise<string> {
-    let key = pin + salt;
-    for (let i = 0; i < 1000; i++) {
-      key = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, key);
+  private clearKeys(): void {
+    for (const vk of this.vaultKeys.values()) wipe(vk.key);
+    if (this.sessionKey) wipe(this.sessionKey.key);
+    this.vaultKeys.clear();
+    this.sessionKey = null;
+  }
+
+  /**
+   * Check the PIN. On success, caches the vault key in memory (for PIN-less wallet switching) and
+   * transparently upgrades any legacy (v1) data to v2. Returns false for a wrong PIN.
+   */
+  private async authenticate(pin: string): Promise<boolean> {
+    const verifier = await SecureStore.getItemAsync(PIN_VERIFIER_KEY);
+
+    if (verifier) {
+      const deviceSecret = await this.getDeviceSecret(false);
+      if (!deviceSecret) {
+        throw new Error(
+          'The wallet key for this device is missing (for example after restoring a backup on a new device). ' +
+            'Restore your wallets from the recovery phrase.'
+        );
+      }
+      let vaultKey: VaultKey;
+      try {
+        vaultKey = await openPinVerifier(pin, deviceSecret, verifier);
+      } catch (e) {
+        if (e instanceof WrongPinError) return false;
+        throw e;
+      }
+      this.setSessionKey(vaultKey);
+      await this.migrateLegacySecrets(pin, deviceSecret);
+      return true;
     }
-    return key;
+
+    // Legacy (v1) install: verify against the old SHA-256 hash, then set up v2.
+    const legacyHash = await SecureStore.getItemAsync(PIN_HASH_KEY);
+    const legacySalt = await SecureStore.getItemAsync(SALT_KEY);
+    if (!legacyHash || !legacySalt) return false;
+    if (!constantTimeEqual(legacyHashPin(pin, legacySalt), legacyHash.toLowerCase())) return false;
+
+    const deviceSecret = await this.getDeviceSecret(true);
+    const vaultKey = await createVaultKey(pin, deviceSecret!, randomBytes);
+    // Write the verifier before touching the secrets: if the app dies mid-migration, the next unlock
+    // takes the v2 path above and finishes migrating (the legacy salt is only deleted at the end).
+    await SecureStore.setItemAsync(PIN_VERIFIER_KEY, createPinVerifier(vaultKey, randomBytes));
+    this.setSessionKey(vaultKey);
+    await this.migrateLegacySecrets(pin, deviceSecret!);
+    return true;
+  }
+
+  /**
+   * Re-encrypt every v1 (XOR) secret as v2 under the session key, and derive keys for any v2 blob
+   * that uses a different salt. Only called right after the PIN has been verified.
+   */
+  private async migrateLegacySecrets(pin: string, deviceSecret: Uint8Array): Promise<void> {
+    await this.loadWalletGroups();
+    const legacySalt = await SecureStore.getItemAsync(SALT_KEY);
+    let legacyKey: string | null = null;
+    let changed = false;
+    let remainingV1 = 0;
+
+    for (const group of this.walletGroups) {
+      let parsed;
+      try {
+        parsed = parseStoredSecret(group.encryptedSecret);
+      } catch (e) {
+        console.warn(`Wallet group ${group.id}: unreadable secret`, e);
+        continue;
+      }
+
+      if (parsed.version === 2) {
+        if (!this.vaultKeys.has(parsed.blob.salt.toLowerCase())) {
+          try {
+            const vk = await deriveKeyForBlob(pin, deviceSecret, parsed.blob);
+            decryptV2(parsed.blob, vk); // make sure the key really opens it
+            this.vaultKeys.set(vk.saltHex, vk);
+          } catch (e) {
+            console.warn(`Wallet group ${group.id}: could not derive key for stored secret`, e);
+          }
+        }
+        continue;
+      }
+
+      // v1
+      if (!legacySalt) {
+        remainingV1++;
+        console.warn(`Wallet group ${group.id}: legacy secret but no legacy salt, cannot migrate`);
+        continue;
+      }
+      try {
+        legacyKey = legacyKey ?? deriveLegacyKey(pin, legacySalt);
+        const plaintext = legacyXorDecrypt(parsed.hex, legacyKey);
+        // XOR has no integrity check, so validate the result before trusting it.
+        if (!this.isPlausibleSecret(group.type, plaintext)) {
+          throw new Error('legacy secret did not decrypt to a valid wallet secret');
+        }
+        group.encryptedSecret = encryptV2(plaintext, this.sessionKey!, randomBytes);
+        changed = true;
+      } catch (e) {
+        remainingV1++;
+        console.warn(`Wallet group ${group.id}: legacy migration failed`, e);
+      }
+    }
+
+    if (changed) await this.saveWalletGroups();
+    if (remainingV1 === 0) {
+      await SecureStore.deleteItemAsync(PIN_HASH_KEY);
+      await SecureStore.deleteItemAsync(SALT_KEY);
+    }
+  }
+
+  private isPlausibleSecret(type: WalletGroup['type'], secret: string): boolean {
+    if (type === 'mnemonic') return ethers.utils.isValidMnemonic(secret.trim());
+    return /^(0x)?[0-9a-fA-F]{64}$/.test(secret.trim());
   }
 
   async verifyPin(pin: string): Promise<boolean> {
-    const storedHash = await SecureStore.getItemAsync(PIN_HASH_KEY);
-    const salt = await SecureStore.getItemAsync(SALT_KEY);
-    if (!storedHash || !salt) return false;
-    const inputHash = await this.hashPin(pin, salt);
-    return inputHash === storedHash;
+    return this.authenticate(pin);
   }
 
   async hasPinSet(): Promise<boolean> {
-    const pinHash = await SecureStore.getItemAsync(PIN_HASH_KEY);
-    return pinHash !== null;
+    const verifier = await SecureStore.getItemAsync(PIN_VERIFIER_KEY);
+    if (verifier !== null) return true;
+    const legacyHash = await SecureStore.getItemAsync(PIN_HASH_KEY);
+    return legacyHash !== null;
   }
 
   async setPin(pin: string): Promise<void> {
-    const salt = await this.generateSalt();
-    const pinHash = await this.hashPin(pin, salt);
-    await SecureStore.setItemAsync(PIN_HASH_KEY, pinHash);
-    await SecureStore.setItemAsync(SALT_KEY, salt);
+    const deviceSecret = await this.getDeviceSecret(true);
+    const vaultKey = await createVaultKey(pin, deviceSecret!, randomBytes);
+    await SecureStore.setItemAsync(PIN_VERIFIER_KEY, createPinVerifier(vaultKey, randomBytes));
+    await SecureStore.deleteItemAsync(PIN_HASH_KEY);
+    this.setSessionKey(vaultKey);
   }
 
-  // Cache encryption key after successful unlock (for PIN-less wallet switching)
-  private async cacheEncryptionKey(pin: string): Promise<void> {
-    const salt = await SecureStore.getItemAsync(SALT_KEY);
-    if (salt) {
-      this.cachedEncryptionKey = await this.deriveKey(pin, salt);
+  /** Verify the PIN if one exists, otherwise set it. Throws 'Invalid PIN' on a wrong PIN. */
+  private async authenticateOrSetPin(pin: string): Promise<void> {
+    if (await this.hasPinSet()) {
+      if (!(await this.authenticate(pin))) throw new Error('Invalid PIN');
+    } else {
+      await this.setPin(pin);
     }
   }
 
-  private async getCachedEncryptionKey(): Promise<string | null> {
-    return this.cachedEncryptionKey;
+  private requireSessionKey(): VaultKey {
+    if (!this.sessionKey) throw new Error('Please unlock the app first');
+    return this.sessionKey;
   }
 
   // ==================== ENCRYPTION ====================
 
-  private encrypt(data: string, key: string): string {
-    const keyBytes = new TextEncoder().encode(key);
-    const dataBytes = new TextEncoder().encode(data);
-    const encrypted = new Uint8Array(dataBytes.length);
-    for (let i = 0; i < dataBytes.length; i++) {
-      encrypted[i] = dataBytes[i] ^ keyBytes[i % keyBytes.length];
-    }
-    return Array.from(encrypted)
-      .map((b) => b.toString(16).padStart(2, '0'))
-      .join('');
+  private encryptSecret(plaintext: string): string {
+    return encryptV2(plaintext, this.requireSessionKey(), randomBytes);
   }
 
-  private decrypt(encryptedHex: string, key: string): string {
-    const keyBytes = new TextEncoder().encode(key);
-    const encrypted = new Uint8Array(
-      encryptedHex.match(/.{2}/g)!.map((byte) => parseInt(byte, 16))
-    );
-    const decrypted = new Uint8Array(encrypted.length);
-    for (let i = 0; i < encrypted.length; i++) {
-      decrypted[i] = encrypted[i] ^ keyBytes[i % keyBytes.length];
+  /** Decrypt a stored secret with the cached vault keys. Requires a prior successful PIN entry. */
+  private decryptSecret(stored: string): string {
+    this.requireSessionKey();
+    const parsed = parseStoredSecret(stored);
+    if (parsed.version === 1) {
+      throw new Error('This wallet still uses the old storage format. Lock the app and unlock it with your PIN.');
     }
-    return new TextDecoder().decode(decrypted);
+    const vaultKey = this.vaultKeys.get(parsed.blob.salt.toLowerCase());
+    if (!vaultKey) throw new Error('Please unlock the app first');
+    try {
+      return decryptV2(parsed.blob, vaultKey);
+    } catch (e) {
+      // The PIN was already verified, so an authentication failure here means the data changed.
+      if (e instanceof WrongPinError) {
+        throw new Error('Stored wallet data failed its integrity check (corrupted or modified)');
+      }
+      throw e;
+    }
   }
 
   // ==================== HD WALLET DERIVATION ====================
@@ -389,14 +532,8 @@ class SecureWalletService {
     // Derive first address
     const { address, privateKey } = this.deriveWalletFromMnemonic(mnemonic, 0);
 
-    // Get or create encryption key
-    let encryptionKey = await this.getCachedEncryptionKey();
-    if (!encryptionKey) {
-      throw new Error('Please unlock the app first');
-    }
-
-    // Encrypt mnemonic
-    const encryptedMnemonic = this.encrypt(mnemonic, encryptionKey);
+    // Encrypt mnemonic (requires the app to be unlocked)
+    const encryptedMnemonic = this.encryptSecret(mnemonic);
 
     // Create wallet group
     const groupId = this.generateId();
@@ -430,11 +567,8 @@ class SecureWalletService {
 
     const cleanMnemonic = mnemonic.trim().toLowerCase();
 
-    // Get encryption key
-    let encryptionKey = await this.getCachedEncryptionKey();
-    if (!encryptionKey) {
-      throw new Error('Please unlock the app first');
-    }
+    // Requires the app to be unlocked
+    this.requireSessionKey();
 
     // Derive first address
     const { address, privateKey } = this.deriveWalletFromMnemonic(cleanMnemonic, 0);
@@ -444,7 +578,7 @@ class SecureWalletService {
     for (const group of this.walletGroups) {
       if (group.type === 'mnemonic') {
         try {
-          const decrypted = this.decrypt(group.encryptedSecret, encryptionKey);
+          const decrypted = this.decryptSecret(group.encryptedSecret);
           if (decrypted.toLowerCase().trim() === cleanMnemonic) {
             throw new Error('This recovery phrase is already imported');
           }
@@ -455,7 +589,7 @@ class SecureWalletService {
     }
 
     // Encrypt mnemonic
-    const encryptedMnemonic = this.encrypt(cleanMnemonic, encryptionKey);
+    const encryptedMnemonic = this.encryptSecret(cleanMnemonic);
 
     // Create wallet group
     const groupId = this.generateId();
@@ -490,11 +624,8 @@ class SecureWalletService {
       throw new Error('Invalid private key');
     }
 
-    // Get encryption key
-    let encryptionKey = await this.getCachedEncryptionKey();
-    if (!encryptionKey) {
-      throw new Error('Please unlock the app first');
-    }
+    // Requires the app to be unlocked
+    this.requireSessionKey();
 
     const address = wallet.address;
 
@@ -509,7 +640,7 @@ class SecureWalletService {
     }
 
     // Encrypt private key
-    const encryptedKey = this.encrypt(privateKey.trim(), encryptionKey);
+    const encryptedKey = this.encryptSecret(privateKey.trim());
 
     // Create wallet group
     const groupId = this.generateId();
@@ -537,10 +668,7 @@ class SecureWalletService {
   // ==================== DERIVE ACCOUNT (within a seed group) ====================
 
   async deriveNewAccount(groupId: string, accountName: string): Promise<{ address: string; index: number }> {
-    const encryptionKey = await this.getCachedEncryptionKey();
-    if (!encryptionKey) {
-      throw new Error('Please unlock the app first');
-    }
+    this.requireSessionKey();
 
     await this.loadWalletGroups();
 
@@ -552,7 +680,7 @@ class SecureWalletService {
     }
 
     // Decrypt mnemonic
-    const mnemonic = this.decrypt(group.encryptedSecret, encryptionKey);
+    const mnemonic = this.decryptSecret(group.encryptedSecret);
 
     // Find next index
     const usedIndices = group.addresses.map((a) => a.index);
@@ -579,10 +707,7 @@ class SecureWalletService {
   // ==================== WALLET SWITCHING (NO PIN) ====================
 
   async setActiveWalletByAddress(address: string): Promise<void> {
-    const encryptionKey = await this.getCachedEncryptionKey();
-    if (!encryptionKey) {
-      throw new Error('Please unlock the app first');
-    }
+    this.requireSessionKey();
 
     await this.loadWalletGroups();
 
@@ -597,7 +722,7 @@ class SecureWalletService {
         await this.saveWalletGroups();
 
         // Unlock the wallet
-        const secret = this.decrypt(group.encryptedSecret, encryptionKey);
+        const secret = this.decryptSecret(group.encryptedSecret);
         let privateKey: string;
 
         if (group.type === 'mnemonic') {
@@ -690,16 +815,7 @@ class SecureWalletService {
     groupName: string,
     walletName: string = 'Account 1'
   ): Promise<{ groupId: string; address: string; mnemonic: string }> {
-    const hasPin = await this.hasPinSet();
-    if (hasPin) {
-      const isValid = await this.verifyPin(pin);
-      if (!isValid) throw new Error('Invalid PIN');
-    } else {
-      await this.setPin(pin);
-    }
-
-    // Cache encryption key
-    await this.cacheEncryptionKey(pin);
+    await this.authenticateOrSetPin(pin);
 
     const result = await this.createNewWallet(groupName);
     
@@ -721,15 +837,7 @@ class SecureWalletService {
     groupName: string,
     walletName: string = 'Account 1'
   ): Promise<{ groupId: string; address: string }> {
-    const hasPin = await this.hasPinSet();
-    if (hasPin) {
-      const isValid = await this.verifyPin(pin);
-      if (!isValid) throw new Error('Invalid PIN');
-    } else {
-      await this.setPin(pin);
-    }
-
-    await this.cacheEncryptionKey(pin);
+    await this.authenticateOrSetPin(pin);
 
     const result = await this.importWalletFromSeed(mnemonic, groupName);
 
@@ -749,24 +857,13 @@ class SecureWalletService {
     privateKey: string,
     walletName: string
   ): Promise<{ groupId: string; address: string }> {
-    const hasPin = await this.hasPinSet();
-    if (hasPin) {
-      const isValid = await this.verifyPin(pin);
-      if (!isValid) throw new Error('Invalid PIN');
-    } else {
-      await this.setPin(pin);
-    }
-
-    await this.cacheEncryptionKey(pin);
+    await this.authenticateOrSetPin(pin);
 
     return this.importWalletFromKey(privateKey, walletName);
   }
 
   async createDerivedWallet(pin: string, name: string): Promise<{ address: string; index: number }> {
-    const isValid = await this.verifyPin(pin);
-    if (!isValid) throw new Error('Invalid PIN');
-
-    await this.cacheEncryptionKey(pin);
+    if (!(await this.authenticate(pin))) throw new Error('Invalid PIN');
 
     if (!this.activeGroupId) {
       throw new Error('No active wallet group');
@@ -776,10 +873,7 @@ class SecureWalletService {
   }
 
   async switchWalletGroup(pin: string, groupId: string): Promise<string> {
-    const isValid = await this.verifyPin(pin);
-    if (!isValid) throw new Error('Invalid PIN');
-
-    await this.cacheEncryptionKey(pin);
+    if (!(await this.authenticate(pin))) throw new Error('Invalid PIN');
     await this.loadWalletGroups();
 
     const group = this.walletGroups.find((g) => g.id === groupId);
@@ -791,10 +885,7 @@ class SecureWalletService {
   }
 
   async switchWallet(pin: string, walletIndex: number): Promise<string> {
-    const isValid = await this.verifyPin(pin);
-    if (!isValid) throw new Error('Invalid PIN');
-
-    await this.cacheEncryptionKey(pin);
+    if (!(await this.authenticate(pin))) throw new Error('Invalid PIN');
     await this.loadWalletGroups();
 
     const group = this.walletGroups.find((g) => g.id === this.activeGroupId);
@@ -811,11 +902,8 @@ class SecureWalletService {
   // ==================== WALLET UNLOCK ====================
 
   async unlockWallet(pin: string): Promise<string> {
-    const isValid = await this.verifyPin(pin);
-    if (!isValid) throw new Error('Invalid PIN');
-
-    // Cache encryption key for PIN-less switching
-    await this.cacheEncryptionKey(pin);
+    // Verifies the PIN and caches the vault key for PIN-less switching
+    if (!(await this.authenticate(pin))) throw new Error('Invalid PIN');
 
     await this.loadWalletGroups();
 
@@ -827,8 +915,7 @@ class SecureWalletService {
     const walletAddr = group.addresses[this.activeWalletIndex] || group.addresses[0];
     this.activeWalletIndex = group.addresses.indexOf(walletAddr);
 
-    const encryptionKey = this.cachedEncryptionKey!;
-    const secret = this.decrypt(group.encryptedSecret, encryptionKey);
+    const secret = this.decryptSecret(group.encryptedSecret);
 
     let privateKey: string;
     if (group.type === 'mnemonic') {
@@ -911,8 +998,7 @@ class SecureWalletService {
   }
 
   async exportMnemonic(pin: string, groupId?: string): Promise<string> {
-    const isValid = await this.verifyPin(pin);
-    if (!isValid) throw new Error('Invalid PIN');
+    if (!(await this.authenticate(pin))) throw new Error('Invalid PIN');
 
     await this.loadWalletGroups();
 
@@ -924,15 +1010,11 @@ class SecureWalletService {
       throw new Error('This wallet was imported with a private key');
     }
 
-    const salt = await SecureStore.getItemAsync(SALT_KEY);
-    const encryptionKey = await this.deriveKey(pin, salt!);
-
-    return this.decrypt(group.encryptedSecret, encryptionKey);
+    return this.decryptSecret(group.encryptedSecret);
   }
 
   async exportPrivateKey(pin: string, groupId?: string): Promise<string> {
-    const isValid = await this.verifyPin(pin);
-    if (!isValid) throw new Error('Invalid PIN');
+    if (!(await this.authenticate(pin))) throw new Error('Invalid PIN');
 
     await this.loadWalletGroups();
 
@@ -940,9 +1022,7 @@ class SecureWalletService {
     const group = this.walletGroups.find((g) => g.id === targetGroupId);
     if (!group) throw new Error('Wallet group not found');
 
-    const salt = await SecureStore.getItemAsync(SALT_KEY);
-    const encryptionKey = await this.deriveKey(pin, salt!);
-    const secret = this.decrypt(group.encryptedSecret, encryptionKey);
+    const secret = this.decryptSecret(group.encryptedSecret);
 
     if (group.type === 'privateKey') {
       return secret;
@@ -1017,22 +1097,24 @@ class SecureWalletService {
     await SecureStore.deleteItemAsync(ACTIVE_WALLET_KEY);
     await SecureStore.deleteItemAsync(PIN_HASH_KEY);
     await SecureStore.deleteItemAsync(SALT_KEY);
+    await SecureStore.deleteItemAsync(PIN_VERIFIER_KEY);
+    await SecureStore.deleteItemAsync(DEVICE_SECRET_KEY, DEVICE_SECRET_STORE_OPTIONS);
     await SecureStore.deleteItemAsync(BIOMETRIC_ENABLED_KEY);
 
     this.walletGroups = [];
     this.activeGroupId = null;
     this.activeWalletIndex = 0;
     this.currentWallet = null;
-    this.cachedEncryptionKey = null;
+    this.clearKeys();
   }
 
   lockWallet(): void {
     this.currentWallet = null;
-    this.cachedEncryptionKey = null;
+    this.clearKeys();
   }
 
   isUnlocked(): boolean {
-    return this.currentWallet !== null && this.cachedEncryptionKey !== null;
+    return this.currentWallet !== null && this.sessionKey !== null;
   }
 }
 

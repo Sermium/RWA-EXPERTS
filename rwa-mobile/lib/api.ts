@@ -1,16 +1,16 @@
 // rwa-mobile/lib/api.ts
 import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://your-domain.com';
+import { getConfig } from './config';
 
 const api = axios.create({
-  baseURL: `${API_URL}/api`,
   timeout: 30000,
 });
 
-// Add auth header
+// Resolve the base URL per request: getConfig() throws a ConfigError when EXPO_PUBLIC_API_URL is
+// missing, so requests fail loudly instead of going to a placeholder host.
 api.interceptors.request.use(async (config) => {
+  config.baseURL = `${getConfig().apiUrl}/api`;
   const walletAddress = await SecureStore.getItemAsync('walletAddress');
   if (walletAddress) {
     config.headers['x-wallet-address'] = walletAddress;
