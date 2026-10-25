@@ -91,6 +91,10 @@ vi.mock('@/config/chains', () => {
 
 const receipts: Record<string, any> = {};
 const transactions: Record<string, any> = {};
+/** Projects each vault holds: vaultProjects[vault.toLowerCase()][id] = [id, owner, securityToken]. */
+const vaultProjects: Record<string, Record<string, [bigint, string, string]>> = {};
+/** Contract writes the operator wallet sent. */
+const written: any[] = [];
 vi.mock('viem', async (orig) => {
   const real: any = await orig();
   return {
@@ -104,7 +108,23 @@ vi.mock('viem', async (orig) => {
         if (!transactions[hash]) throw new Error('not found');
         return transactions[hash];
       },
-      readContract: async () => 6,
+      readContract: async ({ address, functionName, args }: any) => {
+        if (functionName === 'decimals') return 6;
+        if (functionName === 'isPaymentReferenceUsed') return false;
+        if (functionName === 'getProject') {
+          const held = vaultProjects[String(address).toLowerCase()]?.[String(args[0])];
+          // A vault returns an empty struct for a project it does not hold.
+          return held ?? [BigInt(0), '0x0000000000000000000000000000000000000000', '0x0000000000000000000000000000000000000000'];
+        }
+        throw new Error(`unexpected read ${functionName}`);
+      },
+      waitForTransactionReceipt: async () => ({ status: 'success' }),
+    }),
+    createWalletClient: () => ({
+      writeContract: async (params: any) => {
+        written.push(params);
+        return '0x' + 'f'.repeat(64);
+      },
     }),
   };
 });
@@ -139,6 +159,7 @@ vi.mock('stripe', () => ({
 // ---------------------------------------------------------------- helpers
 
 const investor = privateKeyToAccount(generatePrivateKey()).address;
+const OPERATOR_KEY = generatePrivateKey();
 const investorLc = investor.toLowerCase();
 
 const ERC20 = parseAbi(['event Transfer(address indexed from, address indexed to, uint256 value)']);
@@ -197,6 +218,9 @@ beforeEach(() => {
   for (const k of Object.keys(intents)) delete intents[k];
   searchResults = [];
   created.length = 0;
+  written.length = 0;
+  for (const k of Object.keys(vaultProjects)) delete vaultProjects[k];
+  process.env.VERIFIER_PRIVATE_KEY = OPERATOR_KEY;
   process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://db.test';
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-role';
   process.env.STRIPE_SECRET_KEY = 'sk_test_x';
@@ -731,6 +755,106 @@ describe('stripe webhook persists payments and marks what they paid for', () => 
     const { POST } = await import('../stripe/webhook/route');
     expect((await POST(hook(event('payment_intent.succeeded', pi)))).status).toBe(500);
     expect(writes('fundraising_investments', 'update')).toHaveLength(0);
+  });
+});
+
+// ================================================================ 5b. webhook books card investments on the right vault
+
+describe('stripe webhook books a card investment on the vault that holds the project', () => {
+  const PROJECT_VAULT = '0xabababababababababababababababababababab';
+  const SECURITY_TOKEN = '0xcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd';
+  const OWNER = '0xefefefefefefefefefefefefefefefefefefefef';
+  // VAULT is the chain's singleton RWAEscrowVault in the DEPLOYMENTS mock.
+  let project: Record<string, any>;
+  beforeEach(() => {
+    project = { id: PROJECT_UUID, deployed_chain_id: CHAIN_ID, chain_id: CHAIN_ID, project_nft_id: 7, escrow_vault_address: PROJECT_VAULT, security_token_address: SECURITY_TOKEN };
+    respond = (op) => {
+      if (op.table === 'crowdfunding_applications' && op.action === 'select') {
+        if (eq(op, 'id', PROJECT_UUID)) return { data: op.terminal ? project : [project], error: null };
+        const byVaultId = op.filters.find(([f, col]) => f === 'eq' && col !== 'id');
+        if (byVaultId) {
+          const [, col, value] = byVaultId;
+          return { data: String(project[col]) === String(value) ? [project] : [], error: null };
+        }
+      }
+      if (op.table === 'investments' && op.action === 'insert') return { data: { id: 'investment-1' }, error: null };
+      return undefined;
+    };
+  });
+  const event = (object: any) => JSON.stringify({ id: 'evt_v', type: 'payment_intent.succeeded', data: { object } });
+  const hook = (body: string) => new Request('http://test/webhook', { method: 'POST', headers: { 'stripe-signature': 'valid-signature' }, body }) as any;
+  const cardInvestment = (id: string, metadata: Record<string, string> = {}) =>
+    paymentIntent(id, 25000, { type: 'crowdfunding_investment', projectId: PROJECT_UUID, investorAddress: investor, amountUSD: '250', chainId: String(CHAIN_ID), ...metadata });
+  const processing = () => writes('payments', 'update').map((c) => c.payload).filter((p) => p.processing_status);
+
+  it("books on the project's own vault, not the platform vault", async () => {
+    vaultProjects[PROJECT_VAULT] = { '7': [BigInt(7), OWNER, SECURITY_TOKEN] };
+    vaultProjects[VAULT.toLowerCase()] = { '7': [BigInt(7), OWNER, STRANGER] }; // a different project 7 lives there
+    const { POST } = await import('../stripe/webhook/route');
+    expect((await POST(hook(event(cardInvestment('pi_vault_own')))) ).status).toBe(200);
+    expect(written).toHaveLength(1);
+    expect(written[0].address.toLowerCase()).toBe(PROJECT_VAULT);
+    expect(written[0].functionName).toBe('recordOffChainInvestment');
+    expect(written[0].args).toEqual([BigInt(7), investor, BigInt(250_000_000), 'STRIPE-pi_vault_own']);
+    expect(processing().at(-1)).toMatchObject({ processing_status: 'processed' });
+    expect(writes('investments', 'insert')[0].payload).toMatchObject({ project_id: PROJECT_UUID, amount_usd: 250, payment_intent_id: 'pi_vault_own' });
+  });
+
+  it('prefers a stored vault project id over project_nft_id', async () => {
+    project.vault_project_id = 12;
+    vaultProjects[PROJECT_VAULT] = { '12': [BigInt(12), OWNER, SECURITY_TOKEN] };
+    const { POST } = await import('../stripe/webhook/route');
+    expect((await POST(hook(event(cardInvestment('pi_vault_id'))))).status).toBe(200);
+    expect(written[0].args[0]).toBe(BigInt(12));
+  });
+
+  it('finds the project from a vault-side project id in the metadata', async () => {
+    vaultProjects[PROJECT_VAULT] = { '7': [BigInt(7), OWNER, SECURITY_TOKEN] };
+    const { POST } = await import('../stripe/webhook/route');
+    expect((await POST(hook(event(cardInvestment('pi_vault_numeric', { projectId: '7' }))))).status).toBe(200);
+    expect(written[0].address.toLowerCase()).toBe(PROJECT_VAULT);
+    expect(writes('investments', 'insert')[0].payload).toMatchObject({ project_id: PROJECT_UUID });
+  });
+
+  it('books on the platform vault a project that really lives there', async () => {
+    delete project.escrow_vault_address;
+    vaultProjects[VAULT.toLowerCase()] = { '7': [BigInt(7), OWNER, SECURITY_TOKEN] };
+    const { POST } = await import('../stripe/webhook/route');
+    expect((await POST(hook(event(cardInvestment('pi_vault_platform'))))).status).toBe(200);
+    expect(written).toHaveLength(1);
+    expect(written[0].address.toLowerCase()).toBe(VAULT.toLowerCase());
+    expect(written[0].args[0]).toBe(BigInt(7));
+  });
+
+  it('does not book on the platform vault when the project is not there, and flags it', async () => {
+    delete project.escrow_vault_address;
+    vaultProjects[VAULT.toLowerCase()] = { '7': [BigInt(7), OWNER, STRANGER] }; // someone else's project 7
+    const { POST } = await import('../stripe/webhook/route');
+    expect((await POST(hook(event(cardInvestment('pi_vault_wrong'))))).status).toBe(200);
+    expect(written).toHaveLength(0);
+    const flagged = processing().at(-1);
+    expect(flagged).toMatchObject({ processing_status: 'needs_manual_processing' });
+    expect(flagged.failure_reason).toMatch(/^Needs admin attention/);
+    // The payment itself is kept.
+    expect(writes('payments', 'upsert')[0].payload).toMatchObject({ stripe_payment_intent_id: 'pi_vault_wrong', status: 'succeeded' });
+  });
+
+  it('flags a project whose vault project id is unknown instead of guessing', async () => {
+    delete project.project_nft_id;
+    vaultProjects[PROJECT_VAULT] = { '7': [BigInt(7), OWNER, SECURITY_TOKEN] };
+    const { POST } = await import('../stripe/webhook/route');
+    expect((await POST(hook(event(cardInvestment('pi_vault_noid'))))).status).toBe(200);
+    expect(written).toHaveLength(0);
+    expect(processing().at(-1)).toMatchObject({ processing_status: 'needs_manual_processing' });
+    expect(processing().at(-1).failure_reason).toContain('no vault project id');
+  });
+
+  it("flags a vault that does not hold the project", async () => {
+    vaultProjects[PROJECT_VAULT] = {};
+    const { POST } = await import('../stripe/webhook/route');
+    expect((await POST(hook(event(cardInvestment('pi_vault_empty'))))).status).toBe(200);
+    expect(written).toHaveLength(0);
+    expect(processing().at(-1)).toMatchObject({ processing_status: 'needs_manual_processing' });
   });
 });
 
