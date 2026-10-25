@@ -127,10 +127,13 @@ export async function GET(
     }
 
     const isExpired = expiresAt ? new Date() > expiresAt : false;
-    const isApproved = dbStatus === 'approved' && !isExpired;
+    // "pending" with a level already held is an upgrade under review: the
+    // applicant keeps that level, and can keep investing with it, meanwhile.
+    const upgradePending = dbStatus === 'pending' && tierNumber >= 1;
+    const isApproved = (dbStatus === 'approved' || upgradePending) && !isExpired;
 
-    let effectiveStatus: 'none' | 'pending' | 'approved' | 'rejected' | 'expired' = dbStatus;
-    if (isExpired && dbStatus === 'approved') {
+    let effectiveStatus: 'none' | 'pending' | 'approved' | 'rejected' | 'expired' = upgradePending ? 'approved' : dbStatus;
+    if (isExpired && effectiveStatus === 'approved') {
       effectiveStatus = 'expired';
     }
 
@@ -187,6 +190,7 @@ export async function GET(
       // this approval yet: the applicant still has a step to do.
       needsRegistration: isApproved && !kycData.tx_hash,
       isPending: effectiveStatus === 'pending',
+      upgradePending,
       isRejected: effectiveStatus === 'rejected',
       canResubmit: effectiveStatus === 'rejected' || effectiveStatus === 'expired',
       firstName: kycData.first_name,

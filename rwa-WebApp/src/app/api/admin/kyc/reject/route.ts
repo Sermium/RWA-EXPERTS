@@ -67,11 +67,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `Application is not pending (current: ${application.status})` }, { status: 400 });
     }
 
+    // Rejecting an upgrade leaves the level already approved in place: the
+    // applicant goes back to "approved" at current_level, with the reason
+    // on record. Only a first application ends up "rejected".
+    const isUpgrade = Number(application.current_level) >= 1;
+
     // Update application
     const { error: updateError } = await supabase
       .from("kyc_applications")
       .update({
-        status: "rejected",
+        status: isUpgrade ? "approved" : "rejected",
+        ...(isUpgrade ? { requested_level: application.current_level } : {}),
         rejection_reason: reason,
         rejection_reason_text: REJECTION_REASONS[reason],
         notes: notes || null,
@@ -108,7 +114,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: "Application rejected successfully"
+      message: isUpgrade
+        ? "Upgrade rejected. The applicant keeps their current level."
+        : "Application rejected successfully"
     });
 
   } catch (error) {

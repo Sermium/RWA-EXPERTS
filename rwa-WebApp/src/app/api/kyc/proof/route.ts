@@ -91,12 +91,14 @@ export async function GET(request: NextRequest) {
       toHex(`${walletAddress.toLowerCase()}:${walletHashSecret}`)
     );
 
-    // Look up approved application
+    // Look up the approved level ("pending" with a level already held is an
+    // upgrade under review; the level approved before it still stands)
     const { data: application, error: appError } = await supabase
       .from("kyc_applications")
       .select("*")
       .eq("wallet_hash", walletHash)
-      .eq("status", "approved")
+      .in("status", ["approved", "pending"])
+      .gte("current_level", 1)
       .order("updated_at", { ascending: false })
       .limit(1)
       .single();

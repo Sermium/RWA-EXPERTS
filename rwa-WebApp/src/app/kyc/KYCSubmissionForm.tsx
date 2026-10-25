@@ -1220,10 +1220,15 @@ export function KYCSubmissionForm() {
                   </span>
                 </div>
                 <p className="text-ink-muted mt-1">Investment limit: {config.limit}</p>
+                {kycData.upgradePending && (
+                  <p className="text-warning text-sm mt-1">
+                    Your upgrade request is under review. You keep this tier until it is decided.
+                  </p>
+                )}
               </div>
             </div>
 
-            {effectiveTier < 4 && (
+            {effectiveTier < 4 && !kycData.upgradePending && (
               <button
                 onClick={() => handleTierSelect(effectiveTier + 1)}
                 className="px-6 py-3 bg-gold hover:bg-gold-light text-surface-sunken font-semibold rounded-lg transition-all"

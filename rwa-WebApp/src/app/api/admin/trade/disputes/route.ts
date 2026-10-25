@@ -141,7 +141,7 @@ export async function PATCH(request: NextRequest) {
     const supabase = getSupabaseAdmin();
     const body = await request.json();
 
-    const { id, status, resolution, resolved_by } = body;
+    const { id, status, resolution } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -156,7 +156,8 @@ export async function PATCH(request: NextRequest) {
 
     if (status) updateData.status = status;
     if (resolution) updateData.resolution = resolution;
-    if (resolved_by) updateData.resolved_by = resolved_by;
+    // The admin who resolved it is the signed-in one, not whoever the body names.
+    if (status === 'resolved' || status === 'rejected') updateData.resolved_by = auth.walletAddress;
 
     if (status === 'resolved' || status === 'rejected') {
       updateData.resolved_at = new Date().toISOString();

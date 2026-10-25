@@ -148,7 +148,14 @@ export async function POST(request: NextRequest) {
 
     // Generate document ID and wallet hash
     const documentId = crypto.randomUUID();
-    const walletHashSecret = process.env.KYC_WALLET_HASH_SECRET || "default-secret";
+    // No fallback: hashed with a default secret, a wallet's documents would
+    // be filed under a hash anyone can compute, and one no other KYC route
+    // (which all use the real secret) would ever find.
+    const walletHashSecret = process.env.KYC_WALLET_HASH_SECRET;
+    if (!walletHashSecret) {
+      console.error("KYC_WALLET_HASH_SECRET is not configured");
+      return NextResponse.json({ success: false, error: "Server configuration error" }, { status: 500 });
+    }
     const walletHash = keccak256(toHex(`${walletAddress.toLowerCase()}:${walletHashSecret}`));
 
     console.log("Document ID:", documentId);
@@ -162,17 +169,14 @@ export async function POST(request: NextRequest) {
       process.env.GOOGLE_DRIVE_FOLDER_ID
     );
 
+    // This used to answer "uploaded successfully" and drop the file, so the
+    // applicant went on to submit an application with no documents behind it.
     if (!hasGoogleDrive) {
-      console.log("⚠️ Google Drive not configured - returning mock response");
-      return NextResponse.json({
-        success: true,
-        documentId,
-        type,
-        fileName: file.name,
-        fileSize: file.size,
-        url: null,
-        message: "Document uploaded successfully (mock - Google Drive not configured)",
-      });
+      console.error("[KYC Upload] Google Drive is not configured; refusing the upload");
+      return NextResponse.json(
+        { success: false, error: "Document storage is not available. Please try again later." },
+        { status: 503 }
+      );
     }
 
     // Upload to Google Drive

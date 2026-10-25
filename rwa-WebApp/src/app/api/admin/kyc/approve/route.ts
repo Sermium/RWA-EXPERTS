@@ -145,6 +145,10 @@ export async function POST(request: NextRequest) {
       .update({
         status: "approved",
         current_level: application.requested_level,
+        // The approved level needs its own on-chain registration; until
+        // confirm-payment records it, the status route reports
+        // needsRegistration.
+        tx_hash: null,
         updated_at: new Date().toISOString(),
         approved_by: walletAddress,
         approved_at: new Date().toISOString(),

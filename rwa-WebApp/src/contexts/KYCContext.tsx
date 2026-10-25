@@ -28,6 +28,8 @@ export interface KYCData {
   canResubmit: boolean;
   /** Approved, with the on-chain registration (and its fee) still to do. */
   needsRegistration: boolean;
+  /** An upgrade is under review; the level shown is the one already approved. */
+  upgradePending: boolean;
 }
 
 export interface TierInfo {
@@ -288,6 +290,7 @@ async function fetchKYCStatusGlobal(address: string, forceRefresh = false): Prom
         canInvest: data.canInvest ?? false,
         canResubmit: data.canResubmit ?? false,
         needsRegistration: data.needsRegistration ?? false,
+        upgradePending: data.upgradePending ?? false,
       };
 
       globalCache.kycStatus[address.toLowerCase()] = {
@@ -358,6 +361,7 @@ const defaultKYCData: KYCData = {
   canInvest: false,
   canResubmit: true,
   needsRegistration: false,
+  upgradePending: false,
 };
 
 const KYCContext = createContext<KYCContextValue | undefined>(undefined);
