@@ -7,6 +7,7 @@ import { DEPLOYMENTS } from '@/config/deployments';
 import { RWAEscrowVaultABI, ERC20ABI } from '@/config/abis';
 import { SupportedChainId } from '@/config/chains';
 import { ensureOwnKYCCached } from '@/lib/kyc/ownProof';
+import { fetchProjectMilestones } from '@/lib/crowdfunding/vault';
 
 const ZERO_ADDRESS = '0x0000000000000000000000000000000000000000';
 
@@ -193,26 +194,12 @@ export function useCrowdfunding() {
     }
   }, [publicClient, escrowAddress, address]);
 
+  // The escrow vault keeps no milestone list: milestones are defined in the database and the
+  // vault releases each one's share of the escrowed funds
   const getMilestones = useCallback(async (projectId: bigint) => {
-    if (!publicClient || !escrowAddress) return [];
-
     try {
-      const result = await publicClient.readContract({
-        address: escrowAddress,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getMilestones',
-        args: [projectId],
-      }) as readonly {
-        description: string;
-        amount: bigint;
-        deadline: bigint;
-        state: number;
-        releasedAt: bigint;
-        approvedAt: bigint;
-      }[];
-
-      return result.map((m, index) => ({
-        index,
+      return (await fetchProjectMilestones(chainId, projectId)).map((m) => ({
+        index: m.index,
         description: m.description,
         amount: m.amount,
         deadline: m.deadline,
@@ -224,7 +211,7 @@ export function useCrowdfunding() {
       console.error('Error fetching milestones:', e);
       return [];
     }
-  }, [publicClient, escrowAddress]);
+  }, [chainId]);
 
   // ============================================
   // WRITE FUNCTIONS

@@ -133,6 +133,8 @@ CREATE TABLE crowdfunding_applications (
   reviewed_at TIMESTAMPTZ,
   deployed_chain_id INTEGER,
   project_nft_id BIGINT,
+  -- Id of the project inside its escrow vault (RWALaunchpadFactory.getVaultProjectId)
+  vault_project_id BIGINT,
   escrow_vault_address TEXT,
   security_token_address TEXT,
   compliance_address TEXT,
@@ -149,6 +151,7 @@ CREATE TABLE crowdfunding_applications (
 
 CREATE INDEX idx_crowdfunding_wallet ON crowdfunding_applications(wallet_address);
 CREATE INDEX idx_crowdfunding_status ON crowdfunding_applications(status);
+CREATE INDEX idx_crowdfunding_vault_project ON crowdfunding_applications(deployed_chain_id, vault_project_id);
 
 -- ============================================================================
 -- DOCUMENTS

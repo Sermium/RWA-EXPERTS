@@ -6,6 +6,7 @@ import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import { formatUnits } from 'viem';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { RWAEscrowVaultABI } from '@/config/abis';
+import { fetchProjectMilestones, MILESTONE_STATE as ESCROW_MILESTONE_STATE } from '@/lib/crowdfunding/vault';
 import {
   Play, CheckCircle, XCircle, Clock, AlertCircle,
   Loader2, DollarSign, Target, TrendingUp, FileText,
@@ -534,7 +535,7 @@ export default function ProjectOwnerPanel({
   const { address } = useAccount();
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
-  const { explorerUrl } = useChainConfig();
+  const { explorerUrl, chainId } = useChainConfig();
 
   // State
   const [isLoading, setIsLoading] = useState(false);
@@ -556,13 +557,21 @@ export default function ProjectOwnerPanel({
     if (!publicClient || !escrowAddress) return;
 
     try {
-      // Load milestones from contract
-      const milestonesData = await publicClient.readContract({
-        address: escrowAddress as `0x${string}`,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getMilestones',
-        args: [BigInt(projectId)],
-      }) as MilestoneData[];
+      // Milestones are defined in the database; the escrow vault only releases their funds
+      const STATE_FROM_ESCROW: Record<number, number> = {
+        [ESCROW_MILESTONE_STATE.PENDING]: MILESTONE_STATE.PENDING,
+        [ESCROW_MILESTONE_STATE.APPROVED]: MILESTONE_STATE.APPROVED,
+        [ESCROW_MILESTONE_STATE.RELEASED]: MILESTONE_STATE.RELEASED,
+        [ESCROW_MILESTONE_STATE.REJECTED]: MILESTONE_STATE.REJECTED,
+      };
+      const milestonesData: MilestoneData[] = (await fetchProjectMilestones(chainId, BigInt(projectId))).map((m) => ({
+        description: m.description,
+        amount: m.amount,
+        deadline: m.deadline,
+        state: STATE_FROM_ESCROW[m.state] ?? MILESTONE_STATE.PENDING,
+        releasedAt: m.releasedAt,
+        approvedAt: m.approvedAt,
+      }));
 
       setMilestones(milestonesData);
 
@@ -589,7 +598,7 @@ export default function ProjectOwnerPanel({
     } catch (e) {
       console.error('Failed to load owner panel data:', e);
     }
-  }, [publicClient, escrowAddress, projectId]);
+  }, [publicClient, escrowAddress, projectId, chainId]);
 
   useEffect(() => {
     loadData();

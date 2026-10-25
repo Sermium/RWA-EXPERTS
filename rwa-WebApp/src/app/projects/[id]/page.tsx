@@ -1081,7 +1081,13 @@ function ProjectPageContent() {
         socialLinks,
         contractAddress: raw.contract_address || '',
         escrowAddress: raw.escrow_vault_address || raw.escrow_address || '',
-        vaultProjectId: raw.project_nft_id !== null && raw.project_nft_id !== undefined ? BigInt(raw.project_nft_id) : null,
+        // Stored at deployment; projects without it were booked by a v2 factory under their NFT id
+        vaultProjectId:
+          raw.vault_project_id !== null && raw.vault_project_id !== undefined
+            ? BigInt(raw.vault_project_id)
+            : raw.project_nft_id !== null && raw.project_nft_id !== undefined
+              ? BigInt(raw.project_nft_id)
+              : null,
         walletAddress: raw.wallet_address || '',
         _raw: raw,
       };

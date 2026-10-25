@@ -29,6 +29,16 @@ const RWAEscrowVaultABI = [
     inputs: [{ name: '_projectId', type: 'uint256' }],
     outputs: [],
   },
+  {
+    name: 'transferProjectOwnership',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: '_projectId', type: 'uint256' },
+      { name: '_newOwner', type: 'address' },
+    ],
+    outputs: [],
+  },
 ] as const;
 
 export async function POST(
@@ -39,7 +49,7 @@ export async function POST(
 
   try {
     const body = await request.json();
-    const { chainId, securityTokenAddress, fundingGoalUSD, deadlineTimestamp, totalSupply, autoActivate } = body;
+    const { chainId, securityTokenAddress, fundingGoalUSD, deadlineTimestamp, totalSupply, autoActivate, issuerAddress } = body;
 
     // Validate
     if (!chainId || !securityTokenAddress || !fundingGoalUSD || !deadlineTimestamp || !totalSupply) {
@@ -58,6 +68,24 @@ export async function POST(
     }
 
     const escrowAddress = deployment.contracts.RWAEscrowVault;
+
+    // The vault makes whoever calls createProject the project owner, who completes the raise and
+    // receives milestone payouts. This route signs with the operator key, so the project is handed
+    // to the issuer right after: the project's creator, or issuerAddress for projects without one.
+    let issuer: string | undefined;
+    try {
+      const stored = JSON.parse(await readFile(path.join(PROJECTS_DIR, `${projectId}.json`), 'utf-8'));
+      issuer = stored.creator;
+    } catch {
+      // No local project file
+    }
+    issuer = issuer || issuerAddress;
+    if (!issuer || !/^0x[0-9a-fA-F]{40}$/.test(issuer)) {
+      return NextResponse.json(
+        { error: 'Issuer wallet unknown: pass issuerAddress for this project' },
+        { status: 400 }
+      );
+    }
     const OPERATOR_PRIVATE_KEY = process.env.VERIFIER_PRIVATE_KEY as `0x${string}`;
 
     if (!OPERATOR_PRIVATE_KEY) {
@@ -100,6 +128,15 @@ export async function POST(
     await publicClient.waitForTransactionReceipt({ hash: createHash });
     console.log(`[Escrow] Created project ${projectId}: ${createHash}`);
 
+    const ownershipHash = await walletClient.writeContract({
+      address: escrowAddress as `0x${string}`,
+      abi: RWAEscrowVaultABI,
+      functionName: 'transferProjectOwnership',
+      args: [BigInt(projectId), issuer as `0x${string}`],
+    });
+    await publicClient.waitForTransactionReceipt({ hash: ownershipHash });
+    console.log(`[Escrow] Project ${projectId} handed to issuer ${issuer}: ${ownershipHash}`);
+
     let activateHash: string | undefined;
 
     // Auto-activate if requested
@@ -137,6 +174,8 @@ export async function POST(
       projectId,
       escrowAddress,
       createTxHash: createHash,
+      ownershipTxHash: ownershipHash,
+      projectOwner: issuer,
       activateTxHash: activateHash,
       status: autoActivate ? 'active' : 'created',
     });

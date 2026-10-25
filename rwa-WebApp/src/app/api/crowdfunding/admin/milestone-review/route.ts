@@ -5,6 +5,8 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { getChainById, type SupportedChainId } from '@/config/chains';
 import { DEPLOYMENTS } from '@/config/deployments';
 import { RWAEscrowVaultABI } from '@/config/abis';
+import { findVaultProject } from '@/lib/crowdfunding/vaultProject';
+import { milestoneRef, milestoneReleaseAmount, readVaultFunding } from '@/lib/crowdfunding/vault';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -100,27 +102,38 @@ export async function POST(request: NextRequest) {
     let releasedAmount: bigint;
 
     try {
-      // Get milestone info from contract with proper typing
-      const milestones = await publicClient.readContract({
-        address: escrowAddress,
-        abi: RWAEscrowVaultABI,
-        functionName: 'getMilestones',
-        args: [BigInt(projectId)],
-      }) as readonly EscrowMilestone[];
+      // The vault keeps no milestone list: the milestone is defined on the application, and
+      // releasing it pays out its share of the project's escrowed funds
+      const project = await findVaultProject(chainId, BigInt(projectId));
+      const milestone = project?.milestones[milestoneIndex];
+      if (!project || !milestone) {
+        return NextResponse.json({ error: 'Milestone not found for this project' }, { status: 400 });
+      }
+      const vault = project.escrowVault || escrowAddress;
+      const funding = await readVaultFunding(publicClient, vault, project.vaultProjectId);
 
-      if (!milestones || milestones.length <= milestoneIndex) {
-        return NextResponse.json({ error: 'Milestone not found on chain' }, { status: 400 });
+      const { data: releasedProofs } = await supabase
+        .from('milestone_proofs')
+        .select('milestone_index')
+        .eq('chain_id', chainId)
+        .eq('project_id', projectId)
+        .not('release_tx_hash', 'is', null);
+      const released = new Set((releasedProofs || []).map((p) => Number(p.milestone_index)));
+      const unreleased = project.milestones.map((_, i) => i).filter((i) => !released.has(i));
+      const isLastUnreleased = unreleased.length === 1 && unreleased[0] === milestoneIndex;
+
+      releasedAmount = milestoneReleaseAmount(
+        funding.heldAmount, funding.releasedAmount, Number(milestone.fundingPercentage || 0), isLastUnreleased
+      );
+      if (releasedAmount <= BigInt(0)) {
+        return NextResponse.json({ error: 'Nothing left to release for this milestone' }, { status: 400 });
       }
 
-      const milestone = milestones[milestoneIndex];
-      releasedAmount = milestone.amount;
-
-      // Call releaseMilestoneFunds
       releaseTxHash = await walletClient.writeContract({
-        address: escrowAddress,
+        address: vault,
         abi: RWAEscrowVaultABI,
         functionName: 'releaseMilestoneFunds',
-        args: [BigInt(projectId), BigInt(milestoneIndex)],
+        args: [project.vaultProjectId, releasedAmount, milestoneRef(projectId, milestoneIndex)],
       });
 
       await publicClient.waitForTransactionReceipt({ hash: releaseTxHash });

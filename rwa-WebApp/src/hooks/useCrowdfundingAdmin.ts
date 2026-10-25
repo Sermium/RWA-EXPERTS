@@ -6,6 +6,7 @@ import { useChainConfig } from '@/hooks/useChainConfig';
 import { DEPLOYMENTS } from '@/config/deployments';
 import { RWAEscrowVaultABI, ERC20ABI, PlatformFeeManagerABI, DisputeManagerABI } from '@/config/abis';
 import { SupportedChainId } from '@/config/chains';
+import { fetchProjectEscrow, milestoneRef, reviewMilestoneProof } from '@/lib/crowdfunding/vault';
 
 // ============================================
 // TYPES
@@ -71,13 +72,13 @@ export function useCrowdfundingAdmin() {
         ? 'ADMIN_ROLE' 
         : role === 'OPERATOR' 
         ? 'OPERATOR_ROLE' 
-        : 'DISPUTE_RESOLVER_ROLE';
+        : 'DISPUTE_MANAGER_ROLE'; // the vault's dispute role
 
       const roleHash = await publicClient.readContract({
         address: escrowAddress,
         abi: RWAEscrowVaultABI,
         functionName: roleFunctionName,
-      }) as `0x${string}`;
+      });
 
       return await publicClient.readContract({
         address: escrowAddress,
@@ -179,7 +180,7 @@ export function useCrowdfundingAdmin() {
     }
   }, [walletClient, publicClient, escrowAddress]);
 
-  const forceMarkFunded = useCallback(async (projectId: bigint): Promise<`0x${string}` | null> => {
+  const forceMarkFunded = useCallback(async (projectId: bigint, reason = 'Marked funded by admin'): Promise<`0x${string}` | null> => {
     if (!walletClient || !publicClient || !escrowAddress) {
       setError('Wallet not connected or contracts not deployed');
       return null;
@@ -193,7 +194,7 @@ export function useCrowdfundingAdmin() {
         address: escrowAddress,
         abi: RWAEscrowVaultABI,
         functionName: 'forceMarkFunded',
-        args: [projectId],
+        args: [projectId, reason],
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -310,11 +311,18 @@ export function useCrowdfundingAdmin() {
     setError(null);
 
     try {
+      // The vault releases an amount, not a milestone: pay out this milestone's share
+      const escrow = await fetchProjectEscrow(chainId, params.projectId);
+      const milestone = escrow.milestones[params.milestoneIndex];
+      if (escrow.vaultProjectId === null || !milestone || milestone.amount <= BigInt(0)) {
+        throw new Error('Nothing to release for this milestone');
+      }
+
       const hash = await walletClient.writeContract({
         address: escrowAddress,
         abi: RWAEscrowVaultABI,
         functionName: 'releaseMilestoneFunds',
-        args: [params.projectId, BigInt(params.milestoneIndex)],
+        args: [escrow.vaultProjectId, milestone.amount, milestoneRef(params.projectId, params.milestoneIndex)],
       });
 
       await publicClient.waitForTransactionReceipt({ hash });
@@ -325,7 +333,7 @@ export function useCrowdfundingAdmin() {
     } finally {
       setIsLoading(false);
     }
-  }, [walletClient, publicClient, escrowAddress]);
+  }, [walletClient, publicClient, escrowAddress, chainId]);
 
   const approveMilestone = useCallback(async (projectId: bigint, milestoneIndex: number): Promise<`0x${string}` | null> => {
     if (!walletClient || !publicClient || !escrowAddress) {
@@ -337,22 +345,16 @@ export function useCrowdfundingAdmin() {
     setError(null);
 
     try {
-      const hash = await walletClient.writeContract({
-        address: escrowAddress,
-        abi: RWAEscrowVaultABI,
-        functionName: 'approveMilestone',
-        args: [projectId, BigInt(milestoneIndex)],
-      });
-
-      await publicClient.waitForTransactionReceipt({ hash });
-      return hash;
+      // There is no on-chain approval: approving the milestone's proof releases its funds
+      const result = await reviewMilestoneProof({ chainId, projectId, milestoneIndex, action: 'approve' });
+      return (result.txHash as `0x${string}` | undefined) ?? null;
     } catch (e: any) {
       setError(e.message || 'Failed to approve milestone');
       return null;
     } finally {
       setIsLoading(false);
     }
-  }, [walletClient, publicClient, escrowAddress]);
+  }, [walletClient, publicClient, escrowAddress, chainId]);
 
   // ============================================
   // FEE DISTRIBUTION

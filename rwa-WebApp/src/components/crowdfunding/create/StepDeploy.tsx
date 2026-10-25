@@ -21,6 +21,8 @@ interface DeployedContracts {
   escrowVault: Address;
   compliance: Address;
   nftTokenId?: bigint;
+  /** Id the escrow vault books the project under; every vault call needs it */
+  vaultProjectId?: bigint;
 }
 
 interface ActivationData {
@@ -192,6 +194,7 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
           security_token_address: deployed.securityToken,
           compliance_address: deployed.compliance,
           project_nft_id: deployed.nftTokenId?.toString(),
+          vault_project_id: deployed.vaultProjectId?.toString(),
           deployment_tx_hash: txHash,
           activation_tx_hash: activationTxHash,
           chain_id: currentChainId,
@@ -230,6 +233,8 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
     if (!txReceipt || !contracts) return;
     try {
       let deployed: DeployedContracts | null = null;
+      // The NFT's ProjectCreated is logged before the factory's ProjectDeployed, so collect both
+      let nftTokenId: bigint | undefined;
       for (const log of txReceipt.logs) {
         try {
           if (log.address.toLowerCase() === contracts.RWALaunchpadFactory?.toLowerCase()) {
@@ -239,13 +244,27 @@ export function StepDeploy({ application, deadlineDays = 30, onBack, onClose, on
               deployed = { projectId: args.projectId, securityToken: args.securityToken, escrowVault: args.escrowVault, compliance: args.compliance };
             }
           }
-          if (log.address.toLowerCase() === contracts.RWAProjectNFT?.toLowerCase() && deployed) {
+          if (log.address.toLowerCase() === contracts.RWAProjectNFT?.toLowerCase()) {
             const decoded = decodeEventLog({ abi: RWAProjectNFTABI, data: log.data, topics: log.topics });
-            if (decoded.eventName === 'ProjectCreated') deployed.nftTokenId = (decoded.args as any).tokenId;
+            if (decoded.eventName === 'ProjectCreated') nftTokenId = (decoded.args as any).tokenId;
           }
         } catch {}
       }
       if (deployed) {
+        deployed.nftTokenId = nftTokenId;
+        // v2 factories book the project in its vault under the NFT id and report it here; earlier
+        // factories (no getVaultProjectId) booked it under their own project id
+        const factoryProjectId = deployed.projectId;
+        deployed.vaultProjectId = publicClient
+          ? await publicClient
+              .readContract({
+                address: contracts.RWALaunchpadFactory as Address,
+                abi: RWALaunchpadFactoryABI,
+                functionName: 'getVaultProjectId',
+                args: [factoryProjectId],
+              })
+              .catch(() => factoryProjectId)
+          : factoryProjectId;
         setDeployedContracts(deployed);
         const activatedAt = new Date();
         const raiseEndDate = new Date(activatedAt);

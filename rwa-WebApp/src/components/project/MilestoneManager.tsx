@@ -6,6 +6,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt, usePublicCl
 import { Address } from 'viem';
 import { RWAEscrowVaultABI } from '@/config/abis';
 import { useChainConfig } from '@/hooks/useChainConfig';
+import { fetchProjectEscrow, milestoneRef, MILESTONE_STATE } from '@/lib/crowdfunding/vault';
 
 const MILESTONE_STATUS: Record<number, { label: string; color: string }> = {
   0: { label: 'Pending', color: 'bg-ink-faint/20 text-ink-muted' },
@@ -16,7 +17,8 @@ const MILESTONE_STATUS: Record<number, { label: string; color: string }> = {
   5: { label: 'Rejected', color: 'bg-danger/20 text-danger' },
 };
 
-// Matches the ABI's getMilestones output
+// Milestones come from the database (/api/crowdfunding/milestones): the escrow vault keeps no
+// milestone list and only releases each milestone's share of the escrowed funds.
 interface Milestone {
   id: bigint;
   description: string;
@@ -33,15 +35,23 @@ interface ProjectData {
   projectOwner: string;
   securityToken: string;
   paymentToken: string;
-  priceFeed: string;
   fundingGoal: bigint;
   totalRaised: bigint;
   deadline: bigint;
   state: number;
   createdAt: bigint;
-  platformFeeBps: bigint;
-  maxPriceAge: bigint;
+  fundedAt: bigint;
+  completedAt: bigint;
+  totalSupply: bigint;
+  platformFeesTransferred: boolean;
 }
+
+const STATUS_BY_STATE: Record<number, number> = {
+  [MILESTONE_STATE.PENDING]: 0,
+  [MILESTONE_STATE.APPROVED]: 1,
+  [MILESTONE_STATE.RELEASED]: 2,
+  [MILESTONE_STATE.REJECTED]: 5,
+};
 
 interface MilestoneManagerProps {
   projectId: number;
@@ -62,6 +72,7 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
   } = useChainConfig();
 
   const [milestones, setMilestones] = useState<Milestone[]>([]);
+  const [vaultProjectId, setVaultProjectId] = useState<bigint | null>(null);
   const [projectData, setProjectData] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -86,41 +97,27 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
       setLoading(true);
       setError(null);
       
-      const [milestonesData, project] = await Promise.all([
-        publicClient.readContract({
-          address: escrowVaultAddress,
-          abi: RWAEscrowVaultABI,
-          functionName: 'getMilestones',
-          args: [BigInt(projectId)],
-        }),
-        publicClient.readContract({
-          address: escrowVaultAddress,
-          abi: RWAEscrowVaultABI,
-          functionName: 'getProject',
-          args: [BigInt(projectId)],
-        }),
-      ]);
+      const escrow = await fetchProjectEscrow(chainId, projectId);
+      const project = escrow.vaultProjectId === null ? null : await publicClient.readContract({
+        address: escrowVaultAddress,
+        abi: RWAEscrowVaultABI,
+        functionName: 'getProject',
+        args: [escrow.vaultProjectId],
+      });
 
-      // Convert readonly array to mutable array with proper typing
-      const milestonesArray = (milestonesData as readonly {
-        id: bigint;
-        description: string;
-        targetAmount: bigint;
-        releasedAmount: bigint;
-        deadline: bigint;
-        status: number;
-        proofURI: string;
-      }[]).map(m => ({
-        id: m.id,
-        description: m.description,
-        targetAmount: m.targetAmount,
-        releasedAmount: m.releasedAmount,
-        deadline: m.deadline,
-        status: m.status,
-        proofURI: m.proofURI,
+      setVaultProjectId(escrow.vaultProjectId);
+      setMilestones(escrow.milestones.map((m) => {
+        const released = m.state === MILESTONE_STATE.RELEASED;
+        return {
+          id: BigInt(m.index),
+          description: m.description,
+          targetAmount: m.amount,
+          releasedAmount: released ? m.amount : BigInt(0),
+          deadline: m.deadline,
+          status: STATUS_BY_STATE[m.state] ?? 0,
+          proofURI: '',
+        };
       }));
-
-      setMilestones(milestonesArray);
       setProjectData(project as unknown as ProjectData);
     } catch (err) {
       console.error('Failed to load milestones:', err);
@@ -143,13 +140,13 @@ export default function MilestoneManager({ projectId, escrowVault, isOwner }: Mi
   }, [releaseSuccess]);
 
   const handleReleaseMilestone = (milestoneId: bigint) => {
-    if (!escrowVaultAddress) return;
-    
+    const milestone = milestones[Number(milestoneId)];
+    if (!escrowVaultAddress || vaultProjectId === null || !milestone) return;
     releaseMilestone({
       address: escrowVaultAddress,
       abi: RWAEscrowVaultABI,
       functionName: 'releaseMilestoneFunds',
-      args: [BigInt(projectId), milestoneId],
+      args: [vaultProjectId, milestone.targetAmount, milestoneRef(projectId, Number(milestoneId))],
     });
   };
 

@@ -7,6 +7,7 @@ import { useAccount, usePublicClient } from 'wagmi';
 import { Address, formatUnits } from 'viem';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { RWAProjectNFTABI, RWAEscrowVaultABI } from '@/config/abis';
+import { readVaultFunding } from '@/lib/crowdfunding/vault';
 import { Project, AdminTab, KYCStats, TokenizationStats, TradeStats, DisputeStats } from './constants';
 import { convertIPFSUrl } from './helpers';
 import AdminDocs from '@/components/admin/AdminDocs';
@@ -518,13 +519,9 @@ export default function AdminClient() {
 
         if (project.escrowVault && project.escrowVault !== ZERO_ADDRESS && !isNaN(projectId)) {
           try {
-            const fundingData = await publicClient.readContract({
-              address: project.escrowVault as Address,
-              abi: RWAEscrowVaultABI,
-              functionName: 'getProjectFunding',
-              args: [BigInt(projectId)],
-            });
-            refundsEnabled = (fundingData as any)?.refundsEnabled ?? false;
+            // Refunds are open once the vault project is cancelled
+            const funding = await readVaultFunding(publicClient, project.escrowVault as Address, BigInt(projectId));
+            refundsEnabled = funding.refundsEnabled;
           } catch (e) {}
         }
 

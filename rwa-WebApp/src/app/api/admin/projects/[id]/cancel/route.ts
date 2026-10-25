@@ -6,6 +6,9 @@ import { privateKeyToAccount } from 'viem/accounts';
 import { ZERO_ADDRESS } from '@/config/contracts';
 import { RWAProjectNFTABI, RWAEscrowVaultABI } from '@/config/abis';
 
+import { openVaultRefunds, readVaultFunding, VAULT_STATE } from '@/lib/crowdfunding/vault';
+import { resolveVaultProjectId } from '@/lib/crowdfunding/vaultProject';
+
 // ============================================================================
 // MULTICHAIN CONFIGURATION
 // ============================================================================
@@ -104,15 +107,15 @@ const DEFAULT_CHAIN_ID = 43113;
 // CONSTANTS
 // ============================================================================
 
+// RWAProjectNFT.ProjectStatus
+const NFT_STATUS = { DRAFT: 0, ACTIVE: 1, FUNDED: 2, COMPLETED: 3, CANCELLED: 4 } as const;
+
 const STATUS_NAMES: Record<number, string> = {
   0: 'Draft',
-  1: 'Pending',
-  2: 'Active',
-  3: 'Funded',
-  4: 'In Progress',
-  5: 'Completed',
-  6: 'Cancelled',
-  7: 'Failed',
+  1: 'Active',
+  2: 'Funded',
+  3: 'Completed',
+  4: 'Cancelled',
 };
 
 // ============================================================================
@@ -163,9 +166,9 @@ export async function POST(
     }
 
     const body = await request.json();
-    const { 
-      reason = 'Project cancelled by admin', 
-      enableRefunds = true,
+    // Refunds open whenever a project with an escrow is cancelled; there is no separate switch
+    const {
+      reason = 'Project cancelled by admin',
       chainId: requestedChainId,
     } = body;
 
@@ -206,7 +209,6 @@ export async function POST(
 
     console.log(`[${chainConfig.name}] Cancelling project ${projectId}`);
     console.log(`[${chainConfig.name}] Reason:`, reason);
-    console.log(`[${chainConfig.name}] Enable refunds:`, enableRefunds);
 
     const publicClient = createChainPublicClient(chainConfig);
     const walletClient = createChainWalletClient(chainConfig, adminKey as `0x${string}`);
@@ -220,26 +222,24 @@ export async function POST(
     }) as any;
 
     const currentStatus = Number(project.status);
+    const hasEscrow = !!project.escrowVault && project.escrowVault !== ZERO_ADDRESS;
 
     console.log(`[${chainConfig.name}] Current status:`, STATUS_NAMES[currentStatus] || currentStatus);
-    console.log(`[${chainConfig.name}] Total raised:`, project.totalRaised?.toString());
     console.log(`[${chainConfig.name}] Escrow vault:`, project.escrowVault);
 
-    // Status 6 = Cancelled
-    if (currentStatus === 6) {
-      return NextResponse.json({ 
-        success: false, 
+    if (currentStatus === NFT_STATUS.CANCELLED) {
+      return NextResponse.json({
+        success: false,
         error: `Project ${projectId} already cancelled on ${chainConfig.name}`,
         chainId,
         chainName: chainConfig.name,
       }, { status: 400 });
     }
-    
-    // Status 5 = Completed
-    if (currentStatus === 5) {
-      return NextResponse.json({ 
-        success: false, 
-        error: `Cannot cancel completed project on ${chainConfig.name}`,
+
+    if (currentStatus === NFT_STATUS.COMPLETED) {
+      return NextResponse.json({
+        success: false,
+        error: `Cannot cancel completed project on ${chainConfig.name}: a completed project is refunded through a dispute`,
         chainId,
         chainName: chainConfig.name,
       }, { status: 400 });
@@ -247,10 +247,11 @@ export async function POST(
 
     const results: any = {
       projectId,
+      reason,
       previousStatus: STATUS_NAMES[currentStatus] || `Status ${currentStatus}`,
       totalRaised: Number(project.totalRaised) / 1e6,
       totalRaisedFormatted: `$${(Number(project.totalRaised) / 1e6).toLocaleString()}`,
-      investorCount: Number(project.investorCount || 0),
+      investorCount: 0,
       transactions: [],
       chainId,
       chainName: chainConfig.name,
@@ -258,68 +259,50 @@ export async function POST(
       explorerUrl: chainConfig.explorerUrl,
     };
 
-    // Step 1: Cancel the project
-    console.log(`[${chainConfig.name}] Calling cancelProject...`);
-    
-    const cancelHash = await walletClient.writeContract({
-      address: projectNFTAddress,
-      abi: RWAProjectNFTABI,
-      functionName: 'cancelProject',
-      args: [BigInt(projectId), reason],
-    });
+    if (hasEscrow) {
+      // Cancelling on the escrow vault opens refunds: each investor then calls claimRefund.
+      // The vault also marks the project NFT cancelled.
+      const vault = project.escrowVault as `0x${string}`;
+      const vaultProjectId = await resolveVaultProjectId(chainId, projectId);
+      const status = await readVaultFunding(publicClient, vault, vaultProjectId);
+      results.totalRaised = Number(status.totalRaised) / 1e6;
+      results.totalRaisedFormatted = `$${results.totalRaised.toLocaleString()}`;
+      results.investorCount = status.investorCount;
+      results.vaultProjectId = vaultProjectId.toString();
 
-    console.log(`[${chainConfig.name}] Cancel tx:`, cancelHash);
-
-    const cancelReceipt = await publicClient.waitForTransactionReceipt({ hash: cancelHash });
-    
-    results.transactions.push({ 
-      action: 'cancel', 
-      hash: cancelHash,
-      txUrl: `${chainConfig.explorerUrl}/tx/${cancelHash}`,
-      blockNumber: Number(cancelReceipt.blockNumber),
-    });
-    results.cancelled = true;
-
-    // Step 2: Enable refunds if requested and there are funds
-    if (enableRefunds && project.totalRaised > 0n && project.escrowVault !== ZERO_ADDRESS) {
-      try {
-        console.log(`[${chainConfig.name}] Calling enableRefunds on ${project.escrowVault}...`);
-        
-        const refundHash = await walletClient.writeContract({
-          address: project.escrowVault as `0x${string}`,
-          abi: RWAEscrowVaultABI,
-          functionName: 'enableRefunds',
-          args: [BigInt(projectId)],
+      console.log(`[${chainConfig.name}] Cancelling vault project ${vaultProjectId} on ${vault}...`);
+      const cancelHash = await openVaultRefunds(publicClient, walletClient, vault, vaultProjectId);
+      if (cancelHash) {
+        results.transactions.push({
+          action: 'cancel',
+          hash: cancelHash,
+          txUrl: `${chainConfig.explorerUrl}/tx/${cancelHash}`,
         });
-
-        console.log(`[${chainConfig.name}] Refund tx:`, refundHash);
-
-        const refundReceipt = await publicClient.waitForTransactionReceipt({ hash: refundHash });
-        
-        results.transactions.push({ 
-          action: 'enableRefunds', 
-          hash: refundHash,
-          txUrl: `${chainConfig.explorerUrl}/tx/${refundHash}`,
-          blockNumber: Number(refundReceipt.blockNumber),
-        });
-        results.refundsEnabled = true;
-        results.escrowVault = project.escrowVault;
-        results.escrowVaultUrl = `${chainConfig.explorerUrl}/address/${project.escrowVault}`;
-      } catch (refundError: any) {
-        console.error(`[${chainConfig.name}] Refund error:`, refundError);
-        results.refundsEnabled = false;
-        results.refundError = refundError.shortMessage || refundError.message;
       }
+      results.refundsEnabled = status.totalRaised > 0n;
+      if (!results.refundsEnabled) results.refundReason = 'No funds raised';
+      results.escrowVault = vault;
+      results.escrowVaultUrl = `${chainConfig.explorerUrl}/address/${vault}`;
     } else {
+      // No escrow, nothing to refund: only the project NFT's status changes
+      console.log(`[${chainConfig.name}] Marking project NFT ${projectId} cancelled...`);
+      const cancelHash = await walletClient.writeContract({
+        address: projectNFTAddress,
+        abi: RWAProjectNFTABI,
+        functionName: 'updateProjectStatus',
+        args: [BigInt(projectId), NFT_STATUS.CANCELLED],
+      });
+      const cancelReceipt = await publicClient.waitForTransactionReceipt({ hash: cancelHash });
+      results.transactions.push({
+        action: 'cancel',
+        hash: cancelHash,
+        txUrl: `${chainConfig.explorerUrl}/tx/${cancelHash}`,
+        blockNumber: Number(cancelReceipt.blockNumber),
+      });
       results.refundsEnabled = false;
-      if (project.totalRaised === 0n) {
-        results.refundReason = 'No funds raised';
-      } else if (project.escrowVault === ZERO_ADDRESS) {
-        results.refundReason = 'No escrow vault';
-      } else {
-        results.refundReason = 'Refunds not requested';
-      }
+      results.refundReason = 'No escrow vault';
     }
+    results.cancelled = true;
 
     results.newStatus = 'Cancelled';
     results.success = true;
@@ -398,36 +381,38 @@ export async function GET(
       args: [BigInt(projectId)],
     }) as any;
 
-    const currentStatus = Number(project.status);
-    const totalRaised = Number(project.totalRaised || 0);
-    const investorCount = Number(project.investorCount || 0);
-    const hasEscrow = project.escrowVault && project.escrowVault !== ZERO_ADDRESS;
+    let currentStatus = Number(project.status);
+    let totalRaised = Number(project.totalRaised || 0);
+    let investorCount = 0;
+    const hasEscrow = !!project.escrowVault && project.escrowVault !== ZERO_ADDRESS;
+
+    // The escrow vault is the source of truth for funds and refunds
+    let refundsAlreadyEnabled = false;
+    let vaultProjectId: string | null = null;
+    if (hasEscrow) {
+      const id = await resolveVaultProjectId(chainId, projectId);
+      const status = await readVaultFunding(publicClient, project.escrowVault as `0x${string}`, id);
+      vaultProjectId = id.toString();
+      totalRaised = Number(status.totalRaised);
+      investorCount = status.investorCount;
+      refundsAlreadyEnabled = status.refundsEnabled;
+      if (status.state === VAULT_STATE.CANCELLED) currentStatus = NFT_STATUS.CANCELLED;
+      if (status.state === VAULT_STATE.COMPLETED) currentStatus = NFT_STATUS.COMPLETED;
+    }
 
     // Determine if cancellable
-    const isCancellable = currentStatus !== 5 && currentStatus !== 6; // Not Completed or Cancelled
+    const isCancellable = currentStatus !== NFT_STATUS.COMPLETED && currentStatus !== NFT_STATUS.CANCELLED;
     const willNeedRefunds = totalRaised > 0 && hasEscrow;
-
-    // Check if already cancelled
-    let refundsAlreadyEnabled = false;
-    if (currentStatus === 6 && hasEscrow) {
-      try {
-        refundsAlreadyEnabled = await publicClient.readContract({
-          address: project.escrowVault as `0x${string}`,
-          abi: RWAEscrowVaultABI,
-          functionName: 'refundsEnabled',
-          args: [BigInt(projectId)],
-        }) as boolean;
-      } catch {}
-    }
 
     return NextResponse.json({
       success: true,
       projectId,
+      vaultProjectId,
       currentStatus,
       currentStatusName: STATUS_NAMES[currentStatus] || `Status ${currentStatus}`,
       isCancellable,
-      cancellableReason: !isCancellable 
-        ? (currentStatus === 5 ? 'Project is completed' : 'Project is already cancelled')
+      cancellableReason: !isCancellable
+        ? (currentStatus === NFT_STATUS.COMPLETED ? 'Project is completed' : 'Project is already cancelled')
         : null,
       totalRaised: totalRaised / 1e6,
       totalRaisedFormatted: `$${(totalRaised / 1e6).toLocaleString()}`,
@@ -457,11 +442,10 @@ export async function GET(
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { 
-      projectIds, 
+    // Refunds open whenever a project with an escrow is cancelled; there is no separate switch
+    const {
+      projectIds,
       chainId: requestedChainId,
-      reason = 'Batch cancellation by admin',
-      enableRefunds = true,
     } = body;
 
     if (!projectIds || !Array.isArray(projectIds) || projectIds.length === 0) {
@@ -533,7 +517,7 @@ export async function PUT(request: NextRequest) {
         const currentStatus = Number(project.status);
 
         // Skip if already cancelled or completed
-        if (currentStatus === 6) {
+        if (currentStatus === NFT_STATUS.CANCELLED) {
           results.push({
             projectId,
             status: 'skipped',
@@ -542,7 +526,7 @@ export async function PUT(request: NextRequest) {
           continue;
         }
 
-        if (currentStatus === 5) {
+        if (currentStatus === NFT_STATUS.COMPLETED) {
           results.push({
             projectId,
             status: 'skipped',
@@ -551,41 +535,32 @@ export async function PUT(request: NextRequest) {
           continue;
         }
 
-        // Cancel the project
-        const cancelHash = await walletClient.writeContract({
-          address: projectNFTAddress,
-          abi: RWAProjectNFTABI,
-          functionName: 'cancelProject',
-          args: [BigInt(projectId), reason],
-        });
-
-        await publicClient.waitForTransactionReceipt({ hash: cancelHash });
-
         const result: any = {
           projectId,
           status: 'cancelled',
           message: 'Project cancelled',
-          cancelTxHash: cancelHash,
           totalRaised: Number(project.totalRaised) / 1e6,
         };
 
-        // Enable refunds if applicable
-        if (enableRefunds && project.totalRaised > 0n && project.escrowVault !== ZERO_ADDRESS) {
-          try {
-            const refundHash = await walletClient.writeContract({
-              address: project.escrowVault as `0x${string}`,
-              abi: RWAEscrowVaultABI,
-              functionName: 'enableRefunds',
-              args: [BigInt(projectId)],
-            });
-
-            await publicClient.waitForTransactionReceipt({ hash: refundHash });
-            result.refundTxHash = refundHash;
-            result.refundsEnabled = true;
-          } catch (refundError: any) {
-            result.refundsEnabled = false;
-            result.message = 'Cancelled but refund enable failed';
-          }
+        if (project.escrowVault && project.escrowVault !== ZERO_ADDRESS) {
+          // Cancelling on the escrow vault opens refunds (investors call claimRefund)
+          const vault = project.escrowVault as `0x${string}`;
+          const vaultProjectId = await resolveVaultProjectId(chainId, projectId);
+          const status = await readVaultFunding(publicClient, vault, vaultProjectId);
+          const cancelHash = await openVaultRefunds(publicClient, walletClient, vault, vaultProjectId);
+          if (cancelHash) result.cancelTxHash = cancelHash;
+          result.totalRaised = Number(status.totalRaised) / 1e6;
+          result.refundsEnabled = status.totalRaised > 0n;
+        } else {
+          const cancelHash = await walletClient.writeContract({
+            address: projectNFTAddress,
+            abi: RWAProjectNFTABI,
+            functionName: 'updateProjectStatus',
+            args: [BigInt(projectId), NFT_STATUS.CANCELLED],
+          });
+          await publicClient.waitForTransactionReceipt({ hash: cancelHash });
+          result.cancelTxHash = cancelHash;
+          result.refundsEnabled = false;
         }
 
         results.push(result);

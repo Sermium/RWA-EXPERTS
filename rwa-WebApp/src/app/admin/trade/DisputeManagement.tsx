@@ -6,6 +6,7 @@ import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
 import { Address, formatUnits } from 'viem';
 import { useChainConfig } from '@/hooks/useChainConfig';
 import { DisputeManagerABI, RWAEscrowVaultABI } from '@/config/abis';
+import { readVaultFunding } from '@/lib/crowdfunding/vault';
 import { DEPLOYMENTS } from '@/config/deployments';
 import { SupportedChainId } from '@/config/chains';
 import {
@@ -771,14 +772,9 @@ export default function DisputeManagement({ onRefresh }: DisputeManagementProps)
                 let totalInvestors = 0;
 
                 try {
-                  const fundingData = await publicClient.readContract({
-                    address: escrowVaultAddress,
-                    abi: RWAEscrowVaultABI,
-                    functionName: 'getProjectFunding',
-                    args: [disputeData.projectId],
-                  }) as any;
-                  totalRaised = fundingData.totalRaised || 0n;
-                  totalInvestors = Number(fundingData.investorCount || 0);
+                  const funding = await readVaultFunding(publicClient, escrowVaultAddress, BigInt(disputeData.projectId));
+                  totalRaised = funding.totalRaised;
+                  totalInvestors = funding.investorCount;
                 } catch (e) {
                   console.error('Error fetching project funding:', e);
                 }

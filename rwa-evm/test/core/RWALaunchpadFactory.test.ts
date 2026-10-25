@@ -104,6 +104,17 @@ describe("RWALaunchpadFactory", function () {
     expect(await token.hasRole(ethers.id("SNAPSHOT_ROLE"), await vault.getAddress())).to.equal(true);
   });
 
+  it("does not let another project's vault change this project's NFT status", async function () {
+    const f = await loadFixture(deployedFixture);
+    await f.factory.connect(f.deployer).deployProject("Wind Farm", "WIND", "energy", SUPPLY, GOAL, 30, "ipfs://meta2");
+    const other: any = await ethers.getContractAt("RWAEscrowVault", (await f.factory.getDeployment(1)).escrowVault);
+    await ethers.provider.send("hardhat_impersonateAccount", [await other.getAddress()]);
+    await ethers.provider.send("hardhat_setBalance", [await other.getAddress(), "0xDE0B6B3A7640000"]);
+    const otherVault = await ethers.getSigner(await other.getAddress());
+    await expect(f.nft.connect(otherVault).updateProjectStatus(f.vaultProjectId, 4))
+      .to.be.revertedWithCustomError(f.nft, "NotAuthorized");
+  });
+
   it("runs a raise end to end: invest, complete, claim, release", async function () {
     const f = await loadFixture(deployedFixture);
     const { factory, vault, token, usdc, feeManager, signer, verifier, deployer, investor, liquidity, treasury, owner } = f;
@@ -112,8 +123,12 @@ describe("RWALaunchpadFactory", function () {
 
     await factory.connect(deployer).activateProject(0);
     await usdc.connect(investor).approve(await vault.getAddress(), GOAL);
-    await vault.connect(investor).invest(pid, GOAL, await usdc.getAddress(), await kycProof(signer, verifier, investor.address));
+    // The project's own vault may update its NFT status without MANAGER_ROLE
+    await expect(
+      vault.connect(investor).invest(pid, GOAL, await usdc.getAddress(), await kycProof(signer, verifier, investor.address))
+    ).to.not.emit(vault, "ProjectNFTUpdateFailed");
     expect((await vault.getProject(pid)).state).to.equal(2); // FUNDED
+    expect((await f.nft.getProject(pid)).status).to.equal(2); // NFT FUNDED
 
     await cacheKYC(token, signer, verifier, [liquidity.address, treasury.address, investor.address]);
     await vault.connect(deployer).completeProject(pid);

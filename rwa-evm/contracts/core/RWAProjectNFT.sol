@@ -108,8 +108,9 @@ contract RWAProjectNFT is Initializable, ERC721Upgradeable, ERC721URIStorageUpgr
         // No change needed
         if (currentStatus == _status) return;
         
-        // Only managers can change status
-        if (!hasRole(MANAGER_ROLE, msg.sender)) {
+        // Managers, and the escrow vault linked to this project (each launchpad project has its
+        // own vault, which reports funded / completed / cancelled without needing a role)
+        if (!hasRole(MANAGER_ROLE, msg.sender) && msg.sender != project.escrowVault) {
             revert NotAuthorized();
         }
         
