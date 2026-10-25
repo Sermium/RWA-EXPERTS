@@ -2,7 +2,5 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { MockClaimIssuer } from "./MockClaimIssuer";
-export type { MockComplianceModule } from "./MockComplianceModule";
 export type { MockERC20 } from "./MockERC20";
 export type { MockIdentity } from "./MockIdentity";
-export type { MockProjectNFT } from "./MockProjectNFT";

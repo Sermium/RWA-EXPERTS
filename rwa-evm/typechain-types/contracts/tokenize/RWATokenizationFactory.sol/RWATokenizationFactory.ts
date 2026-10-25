@@ -120,7 +120,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
       | "deploymentCounter"
       | "deploymentRestrictedCountries"
       | "deployments"
-      | "escrowStablecoin"
       | "escrowTransactionFeeBps"
       | "getDefaultRestrictedCountries"
       | "getDeployment"
@@ -139,14 +138,12 @@ export interface RWATokenizationFactoryInterface extends Interface {
       | "paused"
       | "platformFeeRecipient"
       | "proxiableUUID"
-      | "releaseLegacyToken"
       | "renounceOwnership"
       | "requireApproval"
       | "requireKYCForDeployment"
       | "setComplianceImplementation"
       | "setDeployerApproval"
       | "setDividendDistributorImplementation"
-      | "setEscrowStablecoin"
       | "setEscrowTransactionFee"
       | "setKYCRequirement"
       | "setKYCVerifier"
@@ -169,7 +166,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
       | "DeploymentDeactivated"
       | "DividendModuleDeployed"
       | "EscrowDeployed"
-      | "EscrowStablecoinUpdated"
       | "ImplementationUpdated"
       | "Initialized"
       | "KYCVerifierUpdated"
@@ -177,7 +173,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
       | "Paused"
       | "ProjectNFTDeployed"
       | "TokenDeployed"
-      | "TokenReleasedToIssuer"
       | "Unpaused"
       | "Upgraded"
   ): EventFragment;
@@ -253,10 +248,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "escrowStablecoin",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "escrowTransactionFeeBps",
     values?: undefined
   ): string;
@@ -327,10 +318,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "releaseLegacyToken",
-    values: [BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
   ): string;
@@ -352,10 +339,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "setDividendDistributorImplementation",
-    values: [AddressLike]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setEscrowStablecoin",
     values: [AddressLike]
   ): string;
   encodeFunctionData(
@@ -458,10 +441,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "escrowStablecoin",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "escrowTransactionFeeBps",
     data: BytesLike
   ): Result;
@@ -522,10 +501,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "releaseLegacyToken",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "renounceOwnership",
     data: BytesLike
   ): Result;
@@ -547,10 +522,6 @@ export interface RWATokenizationFactoryInterface extends Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "setDividendDistributorImplementation",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setEscrowStablecoin",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -691,22 +662,6 @@ export namespace EscrowDeployedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export namespace EscrowStablecoinUpdatedEvent {
-  export type InputTuple = [
-    oldStablecoin: AddressLike,
-    newStablecoin: AddressLike
-  ];
-  export type OutputTuple = [oldStablecoin: string, newStablecoin: string];
-  export interface OutputObject {
-    oldStablecoin: string;
-    newStablecoin: string;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
 export namespace ImplementationUpdatedEvent {
   export type InputTuple = [
     contractType: string,
@@ -828,28 +783,6 @@ export namespace TokenDeployedEvent {
     supply: bigint;
     deploymentType: bigint;
     minKYCLevel: bigint;
-  }
-  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
-  export type Filter = TypedDeferredTopicFilter<Event>;
-  export type Log = TypedEventLog<Event>;
-  export type LogDescription = TypedLogDescription<Event>;
-}
-
-export namespace TokenReleasedToIssuerEvent {
-  export type InputTuple = [
-    deploymentId: BigNumberish,
-    securityToken: AddressLike,
-    issuer: AddressLike
-  ];
-  export type OutputTuple = [
-    deploymentId: bigint,
-    securityToken: string,
-    issuer: string
-  ];
-  export interface OutputObject {
-    deploymentId: bigint;
-    securityToken: string;
-    issuer: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -1085,8 +1018,6 @@ export interface RWATokenizationFactory extends BaseContract {
     "view"
   >;
 
-  escrowStablecoin: TypedContractMethod<[], [string], "view">;
-
   escrowTransactionFeeBps: TypedContractMethod<[], [bigint], "view">;
 
   getDefaultRestrictedCountries: TypedContractMethod<[], [bigint[]], "view">;
@@ -1166,12 +1097,6 @@ export interface RWATokenizationFactory extends BaseContract {
 
   proxiableUUID: TypedContractMethod<[], [string], "view">;
 
-  releaseLegacyToken: TypedContractMethod<
-    [_deploymentId: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   renounceOwnership: TypedContractMethod<[], [void], "nonpayable">;
 
   requireApproval: TypedContractMethod<[], [boolean], "view">;
@@ -1192,12 +1117,6 @@ export interface RWATokenizationFactory extends BaseContract {
 
   setDividendDistributorImplementation: TypedContractMethod<
     [_impl: AddressLike],
-    [void],
-    "nonpayable"
-  >;
-
-  setEscrowStablecoin: TypedContractMethod<
-    [_s: AddressLike],
     [void],
     "nonpayable"
   >;
@@ -1422,9 +1341,6 @@ export interface RWATokenizationFactory extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "escrowStablecoin"
-  ): TypedContractMethod<[], [string], "view">;
-  getFunction(
     nameOrSignature: "escrowTransactionFeeBps"
   ): TypedContractMethod<[], [bigint], "view">;
   getFunction(
@@ -1514,9 +1430,6 @@ export interface RWATokenizationFactory extends BaseContract {
     nameOrSignature: "proxiableUUID"
   ): TypedContractMethod<[], [string], "view">;
   getFunction(
-    nameOrSignature: "releaseLegacyToken"
-  ): TypedContractMethod<[_deploymentId: BigNumberish], [void], "nonpayable">;
-  getFunction(
     nameOrSignature: "renounceOwnership"
   ): TypedContractMethod<[], [void], "nonpayable">;
   getFunction(
@@ -1534,9 +1447,6 @@ export interface RWATokenizationFactory extends BaseContract {
   getFunction(
     nameOrSignature: "setDividendDistributorImplementation"
   ): TypedContractMethod<[_impl: AddressLike], [void], "nonpayable">;
-  getFunction(
-    nameOrSignature: "setEscrowStablecoin"
-  ): TypedContractMethod<[_s: AddressLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "setEscrowTransactionFee"
   ): TypedContractMethod<[_feeBps: BigNumberish], [void], "nonpayable">;
@@ -1625,13 +1535,6 @@ export interface RWATokenizationFactory extends BaseContract {
     EscrowDeployedEvent.OutputObject
   >;
   getEvent(
-    key: "EscrowStablecoinUpdated"
-  ): TypedContractEvent<
-    EscrowStablecoinUpdatedEvent.InputTuple,
-    EscrowStablecoinUpdatedEvent.OutputTuple,
-    EscrowStablecoinUpdatedEvent.OutputObject
-  >;
-  getEvent(
     key: "ImplementationUpdated"
   ): TypedContractEvent<
     ImplementationUpdatedEvent.InputTuple,
@@ -1679,13 +1582,6 @@ export interface RWATokenizationFactory extends BaseContract {
     TokenDeployedEvent.InputTuple,
     TokenDeployedEvent.OutputTuple,
     TokenDeployedEvent.OutputObject
-  >;
-  getEvent(
-    key: "TokenReleasedToIssuer"
-  ): TypedContractEvent<
-    TokenReleasedToIssuerEvent.InputTuple,
-    TokenReleasedToIssuerEvent.OutputTuple,
-    TokenReleasedToIssuerEvent.OutputObject
   >;
   getEvent(
     key: "Unpaused"
@@ -1769,17 +1665,6 @@ export interface RWATokenizationFactory extends BaseContract {
       EscrowDeployedEvent.OutputObject
     >;
 
-    "EscrowStablecoinUpdated(address,address)": TypedContractEvent<
-      EscrowStablecoinUpdatedEvent.InputTuple,
-      EscrowStablecoinUpdatedEvent.OutputTuple,
-      EscrowStablecoinUpdatedEvent.OutputObject
-    >;
-    EscrowStablecoinUpdated: TypedContractEvent<
-      EscrowStablecoinUpdatedEvent.InputTuple,
-      EscrowStablecoinUpdatedEvent.OutputTuple,
-      EscrowStablecoinUpdatedEvent.OutputObject
-    >;
-
     "ImplementationUpdated(string,address,address)": TypedContractEvent<
       ImplementationUpdatedEvent.InputTuple,
       ImplementationUpdatedEvent.OutputTuple,
@@ -1855,17 +1740,6 @@ export interface RWATokenizationFactory extends BaseContract {
       TokenDeployedEvent.InputTuple,
       TokenDeployedEvent.OutputTuple,
       TokenDeployedEvent.OutputObject
-    >;
-
-    "TokenReleasedToIssuer(uint256,address,address)": TypedContractEvent<
-      TokenReleasedToIssuerEvent.InputTuple,
-      TokenReleasedToIssuerEvent.OutputTuple,
-      TokenReleasedToIssuerEvent.OutputObject
-    >;
-    TokenReleasedToIssuer: TypedContractEvent<
-      TokenReleasedToIssuerEvent.InputTuple,
-      TokenReleasedToIssuerEvent.OutputTuple,
-      TokenReleasedToIssuerEvent.OutputObject
     >;
 
     "Unpaused(address)": TypedContractEvent<

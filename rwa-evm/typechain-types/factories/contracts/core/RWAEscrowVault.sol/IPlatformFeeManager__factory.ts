@@ -81,7 +81,7 @@ const _abi = [
         type: "address",
       },
     ],
-    name: "refundForDispute",
+    name: "refundUSDTForDispute",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",

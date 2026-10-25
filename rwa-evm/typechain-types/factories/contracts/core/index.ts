@@ -3,9 +3,9 @@
 /* eslint-disable */
 export * as disputeManagerSol from "./DisputeManager.sol";
 export * as rwaEscrowVaultSol from "./RWAEscrowVault.sol";
-export * as rwaLaunchpadFactorySol from "./RWALaunchpadFactory.sol";
 export { DividendDistributor__factory } from "./DividendDistributor__factory";
 export { PlatformFeeManager__factory } from "./PlatformFeeManager__factory";
 export { ProjectBadgeManager__factory } from "./ProjectBadgeManager__factory";
+export { RWALaunchpadFactory__factory } from "./RWALaunchpadFactory__factory";
 export { RWAProjectNFT__factory } from "./RWAProjectNFT__factory";
 export { RWASecurityToken__factory } from "./RWASecurityToken__factory";
