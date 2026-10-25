@@ -1,4 +1,11 @@
 // lib/contracts/config.ts
+// Contract addresses come from EXPO_PUBLIC_* env / app config extra (see lib/config.ts and .env.example).
+// The root layout refuses to start when a required address is missing, so these are never placeholders.
+import { getConfigProblems, getConfig, ContractAddresses } from '../config';
+
+const EMPTY_CONTRACTS: ContractAddresses = { rwaToken: '', marketplace: '', staking: '', governance: '' };
+const loadedConfig = getConfigProblems().length === 0 ? getConfig() : null;
+
 export const AVALANCHE_FUJI_CONFIG = {
   chainId: 43113,
   name: 'Avalanche Fuji Testnet',
@@ -9,13 +16,8 @@ export const AVALANCHE_FUJI_CONFIG = {
     symbol: 'AVAX',
     decimals: 18,
   },
-  // Your deployed contract addresses (update after deployment)
-  contracts: {
-    rwaToken: '', // RWA Token contract
-    marketplace: '', // Marketplace contract
-    staking: '', // Staking contract
-    governance: '', // Governance contract
-  },
+  // Deployed contract addresses (EXPO_PUBLIC_RWA_TOKEN_ADDRESS, ..._MARKETPLACE_, ..._STAKING_, ..._GOVERNANCE_)
+  contracts: loadedConfig?.contracts ?? EMPTY_CONTRACTS,
   // Testnet tokens
   tokens: {
     USDC: '0x5425890298aed601595a70AB815c96711a31Bc65', // USDC on Fuji
@@ -38,12 +40,8 @@ export const AVALANCHE_MAINNET_CONFIG = {
     symbol: 'AVAX',
     decimals: 18,
   },
-  contracts: {
-    rwaToken: '',
-    marketplace: '',
-    staking: '',
-    governance: '',
-  },
+  // Optional until mainnet deployment (EXPO_PUBLIC_MAINNET_*_ADDRESS)
+  contracts: loadedConfig?.mainnetContracts ?? EMPTY_CONTRACTS,
   tokens: {
     USDC: '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
     USDT: '0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7',

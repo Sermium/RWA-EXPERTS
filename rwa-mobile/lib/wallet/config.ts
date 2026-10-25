@@ -1,5 +1,10 @@
 // lib/wallet/config.ts
-export const WALLET_CONNECT_PROJECT_ID = 'YOUR_PROJECT_ID'; // Get from https://cloud.walletconnect.com
+import { getConfig } from '../config';
+
+/** WalletConnect / Reown project ID from EXPO_PUBLIC_WALLETCONNECT_PROJECT_ID. Throws if unset. */
+export function getWalletConnectProjectId(): string {
+  return getConfig().walletConnectProjectId;
+}
 
 export const WALLET_METADATA = {
   name: 'RWA Platform',
