@@ -1,5 +1,6 @@
 // src/app/api/admin/settings/fee/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 const DEFAULT_FEES = {
@@ -11,7 +12,10 @@ const DEFAULT_FEES = {
   withdrawal_fee: 0.5,
 };
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
 
@@ -43,6 +47,9 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const supabase = getSupabaseAdmin();
     const body = await request.json();

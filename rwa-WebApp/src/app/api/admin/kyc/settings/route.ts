@@ -1,7 +1,7 @@
 // src/app/api/admin/kyc/settings/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { isAdmin, isSuperAdmin } from "@/lib/admin";
+import { validateAdminAccess, validateSuperAdminAccess } from '@/lib/admin';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,15 +20,8 @@ const DEFAULT_SETTINGS = {
 export async function GET(request: NextRequest) {
   try {
     // Verify admin authorization
-    const walletAddress = request.headers.get('x-wallet-address');
-    if (!walletAddress) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const adminCheck = await isAdmin(walletAddress);
-    if (!adminCheck) {
-      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
-    }
+    const auth = await validateAdminAccess(request);
+    if (!auth.isValid) return auth.error;
 
     // Fetch settings from database
     const { data, error } = await supabase
@@ -64,15 +57,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Verify admin authorization
-    const walletAddress = request.headers.get('x-wallet-address');
-    if (!walletAddress) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const superAdminCheck = await isSuperAdmin(walletAddress);
-    if (!superAdminCheck) {
-      return NextResponse.json({ error: "Forbidden - Super admin access required" }, { status: 403 });
-    }
+    const auth = await validateSuperAdminAccess(request);
+    if (!auth.isValid) return auth.error;
+    const walletAddress = auth.walletAddress;
 
     const body = await request.json();
     const {

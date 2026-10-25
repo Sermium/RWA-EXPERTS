@@ -1,19 +1,11 @@
 // src/app/api/admin/tokenization/stats/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
-import { isAdmin } from '@/lib/admin';
+import { validateAdminAccess } from '@/lib/admin';
 
 export async function GET(request: NextRequest) {
-  const walletAddress = request.headers.get('x-wallet-address');
-  
-  if (!walletAddress) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
-  const adminCheck = await isAdmin(walletAddress);
-  if (!adminCheck) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
-  }
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
 
   try {
     const supabase = getSupabaseAdmin();

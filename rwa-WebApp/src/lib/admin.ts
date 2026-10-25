@@ -1,6 +1,7 @@
 // src/lib/admin.ts
 import { getSupabaseAdmin } from './supabase';
 import { NextRequest, NextResponse } from 'next/server';
+import { getSessionWallet } from './admin-session';
 
 export type AdminRole = 'super_admin' | 'admin' | null;
 
@@ -45,35 +46,54 @@ export async function getAdminRole(walletAddress: string): Promise<AdminRole> {
   }
 }
 
-export async function validateAdminAccess(request: NextRequest): Promise<{
-  isValid: boolean;
-  walletAddress: string | null;
-  error?: NextResponse;
-}> {
-  const walletAddress = request.headers.get('x-wallet-address');
-  
+export type AdminAccess =
+  | { isValid: true; walletAddress: string; role: 'admin' | 'super_admin' }
+  | { isValid: false; walletAddress: string | null; error: NextResponse };
+
+/**
+ * The admin making this request, from the signed admin session cookie
+ * (see lib/admin-session.ts) and a fresh admin_roles lookup. The
+ * `x-wallet-address` header is not read: anyone can set it.
+ *
+ *   const auth = await validateAdminAccess(request);
+ *   if (!auth.isValid) return auth.error;
+ *   // auth.walletAddress is the signed-in admin
+ */
+export async function validateAdminAccess(
+  request: NextRequest,
+  { superAdmin = false }: { superAdmin?: boolean } = {}
+): Promise<AdminAccess> {
+  const walletAddress = getSessionWallet(request);
+
   if (!walletAddress) {
     return {
       isValid: false,
       walletAddress: null,
-      error: NextResponse.json({ error: 'Wallet address required' }, { status: 401 }),
+      error: NextResponse.json({ error: 'Admin sign-in required' }, { status: 401 }),
     };
   }
 
-  const adminCheck = await isAdmin(walletAddress);
-  
-  if (!adminCheck) {
+  const role = await getAdminRole(walletAddress);
+  if (role !== 'admin' && role !== 'super_admin') {
     return {
       isValid: false,
       walletAddress,
       error: NextResponse.json({ error: 'Unauthorized - Admin access required' }, { status: 403 }),
     };
   }
+  if (superAdmin && role !== 'super_admin') {
+    return {
+      isValid: false,
+      walletAddress,
+      error: NextResponse.json({ error: 'Forbidden - Super admin access required' }, { status: 403 }),
+    };
+  }
 
-  return {
-    isValid: true,
-    walletAddress,
-  };
+  return { isValid: true, walletAddress, role };
+}
+
+export function validateSuperAdminAccess(request: NextRequest): Promise<AdminAccess> {
+  return validateAdminAccess(request, { superAdmin: true });
 }
 
 // Check if wallet is any type of admin

@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAdmin, getAllAdmins } from '@/lib/admin';
+import { getAllAdmins, validateAdminAccess } from '@/lib/admin';
 
 export async function GET(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
-    
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const adminCheck = await isAdmin(walletAddress);
-    if (!adminCheck) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
+    const auth = await validateAdminAccess(request);
+    if (!auth.isValid) return auth.error;
 
     const admins = await getAllAdmins();
     return NextResponse.json({ admins });

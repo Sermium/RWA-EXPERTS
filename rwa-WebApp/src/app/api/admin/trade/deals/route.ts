@@ -1,15 +1,12 @@
 // src/app/api/admin/trade/deals/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getSupabaseAdmin } from '@/lib/supabase';
-import { isAdmin } from '@/lib/admin';
+import { validateAdminAccess } from '@/lib/admin';
 
 export async function GET(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
-    
-    if (!walletAddress || !isAdmin(walletAddress)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const auth = await validateAdminAccess(request);
+    if (!auth.isValid) return auth.error;
 
     const supabase = getSupabaseAdmin();
 

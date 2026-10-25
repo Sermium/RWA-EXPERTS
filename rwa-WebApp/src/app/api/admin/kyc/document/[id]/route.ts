@@ -1,6 +1,7 @@
 // src/app/api/admin/kyc/document/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
+import { validateAdminAccess } from "@/lib/admin";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,12 +12,8 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const adminAddress = request.headers.get("x-wallet-address");
-  
-  // Verify admin
-  if (adminAddress?.toLowerCase() !== process.env.NEXT_PUBLIC_ADMIN_ADDRESS?.toLowerCase()) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
 
   const { id: documentId } = await params;
 

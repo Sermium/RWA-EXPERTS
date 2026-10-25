@@ -1,15 +1,12 @@
 // src/app/api/admin/email/test/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { verifyEmailConnection, sendTestEmail } from '@/lib/notifications/email-service';
 
 // GET - Check email configuration
 export async function GET(request: NextRequest) {
-  const adminAddress = request.headers.get('x-wallet-address');
-  
-  // Basic admin check (you may want to add proper admin verification)
-  if (!adminAddress) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
 
   try {
     const result = await verifyEmailConnection();
@@ -25,11 +22,8 @@ export async function GET(request: NextRequest) {
 
 // POST - Send test email
 export async function POST(request: NextRequest) {
-  const adminAddress = request.headers.get('x-wallet-address');
-  
-  if (!adminAddress) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
 
   try {
     const body = await request.json();

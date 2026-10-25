@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createClient } from '@supabase/supabase-js';
 import { createPublicClient, createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
@@ -22,8 +23,13 @@ interface EscrowMilestone {
 }
 
 export async function POST(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
-    const { chainId, projectId, milestoneIndex, action, adminNotes, adminAddress } = await request.json();
+    const { chainId, projectId, milestoneIndex, action, adminNotes } = await request.json();
+    // The reviewer is the signed-in admin, not whoever the body names.
+    const adminAddress = auth.walletAddress;
 
     if (!chainId || projectId === undefined || milestoneIndex === undefined || !action) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

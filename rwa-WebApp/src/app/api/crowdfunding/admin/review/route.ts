@@ -1,5 +1,6 @@
 // src/app/api/crowdfunding/admin/review/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { validateAdminAccess } from '@/lib/admin';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -8,9 +9,14 @@ const supabase = createClient(
 );
 
 export async function POST(request: NextRequest) {
+  const auth = await validateAdminAccess(request);
+  if (!auth.isValid) return auth.error;
+
   try {
     const body = await request.json();
-    const { applicationId, adminAddress, action, rejectionReason } = body;
+    const { applicationId, action, rejectionReason } = body;
+    // The reviewer is the signed-in admin, not whoever the body names.
+    const adminAddress = auth.walletAddress;
 
     if (!applicationId || !adminAddress || !action) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

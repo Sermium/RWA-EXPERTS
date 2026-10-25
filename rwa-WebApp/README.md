@@ -20,6 +20,10 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Admin sign-in
+
+Admin API routes accept only a signed admin session: the admin signs a message with their wallet on any `/admin` page, and the server sets an httpOnly cookie. Set `ADMIN_SESSION_SECRET` (at least 32 random characters, e.g. `openssl rand -base64 48`) in every environment; without it no one can sign in as admin. Changing it signs every admin out.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
