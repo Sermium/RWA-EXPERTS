@@ -1,16 +1,15 @@
 // src/app/api/exchange/history/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { getUserTrades, getUserTransactions } from '@/lib/exchange-service';
 
 export async function GET(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type') || 'trades'; // 'trades' or 'transactions'
-    
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
     
     if (type === 'transactions') {
       const transactions = await getUserTransactions(walletAddress);

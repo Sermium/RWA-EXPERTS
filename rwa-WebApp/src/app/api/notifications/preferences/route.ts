@@ -1,14 +1,14 @@
 // src/app/api/notifications/preferences/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { getSupabaseAdmin } from '@/lib/supabase';
 export async function GET(request: NextRequest) {
-  const address = request.headers.get('x-wallet-address');
+  const supabase = getSupabaseAdmin();
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+  const address = session.wallet;
   
-  if (!address) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
   try {
     const { data, error } = await supabase
       .from('notification_preferences')
@@ -48,12 +48,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const address = request.headers.get('x-wallet-address');
+  const supabase = getSupabaseAdmin();
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+  const address = session.wallet;
   
-  if (!address) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
   try {
     const body = await request.json();
 

@@ -2,24 +2,25 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { useAccount, useSignMessage } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { Loader2, Shield } from 'lucide-react';
-import { adminSignInMessage } from '@/lib/admin-sign-in-message';
+import { useWalletSession } from '@/components/WalletSessionProvider';
 
 type GateState = 'checking' | 'ready' | 'needs-sign-in';
 
 /**
- * Admin API routes only accept a signed admin session (a cookie set by
- * /api/admin/auth/session after the wallet signs a message). This asks a
- * connected admin to sign in once, then shows the admin pages, whose fetches
- * carry the cookie on their own.
+ * Admin API routes only accept a signed session (a cookie set by
+ * /api/auth/session after the wallet signs a message). WalletSessionProvider
+ * would ask for that signature on the first refused request anyway; this
+ * asks a connected admin up front, before the admin pages load, so they open
+ * signed in.
  *
  * Wallets that are not connected, or not admins, go straight through to the
  * page, which shows its own "Connect wallet" or "Access denied".
  */
 export function AdminSessionGate({ children }: { children: React.ReactNode }) {
   const { address } = useAccount();
-  const { signMessageAsync } = useSignMessage();
+  const { signIn: signInWallet } = useWalletSession();
   const [state, setState] = useState<GateState>('checking');
   const [signingIn, setSigningIn] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,7 +31,7 @@ export function AdminSessionGate({ children }: { children: React.ReactNode }) {
       return;
     }
     try {
-      const session = await fetch('/api/admin/auth/session', { cache: 'no-store' });
+      const session = await fetch('/api/auth/session', { cache: 'no-store', headers: { 'x-wallet-address': address } });
       if (session.ok) {
         const { wallet } = await session.json();
         if (wallet === address.toLowerCase()) {
@@ -64,20 +65,8 @@ export function AdminSessionGate({ children }: { children: React.ReactNode }) {
     setSigningIn(true);
     setError(null);
     try {
-      const issuedAt = Math.floor(Date.now() / 1000);
-      const signature = await signMessageAsync({
-        message: adminSignInMessage(address, window.location.host, issuedAt),
-      });
-      const res = await fetch('/api/admin/auth/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wallet: address, issuedAt, signature }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data.error || 'Sign-in failed');
-      setState('ready');
-    } catch (err: any) {
-      setError(err?.message?.includes('User rejected') ? 'Signature cancelled' : err?.message || 'Sign-in failed');
+      if (await signInWallet()) setState('ready');
+      else setError('Sign-in was cancelled or failed. Please try again.');
     } finally {
       setSigningIn(false);
     }

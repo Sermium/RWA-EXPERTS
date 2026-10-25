@@ -20,9 +20,11 @@ You can start editing the page by modifying `app/page.tsx`. The page auto-update
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Admin sign-in
+## Wallet sign-in
 
-Admin API routes accept only a signed admin session: the admin signs a message with their wallet on any `/admin` page, and the server sets an httpOnly cookie. Set `ADMIN_SESSION_SECRET` (at least 32 random characters, e.g. `openssl rand -base64 48`) in every environment; without it no one can sign in as admin. Changing it signs every admin out.
+API routes know which wallet is calling only from a signed session cookie. The first time a page's request needs it, the app asks the connected wallet to sign a message (no transaction, no gas), and the server sets an httpOnly cookie valid for 8 hours. Admin routes additionally check the wallet's role on every request; `/admin` pages ask for the signature up front.
+
+Set `SESSION_SECRET` (at least 32 random characters, e.g. `openssl rand -base64 48`) in every environment; without it no one can sign in. Changing it signs everyone out.
 
 ## Learn More
 

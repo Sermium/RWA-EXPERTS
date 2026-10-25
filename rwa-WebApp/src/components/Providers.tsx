@@ -5,6 +5,7 @@ import { WagmiProvider } from 'wagmi';
 import { useState, type ReactNode } from 'react';
 import { config } from '@/config/wagmi';
 import { KYCProvider } from '@/contexts/KYCContext';
+import { WalletSessionProvider } from '@/components/WalletSessionProvider';
 
 export function Providers({ children }: { children: ReactNode }) {
   const [queryClient] = useState(() => new QueryClient());
@@ -12,9 +13,11 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <KYCProvider>
-          {children}
-        </KYCProvider>
+        <WalletSessionProvider>
+          <KYCProvider>
+            {children}
+          </KYCProvider>
+        </WalletSessionProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

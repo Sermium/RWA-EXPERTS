@@ -1,5 +1,6 @@
 // src/app/api/tokenization/apply/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 // Asset type mapping
@@ -16,12 +17,10 @@ const assetTypeMap: Record<string, string> = {
 };
 
 export async function GET(request: NextRequest) {
-  const walletAddress = request.headers.get('x-wallet-address');
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+  const walletAddress = session.wallet;
   
-  if (!walletAddress) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
   try {
     const supabase = getSupabaseAdmin();
     
@@ -44,13 +43,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const walletAddress = request.headers.get('x-wallet-address');
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+  const walletAddress = session.wallet;
   const chainIdHeader = request.headers.get('x-chain-id');
   
-  if (!walletAddress) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
   try {
     const body = await request.json();
     const supabase = getSupabaseAdmin();

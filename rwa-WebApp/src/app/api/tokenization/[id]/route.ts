@@ -1,17 +1,16 @@
 // src/app/api/tokenization/[id]/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const walletAddress = request.headers.get('x-wallet-address');
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+  const walletAddress = session.wallet;
   
-  if (!walletAddress) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
   try {
     const { id } = await params;
     const supabase = getSupabaseAdmin();
@@ -38,12 +37,10 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const walletAddress = request.headers.get('x-wallet-address');
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+  const walletAddress = session.wallet;
   
-  if (!walletAddress) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
   try {
     const { id } = await params;
     const body = await request.json();

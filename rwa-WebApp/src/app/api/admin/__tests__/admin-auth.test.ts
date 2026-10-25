@@ -7,6 +7,9 @@
  * Signatures and session tokens here are real; only the database is faked.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
+// The first import of each route module can take seconds on a cold start.
+vi.setConfig({ testTimeout: 30_000 });
 import { NextRequest } from 'next/server';
 import { privateKeyToAccount, generatePrivateKey } from 'viem/accounts';
 
@@ -59,7 +62,7 @@ vi.mock('@/lib/supabase', () => ({ getSupabaseAdmin: () => fakeClient, supabase:
 
 beforeEach(() => {
   calls.length = 0;
-  process.env.ADMIN_SESSION_SECRET = 'x'.repeat(48);
+  process.env.SESSION_SECRET = 'x'.repeat(48);
   process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://supabase.test';
   process.env.SUPABASE_SERVICE_ROLE_KEY = 'service-role';
 });
@@ -67,8 +70,8 @@ beforeEach(() => {
 const HOST = 'admin.test';
 
 async function sessionCookieFor(wallet: string) {
-  const { createAdminSessionToken, ADMIN_SESSION_COOKIE } = await import('@/lib/admin-session');
-  return `${ADMIN_SESSION_COOKIE}=${createAdminSessionToken(wallet)}`;
+  const { createSessionToken, SESSION_COOKIE } = await import('@/lib/wallet-session');
+  return `${SESSION_COOKIE}=${createSessionToken(wallet)}`;
 }
 
 function req(path: string, init: { method?: string; headers?: Record<string, string>; body?: unknown } = {}) {
@@ -81,64 +84,67 @@ function req(path: string, init: { method?: string; headers?: Record<string, str
 
 // ---------------------------------------------------------------- session token
 
-describe('admin session token', () => {
+describe('session token', () => {
   it('names the wallet it was issued to', async () => {
-    const { createAdminSessionToken, readAdminSessionToken } = await import('@/lib/admin-session');
-    expect(readAdminSessionToken(createAdminSessionToken(admin.address))).toBe(admin.address.toLowerCase());
+    const { createSessionToken, readSessionToken } = await import('@/lib/wallet-session');
+    expect(readSessionToken(createSessionToken(admin.address))).toBe(admin.address.toLowerCase());
   });
 
   it('is refused when its payload is edited to name another wallet', async () => {
-    const { createAdminSessionToken, readAdminSessionToken } = await import('@/lib/admin-session');
-    const [, tag] = createAdminSessionToken(outsider.address).split('.');
+    const { createSessionToken, readSessionToken } = await import('@/lib/wallet-session');
+    const [, tag] = createSessionToken(outsider.address).split('.');
     const forged = Buffer.from(JSON.stringify({ w: superAdmin.address.toLowerCase(), iat: 0, exp: 4102444800 })).toString('base64url');
-    expect(readAdminSessionToken(`${forged}.${tag}`)).toBeNull();
+    expect(readSessionToken(`${forged}.${tag}`)).toBeNull();
   });
 
   it('is refused once expired', async () => {
-    const { createAdminSessionToken, readAdminSessionToken, ADMIN_SESSION_TTL_SECONDS } = await import('@/lib/admin-session');
+    const { createSessionToken, readSessionToken, SESSION_TTL_SECONDS } = await import('@/lib/wallet-session');
     const issued = 1_700_000_000;
-    const token = createAdminSessionToken(admin.address, issued);
-    expect(readAdminSessionToken(token, issued + ADMIN_SESSION_TTL_SECONDS - 1)).toBe(admin.address.toLowerCase());
-    expect(readAdminSessionToken(token, issued + ADMIN_SESSION_TTL_SECONDS)).toBeNull();
+    const token = createSessionToken(admin.address, issued);
+    expect(readSessionToken(token, issued + SESSION_TTL_SECONDS - 1)).toBe(admin.address.toLowerCase());
+    expect(readSessionToken(token, issued + SESSION_TTL_SECONDS)).toBeNull();
   });
 
   it('is refused under a different secret, and not issued without a long enough one', async () => {
-    const { createAdminSessionToken, readAdminSessionToken } = await import('@/lib/admin-session');
-    const token = createAdminSessionToken(admin.address);
-    process.env.ADMIN_SESSION_SECRET = 'y'.repeat(48);
-    expect(readAdminSessionToken(token)).toBeNull();
-    process.env.ADMIN_SESSION_SECRET = 'short';
-    expect(() => createAdminSessionToken(admin.address)).toThrow();
-    expect(readAdminSessionToken(token)).toBeNull();
+    const { createSessionToken, readSessionToken } = await import('@/lib/wallet-session');
+    const token = createSessionToken(admin.address);
+    process.env.SESSION_SECRET = 'y'.repeat(48);
+    expect(readSessionToken(token)).toBeNull();
+    process.env.SESSION_SECRET = 'short';
+    expect(() => createSessionToken(admin.address)).toThrow();
+    expect(readSessionToken(token)).toBeNull();
   });
 });
 
 // ---------------------------------------------------------------- sign-in
 
-describe('admin sign-in', () => {
+describe('sign-in', () => {
   async function signIn(account: typeof admin, { issuedAt = Math.floor(Date.now() / 1000), host = HOST } = {}) {
-    const { adminSignInMessage } = await import('@/lib/admin-sign-in-message');
-    const signature = await account.signMessage({ message: adminSignInMessage(account.address, host, issuedAt) });
-    const { POST } = await import('../auth/session/route');
-    return POST(req('/api/admin/auth/session', { method: 'POST', body: { wallet: account.address, issuedAt, signature } }));
+    const { signInMessage } = await import('@/lib/sign-in-message');
+    const signature = await account.signMessage({ message: signInMessage(account.address, host, issuedAt) });
+    const { POST } = await import('../../auth/session/route');
+    return POST(req('/api/auth/session', { method: 'POST', body: { wallet: account.address, issuedAt, signature } }));
   }
 
   it('gives an admin who signs a session cookie that admin routes accept', async () => {
     const res = await signIn(admin);
     expect(res.status).toBe(200);
-    const cookie = res.cookies.get('rwa_admin_session');
+    const cookie = res.cookies.get('rwa_session');
     expect(cookie?.value).toBeTruthy();
     expect(cookie?.httpOnly).toBe(true);
 
     const { GET } = await import('../list/route');
-    const list = await GET(req('/api/admin/list', { headers: { cookie: `rwa_admin_session=${cookie!.value}` } }));
+    const list = await GET(req('/api/admin/list', { headers: { cookie: `rwa_session=${cookie!.value}` } }));
     expect(list.status).toBe(200);
   });
 
-  it('gives a wallet that is not an admin nothing', async () => {
+  it('gives a wallet that is not an admin a session that admin routes still refuse', async () => {
     const res = await signIn(outsider);
-    expect(res.status).toBe(403);
-    expect(res.cookies.get('rwa_admin_session')).toBeUndefined();
+    expect(res.status).toBe(200);
+    expect((await res.json()).role).toBeNull();
+    const { GET } = await import('../list/route');
+    const list = await GET(req('/api/admin/list', { headers: { cookie: `rwa_session=${res.cookies.get('rwa_session')!.value}` } }));
+    expect(list.status).toBe(403);
   });
 
   it('refuses a signature older than five minutes', async () => {
@@ -157,8 +163,8 @@ const routes = {
   ...import.meta.glob('../../crowdfunding/admin/**/route.ts'),
   ...import.meta.glob('../../debug/**/route.ts'),
 };
-// Public role lookups (grant nothing) and the sign-in route itself.
-const PUBLIC = ['../check/route.ts', '../role/route.ts', '../auth/session/route.ts'];
+// Public role lookups: they grant nothing.
+const PUBLIC = ['../check/route.ts', '../role/route.ts'];
 const METHODS = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'] as const;
 const ctx = { params: Object.assign(Promise.resolve({ id: '1' }), { id: '1' }) };
 

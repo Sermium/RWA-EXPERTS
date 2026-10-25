@@ -1,9 +1,13 @@
 // src/app/api/notifications/route.ts
 
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { getSupabaseAdmin } from '@/lib/supabase';
 export async function GET(request: NextRequest) {
-  const address = request.headers.get('x-wallet-address');
+  const supabase = getSupabaseAdmin();
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+  const address = session.wallet;
   const { searchParams } = new URL(request.url);
   
   const page = parseInt(searchParams.get('page') || '1');
@@ -11,10 +15,6 @@ export async function GET(request: NextRequest) {
   const unreadOnly = searchParams.get('unread') === 'true';
   const type = searchParams.get('type');
   
-  if (!address) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
   try {
     let query = supabase
       .from('notifications')
@@ -60,12 +60,11 @@ export async function GET(request: NextRequest) {
 
 // Mark notification as read
 export async function PATCH(request: NextRequest) {
-  const address = request.headers.get('x-wallet-address');
+  const supabase = getSupabaseAdmin();
+  const session = requireSessionWallet(request);
+  if (!session.ok) return session.response;
+  const address = session.wallet;
   
-  if (!address) {
-    return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-  }
-
   try {
     const body = await request.json();
     const { notificationId, markAll } = body;

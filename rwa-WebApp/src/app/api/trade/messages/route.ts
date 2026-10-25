@@ -1,5 +1,6 @@
 // src/app/api/trade/messages/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { v4 as uuidv4 } from 'uuid';
 import { notifyNewMessage } from '@/lib/notifications/send';
@@ -8,10 +9,9 @@ import { notifyNewMessage } from '@/lib/notifications/send';
 export async function GET(request: NextRequest) {
   try {
     const supabase = getSupabaseAdmin();
-    const walletAddress = request.headers.get('x-wallet-address');
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
 
     const { searchParams } = new URL(request.url);
     const dealId = searchParams.get('dealId');
@@ -79,11 +79,11 @@ export async function GET(request: NextRequest) {
 
 // POST - Send a message
 export async function POST(request: NextRequest) {
+  const supabase = getSupabaseAdmin();
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
 
     const body = await request.json();
     const { dealId, content, attachments } = body;

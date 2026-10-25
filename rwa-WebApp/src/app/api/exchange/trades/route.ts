@@ -1,16 +1,19 @@
 // src/app/api/exchange/trades/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { getRecentTrades, getUserTrades } from '@/lib/exchange';
+import { requireSessionWallet } from '@/lib/wallet-session';
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const pairId = searchParams.get('pairId');
-    const walletAddress = request.headers.get('x-wallet-address');
     const userOnly = searchParams.get('userOnly') === 'true';
     
-    if (userOnly && walletAddress) {
-      const trades = await getUserTrades(walletAddress);
+    // A wallet's own trades need its session; a pair's recent trades are public.
+    if (userOnly) {
+      const session = requireSessionWallet(request);
+      if (!session.ok) return session.response;
+      const trades = await getUserTrades(session.wallet);
       return NextResponse.json({ trades });
     }
     

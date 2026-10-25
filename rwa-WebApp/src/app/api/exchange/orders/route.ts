@@ -1,17 +1,16 @@
 // src/app/api/exchange/orders/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { createOrder, getUserOrders, cancelOrder } from '@/lib/exchange';
 
 export async function GET(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
     const { searchParams } = new URL(request.url);
     const pairId = searchParams.get('pairId') || undefined;
     const status = searchParams.get('status') as 'open' | 'history' | undefined;
-    
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
     
     const orders = await getUserOrders(walletAddress, pairId, status);
     return NextResponse.json({ orders });
@@ -23,11 +22,9 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
-    
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
     
     const body = await request.json();
     const { pairId, side, orderType, price, quantity } = body;
@@ -61,13 +58,11 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
-    const walletAddress = request.headers.get('x-wallet-address');
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
     const { searchParams } = new URL(request.url);
     const orderId = searchParams.get('orderId');
-    
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
     
     if (!orderId) {
       return NextResponse.json({ error: 'orderId is required' }, { status: 400 });

@@ -1,5 +1,6 @@
 // src/app/api/tokenization/[id]/deploy/route.ts
 import { NextRequest, NextResponse } from 'next/server';
+import { requireSessionWallet } from '@/lib/wallet-session';
 import { createClient } from '@supabase/supabase-js';
 
 const supabase = createClient(
@@ -13,14 +14,12 @@ export async function POST(
 ) {
   try {
     const { id: applicationId } = await params;
-    const walletAddress = request.headers.get('x-wallet-address');
+    const session = requireSessionWallet(request);
+    if (!session.ok) return session.response;
+    const walletAddress = session.wallet;
     
     console.log('[Deploy] Starting deployment save for:', applicationId);
     console.log('[Deploy] Wallet address:', walletAddress);
-
-    if (!walletAddress) {
-      return NextResponse.json({ error: 'Wallet address required' }, { status: 401 });
-    }
 
     const body = await request.json();
     console.log('[Deploy] Request body:', JSON.stringify(body, null, 2));
